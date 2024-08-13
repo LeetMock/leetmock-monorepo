@@ -8,10 +8,9 @@ from langchain_core.runnables.config import RunnableConfig
 from langchain_core.prompts import ChatPromptTemplate
 
 from langgraph.graph import END, START, StateGraph, add_messages
-from langgraph.checkpoint import MemorySaver
 
-from agent_graph.utils import create_init_state_node, safe_get
-from agent_graph.llms import get_model, ModelName
+from agents.utils import create_init_state_node, safe_get
+from agents.llms import get_model, ModelName
 
 
 InteractionType = Literal["response_required", "reminder_required"]
@@ -187,6 +186,4 @@ graph_builder.add_edge("reminder", "chatbot")
 graph_builder.add_edge("chatbot", END)
 
 
-graph = graph_builder.compile(
-    checkpointer=MemorySaver(),
-)
+graph = graph_builder.compile()

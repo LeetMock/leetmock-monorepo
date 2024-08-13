@@ -1,8 +1,6 @@
 {
   "dependencies": ["."],
   "graphs": {
-    "openai_search": "./server/agents/openai_search/agent.py:graph",
-    "human_in_loop": "./server/agents/human_in_loop/agent.py:graph",
     "leetmock": "./server/agents/leetmock/agent.py:graph"
   },
   "env": ".env"
