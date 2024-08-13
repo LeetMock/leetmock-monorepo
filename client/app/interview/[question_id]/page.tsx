@@ -29,7 +29,7 @@ import { socket } from "@/lib/socket";
 import PCMPlayer from "pcm-player";
 import { useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
-import { SignedIn, SignedOut, useAuth } from "@clerk/nextjs";
+// import { SignedIn, SignedOut, useAuth } from "@clerk/nextjs";
 
 const formatTime = (time: number): string => {
   const minutes = Math.floor(time / 60);

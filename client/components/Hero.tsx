@@ -2,37 +2,32 @@ import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 import { HeroCards } from "@/components/HeroCards";
 import Link from "next/link";
-import {
-  SignInButton,
-  SignedIn,
-  SignedOut,
-} from '@clerk/nextjs';
 import { Sign } from "crypto";
 
 interface ids {
   href: string;
 }
 
-export const AuthButtons = () => {
-  return (
-    <>
-      <SignedOut>
-        <SignInButton mode="modal">
-          <Button className="w-full md:w-1/3" variant="default" size="lg">
-            Get Started
-          </Button>
-        </SignInButton>
-      </SignedOut>
-      <SignedIn>
-        <Link href="/interview" passHref>
-        <Button className="w-full md:w-1/3" variant="default" size="lg">
-            Get Started
-          </Button>
-        </Link>
-      </SignedIn>
-    </>
-  );
-};
+// export const AuthButtons = () => {
+//   return (
+//     <>
+//       <SignedOut>
+//         <SignInButton mode="modal">
+//           <Button className="w-full md:w-1/3" variant="default" size="lg">
+//             Get Started
+//           </Button>
+//         </SignInButton>
+//       </SignedOut>
+//       <SignedIn>
+//         <Link href="/interview" passHref>
+//           <Button className="w-full md:w-1/3" variant="default" size="lg">
+//             Get Started
+//           </Button>
+//         </Link>
+//       </SignedIn>
+//     </>
+//   );
+// };
 
 export const Hero = () => {
   return (
@@ -60,7 +55,12 @@ export const Hero = () => {
         </p>
 
         <div className="space-y-4 md:space-y-0 md:space-x-4">
-          <AuthButtons />
+          {/* <AuthButtons /> */}
+          <Link href="/interview" passHref>
+            <Button className="w-full md:w-1/3" variant="default" size="lg">
+              Get Started
+            </Button>
+          </Link>
         </div>
       </div>
 

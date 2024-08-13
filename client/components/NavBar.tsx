@@ -19,13 +19,13 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { LogoIcon } from "@/components/Icons";
 import Link from "next/link";
 import { ThemeToggleButton } from "./ThemeToggleButton";
-import {
-  ClerkProvider,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton
-} from '@clerk/nextjs'
+// import {
+//   ClerkProvider,
+//   SignInButton,
+//   SignedIn,
+//   SignedOut,
+//   UserButton
+// } from '@clerk/nextjs'
 
 interface RouteProps {
   href: string;
@@ -128,15 +128,15 @@ export const Navbar = () => {
       </NavigationMenu>
       <div className="flex justify-center items-center space-x-3">
         <ThemeToggleButton />
-        <SignedOut>
-            <SignInButton mode="modal">
-              <Button>Login</Button>
-            </SignInButton>
-          </SignedOut>
-          <SignedIn>
-            <UserButton afterSignOutUrl="/" />
-        </SignedIn>
-      </div> 
+        {/* <SignedOut>
+          <SignInButton mode="modal">
+            <Button>Login</Button>
+          </SignInButton>
+        </SignedOut>
+        <SignedIn>
+          <UserButton afterSignOutUrl="/" />
+        </SignedIn> */}
+      </div>
     </header>
   );
 };

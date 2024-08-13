@@ -9,7 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.4.0",
     "@clerk/nextjs": "^5.3.0",
+    "@hughqing/vad-react": "^0.0.27",
+    "@hughqing/vad-web": "^0.0.18",
     "@monaco-editor/react": "^4.6.0",
     "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-dialog": "^1.1.1",
@@ -21,8 +24,6 @@
     "@radix-ui/react-select": "^2.1.1",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.1",
-    "@hughqing/vad-react": "^0.0.27",
-    "@hughqing/vad-web": "^0.0.18",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "convex": "^1.13.2",
