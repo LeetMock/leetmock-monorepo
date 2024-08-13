@@ -48,6 +48,9 @@ export class VoicePipeline extends EventEmitter {
 
     /* Bind socket event handlers */
     this.socket.on("agent-start-talking", (data: AgentSpeechData) => {
+
+      // TODO:
+
       this.isAgentTalking = true;
 
       if (this.lastUserSpeechTime !== 0) {
