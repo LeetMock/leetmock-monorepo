@@ -6,7 +6,7 @@ import time
 import queue
 from google.cloud import speech
 import numpy as np
-
+from pathlib import Path
 
 for handler in logging.root.handlers[:]:
     logging.root.removeHandler(handler)
@@ -16,7 +16,7 @@ logger.setLevel(logging.DEBUG)
 # Create console handler
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
-file_handler = logging.FileHandler("socket_server_voice_server.log")
+file_handler = logging.FileHandler(Path(__file__).parent / "voice_pipeline.log")
 file_handler.setLevel(logging.DEBUG)
 # Create formatter
 formatter = logging.Formatter('%(levelname)s: %(asctime)s - %(name)s - %(message)s')

@@ -1,6 +1,4 @@
 import asyncio
-import audioop
-from copy import deepcopy
 from datetime import datetime
 import io
 import json
@@ -8,11 +6,8 @@ import logging
 import os
 import threading
 import traceback
-from typing import Literal, Union
-import wave
 from convex import ConvexClient
 import numpy as np
-import pyaudio
 import socketio
 import uuid
 from voice_pipeline.custom_types import (
@@ -28,6 +23,7 @@ from voice_pipeline.custom_types import (
     Utterance,
     WordTimestamp,
 )
+from pathlib import Path
 from openai import OpenAI
 import websocket
 import select
@@ -46,7 +42,7 @@ logger.setLevel(logging.DEBUG)
 # Create console handler
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
-file_handler = logging.FileHandler("socket_server_voice_server.log")
+file_handler = logging.FileHandler(Path(__file__).parent / "voice_pipeline.log")
 file_handler.setLevel(logging.DEBUG)
 # Create formatter
 formatter = logging.Formatter('%(levelname)s: %(asctime)s - %(name)s - %(message)s')
@@ -397,6 +393,9 @@ def finish_transcript_callback(transcript: str, words, request):
     )
 
 
+"""
+Deprecated Endpoint for Non-streaming Voice Pipeline
+"""
 @sio.on("send-speech-data")
 async def send_speech_data(sid, request):
     if False:
