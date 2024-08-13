@@ -9,8 +9,8 @@ from langchain_core.prompts import ChatPromptTemplate
 
 from langgraph.graph import END, START, StateGraph, add_messages
 
-from agents.utils import create_init_state_node, safe_get
-from agents.llms import get_model, ModelName
+from server.agents.utils import create_init_state_node, safe_get
+from server.agents.llms import get_model, ModelName
 
 
 InteractionType = Literal["response_required", "reminder_required"]
