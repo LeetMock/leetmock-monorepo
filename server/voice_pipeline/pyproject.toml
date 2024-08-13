@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "voice-pipeline"
+version = "0.1.0"
+description = ""
+authors = ["Lucheng_Hugh <hughqing@qq.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+openai = "^1.37.0"
+pydantic = "^2.8.2"
+numpy = "^2.0.1"
+python-socketio = "^5.11.3"
+fastapi = "^0.111.1"
+pydub = "^0.25.1"
+websocket-client = "^1.8.0"
+convex = "^0.6.0"
+python-dotenv = "^1.0.1"
+google-cloud-speech = "^2.27.0"
+sounddevice = "^0.4.7"
+pyaudio = "^0.2.14"
+google-cloud-texttospeech = "^2.16.5"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
