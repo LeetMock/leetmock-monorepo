@@ -20,7 +20,6 @@ import { useTheme } from "next-themes";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { LucideVolume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useMicVAD, utils } from "@ricky0123/vad-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Label } from "@/components/ui/label";
 import { QuestionHolder } from "@/components/questions/QuestionHolder";
@@ -76,56 +75,6 @@ const InterviewPage: React.FC = () => {
     setQuestionId(questionId);
   }, [questionId, setQuestionId]);
 
-  //   useEffect(() => {
-
-  //     async function onAudio(data: Float32Array) {
-  //       console.log("Received audio data");
-  //       console.log(data);
-  //       var player = new PCMPlayer({
-  //         inputCodec: 'Int16',
-  //         channels: 1,
-  //         sampleRate: 24000,
-  //         flushTime: 1000,
-  //         fftSize: 2048,
-  //       });
-  //       player.volume(2);
-  //       player.feed(data);
-  //     }
-
-  //     socket.on("audio", onAudio);
-
-  //     return () => {
-  //       socket.off('audio', onAudio);
-  //     };
-  //   }, []);
-
-  //   const vad = useMicVAD({
-  //     modelURL: "/silero_vad.onnx",
-  //     workletURL: "/vad.worklet.bundle.min.js",
-  //     additionalAudioConstraints: {
-  //       advanced: [
-  //         {
-  //           echoCancellation: true,
-  //           noiseSuppression: true,
-  //         },
-  //       ],
-  //     },
-  //     onSpeechStart: () => {
-  //       return toast({
-  //         description: "Speech started",
-  //         className: cn(
-  //           "bottom-0 left-0 flex fixed md:max-w-[420px] md:bottom-4 md:left-4" // bottom-left
-  //         ),
-  //       });
-  //     },
-  //     onSpeechEnd: (audio) => {
-  //       console.log("Speech ended", audio);
-
-  //       const wavBuffer = utils.encodeWAV(audio)
-
-  //       socket.emit("audio", { audio: wavBuffer });
-  //     },
-  //   });
 
   // Check if the conversion was successful
   if (isNaN(questionId)) {
