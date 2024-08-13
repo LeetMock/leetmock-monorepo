@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useInterview } from "../../../../hooks/useInterview";
+import { useInterview } from "@/hooks/useInterview";
 import { LANGUAGES, VOICES } from "@/lib/constants";
 import { useTheme } from "next-themes";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
@@ -29,11 +29,7 @@ import { socket } from "@/lib/socket";
 import PCMPlayer from "pcm-player";
 import { useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
-import {
-  SignedIn,
-  SignedOut,
-  useAuth
-} from '@clerk/nextjs';
+import { SignedIn, SignedOut, useAuth } from "@clerk/nextjs";
 
 const formatTime = (time: number): string => {
   const minutes = Math.floor(time / 60);
@@ -234,15 +230,15 @@ const InterviewPage: React.FC = () => {
                 </Label> */}
 
                 <Button
-                onClick={toggleInterview}
-                className={cn(
+                  onClick={toggleInterview}
+                  className={cn(
                     "transition-colors duration-200",
                     isInterviewActive
-                    ? "bg-red-500 hover:bg-red-600 text-white"
-                    : "bg-white hover:bg-gray-100 text-gray-800 border border-gray-300"
-                )}
+                      ? "bg-red-500 hover:bg-red-600 text-white"
+                      : "bg-white hover:bg-gray-100 text-gray-800 border border-gray-300"
+                  )}
                 >
-                {isInterviewActive ? "End Interview" : "Start Interview"}
+                  {isInterviewActive ? "End Interview" : "Start Interview"}
                 </Button>
               </div>
               {/* {isInterviewActive && (
