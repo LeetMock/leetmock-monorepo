@@ -43,7 +43,7 @@ def convert_float32_to_int16(float32_array):
 
 class WordsStreamBuffer:
     """Handles words data buffering using a queue."""
-    
+
     @property
     def length(self):
         return self._buff.qsize()
@@ -102,7 +102,7 @@ class WordsStreamBuffer:
                 if res:
                     yield res
                 return
-            
+
             res = "".join(data)
             if not res:
                 continue
@@ -202,7 +202,7 @@ def listen_print_loop(responses: object, buffer) -> str:
 
         # Display the transcription of the top alternative.
         transcript = result.alternatives[0].transcript
-        
+
         # print(
         #     f"TRANSCRIPT: Time Delta {(get_current_time() - buffer.open_time)/1000} s"
         # )

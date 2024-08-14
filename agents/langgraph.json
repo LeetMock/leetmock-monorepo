@@ -1,7 +1,7 @@
 {
   "dependencies": ["."],
   "graphs": {
-    "leetmock": "./server/agents/leetmock/agent.py:graph"
+    "leetmock": "./leetmock/agent.py:graph"
   },
   "env": ".env"
 }
