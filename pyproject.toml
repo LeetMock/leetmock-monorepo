@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "server"
+name = "leetmock"
 version = "0.1.0"
 description = ""
 authors = ["Brian Yin <toubatbrian@gmail.com>"]
@@ -7,16 +7,10 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11.9"
-langchain-anthropic = "^0.1.20"
-tavily-python = "^0.3.5"
-langchain-community = "^0.2.9"
-langchain-openai = "^0.1.17"
-convex = "^0.6.0"
-langchainhub = "^0.1.20"
-python-dotenv = "^1.0.1"
-langgraph = "^0.2.3"
-libs = { path = "../libs", develop = true }
-
+libs = { path = "libs", develop = true }
+agent_graph = { path = "agent-graph", develop = true }
+voice_pipeline = { path = "voice-pipeline", develop = true }
+llm_server = { path = "llm-server", develop = true }
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"

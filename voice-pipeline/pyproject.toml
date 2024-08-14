@@ -4,12 +4,15 @@ version = "0.1.0"
 description = ""
 authors = ["Lucheng_Hugh <hughqing@qq.com>"]
 readme = "README.md"
+packages = [
+    { include = "voice_pipeline", from = "." }
+]
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11.9"
 openai = "^1.37.0"
 pydantic = "^2.8.2"
-numpy = "^2.0.1"
+numpy = ">=1.26.0,<2.0.0"
 python-socketio = "^5.11.3"
 fastapi = "^0.111.1"
 pydub = "^0.25.1"
