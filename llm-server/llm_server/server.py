@@ -44,7 +44,7 @@ app.add_middleware(
 
 
 async def get_assistant() -> Assistant:
-    assistants = await lg_client.assistants.search(graph_id="leetmock")
+    assistants = await lg_client.assistants.search(graph_id="code-mock-v1")
     assert len(assistants) > 0, "No assistant found"
 
     return assistants[0]
