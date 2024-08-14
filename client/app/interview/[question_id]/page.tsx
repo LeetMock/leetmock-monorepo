@@ -24,8 +24,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { Label } from "@/components/ui/label";
 import { QuestionHolder } from "@/components/questions/QuestionHolder";
 import { NumIslands } from "@/components/questions/NumIslands";
-import { socket } from "@/lib/socket";
-import PCMPlayer from "pcm-player";
 import { useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 // import { SignedIn, SignedOut, useAuth } from "@clerk/nextjs";

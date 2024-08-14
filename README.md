@@ -211,3 +211,37 @@ NEXT_PUBLIC_VOICE_PIPELINE_SOCKETIO=localhost:5050
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=FILL_ME_IN
 CLERK_SECRET_KEY=FILL_ME_IN
 ```
+
+# Deployment
+
+## Deploy Next JS App
+
+First Time Deployment, following these two guides [guide 1](https://shahriar-ratul.medium.com/deploying-a-next-js-application-on-ubuntu-using-nginx-nodejs-pm2-5912b463832c) [guide 2](https://utsavdesai26.medium.com/the-ultimate-guide-to-deploying-a-next-js-application-with-nginx-937854538d68)
+
+Essentially, first time deployment
+
+```shell
+cd client
+npx convex deploy --cmd 'npm run build'
+pm2 start npm --name leetmock -- start
+# steps to set up Nginx, check out the guide
+# ...
+```
+
+Or second time deployment
+
+```shell
+pm2 restart leetmock
+sudo systemctl restart nginx
+```
+
+## Deploy Voice Pipeline and LLM Server
+Checkout this (guide)[https://python-socketio.readthedocs.io/en/latest/server.html#deployment-strategies]
+
+... TO DO
+
+
+## Monitor
+```shell
+pm2 monit leetmock
+```
