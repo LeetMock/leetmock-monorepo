@@ -5,7 +5,7 @@ from functools import lru_cache
 
 
 from typing import List
-from app.types import Utterance
+from llm_server.types import Utterance
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 
 
