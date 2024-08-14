@@ -1,11 +1,9 @@
-import asyncio
 import logging
-import re
-import sys
 import time
 import queue
-from google.cloud import speech
 import numpy as np
+
+from google.cloud import speech
 from pathlib import Path
 
 for handler in logging.root.handlers[:]:
@@ -19,7 +17,7 @@ console_handler.setLevel(logging.INFO)
 file_handler = logging.FileHandler(Path(__file__).parent / "voice_pipeline.log")
 file_handler.setLevel(logging.DEBUG)
 # Create formatter
-formatter = logging.Formatter('%(levelname)s: %(asctime)s - %(name)s - %(message)s')
+formatter = logging.Formatter("%(levelname)s: %(asctime)s - %(name)s - %(message)s")
 console_handler.setFormatter(formatter)
 file_handler.setFormatter(formatter)
 # Add console handler to logger
@@ -27,6 +25,7 @@ logger.addHandler(console_handler)
 logger.addHandler(file_handler)
 # Prevent the logger from propagating messages to ancestors
 logger.propagate = False
+
 
 def convert_float32_to_int16(float32_array):
     # Convert bytes to numpy array of float32
@@ -40,6 +39,7 @@ def convert_float32_to_int16(float32_array):
 
     # Convert back to bytes
     return int16_np.tobytes()
+
 
 class WordsStreamBuffer:
     """Handles words data buffering using a queue."""
@@ -112,6 +112,7 @@ class WordsStreamBuffer:
                 continue
             logger.info(f"STT: Yielding {data=} ")
             yield res
+
 
 class AudioStreamBuffer:
     """Handles audio data buffering using a queue."""
@@ -242,4 +243,3 @@ def transcribe_streaming(audio_buffer, request, callback):
     transcript, words = listen_print_loop(responses, audio_buffer)
     logger.info("Transcription complete")
     callback(transcript, words, request)
-

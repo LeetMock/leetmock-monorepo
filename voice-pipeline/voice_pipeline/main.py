@@ -1,8 +1,7 @@
-from voice_pipeline.socket_server import socket_app
 from fastapi import FastAPI
-import socketio
-
 from dotenv import load_dotenv, find_dotenv
+
+from voice_pipeline.socket_server import socket_app
 
 load_dotenv(find_dotenv())
 

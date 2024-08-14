@@ -4,11 +4,11 @@ from langgraph_sdk.client import LangGraphClient
 from langgraph_sdk.schema import Assistant, Thread
 from langchain_core.messages import HumanMessage
 
-from app.types import (
+from llm_server.types import (
     ResponseRequiredRequest,
     ResponseResponse,
 )
-from app.utils.messages import convert_transcript_to_messages
+from llm_server.utils.messages import convert_transcript_to_messages
 
 logger = getLogger(__name__)
 

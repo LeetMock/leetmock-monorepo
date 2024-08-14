@@ -1,21 +1,25 @@
 import asyncio
-from datetime import datetime
 import io
 import json
 import logging
 import os
 import threading
 import traceback
-from convex import ConvexClient
-import numpy as np
 import socketio
 import uuid
+import websocket
+
+from datetime import datetime
+from convex import ConvexClient
+from pathlib import Path
+from openai import OpenAI
+from google.cloud.speech_v1.types.cloud_speech import WordInfo
+
 from voice_pipeline.custom_types import (
     AudioRequest,
     EndInterviewRequest,
     EventRequest,
     EventResponse,
-    LLMResponse,
     LLMResponseResponse,
     RegisterInterviewRequest,
     ResponseRequiredRequest,
@@ -23,34 +27,33 @@ from voice_pipeline.custom_types import (
     Utterance,
     WordTimestamp,
 )
-from pathlib import Path
-from openai import OpenAI
-import websocket
-import select
-from logging import getLogger
 from voice_pipeline.voice_server import (
     convert_float32_to_int16,
     transcribe_streaming,
 )
-from google.cloud.speech_v1.types.cloud_speech import WordInfo
 
 for handler in logging.root.handlers[:]:
     logging.root.removeHandler(handler)
+
 # Configure your logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+
 # Create console handler
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
 file_handler = logging.FileHandler(Path(__file__).parent / "voice_pipeline.log")
 file_handler.setLevel(logging.DEBUG)
+
 # Create formatter
-formatter = logging.Formatter('%(levelname)s: %(asctime)s - %(name)s - %(message)s')
+formatter = logging.Formatter("%(levelname)s: %(asctime)s - %(name)s - %(message)s")
 console_handler.setFormatter(formatter)
 file_handler.setFormatter(formatter)
+
 # Add console handler to logger
 logger.addHandler(console_handler)
 logger.addHandler(file_handler)
+
 # Prevent the logger from propagating messages to ancestors
 logger.propagate = False
 
@@ -83,6 +86,7 @@ get_utterance_list = lambda user_id: ws_pool[str(user_id)].utterance_list
 
 get_audio_buffer = lambda user_id: ws_pool[str(user_id)].audio_buffer
 get_word_buffer = lambda user_id: ws_pool[str(user_id)].word_buffer
+
 
 def increment_response_id(user_id: int):
     ws_pool[str(user_id)].latest_response_id += 1
@@ -122,15 +126,17 @@ async def response_handler(sid: str, session_id: str, user_id: int, response_id:
         complete_response = ""
         now = datetime.now()
         for word_chunk in word_buffer.generator():
-            logger.info(f"TIME - voice-pipeline -> word chunk - before TTS - {now.strftime('%H:%M:%S')}")
+            logger.info(
+                f"TIME - voice-pipeline -> word chunk - before TTS - {now.strftime('%H:%M:%S')}"
+            )
             for chunk in get_audio_response(word_chunk, voice).iter_bytes():
                 audio = chunk
-                await sio.emit("agent-start-talking", {"data": audio }, to=sid)
+                await sio.emit("agent-start-talking", {"data": audio}, to=sid)
                 logger.info(
                     f"TIME - voice-pipeline -> user - {response_id=} {word_chunk=} Audio Response Chunk Length: {len(audio)} bytes"
                 )
             complete_response += word_chunk
-            
+
         delta = datetime.now() - now
         logger.info(
             f"TIME - voice-pipeline - All word chunk TTS Completed - {datetime.now().strftime('%H:%M:%S')} - {delta.total_seconds()}s"
@@ -158,7 +164,9 @@ def ws_on_close(ws: websocket.WebSocketApp, close_status_code: int, close_msg: s
 
 def ws_on_message(ws: websocket.WebSocketApp, message: str):
 
-    def generate_agent_response_TTS(sid: str, session_id: str, user_id: int, response_id: int):
+    def generate_agent_response_TTS(
+        sid: str, session_id: str, user_id: int, response_id: int
+    ):
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         try:
@@ -175,27 +183,29 @@ def ws_on_message(ws: websocket.WebSocketApp, message: str):
 
     # Received response from LLM Server until the response is complete
     response = LLMResponseResponse(**json.loads(message))
-    
+
     if get_connection(ws.header["user_id"]) and response.response_type == "response":
-        
+
         global first_token_time
         if first_token_time:
             global first_token_count
             global total_first_token_time
             first_token_count += 1
-            total_first_token_time += (datetime.now() - first_token_time).total_seconds()
+            total_first_token_time += (
+                datetime.now() - first_token_time
+            ).total_seconds()
             logger.info(
                 f"Agent First Token Count #{first_token_count} Avg Time: {total_first_token_time / first_token_count}s"
             )
             first_token_time = None
-        
+
         logger.debug(f"ws_on_message: {ws.header['session_id']} {message}")
         words_map = get_words_map(ws.header["user_id"])
         is_first_message = str(response.response_id) not in words_map
         words_map[str(response.response_id)].append(response.content)
         word_buffer = get_word_buffer(ws.header["user_id"])
         word_buffer.add_word_chunk(response.content)
-        
+
         if response.content_complete:
             word_buffer.close()
             logger.info(f"current word buffer size: {word_buffer.length=}")
@@ -207,14 +217,16 @@ def ws_on_message(ws: websocket.WebSocketApp, message: str):
                 )
                 global agent_total_receive_time
                 global agent_total_receive_count
-                agent_total_receive_time += (now - agent_start_receive_time).total_seconds()
+                agent_total_receive_time += (
+                    now - agent_start_receive_time
+                ).total_seconds()
                 agent_total_receive_count += 1
                 logger.info(
                     f"Agent Response Count #{agent_total_receive_count} Avg Time: {agent_total_receive_time / agent_total_receive_count}s"
                 )
             agent_start_receive_time = None
             # TODO, this is incorrect, need to initiate this thread once the first token is received
-        
+
         if is_first_message:
             # First response from the agent
             threading.Thread(
@@ -380,7 +392,7 @@ def finish_transcript_callback(transcript: str, words, request):
     logger.info(
         f"TIME - user -> agent - send speech data before - {datetime.now().strftime('%H:%M:%S')}"
     )
-    
+
     global first_token_time
     first_token_time = datetime.now()
 
@@ -396,6 +408,8 @@ def finish_transcript_callback(transcript: str, words, request):
 """
 Deprecated Endpoint for Non-streaming Voice Pipeline
 """
+
+
 @sio.on("send-speech-data")
 async def send_speech_data(sid, request):
     if False:
@@ -475,6 +489,7 @@ async def end_interview(sid, request):
         logger.info(f"User {request.user_id} is not in an interview")
     # potentially convex mutation?
     return EventResponse(success=True).model_dump()
+
 
 @sio.on("voice-change")
 async def voice_change(sid, request):

@@ -17,9 +17,9 @@ from convex import ConvexClient
 from langgraph_sdk import get_client
 from langgraph_sdk.schema import Assistant
 
-from app.llm import LlmClient
-from app.types import ConfigResponse, ResponseRequiredRequest
-from app.settings import get_settings
+from llm_server.llm import LlmClient
+from llm_server.types import ConfigResponse, ResponseRequiredRequest
+from llm_server.settings import get_settings
 
 settings = get_settings()
 

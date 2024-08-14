@@ -1,5 +1,4 @@
 from collections import defaultdict
-import threading
 from typing import DefaultDict, List, Literal, Optional, Union
 from pydantic import BaseModel, ConfigDict, Field
 import websocket
@@ -12,11 +11,13 @@ class AudioRequest(BaseModel):
     user_id: int
     session_id: str
 
+
 class EventRequest(BaseModel):
     event_type: Optional[str] = None
     user_id: int
     session_id: str
     data: Optional[dict] = None
+
 
 class RegisterInterviewRequest(BaseModel):
     user_id: int
@@ -81,4 +82,6 @@ class UserConnection(BaseModel):
     audio_buffer: AudioStreamBuffer = Field(default_factory=AudioStreamBuffer)
     word_buffer: WordsStreamBuffer = Field(default_factory=WordsStreamBuffer)
     voice: str = "nova"
+
+
 LLMResponse = Union[LLMResponseResponse, LLMPingPongResponse]
