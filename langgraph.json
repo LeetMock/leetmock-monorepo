@@ -1,7 +1,7 @@
 {
   "dependencies": ["./agent-graph", "./libs"],
   "graphs": {
-    "leetmock": "./agent-graph/agent_graph/agent.py:graph"
+    "code-mock-v1": "./agent-graph/agent_graph/agent.py:graph"
   },
   "env": ".env"
 }
