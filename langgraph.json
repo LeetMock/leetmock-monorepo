@@ -1,5 +1,5 @@
 {
-  "dependencies": ["."],
+  "dependencies": ["./agent-graph", "./libs"],
   "graphs": {
     "leetmock": "./agent-graph/agent_graph/agent.py:graph"
   },
