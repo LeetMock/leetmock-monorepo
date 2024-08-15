@@ -1,4 +1,3 @@
-import { UserSpeechData } from '@/lib/VoicePipeline';
 import { toast } from "@/components/ui/use-toast";
 import EventEmitter from "eventemitter3";
 import PCMPlayer from "pcm-player";
