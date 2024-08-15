@@ -32,8 +32,9 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
+            source ~/.bashrc
             cd ~/leetmock-monorepo
-            git remote set-url origin https://${{ secrets.USERNAME_GITHUB }}:${{ secrets.TOKEN_GITHUB }}@github.com:LeetMock/leetmock-monorepo.git
+            git remote set-url origin https://${{ secrets.USERNAME_GITHUB }}:${{ secrets.TOKEN_GITHUB }}@github.com/LeetMock/leetmock-monorepo.git
             git pull origin main
             cd client
             npm install
@@ -50,8 +51,9 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
+            source ~/.bashrc
             cd ~/leetmock-monorepo
-            git remote set-url origin https://${{ secrets.USERNAME_GITHUB }}:${{ secrets.TOKEN_GITHUB }}@github.com:LeetMock/leetmock-monorepo.git
+            git remote set-url origin https://${{ secrets.USERNAME_GITHUB }}:${{ secrets.TOKEN_GITHUB }}@github.com/LeetMock/leetmock-monorepo.git
             git pull origin main
             cd voice-pipeline
             poetry install
@@ -70,6 +72,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
+            source ~/.bashrc
             cd ~/leetmock-monorepo
             git remote set-url origin https://${{ secrets.USERNAME_GITHUB }}:${{ secrets.TOKEN_GITHUB }}@github.com/LeetMock/leetmock-monorepo.git
             git pull origin main
