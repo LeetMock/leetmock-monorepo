@@ -38,6 +38,7 @@ jobs:
             cd client
             npm install
             npx convex deploy -y --cmd 'npm run build'
+            pm2 delete leetmock
             pm2 restart leetmock
             
   build-voice-pipeline:
@@ -56,7 +57,8 @@ jobs:
             git pull origin main
             cd voice-pipeline
             poetry install
-            poetry run pm2 restart voice-pipeline
+            pm2 delete voice-pipeline
+            poetry run pm2 start ../deployment/voice_pipeline.json
   
   build-llm-server:
     runs-on: ubuntu-latest
@@ -74,4 +76,5 @@ jobs:
             git pull origin main
             cd llm-server
             poetry install
-            poetry run pm2 restart llm-server
+            pm2 delete llm-server
+            poetry run pm2 start ../deployment/llm_server.json
