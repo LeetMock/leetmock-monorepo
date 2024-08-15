@@ -32,13 +32,14 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
-            exec bash \-l
+            bash -lc "
             cd ~/leetmock-monorepo
             git remote set-url origin https://${{ secrets.USERNAME_GITHUB }}:${{ secrets.TOKEN_GITHUB }}@github.com/LeetMock/leetmock-monorepo.git
             git pull origin main
             cd client
             npm install
             npx convex deploy --cmd 'npm run build'
+            "
             
   build-voice-pipeline:
     runs-on: ubuntu-latest
@@ -51,15 +52,14 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
-            exec bash \-l
+            bash -lc "
             cd ~/leetmock-monorepo
             git remote set-url origin https://${{ secrets.USERNAME_GITHUB }}:${{ secrets.TOKEN_GITHUB }}@github.com/LeetMock/leetmock-monorepo.git
             git pull origin main
-            cd voice-pipeline
-            poetry install
-            poetry shell
-            pm2 delete voice-pipeline
-            pm2 start ../deploy/voice_pipeline.sh
+            cd client
+            npm install
+            npx convex deploy --cmd 'npm run build'
+            "
   
   build-llm-server:
     runs-on: ubuntu-latest
@@ -72,12 +72,11 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
-            exec bash \-l
+            bash -lc "
             cd ~/leetmock-monorepo
             git remote set-url origin https://${{ secrets.USERNAME_GITHUB }}:${{ secrets.TOKEN_GITHUB }}@github.com/LeetMock/leetmock-monorepo.git
             git pull origin main
-            cd llm-server
-            poetry install
-            poetry shell
-            pm2 delete llm-server
-            pm2 start ../deploy/llm_server.sh
+            cd client
+            npm install
+            npx convex deploy --cmd 'npm run build'
+            "
