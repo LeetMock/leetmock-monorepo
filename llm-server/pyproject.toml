@@ -45,6 +45,7 @@ convex = "^0.6.0"
 langchainhub = "^0.1.20"
 langgraph-sdk = "^0.1.26"
 langchain = "^0.2.11"
+gunicorn = "^23.0.0"
 
 [build-system]
 requires = ["poetry-core"]
