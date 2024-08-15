@@ -252,16 +252,8 @@ pm2 monit leetmock
 
 ## Deploy Voice Pipeline
 
-```shell
-cd voice-pipeline
-poetry shell
-pm2 start ../deployment/voice_pipeline.sh
-```
+Check Github Action 
 
 ## Deploy llm server
 
-```shell
-cd llm-server
-poetry shell
-pm2 start ../deployment/llm_server.sh
-```
+Check Github Action 

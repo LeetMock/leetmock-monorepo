@@ -9,13 +9,14 @@ import traceback
 import socketio
 import uuid
 import websocket
+from dotenv import load_dotenv
 
 from datetime import datetime
 from convex import ConvexClient
 from pathlib import Path
 from openai import OpenAI
 from google.cloud.speech_v1.types.cloud_speech import WordInfo
-
+from os.path import join, dirname
 from voice_pipeline.custom_types import (
     AudioRequest,
     EndInterviewRequest,
@@ -58,6 +59,9 @@ logger.addHandler(file_handler)
 
 # Prevent the logger from propagating messages to ancestors
 logger.propagate = False
+
+dotenv_path = join(dirname(__file__), "..", "..", '.env')
+load_dotenv(override=True)
 
 client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
