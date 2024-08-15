@@ -58,9 +58,10 @@ jobs:
             cd ~/leetmock-monorepo
             git remote set-url origin https://${{ secrets.USERNAME_GITHUB }}:${{ secrets.TOKEN_GITHUB }}@github.com/LeetMock/leetmock-monorepo.git
             git pull origin main
-            cd client
-            npm install
-            npx convex deploy --cmd 'npm run build'
+            cd voice-pipeline
+            poetry install
+            poetry shell
+            pm2 restart voice-pipeline
             "
   
   build-llm-server:
@@ -79,7 +80,8 @@ jobs:
             cd ~/leetmock-monorepo
             git remote set-url origin https://${{ secrets.USERNAME_GITHUB }}:${{ secrets.TOKEN_GITHUB }}@github.com/LeetMock/leetmock-monorepo.git
             git pull origin main
-            cd client
-            npm install
-            npx convex deploy --cmd 'npm run build'
+            cd llm-server
+            poetry install
+            poetry shell
+            pm2 restart llm-server
             "
