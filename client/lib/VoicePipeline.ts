@@ -1,4 +1,4 @@
-import { UserSpeechData } from '@/lib/VoicePipeline';
+import { UserSpeechData } from "@/lib/VoicePipeline";
 import { toast } from "@/components/ui/use-toast";
 import EventEmitter from "eventemitter3";
 import PCMPlayer from "pcm-player";
@@ -45,6 +45,7 @@ export class VoicePipeline extends EventEmitter {
   lastUserSpeechTime: number = 0;
   reaction_counts = 0;
   total_reaction_time = 0;
+
   constructor() {
     super();
     this.isAgentTalking = false;
@@ -55,6 +56,8 @@ export class VoicePipeline extends EventEmitter {
 
     /* Bind socket event handlers */
     this.socket.on("agent-start-talking", (data: AgentSpeechData) => {
+      // TODO:
+
       this.isAgentTalking = true;
 
       if (this.isUserTalking) {
@@ -65,8 +68,7 @@ export class VoicePipeline extends EventEmitter {
       }
 
       if (this.lastUserSpeechTime !== 0) {
-        this.total_reaction_time +=
-          (Date.now() - this.lastUserSpeechTime) / 1000;
+        this.total_reaction_time += (Date.now() - this.lastUserSpeechTime) / 1000;
         this.reaction_counts++;
         console.log(
           `TIME - Agent Reaction Time ${(Date.now() - this.lastUserSpeechTime) / 1000}s, Reaction counts #${this.reaction_counts} Average ${this.total_reaction_time / this.reaction_counts}s`
@@ -74,7 +76,7 @@ export class VoicePipeline extends EventEmitter {
         this.lastUserSpeechTime = 0;
       }
 
-      /* 
+      /*
       if data.response_id is greater than or equal to this.response_id, then feed the data to the player
       greater than is used to prevent the player to receive outdated speech data
       equal to is used to receive the audio matching with current response_id, which is set at the time of callback of user-talk-stream-start
@@ -85,9 +87,7 @@ export class VoicePipeline extends EventEmitter {
         }
         this.player.volume(2);
         this.player.feed(data.data);
-        console.log(
-          `voice-pipeline: Agent start talking response_id: ${data.response_id}`
-        );
+        console.log(`voice-pipeline: Agent start talking response_id: ${data.response_id}`);
         this.emit("agent-start-talking");
 
         // Update response_id with the latest response_id
@@ -150,9 +150,7 @@ export class VoicePipeline extends EventEmitter {
     console.log("Voice-Pipeline: User started talking");
     this.isUserTalking = true;
     try {
-      console.log(
-        "voice-pipeline: interrupting agent talking by destroy current player"
-      );
+      console.log("voice-pipeline: interrupting agent talking by destroy current player");
       this.player!.destroy();
       this.player = this.newPCMPlayer();
       this.isAgentTalking = false;
@@ -225,13 +223,7 @@ export class VoicePipeline extends EventEmitter {
     this.debouncedUserStopTalking(userSpeechData);
   };
 
-  voiceChangeHandler = async ({
-    user_id,
-    voice,
-  }: {
-    user_id: number;
-    voice: string;
-  }) => {
+  voiceChangeHandler = async ({ user_id, voice }: { user_id: number; voice: string }) => {
     console.log("Voice-Pipeline: Voice changed to", voice);
     this.socket.emit("voice-change", {
       data: { voice },
@@ -263,19 +255,16 @@ export class VoicePipeline extends EventEmitter {
   startInterviewHandler = (startInterviewResponse: EventResponse) => {
     toast({
       title: "Interview is starting",
-      description:
-        "We are initializaing the interview session, please wait for a second",
+      description: "We are initializaing the interview session, please wait for a second",
       duration: 1500,
     });
+
     if (startInterviewResponse.success) {
       console.log("voice-pipeline: handler: Interview started successfully");
       console.log(startInterviewResponse);
       this.interviewSessionId = startInterviewResponse.data.session_id;
       this.isInterviewActive = true;
-      console.log(
-        "Interview started with session id:",
-        this.interviewSessionId
-      );
+      console.log("Interview started with session id:", this.interviewSessionId);
       return this.interviewSessionId!;
     } else {
       toast({
@@ -299,9 +288,7 @@ export class VoicePipeline extends EventEmitter {
       this.isAgentTalking = false;
       this.isUserTalking = false;
     } else {
-      throw new Error(
-        "Failed to end interview due to error " + endInterviewResponse.error
-      );
+      throw new Error("Failed to end interview due to error " + endInterviewResponse.error);
     }
   };
 }

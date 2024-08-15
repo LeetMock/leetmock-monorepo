@@ -73,7 +73,6 @@ const InterviewPage: React.FC = () => {
     setQuestionId(questionId);
   }, [questionId, setQuestionId]);
 
-
   // Check if the conversion was successful
   if (isNaN(questionId)) {
     console.error("Invalid question_id:", params.question_id);

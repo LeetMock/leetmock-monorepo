@@ -5,12 +5,12 @@ run-ngrok:
 run-llm-server:
     @echo "Running LLM server"
     cd llm-server
-    poetry run uvicorn llm_server.server:app --reload --port=8080 --log-level info
+    poetry run uvicorn llm_server.server:app --reload --port 8080 --log-level info
 
 run-voice-pipeline:
     @echo "Running voice pipeline"
     cd voice-pipeline
-    poetry run uvicorn --port 5050 voice_pipeline.main:app --reload --log-level info
+    poetry run uvicorn voice_pipeline.main:app --reload --port 5050 --log-level info
 
 run-client:
     @echo "Running client"

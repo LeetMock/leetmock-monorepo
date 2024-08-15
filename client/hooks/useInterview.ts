@@ -238,14 +238,14 @@ export const useInterview = (initialQuestionId: number) => {
       endInterview(userId!);
     }
   }, [
-    code,
-    createSession,
-    endInterview,
     isInterviewActive,
-    // setupRetellClient,
-    timeLeft,
+    setupVoicePipeline,
+    initialQuestionId,
     updateSession,
-    questionId,
+    code,
+    timeLeft,
+    endInterview,
+    userId,
   ]);
 
   useEffect(() => {
