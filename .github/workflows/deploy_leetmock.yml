@@ -33,6 +33,7 @@ jobs:
           port: 22
           script: |
             bash -lc "
+            source ~/.bashrc
             cd ~/leetmock-monorepo
             git remote set-url origin https://${{ secrets.USERNAME_GITHUB }}:${{ secrets.TOKEN_GITHUB }}@github.com/LeetMock/leetmock-monorepo.git
             git pull origin main
@@ -53,6 +54,7 @@ jobs:
           port: 22
           script: |
             bash -lc "
+            source ~/.bashrc
             cd ~/leetmock-monorepo
             git remote set-url origin https://${{ secrets.USERNAME_GITHUB }}:${{ secrets.TOKEN_GITHUB }}@github.com/LeetMock/leetmock-monorepo.git
             git pull origin main
@@ -73,6 +75,7 @@ jobs:
           port: 22
           script: |
             bash -lc "
+            source ~/.bashrc
             cd ~/leetmock-monorepo
             git remote set-url origin https://${{ secrets.USERNAME_GITHUB }}:${{ secrets.TOKEN_GITHUB }}@github.com/LeetMock/leetmock-monorepo.git
             git pull origin main
