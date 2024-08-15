@@ -62,36 +62,30 @@ export const useInterview = (initialQuestionId: number) => {
       if (voicePipelineRef.current) {
         voicePipelineRef.current?.emit("user-start-talking", userId, sessionId);
       } else {
-        console.log("VoicePipeline not initialized");
-      }
-      console.log(`TIME - userspeech start at ${Date.now()}`);
-    },
-    onSpeechEnd: (audio) => {
-      if (voicePipelineRef.current) {
-        // send audio to voice pipeline
-        const wavBuffer = utils.encodeWAV(audio);
-        if (userId === undefined || sessionId === undefined) {
-          console.log("User ID or Session ID is undefined");
-        }
-        //print the current time in hh-mm-ss
-        voicePipelineRef.current?.emit("user-stop-talking", {
-          data: wavBuffer,
-          user_id: userId,
-          session_id: sessionId,
-        } as UserSpeechData);
-        console.log(`TIME - userspeech end at ${Date.now()}`);
-      } else {
-        console.log("VoicePipeline not initialized");
+        console.log("VoicePipeline not initialized, user not in interview");
       }
     },
+    //This is debounced via user-talking-stream, no need to listen to this event
+    // onSpeechEnd: (audio) => {
+    //   if (voicePipelineRef.current) {
+    //     // send audio to voice pipeline
+    //     const wavBuffer = utils.encodeWAV(audio);
+    //     if (userId === undefined || sessionId === undefined) {
+    //       console.log("User ID or Session ID is undefined");
+    //     }
+    //     //print the current time in hh-mm-ss
+    //     voicePipelineRef.current?.emit("user-stop-talking", {
+    //       data: wavBuffer,
+    //       user_id: userId,
+    //       session_id: sessionId,
+    //     } as UserSpeechData);
+    //   } else {
+    //     console.log("VoicePipeline not initialized");
+    //   }
+    // },
 
     onFrameProcessed: (probabilities, frame: Float32Array) => {
-      if (probabilities.isSpeech > 0.9) {
-        if (!voicePipelineRef.current) {
-          setupVoicePipeline();
-        }
-        // const wavBuffer = utils.encodeWAV(frame, 1, 16000, 1, 16);
-        // console.log("frame:", wavBuffer);
+      if (probabilities.isSpeech > 0.9 && voicePipelineRef.current) {
         voicePipelineRef.current?.emit("user-talking-stream", {
           data: frame,
           user_id: userId,

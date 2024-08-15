@@ -1,7 +1,9 @@
+import { UserSpeechData } from '@/lib/VoicePipeline';
 import { toast } from "@/components/ui/use-toast";
 import EventEmitter from "eventemitter3";
 import PCMPlayer from "pcm-player";
 import { io, Socket } from "socket.io-client";
+import debounce from "debounce";
 
 export interface StartInterviewRequest {
   user_id: number;
@@ -22,6 +24,7 @@ export interface EndInterviewRequest {
 
 export interface AgentSpeechData {
   data: Int16Array;
+  response_id: number;
 }
 
 export interface UserSpeechData {
@@ -31,27 +34,35 @@ export interface UserSpeechData {
 }
 
 export class VoicePipeline extends EventEmitter {
-  player: PCMPlayer;
+  player: PCMPlayer | undefined;
   isAgentTalking: boolean;
+  isUserTalking: boolean;
   interviewSessionId: string | undefined;
   isInterviewActive: boolean;
   socket: Socket;
+  response_id: number = -1;
+
   lastUserSpeechTime: number = 0;
   reaction_counts = 0;
   total_reaction_time = 0;
   constructor() {
     super();
     this.isAgentTalking = false;
+    this.isUserTalking = false;
     this.isInterviewActive = false;
-    this.player = this.newPCMPlayer();
+    this.player = undefined;
     this.socket = io(process.env.NEXT_PUBLIC_VOICE_PIPELINE_SOCKETIO!);
 
     /* Bind socket event handlers */
     this.socket.on("agent-start-talking", (data: AgentSpeechData) => {
-
-      // TODO:
-
       this.isAgentTalking = true;
+
+      if (this.isUserTalking) {
+        console.log(
+          `voice-pipeline: received agent speech ${data.response_id} while user talking, ignoring`
+        );
+        return;
+      }
 
       if (this.lastUserSpeechTime !== 0) {
         this.total_reaction_time +=
@@ -63,11 +74,29 @@ export class VoicePipeline extends EventEmitter {
         this.lastUserSpeechTime = 0;
       }
 
-      this.player.volume(2);
-      this.player.feed(data.data);
-      console.log("voice-pipeline: Agent start talking");
+      /* 
+      if data.response_id is greater than or equal to this.response_id, then feed the data to the player
+      greater than is used to prevent the player to receive outdated speech data
+      equal to is used to receive the audio matching with current response_id, which is set at the time of callback of user-talk-stream-start
+      */
+      if (data.response_id >= this.response_id) {
+        if (this.player === undefined) {
+          this.player = this.newPCMPlayer();
+        }
+        this.player.volume(2);
+        this.player.feed(data.data);
+        console.log(
+          `voice-pipeline: Agent start talking response_id: ${data.response_id}`
+        );
+        this.emit("agent-start-talking");
 
-      this.emit("agent-start-talking");
+        // Update response_id with the latest response_id
+        this.response_id = data.response_id;
+      } else {
+        console.log(
+          `voice-pipeline: Agent speech is outdated, ignoring response_id: ${data.response_id}`
+        );
+      }
     });
 
     this.socket.on("error", (error: string) => {
@@ -76,7 +105,7 @@ export class VoicePipeline extends EventEmitter {
 
     /* Bind voice pipeline event handlers */
     this.on("user-start-talking", this.userStartTalkingHandler);
-    this.on("user-stop-talking", this.userStopTalkingHandler);
+    // this.on("user-stop-talking", this.userStopTalkingHandler); // This is debounced via user-talking-stream, no need to listen to this event
     this.on("user-talking-stream", this.userTalkingStreamHandler);
     this.on("voice-change", this.voiceChangeHandler);
   }
@@ -107,11 +136,11 @@ export class VoicePipeline extends EventEmitter {
       sampleRate: 24000,
       flushTime: 1000,
       fftSize: 2048,
-      onended: () => {
-        this.isAgentTalking = false;
-        console.log("voice-pipeline: Agent stopped talking");
-        this.emit("agent-stop-talking");
-      },
+      // onended: () => {
+      //   this.isAgentTalking = false;
+      //   console.log("voice-pipeline: Agent stopped talking");
+      //   this.emit("agent-stop-talking");
+      // },
     });
   };
 
@@ -119,14 +148,16 @@ export class VoicePipeline extends EventEmitter {
 
   userStartTalkingHandler = async (user_id: number, session_id: string) => {
     console.log("Voice-Pipeline: User started talking");
-    if (this.isAgentTalking) {
-      try {
-        console.log("voice-pipeline: interrupting agent talking");
-        this.player.destroy();
-        this.player = this.newPCMPlayer();
-      } catch (error) {
-        console.error("Error destroying player", error);
-      }
+    this.isUserTalking = true;
+    try {
+      console.log(
+        "voice-pipeline: interrupting agent talking by destroy current player"
+      );
+      this.player!.destroy();
+      this.player = this.newPCMPlayer();
+      this.isAgentTalking = false;
+    } catch (error) {
+      console.error("Error destroying player", error);
     }
 
     // Feed data to user-talk-stream-data
@@ -140,6 +171,10 @@ export class VoicePipeline extends EventEmitter {
         if (!response.success) {
           this.emit("error", "ack: user-start-talking-failure");
         }
+        this.response_id = response.data.response_id;
+        console.log(
+          `voice-pipeline: User start talking, callback response_id: ${this.response_id}`
+        );
       }
     );
   };
@@ -148,6 +183,7 @@ export class VoicePipeline extends EventEmitter {
   userStopTalkingHandler = async (userSpeechData: UserSpeechData) => {
     console.log("Voice-Pipeline: User stopped talking");
     this.lastUserSpeechTime = Date.now();
+    this.isUserTalking = false;
     // this.socket.emit(
     //   "send-speech-data",
     //   userSpeechData,
@@ -174,9 +210,19 @@ export class VoicePipeline extends EventEmitter {
     );
   };
 
+  debouncedUserStopTalking = debounce((UserSpeechData: UserSpeechData) => {
+    console.log("Voice-Pipeline: User Stop Talking debounced");
+    this.userStopTalkingHandler(UserSpeechData);
+  }, 500);
+
   userTalkingStreamHandler = async (userSpeechData: UserSpeechData) => {
     console.log("Voice-Pipeline: User talking stream");
     this.socket.emit("user-talk-stream-data", userSpeechData);
+
+    // It is possible for a very short interrupt such as coughing, VAD cannot detect the end of the speech
+    // Thus no user-stop-talking event is emitted, we need to debounce the user-stop-talking event
+    // so that voice pipeline can receive the user-stop-talking event even if the event is not triggered
+    this.debouncedUserStopTalking(userSpeechData);
   };
 
   voiceChangeHandler = async ({
@@ -188,7 +234,7 @@ export class VoicePipeline extends EventEmitter {
   }) => {
     console.log("Voice-Pipeline: Voice changed to", voice);
     this.socket.emit("voice-change", {
-      data: {voice},
+      data: { voice },
       user_id,
       session_id: this.interviewSessionId,
     });
@@ -246,9 +292,12 @@ export class VoicePipeline extends EventEmitter {
 
   endInterviewHandler = (endInterviewResponse: EventResponse) => {
     if (endInterviewResponse.success) {
+      console.log("Interview ended successfully");
       this.interviewSessionId = undefined;
       this.isInterviewActive = false;
-      console.log("Interview ended successfully");
+      this.response_id = -1;
+      this.isAgentTalking = false;
+      this.isUserTalking = false;
     } else {
       throw new Error(
         "Failed to end interview due to error " + endInterviewResponse.error

@@ -38,6 +38,7 @@ for handler in logging.root.handlers[:]:
 
 # Configure your logger
 logger = logging.getLogger(__name__)
+
 logger.setLevel(logging.DEBUG)
 
 # Create console handler
@@ -132,7 +133,8 @@ async def response_handler(sid: str, session_id: str, user_id: int, response_id:
             )
             for chunk in get_audio_response(word_chunk, voice).iter_bytes():
                 audio = chunk
-                await sio.emit("agent-start-talking", {"data": audio}, to=sid)
+                await sio.emit("agent-start-talking", {"data": audio, "response_id": response_id}, to=sid)
+                logger.info(f"agent-start-talking - {response_id=} {word_chunk=}")
                 logger.info(
                     f"TIME - voice-pipeline -> user - {response_id=} {word_chunk=} Audio Response Chunk Length: {len(audio)} bytes"
                 )
@@ -211,6 +213,7 @@ def ws_on_message(ws: websocket.WebSocketApp, message: str):
             word_buffer.close()
             logger.info(f"current word buffer size: {word_buffer.length=}")
             now = datetime.now()
+            logger.info(f"complete agent response received: {response.response_id} {"".join(words_map[str(response.response_id)])}")
             global agent_start_receive_time
             if agent_start_receive_time:
                 logger.info(
@@ -226,7 +229,6 @@ def ws_on_message(ws: websocket.WebSocketApp, message: str):
                     f"Agent Response Count #{agent_total_receive_count} Avg Time: {agent_total_receive_time / agent_total_receive_count}s"
                 )
             agent_start_receive_time = None
-            # TODO, this is incorrect, need to initiate this thread once the first token is received
 
         if is_first_message:
             # First response from the agent
@@ -312,13 +314,24 @@ async def user_talking_stream_start(sid, request):
     audio_buffer = get_audio_buffer(request.user_id)
     audio_buffer.open()
     logging.info(f"User {request.user_id} has started talking")
+    
+    increment_response_id(request.user_id)
+    response_id = get_response_id(request.user_id)
+    
     threading.Thread(
         target=transcribe_streaming,
         args=(audio_buffer, request, finish_transcript_callback),
         daemon=True,
     ).start()
-
-    return EventResponse(success=True).model_dump()
+    
+    # Interrupt the previous TTS task by clearing the word buffer
+    word_buffer = get_word_buffer(request.user_id)
+    word_buffer.clear()
+    
+    
+    
+    # user should expect the audio response with response_id >= response_id
+    return EventResponse(success=True, data={"response_id": response_id}).model_dump()
 
 
 @sio.on("user-talk-stream-end")
@@ -386,7 +399,6 @@ def finish_transcript_callback(transcript: str, words, request):
     logger.info(f"Utterance Script: {user_utterance.content}")
     ws = get_connection(request.user_id).ws
 
-    increment_response_id(request.user_id)
 
     get_utterance_list(request.user_id).append(user_utterance)
 
