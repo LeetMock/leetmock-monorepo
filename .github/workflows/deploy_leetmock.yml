@@ -39,7 +39,7 @@ jobs:
             npm install
             npx convex deploy -y --cmd 'npm run build'
             pm2 delete leetmock
-            pm2 restart leetmock
+            pm2 start npm --name leetmock -- start
             
   build-voice-pipeline:
     runs-on: ubuntu-latest
