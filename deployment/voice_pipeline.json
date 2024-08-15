@@ -1,0 +1,12 @@
+{
+    "apps": [
+      {
+        "name": "voice-pipeline",
+        "cwd": "/root/leetmock-monorepo/voice-pipeline",
+        "script": "gunicorn -w 1 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:5050 voice_pipeline.main:app --log-level info",
+        "watch": false,
+        "output": "/root/.pm2/logs/voice-pipeline-out.log",
+        "error": "/root/.pm2/logs/voice-pipeline-error.log"
+      }
+    ]
+} 

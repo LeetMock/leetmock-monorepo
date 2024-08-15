@@ -214,6 +214,15 @@ CLERK_SECRET_KEY=FILL_ME_IN
 
 # Deployment
 
+## For future 
+In future, we are going to deploy our services using k8s 
+
+https://kubernetes.io/docs/tutorials/kubernetes-basics/
+
+https://stackoverflow.com/questions/41492878/command-x86-64-linux-gnu-gcc-failed-with-exit-status-1
+
+For the first stage, before we encounter the bottleneck, we are going with the easy route: PM2.
+
 ## Deploy Next JS App
 
 First Time Deployment, following these two guides [guide 1](https://shahriar-ratul.medium.com/deploying-a-next-js-application-on-ubuntu-using-nginx-nodejs-pm2-5912b463832c) [guide 2](https://utsavdesai26.medium.com/the-ultimate-guide-to-deploying-a-next-js-application-with-nginx-937854538d68)
@@ -235,13 +244,24 @@ pm2 restart leetmock
 sudo systemctl restart nginx
 ```
 
-## Deploy Voice Pipeline and LLM Server
-Checkout this (guide)[https://python-socketio.readthedocs.io/en/latest/server.html#deployment-strategies]
-
-... TO DO
-
-
 ## Monitor
 ```shell
 pm2 monit leetmock
+```
+
+
+## Deploy Voice Pipeline
+
+```shell
+cd voice-pipeline
+poetry shell
+pm2 start ../deployment/voice_pipeline.sh
+```
+
+## Deploy llm server
+
+```shell
+cd llm-server
+poetry shell
+pm2 start ../deployment/llm_server.sh
 ```

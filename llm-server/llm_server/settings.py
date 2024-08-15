@@ -3,8 +3,9 @@ import os
 from typing import Optional, Dict, Any
 from pydantic import BaseModel
 from dotenv import load_dotenv
+from os.path import join, dirname
 
-
+dotenv_path = join(dirname(__file__), "..", "..", '.env')
 load_dotenv(override=True)
 
 

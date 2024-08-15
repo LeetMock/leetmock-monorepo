@@ -3,6 +3,7 @@ import io
 import json
 import logging
 import os
+import sys
 import threading
 import traceback
 import socketio
@@ -40,7 +41,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 # Create console handler
-console_handler = logging.StreamHandler()
+console_handler = logging.StreamHandler(sys.stdout)
 console_handler.setLevel(logging.INFO)
 file_handler = logging.FileHandler(Path(__file__).parent / "voice_pipeline.log")
 file_handler.setLevel(logging.DEBUG)

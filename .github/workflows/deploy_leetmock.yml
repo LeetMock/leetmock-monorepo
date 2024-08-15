@@ -1,0 +1,77 @@
+# Sample workflow for building and deploying a Next.js site to GitHub Pages
+#
+# To get started with Next.js see: https://nextjs.org/docs/getting-started
+#
+name: Deploy LeetMock
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "leetmock"
+  cancel-in-progress: false
+
+jobs:
+  build-leetmock-nextjs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            cd ~/leetmock-monorepo
+            git pull origin main
+            cd client
+            npm install
+            npx convex deploy --cmd 'npm run build'
+            
+  build-voice-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            cd ~/leetmock-monorepo
+            git pull origin main
+            cd voice-pipeline
+            poetry install
+            poetry shell
+            pm2 delete voice-pipeline
+            pm2 start ../deploy/voice_pipeline.sh
+  
+  build-llm-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            cd ~/leetmock-monorepo
+            git pull origin main
+            cd llm-server
+            poetry install
+            poetry shell
+            pm2 delete llm-server
+            pm2 start ../deploy/llm_server.sh

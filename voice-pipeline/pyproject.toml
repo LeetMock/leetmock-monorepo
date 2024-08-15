@@ -23,6 +23,7 @@ google-cloud-speech = "^2.27.0"
 sounddevice = "^0.4.7"
 google-cloud-texttospeech = "^2.16.5"
 libs = { path = "../libs", develop = true }
+gunicorn = "^23.0.0"
 
 [build-system]
 requires = ["poetry-core"]

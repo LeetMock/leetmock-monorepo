@@ -1,4 +1,5 @@
 import logging
+import sys
 import time
 import queue
 import numpy as np
@@ -12,7 +13,7 @@ for handler in logging.root.handlers[:]:
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 # Create console handler
-console_handler = logging.StreamHandler()
+console_handler = logging.StreamHandler(sys.stdout)
 console_handler.setLevel(logging.INFO)
 file_handler = logging.FileHandler(Path(__file__).parent / "voice_pipeline.log")
 file_handler.setLevel(logging.DEBUG)
