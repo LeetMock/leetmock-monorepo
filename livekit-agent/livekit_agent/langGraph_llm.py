@@ -116,14 +116,6 @@ class LangGraphLLM(openai.LLM):
         print("abcabc")
         pprint(langchain_messages)
 
-        # update the graph with the latest transcript messages
-        loop = asyncio.get_event_loop()
-        loop.create_task(self._client.threads.update_state(
-            thread_id=self.thread["thread_id"],
-             values={
-                "messages": messages,
-            },))
-
         stream = self._client.runs.stream(
             thread_id=self.thread["thread_id"],
             assistant_id=self.assistant["assistant_id"],
@@ -138,6 +130,14 @@ class LangGraphLLM(openai.LLM):
         )
 
         return SimpleLLMStream(stream=stream, chat_ctx=chat_ctx, fnc_ctx=fnc_ctx)
+
+    async def update_state(self, messages: list[BaseMessage]):
+        print("Updating state")
+        await self._client.threads.update_state(
+            thread_id=self.thread["thread_id"],
+            values={"messages": messages},
+        )
+        print("Updated state successfully")
 
 def convert_msgs_to_langchain_msgs(messages: list[ChatCompletionMessageParam]):
 
