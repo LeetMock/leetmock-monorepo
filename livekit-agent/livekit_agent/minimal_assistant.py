@@ -1,4 +1,7 @@
 import asyncio
+import logging
+import os
+import sys
 
 from dotenv import load_dotenv, find_dotenv
 from livekit import rtc
@@ -9,15 +12,16 @@ from livekit.agents import (
     WorkerOptions,
     cli,
     llm,
+    utils
 )
 from livekit.plugins import deepgram, openai, silero
 from livekit_agent.langGraph_llm import (
     LangGraphLLM,
-    _build_oai_message,
-    convert_msgs_to_langchain_msgs,
+    convert_livekit_msgs_to_langchain_msgs,
+    hash_msg,
 )
 
-from livekit_agent.voice_assistant import VoiceAssistant
+from livekit_agent.voice_assistant import VoiceAssistant, _default_will_synthesize_assistant_reply
 
 load_dotenv(find_dotenv())
 
@@ -45,6 +49,24 @@ async def entrypoint(ctx: JobContext):
 
     # Custom LangGraph Client
     # client = get_client(url=os.environ["LANGGRAPH_API_URL"])
+    
+    async def will_synthesize_assistant_reply(
+        assistant: VoiceAssistant, copied_ctx: llm.ChatContext
+    ) -> llm.LLMStream:
+        
+        langchain_messages = convert_livekit_msgs_to_langchain_msgs(copied_ctx.messages) # only the last message
+        
+        assert isinstance(assistant.llm, LangGraphLLM), "Expected LangGraphLLM"
+        
+        
+        print(f"langchain_messages: {langchain_messages}")
+        
+        # Await the update_state function directly
+        await assistant.llm.update_state(langchain_messages[-1])
+        
+        # Return the result of _default_will_synthesize_assistant_reply
+        return _default_will_synthesize_assistant_reply(assistant, copied_ctx)
+
 
     source = rtc.VideoSource(WIDTH, HEIGHT)
     track = rtc.LocalVideoTrack.create_video_track("example-track", source)
@@ -72,19 +94,26 @@ async def entrypoint(ctx: JobContext):
         llm=await LangGraphLLM.create(),
         tts=openai.TTS(),
         chat_ctx=initial_ctx,
-        plotting=True,
+        will_synthesize_assistant_reply=will_synthesize_assistant_reply,
     )
     assistant.start(ctx.room)
 
     # listen to incoming chat messages, only required if you'd like the agent to
     # answer incoming messages from Chat
-    chat = rtc.ChatManager(ctx.room)
+    # chat = rtc.ChatManager(ctx.room)
 
-    async def answer_from_text(txt: str):
-        chat_ctx = assistant.chat_ctx.copy()
-        chat_ctx.append(role="user", text=txt)
-        stream = assistant.llm.chat(chat_ctx=chat_ctx)
-        await assistant.say(stream)
+    # async def answer_from_text(txt: str):
+        
+    #     chat_ctx = assistant.chat_ctx.copy()
+    #     chat_ctx.append(role="user", text=txt)
+    #     stream = assistant.llm.chat(chat_ctx=chat_ctx)
+    #     await assistant.say(stream)
+
+    # @chat.on("message_received")
+    # def on_chat_received(msg: rtc.ChatMessage):
+    #     if msg.message:
+    #         logger.info(f"Received chat message: {msg.message}")
+    #         asyncio.create_task(answer_from_text(msg.message))
 
     @assistant.on("agent_speech_committed")
     def update_message_state_for_agent(msg: llm.ChatMessage):
@@ -92,9 +121,12 @@ async def entrypoint(ctx: JobContext):
         print("agent_speech_committed")
         print(msg)
         print("-------------------" * 5)
-        message = _build_oai_message(msg, id(assistant.llm))
-        langchain_messages = convert_msgs_to_langchain_msgs([message])
-        asyncio.run(assistant.llm.update_state(langchain_messages))
+        
+        langchain_msg = convert_livekit_msgs_to_langchain_msgs([msg])[0]
+        langchain_msg.id = hash_msg(msg)
+        assert isinstance(assistant.llm, LangGraphLLM), "Expected LangGraphLLM"
+        asyncio.run(assistant.llm.update_state(langchain_msg))
+
 
     @assistant.on("user_speech_committed")
     def update_message_state_for_user(msg: llm.ChatMessage):
@@ -102,10 +134,7 @@ async def entrypoint(ctx: JobContext):
         print("user_speech_committed")
         print(msg)
         print("-------------------" * 5)
-        message = _build_oai_message(msg, id(assistant.llm))
-        langchain_messages = convert_msgs_to_langchain_msgs([message])
 
-        asyncio.run(assistant.llm.update_state(langchain_messages))
 
     @assistant.on("user_stopped_speaking")
     def on_user_stopped_speaking():
@@ -126,11 +155,6 @@ async def entrypoint(ctx: JobContext):
         print("agent_stopped_speaking")
         print("-------------------" * 5)
 
-    @chat.on("message_received")
-    def on_chat_received(msg: rtc.ChatMessage):
-        if msg.message:
-            asyncio.create_task(answer_from_text(msg.message))
-
     await asyncio.sleep(1)
     await assistant.say(
         assistant.llm.chat(chat_ctx=initial_ctx),
@@ -140,4 +164,4 @@ async def entrypoint(ctx: JobContext):
 
 
 if __name__ == "__main__":
-    cli.run_app(WorkerOptions(entrypoint_fnc=entrypoint, prewarm_fnc=prewarm_fnc))
+    cli.run_app(WorkerOptions(entrypoint_fnc=entrypoint, prewarm_fnc=prewarm_fnc,))

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import os
 from pprint import pprint
 from langgraph_sdk import get_client
@@ -10,9 +11,17 @@ from livekit.plugins import openai
 from livekit.plugins.openai import LLMStream
 from typing import Any, AsyncIterator, List
 from openai.types.chat import ChatCompletionChunk, ChatCompletionMessageParam
-from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, FunctionMessage, BaseMessage
 
-from langgraph_sdk.client import LangGraphClient, StreamPart
+from langgraph_sdk.client import LangGraphClient, StreamPart, Assistant, Thread
+import hashlib
+
+logger = logging.getLogger("minimal-assistant")
+logger.setLevel(logging.DEBUG)
+
+def hash_msg(msg: llm.ChatMessage) -> str:
+    s = f"{msg.role}-{msg.name}-{str(msg.content)}"
+    return str(int(hashlib.sha1(s.encode("utf-8")).hexdigest(), 16) % (10 ** 8))
 
 def _build_oai_message(msg: llm.ChatMessage, cache_key: Any):
     oai_msg: dict = {"role": msg.role}
@@ -110,10 +119,9 @@ class LangGraphLLM(openai.LLM):
                 opts["parallel_tool_calls"] = parallel_tool_calls
         """
 
-        messages = _build_oai_context(chat_ctx, id(self))
-        langchain_messages = convert_msgs_to_langchain_msgs(messages)
+        langchain_messages = convert_livekit_msgs_to_langchain_msgs(chat_ctx.messages)
 
-        print("abcabc")
+        print("Following is copied_ctx.messages, not conmmitted yet!")
         pprint(langchain_messages)
 
         stream = self._client.runs.stream(
@@ -139,7 +147,56 @@ class LangGraphLLM(openai.LLM):
         )
         print("Updated state successfully")
 
-def convert_msgs_to_langchain_msgs(messages: list[ChatCompletionMessageParam]):
+
+def convert_livekit_msgs_to_langchain_msgs(messages: list[llm.ChatMessage]) -> List[BaseMessage]:
+    lc_msgs: List[BaseMessage] = []
+
+    for i, msg in enumerate(messages):
+        id = hash_msg(msg)
+        
+        if isinstance(msg.content, str):
+            content = msg.content
+        elif isinstance(msg.content, list):
+            content = []
+            for item in msg.content:
+                if isinstance(item, str):
+                    content.append(item)
+                elif isinstance(item, llm.ChatImage):
+                    # For now, we'll just add a placeholder for images
+                    content.append("[IMAGE]")
+            content = " ".join(content)
+        else:
+            content = str(msg.content)  # Fallback for any other type
+
+        additional_kwargs = {}
+        if msg.name:
+            additional_kwargs["name"] = msg.name
+        if msg.tool_calls:
+            additional_kwargs["tool_calls"] = [
+                {
+                    "id": call.tool_call_id,
+                    "type": "function",
+                    "function": {
+                        "name": call.function_info.name,
+                        "arguments": call.raw_arguments
+                    }
+                } for call in msg.tool_calls
+            ]
+        if msg.tool_call_id:
+            additional_kwargs["tool_call_id"] = msg.tool_call_id
+
+        if msg.role == "user":
+            lc_msgs.append(HumanMessage(content=content, additional_kwargs=additional_kwargs, id=id))
+        elif msg.role == "assistant":
+            lc_msgs.append(AIMessage(content=content, additional_kwargs=additional_kwargs, id=id))
+        elif msg.role == "system":
+            lc_msgs.append(SystemMessage(content=content, additional_kwargs=additional_kwargs, id=id))
+        elif msg.role == "tool":
+            lc_msgs.append(FunctionMessage(content=content, name=msg.name, additional_kwargs=additional_kwargs, id=id))
+
+    return lc_msgs
+
+def convert_oai_msgs_to_langchain_msgs(messages: list[ChatCompletionMessageParam]):
 
     lc_msgs: List[BaseMessage] = []
 

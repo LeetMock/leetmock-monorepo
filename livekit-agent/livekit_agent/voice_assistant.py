@@ -454,15 +454,12 @@ class VoiceAssistant(utils.EventEmitter[EventTypes]):
         self, old_task: asyncio.Task[None], handle: SpeechHandle
     ) -> None:
         if old_task is not None:
+            logger.info("cancelling old synthesis task")
             await utils.aio.gracefully_cancel(old_task)
 
         user_msg = ChatMessage.create(text=handle.user_question, role="user")
         copied_ctx = self._chat_ctx.copy()
         copied_ctx.messages.append(user_msg)
-
-        # Commit the user message before calling the LLM
-        self._chat_ctx.messages.append(user_msg)
-        self.emit("user_speech_committed", user_msg)
 
         llm_stream = self._opts.will_synthesize_assistant_reply(self, copied_ctx)
         if asyncio.iscoroutine(llm_stream):
@@ -540,8 +537,8 @@ class VoiceAssistant(utils.EventEmitter[EventTypes]):
                 "committed user transcript", extra={"user_transcript": user_question}
             )
             user_msg = ChatMessage.create(text=user_question, role="user")
-            # self._chat_ctx.messages.append(user_msg)
-            # self.emit("user_speech_committed", user_msg)
+            self._chat_ctx.messages.append(user_msg)
+            self.emit("user_speech_committed", user_msg)
 
             self._transcribed_text = self._transcribed_text[len(user_question) :]
             user_speech_committed = True
