@@ -33,6 +33,11 @@ def prewarm_fnc(proc: JobProcess):
     proc.userdata["vad"] = silero.VAD.load()
 
 
+WIDTH = 640
+HEIGHT = 480
+COLOR = [255, 255, 0, 0]  # FFFF0000 RED
+
+
 async def entrypoint(ctx: JobContext):
     initial_ctx = llm.ChatContext()
 
@@ -40,6 +45,26 @@ async def entrypoint(ctx: JobContext):
 
     # Custom LangGraph Client
     # client = get_client(url=os.environ["LANGGRAPH_API_URL"])
+
+    source = rtc.VideoSource(WIDTH, HEIGHT)
+    track = rtc.LocalVideoTrack.create_video_track("example-track", source)
+    options = rtc.TrackPublishOptions(
+        # since the agent is a participant, our video I/O is its "camera"
+        source=rtc.TrackSource.SOURCE_CAMERA,
+    )
+    publication = await ctx.agent.publish_track(track, options)
+
+    async def _draw_color():
+        argb_frame = bytearray(WIDTH * HEIGHT * 4)
+        while True:
+            await asyncio.sleep(0.1)  # 10 fps
+            argb_frame[:] = COLOR * WIDTH * HEIGHT
+            frame = rtc.VideoFrame(WIDTH, HEIGHT, rtc.VideoBufferType.RGBA, argb_frame)
+
+            # send this frame to the track
+            source.capture_frame(frame)
+
+    asyncio.create_task(_draw_color())
 
     assistant = VoiceAssistant(
         vad=ctx.proc.userdata["vad"],
