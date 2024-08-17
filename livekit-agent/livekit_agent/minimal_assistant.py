@@ -1,13 +1,12 @@
 import asyncio
-import os
 
 from dotenv import load_dotenv
 from livekit import rtc
 from livekit.agents import AutoSubscribe, JobContext, WorkerOptions, cli, llm
 from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.plugins import deepgram, openai, silero
-from langgraph_sdk import get_client
-from langGraph_llm import LangGraphLLM
+from livekit_agent.langGraph_llm import LangGraphLLM
+
 load_dotenv()
 
 
@@ -22,10 +21,9 @@ async def entrypoint(ctx: JobContext):
 
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
 
-    
     # Custom LangGraph Client
     # client = get_client(url=os.environ["LANGGRAPH_API_URL"])
-    
+
     assistant = VoiceAssistant(
         vad=silero.VAD.load(),
         stt=deepgram.STT(),

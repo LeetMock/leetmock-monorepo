@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import os
 from pprint import pprint
@@ -66,12 +68,12 @@ def _build_oai_context(
 class LangGraphLLM(openai.LLM):
     def __init__(self,  *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
         self._client = get_client(url=os.environ["LANGGRAPH_API_URL"])
-        
+
         self.thread = None
         self.assistant = None
-    
+
     @classmethod
     async def create(cls, *args, **kwargs):
         self = cls(*args, **kwargs)
@@ -83,7 +85,7 @@ class LangGraphLLM(openai.LLM):
         assistants = await self._client.assistants.search(graph_id="code-mock-v1")
         assert len(assistants) > 0, "No assistants found"
         self.assistant = assistants[0]
-    
+
     def chat(
         self,
         *,
@@ -92,8 +94,8 @@ class LangGraphLLM(openai.LLM):
         temperature: float | None = None,
         n: int | None = 1,
         parallel_tool_calls: bool | None = None
-    ) -> "LLMStream":
-        
+    ) -> LLMStream:
+
         # No support for function context yet for LangGraph
         """
         opts: dict[str, Any] = dict()
@@ -107,13 +109,13 @@ class LangGraphLLM(openai.LLM):
             if fnc_ctx and parallel_tool_calls is not None:
                 opts["parallel_tool_calls"] = parallel_tool_calls
         """
-        
+
         messages = _build_oai_context(chat_ctx, id(self))
         langchain_messages = convert_msgs_to_langchain_msgs(messages)
-        
+
         print("abcabc")
         pprint(langchain_messages)
-        
+
         # update the graph with the latest transcript messages
         loop = asyncio.get_event_loop()
         loop.create_task(self._client.threads.update_state(
@@ -121,7 +123,7 @@ class LangGraphLLM(openai.LLM):
              values={
                 "messages": messages,
             },))
-        
+
         stream = self._client.runs.stream(
             thread_id=self.thread["thread_id"],
             assistant_id=self.assistant["assistant_id"],
@@ -138,48 +140,48 @@ class LangGraphLLM(openai.LLM):
         return SimpleLLMStream(stream=stream, chat_ctx=chat_ctx, fnc_ctx=fnc_ctx)
 
 def convert_msgs_to_langchain_msgs(messages: list[ChatCompletionMessageParam]):
-    
+
     lc_msgs: List[BaseMessage] = []
-    
+
     for i, msg in enumerate(messages):
-        
+
         id = f"{i}-{msg["role"]}"
-        
+
         if isinstance(msg["content"], str):
             content = msg["content"]
         elif isinstance(msg.content, list):
             content = " ".join([cnt["text"] for cnt in msg["content"]])
-            
+
         if msg["role"] == "user":
             lc_msgs.append(HumanMessage(id=id, content=content))
         else:
             lc_msgs.append(AIMessage(id=id, content=content))
-    
+
     return lc_msgs
-    
+
 class SimpleLLMStream(llm.LLMStream):
-    
+
     def __init__(self, *, stream: AsyncIterator[StreamPart], chat_ctx: llm.ChatContext, fnc_ctx: llm.FunctionContext | None):
         super().__init__(chat_ctx=chat_ctx, fnc_ctx=fnc_ctx)
-        
+
         self._stream = stream
-        
+
     async def aclose(self) -> None:
         # What to do here?
-        
+
         await super().aclose()
-    
+
     async def __anext__(self) -> llm.ChatChunk:
         while True:
             try:
                 chunk = await anext(self._stream)
-                
+
                 # Skip chunks without data or metadata events
                 if not chunk.data or chunk.event == "metadata":
                     continue
 
                 # Skip chunks that don't have the required tags or events
-                if ("chatbot" not in chunk.data.get("tags", []) or 
+                if ("chatbot" not in chunk.data.get("tags", []) or
                     chunk.data.get("event") != "on_chat_model_stream"):
                     continue
 
