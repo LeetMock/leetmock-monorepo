@@ -66,85 +66,79 @@ const InterviewPage: React.FC = () => {
   return (
     <div className="flex flex-col justify-center items-center h-screen w-full">
       <InterviewToolbar />
-      <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel className="min-w-[20rem]">
-          <div className="w-full h-full overflow-auto">
-            {question ? (
-              <QuestionHolder
-                question_title={question.title}
-                question_description={question.question}
-              />
-            ) : (
-              <div>Loading question...</div>
-            )}
-          </div>
-        </ResizablePanel>
-        <ResizableHandle withHandle />
-        <ResizablePanel className="min-w-[20rem]">
-          <div className="flex flex-col justify-start h-full w-full">
-            <div className="flex justify-between items-center p-3 border-b">
-              <Select onValueChange={handleLanguageChange} value={language}>
-                <SelectTrigger className="w-36 h-8">
-                  <SelectValue placeholder="Language" />
-                </SelectTrigger>
-                <SelectContent>
-                  {LANGUAGES.map((lang) => (
-                    <SelectItem key={lang.value} value={lang.value}>
-                      {lang.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+      <div className="w-full h-full flex justify-center items-center">
+        <ResizablePanelGroup direction="horizontal">
+          <ResizablePanel className="min-w-[20rem]">
+            <div className="w-full h-full overflow-auto">
+              {question ? (
+                <QuestionHolder
+                  question_title={question.title}
+                  question_description={question.question}
+                />
+              ) : (
+                <div>Loading question...</div>
+              )}
             </div>
-            <div className="bg-blue-50 h-full relative" ref={editorContainerRef}>
-              <Editor
-                className="absolute inset-0"
-                language={language}
-                value={code}
-                onChange={handleEditorChange}
-                theme={theme === "dark" ? "vs-dark" : "vs-light"}
-                options={{
-                  fontSize: 14,
-                  lineNumbers: "on",
-                  roundedSelection: false,
-                  scrollBeyondLastLine: false,
-                  readOnly: false,
-                }}
-                onMount={(editor) => {
-                  editorRef.current = editor;
-                }}
-              />
-            </div>
-            <div className="flex justify-end p-3 border-t">
-              {/* <Label>
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel className="min-w-[20rem]">
+            <div className="flex flex-col justify-start h-full w-full">
+              <div className="flex justify-between items-center p-2 border-b">
+                <Select onValueChange={handleLanguageChange} value={language}>
+                  <SelectTrigger className="w-36 h-8">
+                    <SelectValue placeholder="Language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {LANGUAGES.map((lang) => (
+                      <SelectItem key={lang.value} value={lang.value}>
+                        {lang.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="bg-blue-50 h-full relative" ref={editorContainerRef}>
+                <Editor
+                  className="absolute inset-0"
+                  language={language}
+                  value={code}
+                  onChange={handleEditorChange}
+                  theme={theme === "dark" ? "vs-dark" : "vs-light"}
+                  options={{
+                    fontSize: 14,
+                    lineNumbers: "on",
+                    roundedSelection: false,
+                    scrollBeyondLastLine: false,
+                    readOnly: false,
+                  }}
+                  onMount={(editor) => {
+                    editorRef.current = editor;
+                  }}
+                />
+              </div>
+              <div className="flex justify-end p-3 border-t">
+                {/* <Label>
                   {vad.userSpeaking
                     ? "🔴 User Speaking"
                     : "⚪ User Not Speaking"}
                 </Label> */}
-
-              <Button
-                onClick={toggleInterview}
-                className={cn(
-                  "transition-colors duration-200",
-                  isInterviewActive
-                    ? "bg-red-500 hover:bg-red-600 text-white"
-                    : "bg-white hover:bg-gray-100 text-gray-800 border border-gray-300"
-                )}
-              >
-                {isInterviewActive ? "End Interview" : "Start Interview"}
-              </Button>
-            </div>
-            {/* {isInterviewActive && (
-                <div
-                  className="bg-gray-700 text-white p-2 overflow-y-auto"
-                  style={{ maxHeight: "100px" }}
+                <Button
+                  onClick={toggleInterview}
+                  className={cn(
+                    "transition-colors duration-200",
+                    isInterviewActive
+                      ? "bg-red-500 hover:bg-red-600 text-white"
+                      : "bg-white hover:bg-gray-100 text-gray-800 border border-gray-300"
+                  )}
                 >
-                  <strong>Transcript:</strong> {transcript}
-                </div>
-              )} */}
-          </div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
+                  {isInterviewActive ? "End Interview" : "Start Interview"}
+                </Button>
+              </div>
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+        <div className="w-[28rem] border-l h-full">1</div>
+      </div>
     </div>
   );
 };

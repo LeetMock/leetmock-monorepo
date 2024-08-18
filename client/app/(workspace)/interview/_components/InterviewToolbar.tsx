@@ -18,7 +18,7 @@ export const InterviewToolbar: React.FC = () => {
   const timeLeft = 45 * 60;
 
   return (
-    <div className="bg-secondary flex items-center w-full py-2 px-4 justify-end">
+    <div className="bg-secondary flex items-center w-full py-2 px-4 justify-end border-b-[1px]">
       <div className="flex items-center justify-center space-x-4">
         {/* <LucideVolume2
           className={cn(
