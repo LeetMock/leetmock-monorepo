@@ -12,8 +12,9 @@ from livekit.agents import (
     WorkerOptions,
     cli,
     llm,
-    utils
+    utils,
 )
+from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.plugins import deepgram, openai, silero
 from livekit_agent.langGraph_llm import (
     LangGraphLLM,
@@ -21,7 +22,7 @@ from livekit_agent.langGraph_llm import (
     hash_msg,
 )
 import logging
-from livekit_agent.voice_assistant import VoiceAssistant, _default_will_synthesize_assistant_reply
+import nest_asyncio
 
 
 logger = logging.getLogger("minimal-assistant")
@@ -34,13 +35,12 @@ load_dotenv(find_dotenv())
 
 
 # enable nested asyncio
-
-import nest_asyncio
-
 nest_asyncio.apply()
+
 
 def prewarm_fnc(proc: JobProcess):
     proc.userdata["vad"] = silero.VAD.load()
+
 
 WIDTH = 640
 HEIGHT = 480
@@ -48,29 +48,30 @@ COLOR = [255, 255, 0, 0]  # FFFF0000 RED
 
 
 async def entrypoint(ctx: JobContext):
-    initial_ctx = llm.ChatContext().append(role="system", text="(A user joined the room)")
+    initial_ctx = llm.ChatContext().append(
+        role="system", text="(A user joined the room)"
+    )
 
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
-    
-    
-    # Not used anymore since we are using stateless LLM chat
-    async def will_synthesize_assistant_reply(
-        assistant: VoiceAssistant, copied_ctx: llm.ChatContext
-    ) -> llm.LLMStream:
-        
-        langchain_messages = convert_livekit_msgs_to_langchain_msgs(copied_ctx.messages) # only the last message
-        
-        assert isinstance(assistant.llm, LangGraphLLM), "Expected LangGraphLLM"
-        
-        
-        print(f"langchain_messages: {langchain_messages}")
-        
-        # Await the update_state function directly
-        await assistant.llm.update_state(langchain_messages[-1])
-        
-        # Return the result of _default_will_synthesize_assistant_reply
-        return _default_will_synthesize_assistant_reply(assistant, copied_ctx)
 
+    # # Not used anymore since we are using stateless LLM chat
+    # async def will_synthesize_assistant_reply(
+    #     assistant: VoiceAssistant, copied_ctx: llm.ChatContext
+    # ) -> llm.LLMStream:
+
+    #     langchain_messages = convert_livekit_msgs_to_langchain_msgs(
+    #         copied_ctx.messages
+    #     )  # only the last message
+
+    #     assert isinstance(assistant.llm, LangGraphLLM), "Expected LangGraphLLM"
+
+    #     print(f"langchain_messages: {langchain_messages}")
+
+    #     # Await the update_state function directly
+    #     await assistant.llm.update_state(langchain_messages[-1])
+
+    #     # Return the result of _default_will_synthesize_assistant_reply
+    #     return _default_will_synthesize_assistant_reply(assistant, copied_ctx)
 
     # source = rtc.VideoSource(WIDTH, HEIGHT)
     # track = rtc.LocalVideoTrack.create_video_track("example-track", source)
@@ -104,7 +105,7 @@ async def entrypoint(ctx: JobContext):
 
     @assistant.on("agent_speech_committed")
     def update_message_state_for_agent(msg: llm.ChatMessage):
-        
+
         # langchain_msg = convert_livekit_msgs_to_langchain_msgs([msg])[0]
         # langchain_msg.id = hash_msg(msg)
         # assert isinstance(assistant.llm, LangGraphLLM), "Expected LangGraphLLM"
@@ -136,4 +137,9 @@ async def entrypoint(ctx: JobContext):
 
 
 if __name__ == "__main__":
-    cli.run_app(WorkerOptions(entrypoint_fnc=entrypoint, prewarm_fnc=prewarm_fnc,))
+    cli.run_app(
+        WorkerOptions(
+            entrypoint_fnc=entrypoint,
+            prewarm_fnc=prewarm_fnc,
+        )
+    )
