@@ -150,8 +150,8 @@ def reminder(state: AgentState, config: RunnableConfig):
         if time_diff > editor_idle_shreshold
         else typing_aware_reminder_message
     )
-
-    return {"messages": [HumanMessage(content=message)]}
+    state['messages'].append(HumanMessage(content=message))
+    return {"messages": state['messages']}
 
 
 def check_user_activity(state: AgentState):
