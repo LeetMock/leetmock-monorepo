@@ -83,7 +83,7 @@ const InterviewPage: React.FC = () => {
   return (
     <div className="flex justify-center items-center h-screen w-full">
       <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel className="min-w-[10rem]">
+        <ResizablePanel className="min-w-[20rem]">
           <div className="w-full h-full overflow-auto">
             {question ? (
               <QuestionHolder
@@ -96,7 +96,7 @@ const InterviewPage: React.FC = () => {
           </div>
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel className="min-w-[35rem]">
+        <ResizablePanel className="min-w-[20rem]">
           <div className="flex flex-col justify-start h-full w-full">
             <div className="flex justify-between items-center p-3 border-b">
               <Select onValueChange={handleLanguageChange} value={language}>
@@ -107,23 +107,6 @@ const InterviewPage: React.FC = () => {
                   {LANGUAGES.map((lang) => (
                     <SelectItem key={lang.value} value={lang.value}>
                       {lang.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div className="flex items-center space-x-3">
-                <div className="text-sm">Voice</div>
-                <div className="text-sm">:</div>
-                <div className="text-sm">{voice}</div>
-              </div>
-              <Select onValueChange={handleVoiceChange} value={voice}>
-                <SelectTrigger className="w-[150px]">
-                  <SelectValue placeholder="Voice" />
-                </SelectTrigger>
-                <SelectContent>
-                  {VOICES.map((voice) => (
-                    <SelectItem key={voice.value} value={voice.value}>
-                      {voice.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
