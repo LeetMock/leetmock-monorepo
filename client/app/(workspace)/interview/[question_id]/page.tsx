@@ -1,12 +1,10 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import "react-resizable/css/styles.css";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import Editor from "@monaco-editor/react";
-import { TwoSum } from "@/components/questions/TwoSum";
 import {
   Select,
   SelectContent,
@@ -15,30 +13,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useInterview } from "@/hooks/useInterview";
-import { LANGUAGES, VOICES } from "@/lib/constants";
+import { LANGUAGES } from "@/lib/constants";
 import { useTheme } from "next-themes";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { LucideVolume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
-import { Label } from "@/components/ui/label";
 import { QuestionHolder } from "@/components/questions/QuestionHolder";
-import { NumIslands } from "@/components/questions/NumIslands";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-// import { SignedIn, SignedOut, useAuth } from "@clerk/nextjs";
-
-const formatTime = (time: number): string => {
-  const minutes = Math.floor(time / 60);
-  const seconds = time % 60;
-  return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-};
-
-const formatTimeV2 = (time: number): number[] => {
-  const minutes = Math.floor(time / 60);
-  const seconds = time % 60;
-  return [Math.floor(minutes / 10), minutes % 10, Math.floor(seconds / 10), seconds % 10];
-};
+import { InterviewToolbar } from "../_components/InterviewToolbar";
 
 const InterviewPage: React.FC = () => {
   const { theme } = useTheme();
@@ -81,7 +64,8 @@ const InterviewPage: React.FC = () => {
   }
 
   return (
-    <div className="flex justify-center items-center h-screen w-full">
+    <div className="flex flex-col justify-center items-center h-screen w-full">
+      <InterviewToolbar />
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel className="min-w-[20rem]">
           <div className="w-full h-full overflow-auto">
@@ -100,7 +84,7 @@ const InterviewPage: React.FC = () => {
           <div className="flex flex-col justify-start h-full w-full">
             <div className="flex justify-between items-center p-3 border-b">
               <Select onValueChange={handleLanguageChange} value={language}>
-                <SelectTrigger className="w-[150px]">
+                <SelectTrigger className="w-36 h-8">
                   <SelectValue placeholder="Language" />
                 </SelectTrigger>
                 <SelectContent>
@@ -111,25 +95,6 @@ const InterviewPage: React.FC = () => {
                   ))}
                 </SelectContent>
               </Select>
-              <div className="flex items-center justify-center space-x-3">
-                <div>
-                  <LucideVolume2
-                    className={cn(
-                      "w-[1.2rem] h-[1.2rem] opacity-0 text-blue-500",
-                      isAgentTalking ? "animate-pulse opacity-100" : ""
-                    )}
-                  />
-                </div>
-                <div className="bg-secondary font-semibold py-0.5 px-1 rounded-md flex space-x-0.5 hover:bg-gray-200 transition-all select-none cursor-pointer dark:hover:bg-gray-700">
-                  <div className="px-1 py-0.5 rounded-sm text-sm">
-                    {formatTimeV2(timeLeft).slice(0, 2)}
-                  </div>
-                  <div className="py-0.5 rounded-sm text-sm">:</div>
-                  <div className="px-1 py-0.5 rounded-sm text-sm">
-                    {formatTimeV2(timeLeft).slice(2, 4)}
-                  </div>
-                </div>
-              </div>
             </div>
             <div className="bg-blue-50 h-full relative" ref={editorContainerRef}>
               <Editor

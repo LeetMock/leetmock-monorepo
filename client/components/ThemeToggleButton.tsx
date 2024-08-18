@@ -15,9 +15,9 @@ export const ThemeToggleButton = ({ className, ...props }: ButtonProps) => {
   return (
     <Button className={className} onClick={toggleTheme} variant="outline" size="icon" {...props}>
       {theme === "dark" ? (
-        <SunIcon className="h-[1.2rem] w-[1.2rem]" />
+        <SunIcon className="h-[1rem] w-[1rem]" />
       ) : (
-        <MoonIcon className="h-[1.2rem] w-[1.2rem]" />
+        <MoonIcon className="h-[1rem] w-[1rem]" />
       )}
     </Button>
   );

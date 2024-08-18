@@ -15,7 +15,7 @@ const AuthPage = () => {
   const action = useMemo(() => searchParams.get("action") as AuthAction, [searchParams]);
 
   if (isSignedIn) {
-    return redirect("/workspace");
+    return redirect("/problems");
   }
 
   if (searchParams.get("action") !== "signin" && searchParams.get("action") !== "signup") {
