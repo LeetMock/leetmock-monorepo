@@ -19,7 +19,7 @@ InteractionType = Literal["response_required", "reminder_required"]
 class AgentState(TypedDict):
     """Agent state"""
 
-    messages: Annotated[List[BaseMessage], add_messages]
+    messages: List[BaseMessage]
     """List of messages exchanged between user and agent"""
 
     interaction_type: InteractionType
@@ -150,8 +150,8 @@ def reminder(state: AgentState, config: RunnableConfig):
         if time_diff > editor_idle_shreshold
         else typing_aware_reminder_message
     )
-
-    return {"messages": [HumanMessage(content=message)]}
+    state['messages'].append(HumanMessage(content=message))
+    return {"messages": state['messages']}
 
 
 def check_user_activity(state: AgentState):
