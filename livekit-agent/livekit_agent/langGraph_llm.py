@@ -16,6 +16,9 @@ from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, Func
 from langgraph_sdk.client import LangGraphClient, StreamPart, Assistant, Thread
 import hashlib
 
+# LangGraph uses pydantic v1
+from pydantic.v1 import BaseModel
+
 logger = logging.getLogger("minimal-assistant")
 logger.setLevel(logging.DEBUG)
 
@@ -73,6 +76,12 @@ def _build_oai_context(
 ) -> list[ChatCompletionMessageParam]:
     return [_build_oai_message(msg, cache_key) for msg in chat_ctx.messages]  # type: ignore
 
+class LangGraphInput(BaseModel):
+    messages: List[BaseMessage]
+    coding_question: str
+    editor_content: str
+    content_last_updated: int
+    interaction_type: str
 
 class LangGraphLLM(openai.LLM):
     def __init__(self,  *args, **kwargs):
@@ -99,6 +108,7 @@ class LangGraphLLM(openai.LLM):
         self,
         *,
         chat_ctx: llm.ChatContext,
+        interaction_type: str = "response_required",
         fnc_ctx: llm.FunctionContext | None = None,
         temperature: float | None = None,
         n: int | None = 1,
@@ -124,17 +134,18 @@ class LangGraphLLM(openai.LLM):
         print("Following is copied_ctx.messages, not conmmitted yet!")
         pprint(langchain_messages)
 
+        lang_graph_input = LangGraphInput(
+            messages=langchain_messages,
+            coding_question="Two numbers are given. Find the sum of the two numbers.",
+            editor_content="def sum(a, b):\n    ",
+            content_last_updated=1724006757,
+            interaction_type=interaction_type,
+        )
+
         stream = self._client.runs.stream(
-            # thread_id=self.thread["thread_id"],
-            None, # pass None for stateless run
+            thread_id=self.thread["thread_id"],
             assistant_id=self.assistant["assistant_id"],
-            input={
-                "messages": langchain_messages,
-                "coding_question": "Two numbers are given. Find the sum of the two numbers.",
-                "editor_content": "def sum(a, b):\n    ",
-                "content_last_updated": 123123123,
-                "interaction_type": "chat",
-            },
+            input=lang_graph_input.dict(),
             stream_mode="updates",
         )
 

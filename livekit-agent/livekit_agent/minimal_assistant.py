@@ -1,10 +1,6 @@
 import asyncio
 import logging
-import os
-import sys
-
 from dotenv import load_dotenv, find_dotenv
-from livekit import rtc
 from livekit.agents import (
     AutoSubscribe,
     JobContext,
@@ -12,30 +8,27 @@ from livekit.agents import (
     WorkerOptions,
     cli,
     llm,
-    utils,
 )
 from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.plugins import deepgram, openai, silero
 from livekit_agent.langGraph_llm import (
     LangGraphLLM,
-    convert_livekit_msgs_to_langchain_msgs,
-    hash_msg,
 )
 import logging
-import nest_asyncio
-
 
 logger = logging.getLogger("minimal-assistant")
 logger.setLevel(logging.DEBUG)
 file_handler = logging.FileHandler("minimal_assistant.log")
 file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(
+    logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+    )
+)
+
 logger.addHandler(file_handler)
 
 load_dotenv(find_dotenv())
-
-
-# enable nested asyncio
-nest_asyncio.apply()
 
 
 def prewarm_fnc(proc: JobProcess):
@@ -51,8 +44,30 @@ async def entrypoint(ctx: JobContext):
     initial_ctx = llm.ChatContext().append(
         role="system", text="(A user joined the room)"
     )
+    
+    reminder_task: asyncio.Task = None
+    reminder_delay = 10  # seconds
+    async def debounced_send_reminder():
+        nonlocal reminder_task
+        if reminder_task:
+            logger.info("Reminder task cancelled")
+            reminder_task.cancel()
+        
+        async def delayed_reminder():
+            await asyncio.sleep(reminder_delay)
+            await send_reminder()
 
-    await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
+        reminder_task = asyncio.create_task(delayed_reminder())
+    
+    async def send_reminder():
+        logger.info(f"Reminder sent")
+        await assistant.say(
+            assistant.llm.chat(
+                chat_ctx=assistant.chat_ctx.append(
+                    role="system",
+                    text="should get into reminder state now"), interaction_type="reminder_required"),
+            allow_interruptions=True,
+            add_to_chat_ctx=True)
 
     # # Not used anymore since we are using stateless LLM chat
     # async def will_synthesize_assistant_reply(
@@ -93,6 +108,7 @@ async def entrypoint(ctx: JobContext):
 
     # asyncio.create_task(_draw_color())
 
+    await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
     assistant = VoiceAssistant(
         vad=ctx.proc.userdata["vad"],
         stt=deepgram.STT(),
@@ -105,16 +121,23 @@ async def entrypoint(ctx: JobContext):
 
     @assistant.on("agent_speech_committed")
     def update_message_state_for_agent(msg: llm.ChatMessage):
-
         # langchain_msg = convert_livekit_msgs_to_langchain_msgs([msg])[0]
         # langchain_msg.id = hash_msg(msg)
         # assert isinstance(assistant.llm, LangGraphLLM), "Expected LangGraphLLM"
         # asyncio.run(assistant.llm.update_state(langchain_msg))
         logger.info(f"agent_speech_committed: {msg}")
 
+        # Send a reminder event to the agent after 10 seconds of silence since the
+        # last agent speech committed
+        asyncio.create_task(debounced_send_reminder())
+
     @assistant.on("user_speech_committed")
     def update_message_state_for_user(msg: llm.ChatMessage):
         logger.info(f"user_speech_committed: {msg}")
+
+        # Send a reminder event to the agent after 10 seconds of silence since the
+        # last agent speech committed
+        asyncio.create_task(debounced_send_reminder())
 
     @assistant.on("user_stopped_speaking")
     def on_user_stopped_speaking():
