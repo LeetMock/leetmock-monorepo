@@ -8,7 +8,7 @@ export const Navbar = () => {
   const { theme } = useTheme();
 
   return (
-    <header className={"sticky border-b top-0 w-full dark:bg-background h-14"}>
+    <header className={"sticky border-b top-0 w-full dark:bg-secondary h-14"}>
       <div className="h-full flex items-center justify-between container">
         <div>
           <a rel="noreferrer noopener" href="/" className="flex items-center font-bold text-xl">

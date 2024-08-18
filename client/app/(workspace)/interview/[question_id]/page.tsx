@@ -5,6 +5,7 @@ import React, { useEffect, useRef } from "react";
 import "react-resizable/css/styles.css";
 import { Button } from "@/components/ui/button";
 import Editor from "@monaco-editor/react";
+import { editor as monacoEditor } from "monaco-editor";
 import {
   Select,
   SelectContent,
@@ -22,6 +23,16 @@ import { QuestionHolder } from "@/components/questions/QuestionHolder";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { InterviewToolbar } from "../_components/InterviewToolbar";
+import { monaco } from "react-monaco-editor";
+
+const customEditorTheme: monacoEditor.IStandaloneThemeData = {
+  base: "vs-dark",
+  inherit: true,
+  rules: [],
+  colors: {
+    "editor.background": "#181a1f", // Slate 950
+  },
+};
 
 const InterviewPage: React.FC = () => {
   const { theme } = useTheme();
@@ -103,16 +114,23 @@ const InterviewPage: React.FC = () => {
                   language={language}
                   value={code}
                   onChange={handleEditorChange}
-                  theme={theme === "dark" ? "vs-dark" : "vs-light"}
+                  theme={theme === "dark" ? "customDarkTheme" : "vs-light"}
                   options={{
                     fontSize: 14,
                     lineNumbers: "on",
                     roundedSelection: false,
                     scrollBeyondLastLine: false,
                     readOnly: false,
+                    minimap: {
+                      enabled: false,
+                    },
                   }}
                   onMount={(editor) => {
                     editorRef.current = editor;
+                  }}
+                  beforeMount={(monaco) => {
+                    monaco.editor.defineTheme("customDarkTheme", customEditorTheme);
+                    monaco.editor.setTheme("customDarkTheme");
                   }}
                 />
               </div>

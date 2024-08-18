@@ -68,7 +68,7 @@ export default function InterviewSelectionPage() {
               key={question.question_id}
               className="block transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
             >
-              <Card className="h-full cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900 shadow-sm rounded-lg">
+              <Card className="h-full cursor-pointer hover:bg-gray-50 dark:bg-secondary shadow-sm rounded-lg">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle className="text-xl">{question.title}</CardTitle>
                   <Badge
