@@ -1,5 +1,5 @@
 import time
-from typing import List, Literal, TypedDict, Annotated
+from typing import List, Literal, TypedDict
 
 from langchain import hub
 
@@ -110,25 +110,27 @@ def chatbot(state: AgentState, config: RunnableConfig):
     )
 
     # Keep track of SLIENT token in message history, but not send to voice engine
-    message = AIMessage(
-        content=(
-            response.content
-            if len(response.content) > 0
-            else DEFAULT_CHATBOT_STOP_TOKEN
-        )
-    )
+    # message = AIMessage(
+    #     content=(
+    #         response.content
+    #         if len(response.content) > 0
+    #         else DEFAULT_CHATBOT_STOP_TOKEN
+    #     )
+    # )
 
-    if debug_mode:
-        messages = [message]
-        return {"messages": messages, "response": response}
-    else:
-        # In production, only append the message if the response is empty (SILENT),
-        # we want the messages to be updated using (update_state) on the server side
-        messages = [message] if len(response.content) == 0 else []
-        return {"messages": messages, "response": response}
+    # if debug_mode:
+    #     messages = [*messages, message]
+    #     return {"messages": messages, "response": response}
+    # else:
+    #     # In production, only append the message if the response is empty (SILENT),
+    #     # we want the messages to be updated using (update_state) on the server side
+    #     messages = [message] if len(response.content) == 0 else []
+    #     return {"messages": messages, "response": response}
+    return {"response": response}
 
 
 def reminder(state: AgentState, config: RunnableConfig):
+    messages: List[BaseMessage] = safe_get(List, state, "messages", [])  # type: ignore
     editor_idle_shreshold = safe_get(
         int,
         config.get("configurable", {}),
@@ -150,8 +152,8 @@ def reminder(state: AgentState, config: RunnableConfig):
         if time_diff > editor_idle_shreshold
         else typing_aware_reminder_message
     )
-    state['messages'].append(HumanMessage(content=message))
-    return {"messages": state['messages']}
+
+    return {"messages": [*messages, HumanMessage(content=message)]}
 
 
 def check_user_activity(state: AgentState):
