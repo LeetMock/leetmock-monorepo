@@ -23,14 +23,13 @@ import { QuestionHolder } from "@/components/questions/QuestionHolder";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { InterviewToolbar } from "../_components/InterviewToolbar";
-import { monaco } from "react-monaco-editor";
 
 const customEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
   inherit: true,
   rules: [],
   colors: {
-    "editor.background": "#181a1f", // Slate 950
+    "editor.background": "#181a1f",
   },
 };
 
@@ -107,6 +106,7 @@ const InterviewPage: React.FC = () => {
                     ))}
                   </SelectContent>
                 </Select>
+                <Button className="w-20 h-8">Run</Button>
               </div>
               <div className="bg-blue-50 h-full relative" ref={editorContainerRef}>
                 <Editor
@@ -134,28 +134,23 @@ const InterviewPage: React.FC = () => {
                   }}
                 />
               </div>
-              <div className="flex justify-end p-3 border-t">
-                {/* <Label>
-                  {vad.userSpeaking
-                    ? "🔴 User Speaking"
-                    : "⚪ User Not Speaking"}
-                </Label> */}
-                <Button
-                  onClick={toggleInterview}
-                  className={cn(
-                    "transition-colors duration-200",
-                    isInterviewActive
-                      ? "bg-red-500 hover:bg-red-600 text-white"
-                      : "bg-white hover:bg-gray-100 text-gray-800 border border-gray-300"
-                  )}
-                >
-                  {isInterviewActive ? "End Interview" : "Start Interview"}
-                </Button>
+              <div className="flex p-3 border-t flex-col space-y-2 min-h-[10rem]">
+                <p className="text-sm text-primary font-medium">Output</p>
+                <div className="p-2 rounded-md bg-secondary h-full">
+                  <pre className="text-sm text-gray-800 dark:text-gray-200 p-1 rounded-md">
+                    {/* Fake content. TODO: Add real content */}
+                    <code>console.log(Hello, world!);</code>
+                  </pre>
+                </div>
               </div>
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
-        <div className="w-[28rem] border-l h-full">1</div>
+        <div className="w-[28rem] border-l h-full p-2">
+          <Button className="w-full" variant="secondary">
+            Connect
+          </Button>
+        </div>
       </div>
     </div>
   );
