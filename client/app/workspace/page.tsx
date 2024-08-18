@@ -64,7 +64,7 @@ export default function InterviewSelectionPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {questions.map((question) => (
             <Link
-              href={`/workspace/interview/${question.question_id}`}
+              href={`/interview/${question.question_id}`}
               key={question.question_id}
               className="block transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
             >
