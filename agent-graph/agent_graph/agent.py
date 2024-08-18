@@ -19,7 +19,7 @@ InteractionType = Literal["response_required", "reminder_required"]
 class AgentState(TypedDict):
     """Agent state"""
 
-    messages: Annotated[List[BaseMessage], add_messages]
+    messages: List[BaseMessage]
     """List of messages exchanged between user and agent"""
 
     interaction_type: InteractionType
