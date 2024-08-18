@@ -88,7 +88,7 @@ class LangGraphLLM(openai.LLM):
         self = cls(*args, **kwargs)
         await self.initialize()
         return self
-
+    
     async def initialize(self):
         self.thread = await self._client.threads.create()
         assistants = await self._client.assistants.search(graph_id="code-mock-v1")
@@ -125,16 +125,17 @@ class LangGraphLLM(openai.LLM):
         pprint(langchain_messages)
 
         stream = self._client.runs.stream(
-            thread_id=self.thread["thread_id"],
+            # thread_id=self.thread["thread_id"],
+            None, # pass None for stateless run
             assistant_id=self.assistant["assistant_id"],
             input={
+                "messages": langchain_messages,
                 "coding_question": "Two numbers are given. Find the sum of the two numbers.",
                 "editor_content": "def sum(a, b):\n    ",
                 "content_last_updated": 123123123,
                 "interaction_type": "chat",
             },
-            multitask_strategy="interrupt",
-            stream_mode=["events"],
+            stream_mode="updates",
         )
 
         return SimpleLLMStream(stream=stream, chat_ctx=chat_ctx, fnc_ctx=fnc_ctx)
@@ -225,13 +226,16 @@ class SimpleLLMStream(llm.LLMStream):
 
     async def aclose(self) -> None:
         # What to do here?
-
         await super().aclose()
 
+    """
+    # Stateful LLMStream
     async def __anext__(self) -> llm.ChatChunk:
         while True:
             try:
                 chunk = await anext(self._stream)
+                
+                logger.debug(f"Received chunk: {chunk}")
 
                 # Skip chunks without data or metadata events
                 if not chunk.data or chunk.event == "metadata":
@@ -255,3 +259,31 @@ class SimpleLLMStream(llm.LLMStream):
             except StopAsyncIteration:
                 # Maybe more to do here?
                 raise StopAsyncIteration
+    """
+
+    async def __anext__(self) -> llm.ChatChunk:
+        try:
+            chunk = await anext(self._stream)
+            
+            logger.debug(f"Received chunk: {chunk}")
+
+            if chunk.event != 'updates' or 'chatbot' not in chunk.data:
+                return await self.__anext__()
+
+            chatbot_data = chunk.data['chatbot']
+            if 'response' not in chatbot_data:
+                return await self.__anext__()
+
+            response = chatbot_data['response']
+            content = response.get('content', '')
+
+            return llm.ChatChunk(
+                choices=[
+                    llm.Choice(
+                        delta=llm.ChoiceDelta(content=content, role="assistant"),
+                        index=0,
+                    )
+                ]
+            )
+        except StopAsyncIteration:
+            raise StopAsyncIteration
