@@ -30,8 +30,7 @@ export const HeroCards = () => {
         </CardHeader>
 
         <CardContent>
-          LeetMock helps a lot 😃!! I am now confident for any coding
-          interviews!
+          LeetMock helps a lot 😃!! I am now confident for any coding interviews!
         </CardContent>
       </Card>
 
@@ -44,15 +43,13 @@ export const HeroCards = () => {
             className="absolute grayscale-[0%] -top-12 rounded-full w-24 h-24 aspect-square object-cover"
           />
           <CardTitle className="text-center">Baby Boby</CardTitle>
-          <CardDescription className="font-normal text-primary">
-            Backend Developer
-          </CardDescription>
+          <CardDescription className="font-normal text-primary">Backend Developer</CardDescription>
         </CardHeader>
 
         <CardContent className="text-center pb-2">
           <p>
-            I really enjoy practicing coding interviews with LeetMock. It is a
-            great platform to improve my coding skills.
+            I really enjoy practicing coding interviews with LeetMock. It is a great platform to
+            improve my coding skills.
           </p>
         </CardContent>
 
@@ -131,16 +128,13 @@ export const HeroCards = () => {
 
         <CardFooter className="flex">
           <div className="space-y-4">
-            {[
-              "1 Phone Session",
-              "1 Interview Feedback",
-              "Interview Recap Available",
-            ].map((benefit: string) => (
-              <span key={benefit} className="flex">
-                <Check className="text-green-500" />{" "}
-                <h3 className="ml-2">{benefit}</h3>
-              </span>
-            ))}
+            {["1 Phone Session", "1 Interview Feedback", "Interview Recap Available"].map(
+              (benefit: string) => (
+                <span key={benefit} className="flex">
+                  <Check className="text-green-500" /> <h3 className="ml-2">{benefit}</h3>
+                </span>
+              )
+            )}
           </div>
         </CardFooter>
       </Card>

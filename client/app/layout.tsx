@@ -14,7 +14,7 @@ const fontSans = FontSans({
 
 export const metadata: Metadata = {
   title: "LeetMock",
-  description: "Mock Interview Like Ever Before",
+  description: "Mock Interview like Ever Before",
 };
 
 export default function RootLayout({
@@ -24,14 +24,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head />
       <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
         <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange>
           <ConvexClientProvider>
-            <div>
-              <Navbar />
-              <div className="h-[calc(100vh-64px)]">{children}</div>
-              <Toaster />
-            </div>
+            {children}
+            <Toaster />
           </ConvexClientProvider>
         </ThemeProvider>
       </body>

@@ -25,7 +25,7 @@ import { Label } from "@/components/ui/label";
 import { QuestionHolder } from "@/components/questions/QuestionHolder";
 import { NumIslands } from "@/components/questions/NumIslands";
 import { useQuery } from "convex/react";
-import { api } from "@convex/_generated/api";
+import { api } from "@/convex/_generated/api";
 // import { SignedIn, SignedOut, useAuth } from "@clerk/nextjs";
 
 const formatTime = (time: number): string => {
@@ -81,113 +81,95 @@ const InterviewPage: React.FC = () => {
   }
 
   return (
-    <div className="flex p-4 justify-center items-center h-full w-full bg-secondary">
-      <div className="bg-background flex items-center h-full w-full rounded-lg border text-card-foreground shadow-md">
-        <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel className="min-w-[10rem]">
-            <ScrollArea className="h-full rounded-l-lg p-6 pr-8 w-[40rem] flex-shrink-0">
-              {question ? (
-                <QuestionHolder
-                  question_title={question.title}
-                  question_description={question.question}
-                />
-              ) : (
-                <div>Loading question...</div>
-              )}
-            </ScrollArea>
-          </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel className="min-w-[35rem]">
-            <div className="flex flex-col justify-start h-full w-full rounded-r-lg bg-background ">
-              <div className="flex justify-between items-center p-3 rounded-tr-lg border-b">
-                <Select onValueChange={handleLanguageChange} value={language}>
-                  <SelectTrigger className="w-[150px]">
-                    <SelectValue placeholder="Language" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {LANGUAGES.map((lang) => (
-                      <SelectItem key={lang.value} value={lang.value}>
-                        {lang.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="flex items-center space-x-3">
-                  <div className="text-sm">Voice</div>
-                  <div className="text-sm">:</div>
-                  <div className="text-sm">{voice}</div>
+    <div className="flex justify-center items-center h-screen w-full">
+      <ResizablePanelGroup direction="horizontal">
+        <ResizablePanel className="min-w-[20rem]">
+          <div className="w-full h-full overflow-auto">
+            {question ? (
+              <QuestionHolder
+                question_title={question.title}
+                question_description={question.question}
+              />
+            ) : (
+              <div>Loading question...</div>
+            )}
+          </div>
+        </ResizablePanel>
+        <ResizableHandle withHandle />
+        <ResizablePanel className="min-w-[20rem]">
+          <div className="flex flex-col justify-start h-full w-full">
+            <div className="flex justify-between items-center p-3 border-b">
+              <Select onValueChange={handleLanguageChange} value={language}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Language" />
+                </SelectTrigger>
+                <SelectContent>
+                  {LANGUAGES.map((lang) => (
+                    <SelectItem key={lang.value} value={lang.value}>
+                      {lang.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <div className="flex items-center justify-center space-x-3">
+                <div>
+                  <LucideVolume2
+                    className={cn(
+                      "w-[1.2rem] h-[1.2rem] opacity-0 text-blue-500",
+                      isAgentTalking ? "animate-pulse opacity-100" : ""
+                    )}
+                  />
                 </div>
-                <Select onValueChange={handleVoiceChange} value={voice}>
-                  <SelectTrigger className="w-[150px]">
-                    <SelectValue placeholder="Voice" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {VOICES.map((voice) => (
-                      <SelectItem key={voice.value} value={voice.value}>
-                        {voice.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="flex items-center justify-center space-x-3">
-                  <div>
-                    <LucideVolume2
-                      className={cn(
-                        "w-[1.2rem] h-[1.2rem] opacity-0 text-blue-500",
-                        isAgentTalking ? "animate-pulse opacity-100" : ""
-                      )}
-                    />
+                <div className="bg-secondary font-semibold py-0.5 px-1 rounded-md flex space-x-0.5 hover:bg-gray-200 transition-all select-none cursor-pointer dark:hover:bg-gray-700">
+                  <div className="px-1 py-0.5 rounded-sm text-sm">
+                    {formatTimeV2(timeLeft).slice(0, 2)}
                   </div>
-                  <div className="bg-secondary font-semibold py-0.5 px-1 rounded-md flex space-x-0.5 hover:bg-gray-200 transition-all select-none cursor-pointer dark:hover:bg-gray-700">
-                    <div className="px-1 py-0.5 rounded-sm text-sm">
-                      {formatTimeV2(timeLeft).slice(0, 2)}
-                    </div>
-                    <div className="py-0.5 rounded-sm text-sm">:</div>
-                    <div className="px-1 py-0.5 rounded-sm text-sm">
-                      {formatTimeV2(timeLeft).slice(2, 4)}
-                    </div>
+                  <div className="py-0.5 rounded-sm text-sm">:</div>
+                  <div className="px-1 py-0.5 rounded-sm text-sm">
+                    {formatTimeV2(timeLeft).slice(2, 4)}
                   </div>
                 </div>
               </div>
-              <div className="bg-blue-50 h-full relative rounded-br-lg" ref={editorContainerRef}>
-                <Editor
-                  className="absolute inset-0"
-                  language={language}
-                  value={code}
-                  onChange={handleEditorChange}
-                  theme={theme === "dark" ? "vs-dark" : "vs-light"}
-                  options={{
-                    fontSize: 14,
-                    lineNumbers: "on",
-                    roundedSelection: false,
-                    scrollBeyondLastLine: false,
-                    readOnly: false,
-                  }}
-                  onMount={(editor) => {
-                    editorRef.current = editor;
-                  }}
-                />
-              </div>
-              <div className="flex justify-end p-3 border-t">
-                {/* <Label>
+            </div>
+            <div className="bg-blue-50 h-full relative" ref={editorContainerRef}>
+              <Editor
+                className="absolute inset-0"
+                language={language}
+                value={code}
+                onChange={handleEditorChange}
+                theme={theme === "dark" ? "vs-dark" : "vs-light"}
+                options={{
+                  fontSize: 14,
+                  lineNumbers: "on",
+                  roundedSelection: false,
+                  scrollBeyondLastLine: false,
+                  readOnly: false,
+                }}
+                onMount={(editor) => {
+                  editorRef.current = editor;
+                }}
+              />
+            </div>
+            <div className="flex justify-end p-3 border-t">
+              {/* <Label>
                   {vad.userSpeaking
                     ? "🔴 User Speaking"
                     : "⚪ User Not Speaking"}
                 </Label> */}
 
-                <Button
-                  onClick={toggleInterview}
-                  className={cn(
-                    "transition-colors duration-200",
-                    isInterviewActive
-                      ? "bg-red-500 hover:bg-red-600 text-white"
-                      : "bg-white hover:bg-gray-100 text-gray-800 border border-gray-300"
-                  )}
-                >
-                  {isInterviewActive ? "End Interview" : "Start Interview"}
-                </Button>
-              </div>
-              {/* {isInterviewActive && (
+              <Button
+                onClick={toggleInterview}
+                className={cn(
+                  "transition-colors duration-200",
+                  isInterviewActive
+                    ? "bg-red-500 hover:bg-red-600 text-white"
+                    : "bg-white hover:bg-gray-100 text-gray-800 border border-gray-300"
+                )}
+              >
+                {isInterviewActive ? "End Interview" : "Start Interview"}
+              </Button>
+            </div>
+            {/* {isInterviewActive && (
                 <div
                   className="bg-gray-700 text-white p-2 overflow-y-auto"
                   style={{ maxHeight: "100px" }}
@@ -195,10 +177,9 @@ const InterviewPage: React.FC = () => {
                   <strong>Transcript:</strong> {transcript}
                 </div>
               )} */}
-            </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </div>
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 };
