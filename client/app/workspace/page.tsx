@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "convex/react";
-import { api } from "@convex/_generated/api";
+import { api } from "@/convex/_generated/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -13,13 +13,14 @@ import Link from "next/link";
 import { Sign } from "crypto";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 const getDifficultyColor = (difficulty: number) => {
   switch (difficulty) {
     case 1:
       return "bg-green-500";
     case 2:
-      return "bg-yellow-500";
+      return "bg-yellow-400";
     case 3:
       return "bg-red-500";
     default:
@@ -52,22 +53,31 @@ export default function InterviewSelectionPage() {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 text-center">Select a Question</h1>
+    <div className="container mx-auto py-6">
+      <p className="text-xl font-semibold leading-0">Questions</p>
+      <p className="text-md text-muted-foreground leading-0 mb-6">
+        Select a question to start your interview preparation.
+      </p>
       {questions.length === 0 ? (
         <p className="text-center">No questions available.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {questions.map((question) => (
             <Link
-              href={`/interview/${question.question_id}`}
+              href={`/workspace/interview/${question.question_id}`}
               key={question.question_id}
               className="block transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
             >
-              <Card className="h-full cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800">
+              <Card className="h-full cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900 shadow-sm rounded-lg">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle className="text-xl">{question.title}</CardTitle>
-                  <Badge className={`${getDifficultyColor(question.difficulty)} text-white`}>
+                  <Badge
+                    className={cn(
+                      getDifficultyColor(question.difficulty),
+                      "text-white border-transparent dark:text-primary-foreground"
+                    )}
+                    variant="outline"
+                  >
                     {getDifficultyText(question.difficulty)}
                   </Badge>
                 </CardHeader>

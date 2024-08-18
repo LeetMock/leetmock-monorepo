@@ -1,8 +1,9 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
-import { buttonVariants } from "@/components/ui/button";
 import { HeroCards } from "@/components/HeroCards";
 import Link from "next/link";
-import { Sign } from "crypto";
+import { useAuth } from "@clerk/clerk-react";
 
 interface ids {
   href: string;
@@ -30,6 +31,8 @@ interface ids {
 // };
 
 export const Hero = () => {
+  const { isSignedIn, isLoaded } = useAuth();
+
   return (
     <section className="container grid lg:grid-cols-2 place-items-center py-20 md:py-32 gap-10">
       <div className="text-center lg:text-start space-y-6">
@@ -49,26 +52,31 @@ export const Hero = () => {
             Mock Interview Platform
           </h2>
         </main>
-
         <p className="text-xl text-muted-foreground md:w-10/12 mx-auto lg:mx-0">
           Practice coding interviews with AI. Get instant feedback. Improve interview skills.
         </p>
-
-        <div className="space-y-4 md:space-y-0 md:space-x-4">
-          {/* <AuthButtons /> */}
-          <Link href="/interview" passHref>
-            <Button className="w-full md:w-1/3" variant="default" size="lg">
-              Get Started
-            </Button>
-          </Link>
-        </div>
+        {isLoaded && (
+          <div className="space-y-4 md:space-y-0 md:space-x-4">
+            {!!isSignedIn ? (
+              <Link href="/workspace" passHref>
+                <Button className="w-full md:w-1/3" variant="default" size="lg">
+                  Go to Workspace
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/auth" passHref>
+                <Button className="w-full md:w-1/3" variant="default" size="lg">
+                  Get Started
+                </Button>
+              </Link>
+            )}
+          </div>
+        )}
       </div>
-
       {/* Hero cards sections */}
       <div className="z-10">
         <HeroCards />
       </div>
-
       {/* Shadow effect */}
       <div className="shadow"></div>
     </section>

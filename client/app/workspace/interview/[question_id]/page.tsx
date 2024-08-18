@@ -25,7 +25,7 @@ import { Label } from "@/components/ui/label";
 import { QuestionHolder } from "@/components/questions/QuestionHolder";
 import { NumIslands } from "@/components/questions/NumIslands";
 import { useQuery } from "convex/react";
-import { api } from "@convex/_generated/api";
+import { api } from "@/convex/_generated/api";
 // import { SignedIn, SignedOut, useAuth } from "@clerk/nextjs";
 
 const formatTime = (time: number): string => {

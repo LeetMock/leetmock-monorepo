@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useMutation } from "convex/react";
-import { api } from "@convex/_generated/api";
+import { api } from "@/convex/_generated/api";
 import { RetellWebClient } from "retell-client-js-sdk";
 import { DEFAULT_CODE } from "@/lib/constants";
 import { editor } from "monaco-editor";
