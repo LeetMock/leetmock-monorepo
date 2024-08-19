@@ -1,21 +1,14 @@
-import { ConnectionState, LocalParticipant, RoomEvent, Track } from "livekit-client";
+import { RoomEvent, Track } from "livekit-client";
 import {
   useTracks,
-  LiveKitRoom,
-  useLocalParticipant,
   useRemoteParticipants,
-  DisconnectButton,
-  useRoomContext,
   TrackReferenceOrPlaceholder,
+  useIsSpeaking,
 } from "@livekit/components-react";
-import { StartAudio, AudioConference, useConnectionState } from "@livekit/components-react";
-import { useConnection } from "@/hooks/useConnection";
 import { useMemo } from "react";
 
 export const useAgent = () => {
   const tracks = useTracks();
-  const room = useRoomContext();
-  const connectionState = useConnectionState();
 
   const participants = useRemoteParticipants({
     updateOnlyOn: [RoomEvent.ParticipantMetadataChanged],
@@ -46,7 +39,10 @@ export const useAgent = () => {
     return undefined;
   }, [tracks, agentParticipant]);
 
+  const isAgentSpeaking = agentParticipant ? agentParticipant.isSpeaking : false;
+
   return {
+    isAgentSpeaking,
     agentParticipant,
     isAgentConnected,
     agentAudioTrack,

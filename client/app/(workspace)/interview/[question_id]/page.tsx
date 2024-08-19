@@ -18,23 +18,20 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 import { QuestionHolder } from "@/components/questions/QuestionHolder";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { InterviewToolbar } from "../_components/InterviewToolbar";
-import { ConnectionState, LocalParticipant, RoomEvent, Track } from "livekit-client";
+import { Toolbar } from "../_components/Toolbar";
+import { ConnectionState } from "livekit-client";
 import {
-  useTracks,
-  LiveKitRoom,
-  useLocalParticipant,
-  useRemoteParticipants,
-  DisconnectButton,
-  useRoomContext,
-  TrackReferenceOrPlaceholder,
-  useTrackTranscription,
   useDataChannel,
+  useLocalParticipant,
+  useRoomContext,
+  useTracks,
 } from "@livekit/components-react";
-import { StartAudio, AudioConference, useConnectionState } from "@livekit/components-react";
+import { useConnectionState } from "@livekit/components-react";
 import { useConnection } from "@/hooks/useConnection";
 import { useAgent } from "@/hooks/useAgent";
 import { Transcripts } from "../_components/Transcripts";
+import { LucideVolume2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const customEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -49,6 +46,7 @@ const InterviewPage: React.FC = () => {
   const { theme } = useTheme();
   const editorContainerRef = useRef<HTMLDivElement>(null);
 
+  const tracks = useTracks();
   const params = useParams();
   const questionId = parseInt(params.question_id as string, 10);
   const question = useQuery(api.questions.getByQuestionId, { question_id: questionId });
@@ -57,19 +55,38 @@ const InterviewPage: React.FC = () => {
   const { connect, disconnect } = useConnection(room);
   const connectionState = useConnectionState();
 
-  const tracks = useTracks();
-  const { localParticipant, microphoneTrack } = useLocalParticipant();
-  const localTracks = tracks.filter(({ participant }) => participant instanceof LocalParticipant);
-  const localMicTrack = localTracks.find(({ source }) => source === Track.Source.Microphone);
-  const localMessages = useTrackTranscription({
-    publication: microphoneTrack,
-    source: Track.Source.Microphone,
-    participant: localParticipant,
+  const { isAgentConnected, isAgentSpeaking } = useAgent();
+  const { localParticipant } = useLocalParticipant();
+
+  const strData = JSON.stringify({ some: "data" });
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+
+  // publishData takes in a Uint8Array, so we need to convert it
+  const data = encoder.encode(strData);
+
+  const { message: latestMessage, send } = useDataChannel("test", (message) => {
+    console.log("message", message);
   });
 
-  const { isAgentConnected, agentAudioTrack } = useAgent();
+  console.log("latestMessage", latestMessage);
 
-  console.log(agentAudioTrack);
+  useEffect(() => {
+    const strData = JSON.stringify({ some: "data" });
+    const encoder = new TextEncoder();
+
+    // publishData takes in a Uint8Array, so we need to convert it
+    const data = encoder.encode(strData);
+
+    const interval = setInterval(() => {
+      if (connectionState === ConnectionState.Connected) {
+        console.log("sending message");
+        localParticipant.publishData(data, { reliable: true, topic: "test" });
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [connectionState, localParticipant]);
 
   useEffect(() => {
     if (connectionState === ConnectionState.Connected) {
@@ -100,12 +117,9 @@ const InterviewPage: React.FC = () => {
     return <div>Invalid question ID</div>;
   }
 
-  // console.log(localParticipant);
-  // console.log(participants);
-
   return (
     <div className="flex flex-col justify-center items-center h-screen w-full">
-      <InterviewToolbar />
+      <Toolbar />
       <div className="w-full h-full flex justify-center items-center">
         <ResizablePanelGroup direction="horizontal" className="w-full h-full">
           <ResizablePanel className="min-w-[20rem] h-full w-full relative">
@@ -180,14 +194,22 @@ const InterviewPage: React.FC = () => {
             {connectionState === ConnectionState.Connected ? "Disconnect" : "Connect"}
           </Button>
           <div className="mt-4 p-3 border rounded-md">
-            <p className="text-sm font-medium">
-              Agent Status:{" "}
-              {isAgentConnected ? (
-                <span className="text-green-600">Connected</span>
-              ) : (
-                <span className="text-red-600">Disconnected</span>
-              )}
-            </p>
+            <div className="text-sm font-medium flex justify-between items-center space-x-2">
+              <div className="flex items-center space-x-1.5">
+                <span>Agent Status:</span>
+                {isAgentConnected ? (
+                  <span className="text-green-500 mt-[1px]">Connected</span>
+                ) : (
+                  <span className="text-red-500 mt-[1px]">Disconnected</span>
+                )}
+              </div>
+              <LucideVolume2
+                className={cn(
+                  "w-4 h-4 opacity-0 text-blue-500",
+                  isAgentSpeaking ? "opacity-100" : ""
+                )}
+              />
+            </div>
           </div>
           <Transcripts />
         </div>

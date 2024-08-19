@@ -10,6 +10,7 @@ from livekit.agents import (
     cli,
     llm,
 )
+from livekit.rtc import DataPacket
 from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.plugins import deepgram, openai, silero
 from agent_server.langgraph_llm import (
@@ -151,6 +152,21 @@ async def entrypoint(ctx: JobContext):
     @assistant.on("agent_stopped_speaking")
     def on_agent_stopped_speaking():
         logger.info("agent_stopped_speaking")
+
+    @ctx.room.on("data_received")
+    def on_data_received(data: DataPacket):
+        logger.info(
+            "Received data from %s: %s, topic: %s",
+            data.participant.identity,
+            data.data,
+            data.topic,
+        )
+
+    await ctx.room.local_participant.publish_data(
+        "my payload",
+        reliable=True,
+        topic="test",
+    )
 
     await asyncio.sleep(1)
     await assistant.say(

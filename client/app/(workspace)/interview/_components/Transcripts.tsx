@@ -3,7 +3,6 @@ import { cn } from "@/lib/utils";
 import {
   TrackReferenceOrPlaceholder,
   useLocalParticipant,
-  useTracks,
   useTrackTranscription,
 } from "@livekit/components-react";
 import { LocalParticipant, Participant, Track, TranscriptionSegment } from "livekit-client";
@@ -21,7 +20,6 @@ const segmentToChatMessage = (
   existingMessage: ChatMessageType | undefined,
   participant: Participant
 ): ChatMessageType => {
-  console.log(existingMessage);
   const msg: ChatMessageType = {
     message: s.final ? s.text : `${s.text} ...`,
     name: participant instanceof LocalParticipant ? "You" : "Agent",
@@ -36,7 +34,6 @@ const TranscriptsInner = ({
 }: {
   agentAudioTrack: TrackReferenceOrPlaceholder;
 }) => {
-  const tracks = useTracks();
   const { localParticipant, microphoneTrack } = useLocalParticipant();
   const [transcripts, setTranscripts] = useState<Record<string, ChatMessageType>>({});
 
