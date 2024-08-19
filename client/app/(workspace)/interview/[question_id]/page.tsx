@@ -46,7 +46,6 @@ const InterviewPage: React.FC = () => {
   const { theme } = useTheme();
   const editorContainerRef = useRef<HTMLDivElement>(null);
 
-  const tracks = useTracks();
   const params = useParams();
   const questionId = parseInt(params.question_id as string, 10);
   const question = useQuery(api.questions.getByQuestionId, { question_id: questionId });
@@ -58,18 +57,9 @@ const InterviewPage: React.FC = () => {
   const { isAgentConnected, isAgentSpeaking } = useAgent();
   const { localParticipant } = useLocalParticipant();
 
-  const strData = JSON.stringify({ some: "data" });
-  const encoder = new TextEncoder();
-  const decoder = new TextDecoder();
-
-  // publishData takes in a Uint8Array, so we need to convert it
-  const data = encoder.encode(strData);
-
-  const { message: latestMessage, send } = useDataChannel("test", (message) => {
+  const { send } = useDataChannel("test", (message) => {
     console.log("message", message);
   });
-
-  console.log("latestMessage", latestMessage);
 
   useEffect(() => {
     const strData = JSON.stringify({ some: "data" });
@@ -81,12 +71,12 @@ const InterviewPage: React.FC = () => {
     const interval = setInterval(() => {
       if (connectionState === ConnectionState.Connected) {
         console.log("sending message");
-        localParticipant.publishData(data, { reliable: true, topic: "test" });
+        send(data, { reliable: true, topic: "test" });
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [connectionState, localParticipant]);
+  }, [connectionState, localParticipant, send]);
 
   useEffect(() => {
     if (connectionState === ConnectionState.Connected) {
