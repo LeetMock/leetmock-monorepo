@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { api } from "@/convex/_generated/api";
 import { useAction } from "convex/react";
+import type { Room } from "livekit-client";
 
 interface ConnectionState {
   accessToken?: string;
@@ -20,7 +21,7 @@ export const useConnectionParams = create<ConnectionState>((set) => ({
   setConnectionParams: (params) => set(params),
 }));
 
-export const useConnection = () => {
+export const useConnection = (room: Room | undefined = undefined) => {
   const { accessToken, serverUrl, shouldConnect, setConnectionParams } = useConnectionParams();
   const getToken = useAction(api.sessions.getToken);
 
@@ -35,6 +36,7 @@ export const useConnection = () => {
   };
 
   const disconnect = () => {
+    if (room) room.disconnect();
     setConnectionParams({ accessToken: undefined, serverUrl: undefined, shouldConnect: false });
   };
 

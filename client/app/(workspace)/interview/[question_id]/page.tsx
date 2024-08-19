@@ -28,9 +28,13 @@ import {
   DisconnectButton,
   useRoomContext,
   TrackReferenceOrPlaceholder,
+  useTrackTranscription,
+  useDataChannel,
 } from "@livekit/components-react";
 import { StartAudio, AudioConference, useConnectionState } from "@livekit/components-react";
 import { useConnection } from "@/hooks/useConnection";
+import { useAgent } from "@/hooks/useAgent";
+import { Transcripts } from "../_components/Transcripts";
 
 const customEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -50,29 +54,22 @@ const InterviewPage: React.FC = () => {
   const question = useQuery(api.questions.getByQuestionId, { question_id: questionId });
 
   const room = useRoomContext();
-  const { connect, disconnect } = useConnection();
+  const { connect, disconnect } = useConnection(room);
   const connectionState = useConnectionState();
 
-  const { localParticipant } = useLocalParticipant();
-  const participants = useRemoteParticipants({
-    updateOnlyOn: [RoomEvent.ParticipantMetadataChanged],
-  });
-  const agentParticipant = participants.find((p) => p.isAgent);
-  const isAgentConnected = agentParticipant !== undefined;
   const tracks = useTracks();
+  const { localParticipant, microphoneTrack } = useLocalParticipant();
+  const localTracks = tracks.filter(({ participant }) => participant instanceof LocalParticipant);
+  const localMicTrack = localTracks.find(({ source }) => source === Track.Source.Microphone);
+  const localMessages = useTrackTranscription({
+    publication: microphoneTrack,
+    source: Track.Source.Microphone,
+    participant: localParticipant,
+  });
 
-  let agentAudioTrack: TrackReferenceOrPlaceholder | undefined;
-  const aat = tracks.find(
-    (trackRef) => trackRef.publication.kind === Track.Kind.Audio && trackRef.participant.isAgent
-  );
-  if (aat) {
-    agentAudioTrack = aat;
-  } else if (agentParticipant) {
-    agentAudioTrack = {
-      participant: agentParticipant,
-      source: Track.Source.Microphone,
-    };
-  }
+  const { isAgentConnected, agentAudioTrack } = useAgent();
+
+  console.log(agentAudioTrack);
 
   useEffect(() => {
     if (connectionState === ConnectionState.Connected) {
@@ -90,7 +87,6 @@ const InterviewPage: React.FC = () => {
     }
 
     if (connectionState === ConnectionState.Connected) {
-      room.disconnect();
       disconnect();
     } else {
       connect();
@@ -104,8 +100,8 @@ const InterviewPage: React.FC = () => {
     return <div>Invalid question ID</div>;
   }
 
-  console.log(localParticipant);
-  console.log(participants);
+  // console.log(localParticipant);
+  // console.log(participants);
 
   return (
     <div className="flex flex-col justify-center items-center h-screen w-full">
@@ -174,7 +170,7 @@ const InterviewPage: React.FC = () => {
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
-        <div className="w-[28rem] border-l h-full p-2">
+        <div className="w-[28rem] border-l h-full p-2 flex flex-col space-y-4">
           <Button
             className="w-full"
             variant={connectionState === ConnectionState.Connected ? "destructive" : "secondary"}
@@ -193,6 +189,7 @@ const InterviewPage: React.FC = () => {
               )}
             </p>
           </div>
+          <Transcripts />
         </div>
       </div>
     </div>

@@ -1,9 +1,6 @@
 "use client";
 
 import React from "react";
-import { LucideVolume2, Settings } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { UserButton } from "@clerk/clerk-react";
 import { ThemeToggleButton } from "@/components/ThemeToggleButton";
 

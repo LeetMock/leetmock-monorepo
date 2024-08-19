@@ -109,10 +109,11 @@ async def entrypoint(ctx: JobContext):
     # asyncio.create_task(_draw_color())
 
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
+    agent = await LangGraphLLM.create()
     assistant = VoiceAssistant(
         vad=ctx.proc.userdata["vad"],
         stt=deepgram.STT(),
-        llm=await LangGraphLLM.create(),
+        llm=agent,
         tts=openai.TTS(),
         chat_ctx=initial_ctx,
         # will_synthesize_assistant_reply=will_synthesize_assistant_reply,
