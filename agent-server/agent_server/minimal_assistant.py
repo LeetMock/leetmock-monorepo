@@ -1,5 +1,6 @@
 import asyncio
 import logging
+
 from dotenv import load_dotenv, find_dotenv
 from livekit.agents import (
     AutoSubscribe,
@@ -11,10 +12,9 @@ from livekit.agents import (
 )
 from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.plugins import deepgram, openai, silero
-from livekit_agent.langGraph_llm import (
+from agent_server.langgraph_llm import (
     LangGraphLLM,
 )
-import logging
 
 logger = logging.getLogger("minimal-assistant")
 logger.setLevel(logging.DEBUG)
@@ -22,7 +22,8 @@ file_handler = logging.FileHandler("minimal_assistant.log")
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(
     logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
 )
 
@@ -35,39 +36,38 @@ def prewarm_fnc(proc: JobProcess):
     proc.userdata["vad"] = silero.VAD.load()
 
 
-WIDTH = 640
-HEIGHT = 480
-COLOR = [255, 255, 0, 0]  # FFFF0000 RED
-
-
 async def entrypoint(ctx: JobContext):
     initial_ctx = llm.ChatContext().append(
         role="system", text="(A user joined the room)"
     )
-    
+
     reminder_task: asyncio.Task = None
     reminder_delay = 10  # seconds
+
     async def debounced_send_reminder():
         nonlocal reminder_task
         if reminder_task:
             logger.info("Reminder task cancelled")
             reminder_task.cancel()
-        
+
         async def delayed_reminder():
             await asyncio.sleep(reminder_delay)
             await send_reminder()
 
         reminder_task = asyncio.create_task(delayed_reminder())
-    
+
     async def send_reminder():
         logger.info(f"Reminder sent")
         await assistant.say(
             assistant.llm.chat(
                 chat_ctx=assistant.chat_ctx.append(
-                    role="system",
-                    text="should get into reminder state now"), interaction_type="reminder_required"),
+                    role="system", text="should get into reminder state now"
+                ),
+                interaction_type="reminder_required",
+            ),
             allow_interruptions=True,
-            add_to_chat_ctx=True)
+            add_to_chat_ctx=True,
+        )
 
     # # Not used anymore since we are using stateless LLM chat
     # async def will_synthesize_assistant_reply(
