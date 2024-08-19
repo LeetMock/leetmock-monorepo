@@ -1,5 +1,4 @@
 import React from "react";
-import { ScrollArea } from "../ui/scroll-area";
 
 interface QuestionHolderProps {
   question_title: string;
@@ -11,7 +10,7 @@ export const QuestionHolder: React.FC<QuestionHolderProps> = ({
   question_description,
 }) => {
   return (
-    <div className="space-y-6 p-4 min-w-[35rem]">
+    <div className="space-y-6 p-4 min-w-[30rem]">
       <h1 className="text-3xl font-bold">{question_title}</h1>
       <div className="space-y-4">
         <div>

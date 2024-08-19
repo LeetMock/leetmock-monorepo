@@ -2,7 +2,6 @@
 
 import { useParams } from "next/navigation";
 import React, { useEffect, useRef } from "react";
-import "react-resizable/css/styles.css";
 import { Button } from "@/components/ui/button";
 import Editor from "@monaco-editor/react";
 import { editor as monacoEditor } from "monaco-editor";
@@ -13,18 +12,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useInterview } from "@/hooks/useInterview";
 import { LANGUAGES } from "@/lib/constants";
 import { useTheme } from "next-themes";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { useToast } from "@/components/ui/use-toast";
 import { QuestionHolder } from "@/components/questions/QuestionHolder";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { InterviewToolbar } from "../_components/InterviewToolbar";
-import { Track } from "livekit-client";
-import { useTracks, LiveKitRoom } from "@livekit/components-react";
-import { StartAudio } from "@livekit/components-react";
+import { ConnectionState, LocalParticipant, RoomEvent, Track } from "livekit-client";
+import {
+  useTracks,
+  LiveKitRoom,
+  useLocalParticipant,
+  useRemoteParticipants,
+  DisconnectButton,
+  useRoomContext,
+} from "@livekit/components-react";
+import { StartAudio, AudioConference, useConnectionState } from "@livekit/components-react";
 import { useConnection } from "@/hooks/useConnection";
 
 const customEditorTheme: monacoEditor.IStandaloneThemeData = {
@@ -38,22 +42,36 @@ const customEditorTheme: monacoEditor.IStandaloneThemeData = {
 
 const InterviewPage: React.FC = () => {
   const { theme } = useTheme();
+  const editorContainerRef = useRef<HTMLDivElement>(null);
 
   const params = useParams();
   const questionId = parseInt(params.question_id as string, 10);
-
-  const { accessToken, serverUrl, shouldConnect, connect } = useConnection();
-
-  // const trackRefs = useTracks([Track.Source.Microphone]);
-  // const tokyoCamTrackRef = trackRefs.find((trackRef) => trackRef.participant.name === "tokyo");
-
-  // console.log(trackRefs);
-  // console.log(tokyoCamTrackRef);
-
-  const editorContainerRef = useRef<HTMLDivElement>(null);
-
   const question = useQuery(api.questions.getByQuestionId, { question_id: questionId });
-  const { toast } = useToast();
+
+  const room = useRoomContext();
+  const { connect, disconnect } = useConnection();
+  const connectionState = useConnectionState();
+
+  const { localParticipant } = useLocalParticipant();
+  const participants = useRemoteParticipants({
+    updateOnlyOn: [RoomEvent.ParticipantMetadataChanged],
+  });
+
+  const handleConnect = () => {
+    if (
+      connectionState === ConnectionState.Connecting ||
+      connectionState === ConnectionState.Reconnecting
+    ) {
+      return;
+    }
+
+    if (connectionState === ConnectionState.Connected) {
+      room.disconnect();
+      disconnect();
+    } else {
+      connect();
+    }
+  };
 
   // Check if the conversion was successful
   if (isNaN(questionId)) {
@@ -66,9 +84,9 @@ const InterviewPage: React.FC = () => {
     <div className="flex flex-col justify-center items-center h-screen w-full">
       <InterviewToolbar />
       <div className="w-full h-full flex justify-center items-center">
-        <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel className="min-w-[20rem]">
-            <div className="w-full h-full overflow-auto">
+        <ResizablePanelGroup direction="horizontal" className="w-full h-full">
+          <ResizablePanel className="min-w-[20rem] h-full w-full relative">
+            <div className="absolute inset-0 overflow-y-auto overflow-auto">
               {question ? (
                 <QuestionHolder
                   question_title={question.title}
@@ -132,17 +150,12 @@ const InterviewPage: React.FC = () => {
         <div className="w-[28rem] border-l h-full p-2">
           <Button
             className="w-full"
-            variant="secondary"
-            onClick={() => {
-              connect();
-            }}
+            variant={connectionState === ConnectionState.Connected ? "destructive" : "secondary"}
+            disabled={connectionState === ConnectionState.Connecting}
+            onClick={handleConnect}
           >
-            Connect
+            {connectionState === ConnectionState.Connected ? "Disconnect" : "Connect"}
           </Button>
-          <LiveKitRoom serverUrl={serverUrl} token={accessToken} connect={shouldConnect}>
-            <StartAudio label="Click to allow audio playback" />
-            {/* Your components go here. */}
-          </LiveKitRoom>
         </div>
       </div>
     </div>
