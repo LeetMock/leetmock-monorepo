@@ -1,5 +1,21 @@
-import { query, mutation } from "./_generated/server";
+import { query, mutation, action } from "./_generated/server";
 import { v } from "convex/values";
+
+import type { AccessTokenOptions, VideoGrant } from "livekit-server-sdk";
+import { generateRandomAlphanumeric } from "@/lib/utils";
+import { TokenResult } from "@/lib/types";
+import { AccessToken } from "livekit-server-sdk";
+
+const createToken = (
+  apiKey: string,
+  apiSecret: string,
+  userInfo: AccessTokenOptions,
+  grant: VideoGrant
+) => {
+  const at = new AccessToken(apiKey, apiSecret, userInfo);
+  at.addGrant(grant);
+  return at.toJwt();
+};
 
 export const getBySessionId = query({
   args: { session_id: v.string() },
@@ -82,5 +98,42 @@ export const update = mutation({
       last_code_update_timestamp: Date.now(),
       time_remain,
     });
+  },
+});
+
+export const getToken = action({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const apiKey = process.env.LIVEKIT_API_KEY;
+    const apiSecret = process.env.LIVEKIT_API_SECRET;
+
+    if (!apiKey || !apiSecret) {
+      throw new Error("Environment variables aren't set up correctly");
+    }
+
+    // TODO: May change these
+    const roomName = `room-${generateRandomAlphanumeric(4)}-${generateRandomAlphanumeric(4)}`;
+    const userIdentity = `identity-${generateRandomAlphanumeric(4)}`;
+
+    const grant: VideoGrant = {
+      room: roomName,
+      roomJoin: true,
+      canPublish: true,
+      canPublishData: true,
+      canSubscribe: true,
+    };
+
+    const token = await createToken(apiKey, apiSecret, { identity: userIdentity }, grant);
+    const result: TokenResult = {
+      identity: userIdentity,
+      accessToken: token,
+    };
+
+    return result;
   },
 });

@@ -17,12 +17,15 @@ import { useInterview } from "@/hooks/useInterview";
 import { LANGUAGES } from "@/lib/constants";
 import { useTheme } from "next-themes";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
 import { QuestionHolder } from "@/components/questions/QuestionHolder";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { InterviewToolbar } from "../_components/InterviewToolbar";
+import { Track } from "livekit-client";
+import { useTracks, LiveKitRoom } from "@livekit/components-react";
+import { StartAudio } from "@livekit/components-react";
+import { useConnection } from "@/hooks/useConnection";
 
 const customEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -39,32 +42,18 @@ const InterviewPage: React.FC = () => {
   const params = useParams();
   const questionId = parseInt(params.question_id as string, 10);
 
-  const {
-    code,
-    language,
-    voice,
-    timeLeft,
-    isInterviewActive,
-    isAgentTalking,
-    transcript,
-    editorRef,
-    setQuestionId,
-    handleEditorChange,
-    toggleInterview,
-    handleLanguageChange,
-    handleVoiceChange,
-    handleResize,
-  } = useInterview(questionId);
+  const { accessToken, serverUrl, shouldConnect, connect } = useConnection();
+
+  // const trackRefs = useTracks([Track.Source.Microphone]);
+  // const tokyoCamTrackRef = trackRefs.find((trackRef) => trackRef.participant.name === "tokyo");
+
+  // console.log(trackRefs);
+  // console.log(tokyoCamTrackRef);
 
   const editorContainerRef = useRef<HTMLDivElement>(null);
 
   const question = useQuery(api.questions.getByQuestionId, { question_id: questionId });
   const { toast } = useToast();
-
-  // Update questionId in the hook if it changes in the URL
-  useEffect(() => {
-    setQuestionId(questionId);
-  }, [questionId, setQuestionId]);
 
   // Check if the conversion was successful
   if (isNaN(questionId)) {
@@ -94,7 +83,7 @@ const InterviewPage: React.FC = () => {
           <ResizablePanel className="min-w-[20rem]">
             <div className="flex flex-col justify-start h-full w-full">
               <div className="flex justify-between items-center p-2 border-b">
-                <Select onValueChange={handleLanguageChange} value={language}>
+                <Select>
                   <SelectTrigger className="w-36 h-8">
                     <SelectValue placeholder="Language" />
                   </SelectTrigger>
@@ -111,9 +100,7 @@ const InterviewPage: React.FC = () => {
               <div className="bg-blue-50 h-full relative" ref={editorContainerRef}>
                 <Editor
                   className="absolute inset-0"
-                  language={language}
-                  value={code}
-                  onChange={handleEditorChange}
+                  language="python"
                   theme={theme === "dark" ? "customDarkTheme" : "vs-light"}
                   options={{
                     fontSize: 14,
@@ -125,9 +112,6 @@ const InterviewPage: React.FC = () => {
                       enabled: false,
                     },
                   }}
-                  onMount={(editor) => {
-                    editorRef.current = editor;
-                  }}
                   beforeMount={(monaco) => {
                     monaco.editor.defineTheme("customDarkTheme", customEditorTheme);
                     monaco.editor.setTheme("customDarkTheme");
@@ -138,7 +122,6 @@ const InterviewPage: React.FC = () => {
                 <p className="text-sm text-primary font-medium">Output</p>
                 <div className="p-2 rounded-md bg-secondary h-full">
                   <pre className="text-sm text-gray-800 dark:text-gray-200 p-1 rounded-md">
-                    {/* Fake content. TODO: Add real content */}
                     <code>console.log(Hello, world!);</code>
                   </pre>
                 </div>
@@ -147,9 +130,19 @@ const InterviewPage: React.FC = () => {
           </ResizablePanel>
         </ResizablePanelGroup>
         <div className="w-[28rem] border-l h-full p-2">
-          <Button className="w-full" variant="secondary">
+          <Button
+            className="w-full"
+            variant="secondary"
+            onClick={() => {
+              connect();
+            }}
+          >
             Connect
           </Button>
+          <LiveKitRoom serverUrl={serverUrl} token={accessToken} connect={shouldConnect}>
+            <StartAudio label="Click to allow audio playback" />
+            {/* Your components go here. */}
+          </LiveKitRoom>
         </div>
       </div>
     </div>
