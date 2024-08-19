@@ -27,6 +27,7 @@ import {
   useRemoteParticipants,
   DisconnectButton,
   useRoomContext,
+  TrackReferenceOrPlaceholder,
 } from "@livekit/components-react";
 import { StartAudio, AudioConference, useConnectionState } from "@livekit/components-react";
 import { useConnection } from "@/hooks/useConnection";
@@ -56,6 +57,29 @@ const InterviewPage: React.FC = () => {
   const participants = useRemoteParticipants({
     updateOnlyOn: [RoomEvent.ParticipantMetadataChanged],
   });
+  const agentParticipant = participants.find((p) => p.isAgent);
+  const isAgentConnected = agentParticipant !== undefined;
+  const tracks = useTracks();
+
+  let agentAudioTrack: TrackReferenceOrPlaceholder | undefined;
+  const aat = tracks.find(
+    (trackRef) => trackRef.publication.kind === Track.Kind.Audio && trackRef.participant.isAgent
+  );
+  if (aat) {
+    agentAudioTrack = aat;
+  } else if (agentParticipant) {
+    agentAudioTrack = {
+      participant: agentParticipant,
+      source: Track.Source.Microphone,
+    };
+  }
+
+  useEffect(() => {
+    if (connectionState === ConnectionState.Connected) {
+      localParticipant.setCameraEnabled(false);
+      localParticipant.setMicrophoneEnabled(true);
+    }
+  }, [localParticipant, connectionState]);
 
   const handleConnect = () => {
     if (
@@ -79,6 +103,9 @@ const InterviewPage: React.FC = () => {
     // Handle the error appropriately, e.g., show an error message or redirect
     return <div>Invalid question ID</div>;
   }
+
+  console.log(localParticipant);
+  console.log(participants);
 
   return (
     <div className="flex flex-col justify-center items-center h-screen w-full">
@@ -156,6 +183,16 @@ const InterviewPage: React.FC = () => {
           >
             {connectionState === ConnectionState.Connected ? "Disconnect" : "Connect"}
           </Button>
+          <div className="mt-4 p-3 border rounded-md">
+            <p className="text-sm font-medium">
+              Agent Status:{" "}
+              {isAgentConnected ? (
+                <span className="text-green-600">Connected</span>
+              ) : (
+                <span className="text-red-600">Disconnected</span>
+              )}
+            </p>
+          </div>
         </div>
       </div>
     </div>
