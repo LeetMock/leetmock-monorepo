@@ -1,17 +1,27 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
 
+function getFileExtension(language: string): string {
+  const extensionMap: { [key: string]: string } = {
+    python: "py",
+    javascript: "js",
+    java: "java",
+    cpp: "cpp"
+  };
+  return extensionMap[language] || "txt";
+}
+
 export async function POST(request: Request) {
   const body = await request.json();
 
   const url = "https://onecompiler-apis.p.rapidapi.com/api/v1/run";
 
   const payload = {
-    language: "python",
-    stdin: "Peter",
+    language: body.language,
+    stdin: "",
     files: [
       {
-        name: "Runner.py",
+        name: `Runner.${getFileExtension(body.language)}`,
         content: body.code
       }
     ]

@@ -32,6 +32,8 @@ import { useAgent } from "@/hooks/useAgent";
 import { Transcripts } from "../_components/Transcripts";
 import { LucideVolume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react"; // Import a loading icon
+import { Clock } from "lucide-react"; // Import Clock icon
 
 const customEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -110,27 +112,33 @@ const InterviewPage: React.FC = () => {
   const [editorContent, setEditorContent] = useState("");
   const [output, setOutput] = useState("");
   const [isError, setIsError] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("python");
+  const [isRunning, setIsRunning] = useState(false);
+  const [executionTime, setExecutionTime] = useState<number | null>(null);
 
   const handleRunCode = async () => {
+    setIsRunning(true);
+    setExecutionTime(null); // Reset execution time
     try {
       const response = await fetch('/api/runCode', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ code: editorContent }),
+        body: JSON.stringify({ code: editorContent, language: selectedLanguage }),
       });
       const data = await response.json();
       if (data.status === 'success'){
+        setExecutionTime(data.executionTime);
         if (data.exception !== null){
           const exceptionLines = data.exception.split('\n');
           setOutput(exceptionLines.slice(1).join('\n').trim());
           setIsError(true);
-        }else{
+        } else {
           setOutput(data.stdout);
           setIsError(false);
         }
-      }else{
+      } else {
         setOutput('Please Try Again Later');
         setIsError(true);
       }
@@ -138,6 +146,8 @@ const InterviewPage: React.FC = () => {
       console.error('Error running code:', error);
       setOutput('Error running code. Please try again.');
       setIsError(true);
+    } finally {
+      setIsRunning(false);
     }
   };
 
@@ -162,7 +172,7 @@ const InterviewPage: React.FC = () => {
           <ResizablePanel className="min-w-[20rem]">
             <div className="flex flex-col justify-start h-full w-full">
               <div className="flex justify-between items-center p-2 border-b">
-                <Select>
+              <Select defaultValue="python" onValueChange={setSelectedLanguage}>
                   <SelectTrigger className="w-36 h-8">
                     <SelectValue placeholder="Language" />
                   </SelectTrigger>
@@ -174,7 +184,13 @@ const InterviewPage: React.FC = () => {
                     ))}
                   </SelectContent>
                 </Select>
-                <Button className="w-20 h-8" onClick={handleRunCode}>Run</Button>
+                <Button className="w-20 h-8 relative" onClick={handleRunCode} disabled={isRunning}>
+                  {isRunning ? (
+                    <Loader2 className="absolute inset-0 m-auto h-4 w-4 animate-spin" />
+                  ) : (
+                    "Run"
+                  )}
+                </Button>
               </div>
               <div className="bg-blue-50 h-full relative" ref={editorContainerRef}>
                 <Editor
@@ -199,7 +215,15 @@ const InterviewPage: React.FC = () => {
                 />
               </div>
               <div className="flex p-3 border-t flex-col space-y-2 min-h-[10rem]">
-                <p className="text-sm text-primary font-medium">Output</p>
+                <div className="flex justify-between items-center">
+                  <p className="text-sm text-primary font-medium">Output</p>
+                  {executionTime !== null && (
+                    <div className="flex items-center text-sm text-gray-500">
+                      <Clock className="w-4 h-4 mr-1" />
+                      <span>{executionTime} ms</span>
+                    </div>
+                  )}
+                </div>
                 <div className="p-2 rounded-md bg-secondary h-full">
                   <pre className={`text-sm ${isError ? 'text-red-500' : 'text-gray-800 dark:text-gray-200'} p-1 rounded-md`}>
                     <code>{output}</code>
