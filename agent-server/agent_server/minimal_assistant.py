@@ -166,7 +166,7 @@ async def entrypoint(ctx: JobContext):
         logger.info("Received data for topic: %s", data.topic)
         editor_state = EditorState.model_validate_json(data.data)
         agent.set_editor_state(editor_state)
-        logger.info(f"Received editor state: {editor_state}")
+        asyncio.create_task(debounced_send_reminder())
 
     await ctx.room.local_participant.publish_data(
         "my payload",
