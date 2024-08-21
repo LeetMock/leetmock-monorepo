@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Editor from "@monaco-editor/react";
 import { editor as monacoEditor } from "monaco-editor";
@@ -107,6 +107,40 @@ const InterviewPage: React.FC = () => {
     return <div>Invalid question ID</div>;
   }
 
+  const [editorContent, setEditorContent] = useState("");
+  const [output, setOutput] = useState("");
+  const [isError, setIsError] = useState(false);
+
+  const handleRunCode = async () => {
+    try {
+      const response = await fetch('/api/runCode', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code: editorContent }),
+      });
+      const data = await response.json();
+      if (data.status === 'success'){
+        if (data.exception !== null){
+          const exceptionLines = data.exception.split('\n');
+          setOutput(exceptionLines.slice(1).join('\n').trim());
+          setIsError(true);
+        }else{
+          setOutput(data.stdout);
+          setIsError(false);
+        }
+      }else{
+        setOutput('Please Try Again Later');
+        setIsError(true);
+      }
+    } catch (error) {
+      console.error('Error running code:', error);
+      setOutput('Error running code. Please try again.');
+      setIsError(true);
+    }
+  };
+
   return (
     <div className="flex flex-col justify-center items-center h-screen w-full">
       <Toolbar />
@@ -140,7 +174,7 @@ const InterviewPage: React.FC = () => {
                     ))}
                   </SelectContent>
                 </Select>
-                <Button className="w-20 h-8">Run</Button>
+                <Button className="w-20 h-8" onClick={handleRunCode}>Run</Button>
               </div>
               <div className="bg-blue-50 h-full relative" ref={editorContainerRef}>
                 <Editor
@@ -157,6 +191,7 @@ const InterviewPage: React.FC = () => {
                       enabled: false,
                     },
                   }}
+                  onChange={(value) => setEditorContent(value || "")}
                   beforeMount={(monaco) => {
                     monaco.editor.defineTheme("customDarkTheme", customEditorTheme);
                     monaco.editor.setTheme("customDarkTheme");
@@ -166,8 +201,8 @@ const InterviewPage: React.FC = () => {
               <div className="flex p-3 border-t flex-col space-y-2 min-h-[10rem]">
                 <p className="text-sm text-primary font-medium">Output</p>
                 <div className="p-2 rounded-md bg-secondary h-full">
-                  <pre className="text-sm text-gray-800 dark:text-gray-200 p-1 rounded-md">
-                    <code>console.log(Hello, world!);</code>
+                  <pre className={`text-sm ${isError ? 'text-red-500' : 'text-gray-800 dark:text-gray-200'} p-1 rounded-md`}>
+                    <code>{output}</code>
                   </pre>
                 </div>
               </div>

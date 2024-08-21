@@ -11,6 +11,8 @@ libs = { path = "libs", develop = true }
 agent_graph = { path = "agent-graph", develop = true }
 voice_pipeline = { path = "voice-pipeline", develop = true }
 llm_server = { path = "llm-server", develop = true }
+langgraph = "^0.2.4"
+langgraph-cli = "^0.1.50"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"
