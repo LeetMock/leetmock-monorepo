@@ -60,6 +60,7 @@ const InterviewPage: React.FC = () => {
   // Agent & Interview states
   const { isAgentConnected, isAgentSpeaking } = useAgent();
   const { language, editorContent, onEditorContentChange, onLanguageChange } = useCodingInterview({
+    questionId,
     language: "python",
     editorContent: DEFAULT_CODE,
     connectionState: connectionState,

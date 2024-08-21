@@ -23,4 +23,5 @@ export const DEFAULT_CODE: string = `def main():\n\t# TODO: Write your code here
 
 export enum Topic {
   EditorState = "editor-state",
+  Question = "question",
 }

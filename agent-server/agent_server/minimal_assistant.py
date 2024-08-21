@@ -13,9 +13,9 @@ from livekit.agents import (
 from livekit.rtc import DataPacket
 from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.plugins import deepgram, openai, silero
-from agent_server.langgraph_llm import (
-    LangGraphLLM,
-)
+
+from agent_server.langgraph_llm import LangGraphLLM
+from agent_server.types import EditorState
 
 logger = logging.getLogger("minimal-assistant")
 logger.setLevel(logging.DEBUG)
@@ -42,7 +42,7 @@ async def entrypoint(ctx: JobContext):
         role="system", text="(A user joined the room)"
     )
 
-    reminder_task: asyncio.Task = None
+    reminder_task: asyncio.Task | None = None
     reminder_delay = 10  # seconds
 
     async def debounced_send_reminder():
@@ -155,12 +155,10 @@ async def entrypoint(ctx: JobContext):
 
     @ctx.room.on("data_received")
     def on_data_received(data: DataPacket):
-        logger.info(
-            "Received data from %s: %s, topic: %s",
-            data.participant.identity,
-            data.data,
-            data.topic,
-        )
+        logger.info("Received data for topic: %s", data.topic)
+        editor_state = EditorState.model_validate_json(data.data)
+        agent.set_editor_state(editor_state)
+        logger.info(f"Received editor state: {editor_state}")
 
     await ctx.room.local_participant.publish_data(
         "my payload",
