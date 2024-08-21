@@ -43,7 +43,7 @@ async def entrypoint(ctx: JobContext):
     )
 
     reminder_task: asyncio.Task | None = None
-    reminder_delay = 10  # seconds
+    reminder_delay = 24  # seconds
 
     async def debounced_send_reminder():
         nonlocal reminder_task
