@@ -7,22 +7,22 @@ interface ConnectionState {
   accessToken?: string;
   serverUrl?: string;
   shouldConnect: boolean;
-  setConnectionParams: (params: {
+  setConnectionState: (state: {
     accessToken?: string;
     serverUrl?: string;
     shouldConnect?: boolean;
   }) => void;
 }
 
-export const useConnectionParams = create<ConnectionState>((set) => ({
+export const useConnectionState = create<ConnectionState>((set) => ({
   accessToken: undefined,
   serverUrl: undefined,
   shouldConnect: false,
-  setConnectionParams: (params) => set(params),
+  setConnectionState: (state) => set(state),
 }));
 
 export const useConnection = (room: Room | undefined = undefined) => {
-  const { accessToken, serverUrl, shouldConnect, setConnectionParams } = useConnectionParams();
+  const { accessToken, serverUrl, shouldConnect, setConnectionState } = useConnectionState();
   const getToken = useAction(api.sessions.getToken);
 
   const connect = async () => {
@@ -32,12 +32,12 @@ export const useConnection = (room: Room | undefined = undefined) => {
     }
 
     const url = process.env.NEXT_PUBLIC_LIVEKIT_URL;
-    setConnectionParams({ accessToken, serverUrl: url, shouldConnect: true });
+    setConnectionState({ accessToken, serverUrl: url, shouldConnect: true });
   };
 
   const disconnect = () => {
     if (room) room.disconnect();
-    setConnectionParams({ accessToken: undefined, serverUrl: undefined, shouldConnect: false });
+    setConnectionState({ accessToken: undefined, serverUrl: undefined, shouldConnect: false });
   };
 
   return { accessToken, serverUrl, shouldConnect, connect, disconnect };

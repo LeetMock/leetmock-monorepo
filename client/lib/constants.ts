@@ -19,4 +19,8 @@ export const VOICES: Language[] = [
   { value: "shimmer", label: "Shimmer" },
 ];
 
-export const DEFAULT_CODE: string = `// Write your code here\n\t`;
+export const DEFAULT_CODE: string = `def main():\n\t# TODO: Write your code here\n\tpass`;
+
+export enum Topic {
+  EditorState = "editor-state",
+}

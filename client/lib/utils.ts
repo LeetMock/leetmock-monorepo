@@ -16,3 +16,7 @@ export function generateRandomAlphanumeric(length: number): string {
 
   return result;
 }
+
+export function encode(text: string): Uint8Array {
+  return new TextEncoder().encode(text);
+}
