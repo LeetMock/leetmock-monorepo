@@ -49,6 +49,12 @@ const InterviewPage: React.FC = () => {
   const { theme } = useTheme();
   const editorContainerRef = useRef<HTMLDivElement>(null);
 
+  const [output, setOutput] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("python");
+  const [isRunning, setIsRunning] = useState(false);
+  const [executionTime, setExecutionTime] = useState<number | null>(null);
+
   const params = useParams();
   const questionId = parseInt(params.question_id as string, 10);
   const question = useQuery(api.questions.getByQuestionId, { question_id: questionId });
@@ -97,41 +103,35 @@ const InterviewPage: React.FC = () => {
     return <div>Invalid question ID</div>;
   }
 
-  const [output, setOutput] = useState("");
-  const [isError, setIsError] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("python");
-  const [isRunning, setIsRunning] = useState(false);
-  const [executionTime, setExecutionTime] = useState<number | null>(null);
-
   const handleRunCode = async () => {
     setIsRunning(true);
     setExecutionTime(null); // Reset execution time
     try {
-      const response = await fetch('/api/runCode', {
-        method: 'POST',
+      const response = await fetch("/api/runCode", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ code: editorContent, language: language }),
       });
       const data = await response.json();
-      if (data.status === 'success'){
+      if (data.status === "success") {
         setExecutionTime(data.executionTime);
-        if (data.exception !== null){
-          const exceptionLines = data.exception.split('\n');
-          setOutput(exceptionLines.slice(1).join('\n').trim());
+        if (data.exception !== null) {
+          const exceptionLines = data.exception.split("\n");
+          setOutput(exceptionLines.slice(1).join("\n").trim());
           setIsError(true);
         } else {
           setOutput(data.stdout);
           setIsError(false);
         }
       } else {
-        setOutput('Please Try Again Later');
+        setOutput("Please Try Again Later");
         setIsError(true);
       }
     } catch (error) {
-      console.error('Error running code:', error);
-      setOutput('Error running code. Please try again.');
+      console.error("Error running code:", error);
+      setOutput("Error running code. Please try again.");
       setIsError(true);
     } finally {
       setIsRunning(false);
@@ -213,7 +213,9 @@ const InterviewPage: React.FC = () => {
                   )}
                 </div>
                 <div className="p-2 rounded-md bg-secondary h-full">
-                  <pre className={`text-sm ${isError ? 'text-red-500' : 'text-gray-800 dark:text-gray-200'} p-1 rounded-md`}>
+                  <pre
+                    className={`text-sm ${isError ? "text-red-500" : "text-gray-800 dark:text-gray-200"} p-1 rounded-md`}
+                  >
                     <code>{output}</code>
                   </pre>
                 </div>
