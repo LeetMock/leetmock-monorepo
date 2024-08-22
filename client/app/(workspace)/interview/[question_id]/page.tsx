@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Editor from "@monaco-editor/react";
 import { editor as monacoEditor } from "monaco-editor";
@@ -32,6 +32,8 @@ import { useAgent } from "@/hooks/useAgent";
 import { Transcripts } from "../_components/Transcripts";
 import { LucideVolume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react"; // Import a loading icon
+import { Clock } from "lucide-react"; // Import Clock icon
 import { useCodingInterview } from "@/hooks/useCodingInterview";
 
 const customEditorTheme: monacoEditor.IStandaloneThemeData = {
@@ -95,6 +97,47 @@ const InterviewPage: React.FC = () => {
     return <div>Invalid question ID</div>;
   }
 
+  const [output, setOutput] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("python");
+  const [isRunning, setIsRunning] = useState(false);
+  const [executionTime, setExecutionTime] = useState<number | null>(null);
+
+  const handleRunCode = async () => {
+    setIsRunning(true);
+    setExecutionTime(null); // Reset execution time
+    try {
+      const response = await fetch('/api/runCode', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code: editorContent, language: language }),
+      });
+      const data = await response.json();
+      if (data.status === 'success'){
+        setExecutionTime(data.executionTime);
+        if (data.exception !== null){
+          const exceptionLines = data.exception.split('\n');
+          setOutput(exceptionLines.slice(1).join('\n').trim());
+          setIsError(true);
+        } else {
+          setOutput(data.stdout);
+          setIsError(false);
+        }
+      } else {
+        setOutput('Please Try Again Later');
+        setIsError(true);
+      }
+    } catch (error) {
+      console.error('Error running code:', error);
+      setOutput('Error running code. Please try again.');
+      setIsError(true);
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
   return (
     <div className="flex flex-col justify-center items-center h-screen w-full">
       <Toolbar />
@@ -128,7 +171,13 @@ const InterviewPage: React.FC = () => {
                     ))}
                   </SelectContent>
                 </Select>
-                <Button className="w-20 h-8">Run</Button>
+                <Button className="w-20 h-8 relative" onClick={handleRunCode} disabled={isRunning}>
+                  {isRunning ? (
+                    <Loader2 className="absolute inset-0 m-auto h-4 w-4 animate-spin" />
+                  ) : (
+                    "Run"
+                  )}
+                </Button>
               </div>
               <div className="bg-blue-50 h-full relative" ref={editorContainerRef}>
                 <Editor
@@ -154,10 +203,18 @@ const InterviewPage: React.FC = () => {
                 />
               </div>
               <div className="flex p-3 border-t flex-col space-y-2 min-h-[10rem]">
-                <p className="text-sm text-primary font-medium">Output</p>
+                <div className="flex justify-between items-center">
+                  <p className="text-sm text-primary font-medium">Output</p>
+                  {executionTime !== null && (
+                    <div className="flex items-center text-sm text-gray-500">
+                      <Clock className="w-4 h-4 mr-1" />
+                      <span>{executionTime} ms</span>
+                    </div>
+                  )}
+                </div>
                 <div className="p-2 rounded-md bg-secondary h-full">
-                  <pre className="text-sm text-gray-800 dark:text-gray-200 p-1 rounded-md">
-                    <code>console.log(Hello, world!);</code>
+                  <pre className={`text-sm ${isError ? 'text-red-500' : 'text-gray-800 dark:text-gray-200'} p-1 rounded-md`}>
+                    <code>{output}</code>
                   </pre>
                 </div>
               </div>

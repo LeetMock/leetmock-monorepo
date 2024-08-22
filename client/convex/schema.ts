@@ -22,3 +22,4 @@ export default defineSchema({
     title: v.string(),
   }),
 });
+
