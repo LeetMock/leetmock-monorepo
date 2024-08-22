@@ -225,12 +225,30 @@ const InterviewPage: React.FC = () => {
         </ResizablePanelGroup>
         <div className="w-[24rem] border-l h-full p-2 flex flex-col space-y-4">
           <Button
-            className="w-full"
+            className={cn(
+              "w-full",
+              "font-semibold",
+              connectionState === ConnectionState.Disconnected &&
+                "bg-green-400 text-gray-900 hover:bg-green-500 transition-all",
+              connectionState === ConnectionState.Connecting &&
+                "bg-gray-400 text-gray-900 hover:bg-gray-500 transition-all",
+              connectionState === ConnectionState.Connected &&
+                "bg-red-500 text-white hover:bg-red-600 transition-all"
+            )}
             variant={connectionState === ConnectionState.Connected ? "destructive" : "secondary"}
             disabled={connectionState === ConnectionState.Connecting}
             onClick={handleConnect}
           >
-            {connectionState === ConnectionState.Connected ? "Disconnect" : "Connect"}
+            {connectionState === ConnectionState.Connected ? (
+              "Disconnect"
+            ) : connectionState === ConnectionState.Connecting ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                Connecting...
+              </>
+            ) : (
+              <>Connect</>
+            )}
           </Button>
           <div className="mt-4 p-3 border rounded-md">
             <div className="text-sm font-medium flex justify-between items-center space-x-2">

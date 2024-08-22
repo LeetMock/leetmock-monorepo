@@ -38,9 +38,7 @@ def prewarm_fnc(proc: JobProcess):
 
 
 async def entrypoint(ctx: JobContext):
-    initial_ctx = llm.ChatContext().append(
-        role="system", text="(A user joined the room)"
-    )
+    initial_ctx = llm.ChatContext()
 
     reminder_task: asyncio.Task | None = None
     reminder_delay = 24  # seconds
