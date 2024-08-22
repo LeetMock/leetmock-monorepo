@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LANGUAGES } from "@/lib/constants";
+import { DEFAULT_CODE, LANGUAGES } from "@/lib/constants";
 import { useTheme } from "next-themes";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { QuestionHolder } from "@/components/questions/QuestionHolder";
@@ -34,6 +34,7 @@ import { LucideVolume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react"; // Import a loading icon
 import { Clock } from "lucide-react"; // Import Clock icon
+import { useCodingInterview } from "@/hooks/useCodingInterview";
 
 const customEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -52,33 +53,20 @@ const InterviewPage: React.FC = () => {
   const questionId = parseInt(params.question_id as string, 10);
   const question = useQuery(api.questions.getByQuestionId, { question_id: questionId });
 
+  // LiveKit states
   const room = useRoomContext();
   const { connect, disconnect } = useConnection(room);
   const connectionState = useConnectionState();
-
-  const { isAgentConnected, isAgentSpeaking } = useAgent();
   const { localParticipant } = useLocalParticipant();
 
-  const { send } = useDataChannel("test", (message) => {
-    console.log("message", message);
+  // Agent & Interview states
+  const { isAgentConnected, isAgentSpeaking } = useAgent();
+  const { language, editorContent, onEditorContentChange, onLanguageChange } = useCodingInterview({
+    questionId,
+    language: "python",
+    editorContent: DEFAULT_CODE,
+    connectionState: connectionState,
   });
-
-  useEffect(() => {
-    const strData = JSON.stringify({ some: "data" });
-    const encoder = new TextEncoder();
-
-    // publishData takes in a Uint8Array, so we need to convert it
-    const data = encoder.encode(strData);
-
-    const interval = setInterval(() => {
-      if (connectionState === ConnectionState.Connected) {
-        console.log("sending message");
-        send(data, { reliable: true, topic: "test" });
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [connectionState, localParticipant, send]);
 
   useEffect(() => {
     if (connectionState === ConnectionState.Connected) {
@@ -109,7 +97,6 @@ const InterviewPage: React.FC = () => {
     return <div>Invalid question ID</div>;
   }
 
-  const [editorContent, setEditorContent] = useState("");
   const [output, setOutput] = useState("");
   const [isError, setIsError] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("python");
@@ -125,7 +112,7 @@ const InterviewPage: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ code: editorContent, language: selectedLanguage }),
+        body: JSON.stringify({ code: editorContent, language: language }),
       });
       const data = await response.json();
       if (data.status === 'success'){
@@ -156,7 +143,7 @@ const InterviewPage: React.FC = () => {
       <Toolbar />
       <div className="w-full h-full flex justify-center items-center">
         <ResizablePanelGroup direction="horizontal" className="w-full h-full">
-          <ResizablePanel className="min-w-[20rem] h-full w-full relative">
+          <ResizablePanel className="min-w-[5rem] h-full w-full relative">
             <div className="absolute inset-0 overflow-y-auto overflow-auto">
               {question ? (
                 <QuestionHolder
@@ -172,7 +159,7 @@ const InterviewPage: React.FC = () => {
           <ResizablePanel className="min-w-[20rem]">
             <div className="flex flex-col justify-start h-full w-full">
               <div className="flex justify-between items-center p-2 border-b">
-              <Select defaultValue="python" onValueChange={setSelectedLanguage}>
+                <Select value={language} onValueChange={onLanguageChange}>
                   <SelectTrigger className="w-36 h-8">
                     <SelectValue placeholder="Language" />
                   </SelectTrigger>
@@ -195,8 +182,9 @@ const InterviewPage: React.FC = () => {
               <div className="bg-blue-50 h-full relative" ref={editorContainerRef}>
                 <Editor
                   className="absolute inset-0"
-                  language="python"
+                  language={language}
                   theme={theme === "dark" ? "customDarkTheme" : "vs-light"}
+                  value={editorContent}
                   options={{
                     fontSize: 14,
                     lineNumbers: "on",
@@ -207,7 +195,7 @@ const InterviewPage: React.FC = () => {
                       enabled: false,
                     },
                   }}
-                  onChange={(value) => setEditorContent(value || "")}
+                  onChange={(value) => onEditorContentChange(value || "")}
                   beforeMount={(monaco) => {
                     monaco.editor.defineTheme("customDarkTheme", customEditorTheme);
                     monaco.editor.setTheme("customDarkTheme");
@@ -233,7 +221,7 @@ const InterviewPage: React.FC = () => {
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
-        <div className="w-[28rem] border-l h-full p-2 flex flex-col space-y-4">
+        <div className="w-[24rem] border-l h-full p-2 flex flex-col space-y-4">
           <Button
             className="w-full"
             variant={connectionState === ConnectionState.Connected ? "destructive" : "secondary"}

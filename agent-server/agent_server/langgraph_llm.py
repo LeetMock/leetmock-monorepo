@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-import asyncio
 import logging
+import hashlib
 import os
+
 from pprint import pprint
 from langgraph_sdk import get_client
 from livekit.agents.voice_assistant import VoiceAssistant
@@ -12,9 +13,9 @@ from livekit.plugins.openai import LLMStream
 from typing import Any, AsyncIterator, List
 from openai.types.chat import ChatCompletionChunk, ChatCompletionMessageParam
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, FunctionMessage, BaseMessage
-
 from langgraph_sdk.client import LangGraphClient, StreamPart, Assistant, Thread
-import hashlib
+from agent_server.types import EditorState
+from agent_server.constants import QUESTION
 
 # LangGraph uses pydantic v1
 from pydantic.v1 import BaseModel
@@ -83,26 +84,30 @@ class LangGraphInput(BaseModel):
     content_last_updated: int
     interaction_type: str
 
+
 class LangGraphLLM(openai.LLM):
     def __init__(self,  *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self._client = get_client(url=os.environ["LANGGRAPH_API_URL"])
-
         self.thread = None
         self.assistant = None
+        self.editor_state = EditorState()
 
     @classmethod
     async def create(cls, *args, **kwargs):
         self = cls(*args, **kwargs)
         await self.initialize()
         return self
-    
+
     async def initialize(self):
         self.thread = await self._client.threads.create()
         assistants = await self._client.assistants.search(graph_id="code-mock-v1")
         assert len(assistants) > 0, "No assistants found"
         self.assistant = assistants[0]
+
+    def set_editor_state(self, state: EditorState):
+        self.editor_state = state
 
     def chat(
         self,
@@ -136,9 +141,9 @@ class LangGraphLLM(openai.LLM):
 
         lang_graph_input = LangGraphInput(
             messages=langchain_messages,
-            coding_question="Two numbers are given. Find the sum of the two numbers.",
-            editor_content="def sum(a, b):\n    ",
-            content_last_updated=1724006757,
+            coding_question=QUESTION,
+            editor_content=self.editor_state.content,
+            content_last_updated=self.editor_state.last_updated,
             interaction_type=interaction_type,
         )
 
@@ -165,7 +170,7 @@ def convert_livekit_msgs_to_langchain_msgs(messages: list[llm.ChatMessage]) -> L
 
     for i, msg in enumerate(messages):
         id = hash_msg(msg)
-        
+
         if isinstance(msg.content, str):
             content = msg.content
         elif isinstance(msg.content, list):
@@ -245,7 +250,7 @@ class SimpleLLMStream(llm.LLMStream):
         while True:
             try:
                 chunk = await anext(self._stream)
-                
+
                 logger.debug(f"Received chunk: {chunk}")
 
                 # Skip chunks without data or metadata events
@@ -275,7 +280,7 @@ class SimpleLLMStream(llm.LLMStream):
     async def __anext__(self) -> llm.ChatChunk:
         try:
             chunk = await anext(self._stream)
-            
+
             logger.debug(f"Received chunk: {chunk}")
 
             if chunk.event != 'updates' or 'chatbot' not in chunk.data:

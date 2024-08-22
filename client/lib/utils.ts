@@ -16,3 +16,11 @@ export function generateRandomAlphanumeric(length: number): string {
 
   return result;
 }
+
+export function encode(text: string): Uint8Array {
+  return new TextEncoder().encode(text);
+}
+
+export function getCurrentUnixTimestamp(): number {
+  return Math.floor(Date.now() / 1000);
+}

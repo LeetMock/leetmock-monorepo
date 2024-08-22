@@ -1,8 +1,9 @@
+"use client";
+
 import { useTheme } from "next-themes";
 import { dark } from "@clerk/themes";
 import { UserButton } from "@clerk/clerk-react";
 import { ThemeToggleButton } from "./ThemeToggleButton";
-import { cn } from "@/lib/utils";
 
 export const Navbar = () => {
   const { theme } = useTheme();
