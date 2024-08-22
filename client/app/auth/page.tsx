@@ -1,14 +1,13 @@
 "use client";
 
-import { useMemo } from "react";
-import { useSearchParams } from "next/navigation";
-import { SignIn, SignUp, useAuth } from "@clerk/clerk-react";
-import { redirect } from "next/navigation";
+import { Suspense, useMemo } from "react";
 import { Unauthenticated } from "convex/react";
+import { useSearchParams, redirect } from "next/navigation";
+import { SignIn, SignUp, useAuth } from "@clerk/clerk-react";
 
 type AuthAction = "signin" | "signup";
 
-const AuthPage = () => {
+const AuthPageContent = () => {
   const searchParams = useSearchParams();
   const { isSignedIn } = useAuth();
 
@@ -23,13 +22,23 @@ const AuthPage = () => {
   }
 
   return (
+    <>
+      {action === "signin" ? (
+        <SignIn signUpUrl="/auth?action=signup" />
+      ) : (
+        <SignUp signInUrl="/auth?action=signin" />
+      )}
+    </>
+  );
+};
+
+const AuthPage = () => {
+  return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-purple-500 to-blue-500">
       <Unauthenticated>
-        {action === "signin" ? (
-          <SignIn signUpUrl="/auth?action=signup" />
-        ) : (
-          <SignUp signInUrl="/auth?action=signin" />
-        )}
+        <Suspense fallback={<div>Loading...</div>}>
+          <AuthPageContent />
+        </Suspense>
       </Unauthenticated>
     </div>
   );
