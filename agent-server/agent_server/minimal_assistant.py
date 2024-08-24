@@ -87,26 +87,6 @@ async def entrypoint(ctx: JobContext):
     #     # Return the result of _default_will_synthesize_assistant_reply
     #     return _default_will_synthesize_assistant_reply(assistant, copied_ctx)
 
-    # source = rtc.VideoSource(WIDTH, HEIGHT)
-    # track = rtc.LocalVideoTrack.create_video_track("example-track", source)
-    # options = rtc.TrackPublishOptions(
-    #     # since the agent is a participant, our video I/O is its "camera"
-    #     source=rtc.TrackSource.SOURCE_CAMERA,
-    # )
-    # publication = await ctx.agent.publish_track(track, options)
-
-    # async def _draw_color():
-    #     argb_frame = bytearray(WIDTH * HEIGHT * 4)
-    #     while True:
-    #         await asyncio.sleep(0.1)  # 10 fps
-    #         argb_frame[:] = COLOR * WIDTH * HEIGHT
-    #         frame = rtc.VideoFrame(WIDTH, HEIGHT, rtc.VideoBufferType.RGBA, argb_frame)
-
-    #         # send this frame to the track
-    #         source.capture_frame(frame)
-
-    # asyncio.create_task(_draw_color())
-
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
     agent = await LangGraphLLM.create()
     assistant = VoiceAssistant(
@@ -121,10 +101,6 @@ async def entrypoint(ctx: JobContext):
 
     @assistant.on("agent_speech_committed")
     def update_message_state_for_agent(msg: llm.ChatMessage):
-        # langchain_msg = convert_livekit_msgs_to_langchain_msgs([msg])[0]
-        # langchain_msg.id = hash_msg(msg)
-        # assert isinstance(assistant.llm, LangGraphLLM), "Expected LangGraphLLM"
-        # asyncio.run(assistant.llm.update_state(langchain_msg))
         logger.info(f"agent_speech_committed: {msg}")
 
         # Send a reminder event to the agent after 10 seconds of silence since the
