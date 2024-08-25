@@ -4,7 +4,10 @@ import { query } from "./_generated/server";
 export const getById = query({
   args: { questionId: v.optional(v.id("questions")) },
   handler: async (ctx, { questionId }) => {
-    if (!questionId) return undefined;
+    if (!questionId) {
+      return undefined;
+    }
+
     return await ctx.db.get(questionId);
   },
 });

@@ -6,8 +6,7 @@ import { DEFAULT_CODE } from "@/lib/constants";
 import { editor } from "monaco-editor";
 import { UserSpeechData, VoicePipeline } from "@/lib/VoicePipeline";
 import { useMicVAD, utils } from "@hughqing/vad-react";
-import { useToast } from "@/components/ui/use-toast";
-import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export const useInterview = (initialQuestionId: number) => {
   const [sessionId, setSessionId] = useState<string | undefined>(undefined);
@@ -21,7 +20,6 @@ export const useInterview = (initialQuestionId: number) => {
   const [isAgentTalking, setIsAgentTalking] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [questionId, setQuestionId] = useState(initialQuestionId);
-  const { toast } = useToast();
 
   const editorRef = useRef<editor.IStandaloneCodeEditor | undefined>(undefined);
   const retellClientRef = useRef<RetellWebClient | undefined>(undefined);

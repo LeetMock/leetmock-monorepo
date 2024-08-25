@@ -1,13 +1,16 @@
-import { query } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 // Get editor snapshot by ID
 export const getById = query({
   args: {
-    id: v.id("editorSnapshots"),
+    snapshotId: v.optional(v.id("editorSnapshots")),
   },
-  handler: async (ctx, { id }) => {
-    return await ctx.db.get(id);
+  handler: async (ctx, { snapshotId }) => {
+    if (!snapshotId) {
+      return undefined;
+    }
+    return await ctx.db.get(snapshotId);
   },
 });
 
@@ -42,5 +45,27 @@ export const getLatestSnapshotBySessionId = query({
     }
 
     return snapshot;
+  },
+});
+
+export const create = mutation({
+  args: {
+    sessionId: v.id("sessions"),
+    editor: v.object({
+      language: v.string(),
+      content: v.string(),
+    }),
+    terminal: v.object({
+      output: v.string(),
+      isError: v.boolean(),
+      executionTime: v.optional(v.number()),
+    }),
+  },
+  handler: async (ctx, { sessionId, editor, terminal }) => {
+    return await ctx.db.insert("editorSnapshots", {
+      sessionId,
+      editor,
+      terminal,
+    });
   },
 });

@@ -32,9 +32,14 @@ export const create = mutation({
 
     await ctx.db.insert("editorSnapshots", {
       sessionId,
-      language: "python",
-      content: "",
-      output: "",
+      editor: {
+        language: "python",
+        content: "",
+      },
+      terminal: {
+        output: "",
+        isError: false,
+      },
     });
 
     return sessionId;

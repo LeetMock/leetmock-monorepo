@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
 import router from "next/router";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 const getDifficultyColor = (difficulty: number) => {
   switch (difficulty) {
@@ -39,7 +39,6 @@ const getDifficultyText = (difficulty: number) => {
 
 export default function InterviewSelectionPage() {
   const router = useRouter();
-  const toast = useToast();
 
   const questions = useQuery(api.questions.getAll);
   const createAgentThread = useAction(api.actions.createAgentThread);
@@ -47,27 +46,27 @@ export default function InterviewSelectionPage() {
 
   const onQuestionSelected = useCallback(
     async (questionId: Id<"questions">) => {
-      toast.toast({
-        title: "Starting interview",
-        description: "Please wait while we prepare your interview room.",
-      });
-
       // TODO: wrap inside an action
-      const agentThreadId = await createAgentThread();
-      const sessionId = await createSession({
-        questionId: questionId,
-        agentThreadId: agentThreadId,
-      });
+      const promise = createAgentThread()
+        .then((agentThreadId) => {
+          return createSession({
+            questionId: questionId,
+            agentThreadId: agentThreadId,
+          });
+        })
+        .then((sessionId) => {
+          // TODO: add session list page and let user select the session
 
-      toast.toast({
-        title: "Interview Created",
-        description: "You can now start your interview.",
-      });
+          router.push(`/interview/${sessionId}`);
+        });
 
-      // TODO: add session list page and let user select the session
-      router.push(`/interview/${sessionId}`);
+      toast.promise(promise, {
+        loading: "Creating interview",
+        success: "Interview created",
+        error: "Error creating interview",
+      });
     },
-    [createAgentThread, createSession, router, toast]
+    [createAgentThread, createSession, router]
   );
 
   if (questions === undefined) {

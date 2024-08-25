@@ -15,9 +15,15 @@ export default defineSchema({
   }),
   editorSnapshots: defineTable({
     sessionId: v.id("sessions"),
-    language: v.string(),
-    content: v.string(),
-    output: v.string(),
+    editor: v.object({
+      language: v.string(),
+      content: v.string(),
+    }),
+    terminal: v.object({
+      output: v.string(),
+      isError: v.boolean(),
+      executionTime: v.optional(v.number()),
+    }),
   }).index("by_session_id", ["sessionId"]),
   questions: defineTable({
     category: v.array(v.string()),

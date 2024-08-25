@@ -13,11 +13,11 @@ export const createAgentThread = action({
       throw new Error("Not authenticated");
     }
 
-    const apiKey = process.env.LANGGRAPH_API_KEY;
+    const apiKey = process.env.LANGSMITH_API_KEY;
     const apiUrl = process.env.LANGGRAPH_API_URL;
     const client = new Client({ apiKey, apiUrl });
-    const thread = await client.threads.create();
 
+    const thread = await client.threads.create();
     return thread.thread_id;
   },
 });

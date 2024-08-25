@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DEFAULT_CODE, LANGUAGES } from "@/lib/constants";
+import { LANGUAGES } from "@/lib/constants";
 import { useTheme } from "next-themes";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { QuestionHolder } from "@/components/questions/QuestionHolder";
@@ -36,6 +36,9 @@ import { Loader2 } from "lucide-react"; // Import a loading icon
 import { Clock } from "lucide-react"; // Import Clock icon
 import { useCodingSession } from "@/hooks/useCodingSession";
 import { Id } from "@/convex/_generated/dataModel";
+import { toast } from "sonner";
+import { useDebounceCallback } from "usehooks-ts";
+import { EditorState, useEditorState } from "@/hooks/useEditorState";
 
 const customEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -50,11 +53,7 @@ const InterviewPage: React.FC = () => {
   const { theme } = useTheme();
   const { sessionId } = useParams<{ sessionId: Id<"sessions"> }>();
 
-  const [output, setOutput] = useState("");
-  const [isError, setIsError] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("python");
-  const [isRunning, setIsRunning] = useState(false);
-  const [executionTime, setExecutionTime] = useState<number | null>(null);
+  const [editorInitialized, setEditorInitialized] = useState(false);
   const editorContainerRef = useRef<HTMLDivElement>(null);
 
   // LiveKit states
@@ -69,10 +68,50 @@ const InterviewPage: React.FC = () => {
   // Convex states
   const session = useQuery(api.sessions.getById, { sessionId });
   const question = useQuery(api.questions.getById, { questionId: session?.questionId });
-  const editorSnapshot = useQuery(api.editorSnapshots.getLatestSnapshotBySessionId, { sessionId });
+  const initialEditorSnapshot = useQuery(api.editorSnapshots.getLatestSnapshotBySessionId, {
+    sessionId,
+  });
+  const createSnapshot = useMutation(api.editorSnapshots.create);
 
-  // Set up the participant device
+  const handleSnapshotChanged = useCallback(
+    (snapshot: EditorState) => {
+      const promise = createSnapshot({
+        sessionId,
+        ...snapshot,
+      });
+
+      toast.promise(promise, {
+        success: "Snapshot saved",
+        error: "Error saving snapshot",
+      });
+    },
+    [createSnapshot, sessionId]
+  );
+
+  const {
+    editorState,
+    setEditorState,
+    isRunning,
+    setIsRunning,
+    onLanguageChange,
+    onContentChange,
+    onTerminalChange,
+  } = useEditorState(handleSnapshotChanged);
+
   useEffect(() => {
+    // Initialize the local editor state from the initial snapshot
+    if (editorInitialized) return;
+    if (!initialEditorSnapshot) return;
+
+    setTimeout(() => {
+      const { editor, terminal } = initialEditorSnapshot;
+      setEditorState({ editor, terminal });
+      setEditorInitialized(true);
+    }, 3000);
+  }, [editorInitialized, initialEditorSnapshot, setEditorState]);
+
+  useEffect(() => {
+    // Setup the participant device
     if (connectionState === ConnectionState.Connected) {
       localParticipant.setCameraEnabled(false);
       localParticipant.setMicrophoneEnabled(true);
@@ -80,29 +119,17 @@ const InterviewPage: React.FC = () => {
   }, [localParticipant, connectionState]);
 
   const handleConnect = useCallback(() => {
-    if (
-      connectionState === ConnectionState.Connecting ||
-      connectionState === ConnectionState.Reconnecting
-    ) {
-      return;
-    }
-
-    if (connectionState === ConnectionState.Connected) {
-      disconnect();
-    } else {
-      connect();
-    }
+    if (connectionState === ConnectionState.Connected) return disconnect();
+    if (connectionState === ConnectionState.Disconnected) return connect();
   }, [connectionState, disconnect, connect]);
 
   const startInterview = useCallback(async () => {
-    // TODO: move session creation to a separate place
+    // TODO: toggle session status to in_progress
   }, []);
 
   const handleRunCode = async () => {
+    const { language, content } = editorState.editor;
     setIsRunning(true);
-    setExecutionTime(null); // Reset execution time
-
-    const { language, content } = editorSnapshot!;
 
     try {
       const response = await fetch("/api/runCode", {
@@ -112,34 +139,37 @@ const InterviewPage: React.FC = () => {
         },
         body: JSON.stringify({ code: content, language: language }),
       });
+
       const data = await response.json();
       if (data.status === "success") {
-        setExecutionTime(data.executionTime);
+        const executionTime = data.executionTime;
+        let output = "";
+        let isError = false;
+
         if (data.exception !== null) {
           const exceptionLines = data.exception.split("\n");
-          setOutput(exceptionLines.slice(1).join("\n").trim());
-          setIsError(true);
+          output = exceptionLines.slice(1).join("\n").trim();
+          isError = true;
         } else {
-          setOutput(data.stdout);
-          setIsError(false);
+          output = data.stdout;
+          isError = false;
         }
+
+        onTerminalChange({ output, isError, executionTime });
       } else {
-        setOutput("Please Try Again Later");
-        setIsError(true);
+        toast.error("Error running code. Please try again.");
       }
     } catch (error) {
-      console.error("Error running code:", error);
-      setOutput("Error running code. Please try again.");
-      setIsError(true);
-    } finally {
-      setIsRunning(false);
+      toast.error("Error running code. Please try again.");
     }
+
+    setIsRunning(false);
   };
 
   return (
     <div className="flex flex-col justify-center items-center h-screen w-full">
       <Toolbar />
-      {!!session && !!question && !!editorSnapshot ? (
+      {!!session && !!question && editorInitialized ? (
         <div className="w-full h-full flex justify-center items-center">
           <ResizablePanelGroup direction="horizontal" className="w-full h-full">
             <ResizablePanel className="min-w-[5rem] h-full w-full relative">
@@ -158,7 +188,7 @@ const InterviewPage: React.FC = () => {
             <ResizablePanel className="min-w-[20rem]">
               <div className="flex flex-col justify-start h-full w-full">
                 <div className="flex justify-between items-center p-2 border-b">
-                  <Select value={editorSnapshot.language} onValueChange={onLanguageChange}>
+                  <Select value={editorState.editor.language} onValueChange={onLanguageChange}>
                     <SelectTrigger className="w-36 h-8">
                       <SelectValue placeholder="Language" />
                     </SelectTrigger>
@@ -185,9 +215,9 @@ const InterviewPage: React.FC = () => {
                 <div className="bg-blue-50 h-full relative" ref={editorContainerRef}>
                   <Editor
                     className="absolute inset-0"
-                    language={editorSnapshot.language}
+                    language={editorState.editor.language}
                     theme={theme === "dark" ? "customDarkTheme" : "vs-light"}
-                    value={editorSnapshot.content}
+                    value={editorState.editor.content}
                     options={{
                       fontSize: 14,
                       lineNumbers: "on",
@@ -198,7 +228,7 @@ const InterviewPage: React.FC = () => {
                         enabled: false,
                       },
                     }}
-                    onChange={(value) => onEditorContentChange(value || "")}
+                    onChange={(value) => onContentChange(value || "")}
                     beforeMount={(monaco) => {
                       monaco.editor.defineTheme("customDarkTheme", customEditorTheme);
                       monaco.editor.setTheme("customDarkTheme");
@@ -208,18 +238,23 @@ const InterviewPage: React.FC = () => {
                 <div className="flex p-3 border-t flex-col space-y-2 min-h-[10rem]">
                   <div className="flex justify-between items-center">
                     <p className="text-sm text-primary font-medium">Output</p>
-                    {executionTime !== null && (
+                    {!isRunning && (
                       <div className="flex items-center text-sm text-gray-500">
                         <Clock className="w-4 h-4 mr-1" />
-                        <span>{executionTime} ms</span>
+                        <span>{editorState.terminal.executionTime} ms</span>
                       </div>
                     )}
                   </div>
                   <div className="p-2 rounded-md bg-secondary h-full">
                     <pre
-                      className={`text-sm ${isError ? "text-red-500" : "text-gray-800 dark:text-gray-200"} p-1 rounded-md`}
+                      className={cn(
+                        "text-sm p-1 rounded-md",
+                        editorState.terminal.isError
+                          ? "text-red-500"
+                          : "text-gray-800 dark:text-gray-200"
+                      )}
                     >
-                      <code>{output}</code>
+                      <code>{editorState.terminal.output}</code>
                     </pre>
                   </div>
                 </div>
@@ -275,7 +310,9 @@ const InterviewPage: React.FC = () => {
           </div>
         </div>
       ) : (
-        <div>Loading...</div>
+        <div className="flex justify-center items-center h-full">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+        </div>
       )}
     </div>
   );

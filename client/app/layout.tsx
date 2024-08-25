@@ -5,7 +5,7 @@ import "./globals.css";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 
 const fontSans = FontSans({
   subsets: ["latin"],
