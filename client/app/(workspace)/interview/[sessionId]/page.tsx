@@ -73,6 +73,7 @@ const InterviewPage: React.FC = () => {
   });
   const createSnapshot = useMutation(api.editorSnapshots.create);
 
+  // Handle snapshot changes on convex backend
   const handleSnapshotChanged = useCallback(
     (snapshot: EditorState) => {
       const promise = createSnapshot({
@@ -103,11 +104,9 @@ const InterviewPage: React.FC = () => {
     if (editorInitialized) return;
     if (!initialEditorSnapshot) return;
 
-    setTimeout(() => {
-      const { editor, terminal } = initialEditorSnapshot;
-      setEditorState({ editor, terminal });
-      setEditorInitialized(true);
-    }, 3000);
+    const { editor, terminal } = initialEditorSnapshot;
+    setEditorState({ editor, terminal });
+    setEditorInitialized(true);
   }, [editorInitialized, initialEditorSnapshot, setEditorState]);
 
   useEffect(() => {
