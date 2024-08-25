@@ -23,7 +23,7 @@ export const useConnectionState = create<ConnectionState>((set) => ({
 
 export const useConnection = (room: Room | undefined = undefined) => {
   const { accessToken, serverUrl, shouldConnect, setConnectionState } = useConnectionState();
-  const getToken = useAction(api.sessions.getToken);
+  const getToken = useAction(api.actions.getToken);
 
   const connect = async () => {
     const { accessToken } = await getToken();
