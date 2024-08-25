@@ -135,6 +135,7 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
   const handleConnect = useCallback(async () => {
     if (connectionState === ConnectionState.Connected) {
       disconnect();
+      setAgentReceivedSessionId(false);
     } else if (connectionState === ConnectionState.Disconnected) {
       await connect();
     }

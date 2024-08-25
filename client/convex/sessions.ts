@@ -80,6 +80,7 @@ export const create = mutation({
       editor: {
         language: "python",
         content: "",
+        lastUpdated: Date.now(),
       },
       terminal: {
         output: "",
@@ -93,12 +94,12 @@ export const create = mutation({
 
 export const getSessionMetadata = query({
   args: {
-    sessionId: v.string(),
+    sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
     // TODO: should check user identity, but this api is used by the agent server
     // so we skip that for now
-    const session = await ctx.db.get(sessionId as Id<"sessions">);
+    const session = await ctx.db.get(sessionId);
     const question = await ctx.db.get(session!.questionId);
 
     if (!session || !question) {

@@ -13,11 +13,18 @@ from livekit.agents import (
     llm,
 )
 from livekit.rtc import DataPacket
-from livekit.agents.voice_assistant import VoiceAssistant
+from livekit.agents.voice_assistant import (
+    VoiceAssistant,
+)
 from livekit.plugins import deepgram, openai, silero
 
 from agent_server.langgraph_llm import LangGraphLLM
-from agent_server.types import SessionMetadata
+from agent_server.types import (
+    SessionMetadata,
+    EditorSnapshot,
+    EditorState,
+    TerminalState,
+)
 
 logger = logging.getLogger("minimal-assistant")
 logger.setLevel(logging.DEBUG)
@@ -63,44 +70,53 @@ async def entrypoint(ctx: JobContext):
     async def send_reminder():
         logger.info(f"Reminder sent")
         await assistant.say(
-            assistant.llm.chat(
-                chat_ctx=assistant.chat_ctx.append(
-                    role="system", text="should get into reminder state now"
-                ),
-                interaction_type="reminder_required",
-            ),
+            invoke_agent(assistant.chat_ctx, "reminder_required"),
             allow_interruptions=True,
             add_to_chat_ctx=True,
         )
 
-    # # Not used anymore since we are using stateless LLM chat
-    # async def will_synthesize_assistant_reply(
-    #     assistant: VoiceAssistant, copied_ctx: llm.ChatContext
-    # ) -> llm.LLMStream:
+    def invoke_agent(chat_ctx: llm.ChatContext, interaction_type: str) -> llm.LLMStream:
+        result = convex_client.query(
+            "editorSnapshots:getLatestSnapshotBySessionId",
+            {"sessionId": session_id_fut.result()},
+        )
 
-    #     langchain_messages = convert_livekit_msgs_to_langchain_msgs(
-    #         copied_ctx.messages
-    #     )  # only the last message
+        logger.info(f"Got snapshot: {result}")
+        session_metadata = session_metadata_fut.result()
+        snapshot = EditorSnapshot(
+            editor=EditorState(
+                language=result["editor"]["language"],
+                content=result["editor"]["content"],
+                last_updated=result["editor"]["lastUpdated"],
+            ),
+            terminal=TerminalState(
+                output=result["terminal"]["output"],
+                is_error=result["terminal"]["isError"],
+                execution_time=result["terminal"].get("executionTime", None),
+            ),
+        )
 
-    #     assert isinstance(assistant.llm, LangGraphLLM), "Expected LangGraphLLM"
+        return agent.chat(
+            chat_ctx=chat_ctx,
+            snapshot=snapshot,
+            interaction_type=interaction_type,
+            session_metadata=session_metadata,
+        )
 
-    #     print(f"langchain_messages: {langchain_messages}")
-
-    #     # Await the update_state function directly
-    #     await assistant.llm.update_state(langchain_messages[-1])
-
-    #     # Return the result of _default_will_synthesize_assistant_reply
-    #     return _default_will_synthesize_assistant_reply(assistant, copied_ctx)
+    def will_synthesize_assistant_reply(
+        assistant: VoiceAssistant, chat_ctx: llm.ChatContext
+    ) -> llm.LLMStream:
+        return invoke_agent(chat_ctx, "response_required")
 
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
-    agent = LangGraphLLM(session_metadata=session_metadata_fut)
+    agent = LangGraphLLM()
     assistant = VoiceAssistant(
         vad=ctx.proc.userdata["vad"],
         stt=deepgram.STT(),
         llm=agent,
         tts=openai.TTS(),
         chat_ctx=initial_ctx,
-        # will_synthesize_assistant_reply=will_synthesize_assistant_reply,
+        will_synthesize_assistant_reply=will_synthesize_assistant_reply,
     )
     assistant.start(ctx.room)
 
@@ -171,9 +187,8 @@ async def entrypoint(ctx: JobContext):
     await prepare_session_and_acknowledge()
     logger.info("Acked session id")
 
-    await asyncio.sleep(5)
     await assistant.say(
-        assistant.llm.chat(chat_ctx=initial_ctx),
+        will_synthesize_assistant_reply(assistant, initial_ctx),
         allow_interruptions=True,
         add_to_chat_ctx=True,
     )

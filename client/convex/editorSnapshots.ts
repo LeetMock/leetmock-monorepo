@@ -54,6 +54,7 @@ export const create = mutation({
     editor: v.object({
       language: v.string(),
       content: v.string(),
+      lastUpdated: v.number(),
     }),
     terminal: v.object({
       output: v.string(),
@@ -62,6 +63,12 @@ export const create = mutation({
     }),
   },
   handler: async (ctx, { sessionId, editor, terminal }) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
     return await ctx.db.insert("editorSnapshots", {
       sessionId,
       editor,

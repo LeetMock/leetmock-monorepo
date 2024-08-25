@@ -5,6 +5,7 @@ export interface EditorState {
   editor: {
     language: string;
     content: string;
+    lastUpdated: number;
   };
   terminal: {
     output: string;
@@ -17,6 +18,7 @@ const initialState: EditorState = {
   editor: {
     language: "python",
     content: "",
+    lastUpdated: Date.now(),
   },
   terminal: {
     output: "",
@@ -31,6 +33,7 @@ export const useEditorState = (onChange: (state: EditorState) => void, delay: nu
   const onChangeDebounced = useDebounceCallback(onChange, delay);
 
   const handleStateChange = (state: EditorState, debounce: boolean = false) => {
+    state.editor.lastUpdated = Date.now();
     setEditorState(state);
     debounce ? onChangeDebounced(state) : onChange(state);
   };

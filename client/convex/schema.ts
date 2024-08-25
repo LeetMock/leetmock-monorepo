@@ -19,6 +19,7 @@ export default defineSchema({
     editor: v.object({
       language: v.string(),
       content: v.string(),
+      lastUpdated: v.number(),
     }),
     terminal: v.object({
       output: v.string(),
