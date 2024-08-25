@@ -1,7 +1,9 @@
 import asyncio
 import logging
+import os
 
 from dotenv import load_dotenv, find_dotenv
+from convex import ConvexClient
 from livekit.agents import (
     AutoSubscribe,
     JobContext,
@@ -15,7 +17,7 @@ from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.plugins import deepgram, openai, silero
 
 from agent_server.langgraph_llm import LangGraphLLM
-from agent_server.types import EditorState
+from agent_server.types import SessionMetadata
 
 logger = logging.getLogger("minimal-assistant")
 logger.setLevel(logging.DEBUG)
@@ -39,7 +41,10 @@ def prewarm_fnc(proc: JobProcess):
 
 async def entrypoint(ctx: JobContext):
     initial_ctx = llm.ChatContext()
+    convex_client = ConvexClient(deployment_url=os.getenv("CONVEX_URL"))
 
+    session_metadata_fut = asyncio.Future[SessionMetadata]()
+    session_id_fut = asyncio.Future[str]()
     reminder_task: asyncio.Task | None = None
     reminder_delay = 24  # seconds
 
@@ -88,7 +93,7 @@ async def entrypoint(ctx: JobContext):
     #     return _default_will_synthesize_assistant_reply(assistant, copied_ctx)
 
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
-    agent = await LangGraphLLM.create()
+    agent = LangGraphLLM(session_metadata=session_metadata_fut)
     assistant = VoiceAssistant(
         vad=ctx.proc.userdata["vad"],
         stt=deepgram.STT(),
@@ -137,18 +142,36 @@ async def entrypoint(ctx: JobContext):
 
     @ctx.room.on("data_received")
     def on_data_received(data: DataPacket):
-        logger.info("Received data for topic: %s", data.topic)
-        editor_state = EditorState.model_validate_json(data.data)
-        agent.set_editor_state(editor_state)
-        asyncio.create_task(debounced_send_reminder())
+        if data.topic == "session-id":
+            logger.info("Received data for topic: %s", data.topic)
+            if not session_id_fut.done():
+                session_id_fut.set_result(data.data.decode("utf-8"))
+            else:
+                logger.warning("session_id_fut already set")
+        else:
+            logger.warning("Unexpected data topic: %s", data.topic)
 
-    await ctx.room.local_participant.publish_data(
-        "my payload",
-        reliable=True,
-        topic="test",
-    )
+    async def prepare_session_and_acknowledge():
+        result = convex_client.query(
+            "sessions:getSessionMetadata",
+            {"sessionId": session_id_fut.result()},
+        )
 
-    await asyncio.sleep(1)
+        session_metadata = SessionMetadata.model_validate(result)
+        session_metadata_fut.set_result(session_metadata)
+
+        await ctx.room.local_participant.publish_data(
+            payload="session-id-received",
+            topic="session-id-received",
+            reliable=True,
+        )
+
+    logger.info("Waiting for session id")
+    await session_id_fut
+    await prepare_session_and_acknowledge()
+    logger.info("Acked session id")
+
+    await asyncio.sleep(5)
     await assistant.say(
         assistant.llm.chat(chat_ctx=initial_ctx),
         allow_interruptions=True,

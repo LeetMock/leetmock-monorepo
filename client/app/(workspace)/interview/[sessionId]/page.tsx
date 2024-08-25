@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Editor from "@monaco-editor/react";
 import { editor as monacoEditor } from "monaco-editor";
@@ -16,29 +16,26 @@ import { LANGUAGES } from "@/lib/constants";
 import { useTheme } from "next-themes";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { QuestionHolder } from "@/components/questions/QuestionHolder";
-import { useAction, useMutation, useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Toolbar } from "../_components/Toolbar";
 import { ConnectionState } from "livekit-client";
 import {
+  useConnectionState,
   useDataChannel,
   useLocalParticipant,
   useRoomContext,
-  useTracks,
 } from "@livekit/components-react";
-import { useConnectionState } from "@livekit/components-react";
 import { useConnection } from "@/hooks/useConnection";
 import { useAgent } from "@/hooks/useAgent";
 import { Transcripts } from "../_components/Transcripts";
 import { LucideVolume2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, encode } from "@/lib/utils";
 import { Loader2 } from "lucide-react"; // Import a loading icon
 import { Clock } from "lucide-react"; // Import Clock icon
-import { useCodingSession } from "@/hooks/useCodingSession";
 import { Id } from "@/convex/_generated/dataModel";
-import { toast } from "sonner";
-import { useDebounceCallback } from "usehooks-ts";
 import { EditorState, useEditorState } from "@/hooks/useEditorState";
+import { toast } from "sonner";
 
 const customEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -49,29 +46,29 @@ const customEditorTheme: monacoEditor.IStandaloneThemeData = {
   },
 };
 
-const InterviewPage: React.FC = () => {
+const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { theme } = useTheme();
-  const { sessionId } = useParams<{ sessionId: Id<"sessions"> }>();
-
   const [editorInitialized, setEditorInitialized] = useState(false);
   const editorContainerRef = useRef<HTMLDivElement>(null);
 
-  // LiveKit states
+  // LiveKit
   const room = useRoomContext();
   const connectionState = useConnectionState();
   const { connect, disconnect } = useConnection(room);
   const { localParticipant } = useLocalParticipant();
+  const { send: sendSessionId } = useDataChannel("session-id");
 
-  // Agent & Interview states
+  // Agent & Interview
+  const [agentReceivedSessionId, setAgentReceivedSessionId] = useState(false);
   const { isAgentConnected, isAgentSpeaking } = useAgent();
 
-  // Convex states
+  // Convex
+  const createSnapshot = useMutation(api.editorSnapshots.create);
   const session = useQuery(api.sessions.getById, { sessionId });
   const question = useQuery(api.questions.getById, { questionId: session?.questionId });
   const initialEditorSnapshot = useQuery(api.editorSnapshots.getLatestSnapshotBySessionId, {
     sessionId,
   });
-  const createSnapshot = useMutation(api.editorSnapshots.create);
 
   // Handle snapshot changes on convex backend
   const handleSnapshotChanged = useCallback(
@@ -117,14 +114,31 @@ const InterviewPage: React.FC = () => {
     }
   }, [localParticipant, connectionState]);
 
-  const handleConnect = useCallback(() => {
-    if (connectionState === ConnectionState.Connected) return disconnect();
-    if (connectionState === ConnectionState.Disconnected) return connect();
-  }, [connectionState, disconnect, connect]);
+  useDataChannel("session-id-received", (message) => {
+    console.log("Received session id", message);
+    setAgentReceivedSessionId(true);
+  });
 
-  const startInterview = useCallback(async () => {
-    // TODO: toggle session status to in_progress
-  }, []);
+  useEffect(() => {
+    if (agentReceivedSessionId) return;
+
+    if (connectionState === ConnectionState.Connected) {
+      const interval = setInterval(() => {
+        console.log("Sending session id", sessionId);
+        sendSessionId(encode(sessionId), { reliable: true });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [agentReceivedSessionId, connectionState, sendSessionId, sessionId]);
+
+  const handleConnect = useCallback(async () => {
+    if (connectionState === ConnectionState.Connected) {
+      disconnect();
+    } else if (connectionState === ConnectionState.Disconnected) {
+      await connect();
+    }
+  }, [connectionState, disconnect, connect]);
 
   const handleRunCode = async () => {
     const { language, content } = editorState.editor;
@@ -166,7 +180,7 @@ const InterviewPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen w-full">
+    <>
       <Toolbar />
       {!!session && !!question && editorInitialized ? (
         <div className="w-full h-full flex justify-center items-center">
@@ -313,6 +327,29 @@ const InterviewPage: React.FC = () => {
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
         </div>
       )}
+    </>
+  );
+};
+
+const InterviewPage: React.FC = () => {
+  const { sessionId } = useParams<{ sessionId: string }>();
+  const sessionExists = useQuery(api.sessions.exists, { sessionId });
+
+  const interviewWorkspace = useMemo(() => {
+    if (sessionExists === undefined) {
+      return <div>Loading...</div>;
+    }
+
+    if (sessionExists === false) {
+      return <div>Session not found</div>;
+    }
+
+    return <InterviewWorkspace sessionId={sessionId as Id<"sessions">} />;
+  }, [sessionExists, sessionId]);
+
+  return (
+    <div className="flex flex-col justify-center items-center h-screen w-full">
+      {interviewWorkspace}
     </div>
   );
 };

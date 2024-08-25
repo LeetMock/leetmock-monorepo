@@ -7,6 +7,7 @@ export default defineSchema({
     userId: v.string(),
     questionId: v.id("questions"),
     agentThreadId: v.string(),
+    assistantId: v.string(),
     sessionStatus: v.union(
       v.literal("not_started"),
       v.literal("in_progress"),

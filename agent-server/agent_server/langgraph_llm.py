@@ -1,20 +1,20 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 import hashlib
 import os
 
 from pprint import pprint
-from langgraph_sdk import get_client
-from livekit.agents.voice_assistant import VoiceAssistant
-from livekit.agents import llm, utils
+from langgraph_sdk.client import get_client
+from livekit.agents import llm
 from livekit.plugins import openai
 from livekit.plugins.openai import LLMStream
 from typing import Any, AsyncIterator, List
 from openai.types.chat import ChatCompletionChunk, ChatCompletionMessageParam
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, FunctionMessage, BaseMessage
 from langgraph_sdk.client import LangGraphClient, StreamPart, Assistant, Thread
-from agent_server.types import EditorState
+from agent_server.types import SessionMetadata
 from agent_server.constants import QUESTION
 
 # LangGraph uses pydantic v1
@@ -86,28 +86,10 @@ class LangGraphInput(BaseModel):
 
 
 class LangGraphLLM(openai.LLM):
-    def __init__(self,  *args, **kwargs):
+    def __init__(self, session_metadata: asyncio.Future[SessionMetadata], *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        self._client = get_client(url=os.environ["LANGGRAPH_API_URL"])
-        self.thread = None
-        self.assistant = None
-        self.editor_state = EditorState()
-
-    @classmethod
-    async def create(cls, *args, **kwargs):
-        self = cls(*args, **kwargs)
-        await self.initialize()
-        return self
-
-    async def initialize(self):
-        self.thread = await self._client.threads.create()
-        assistants = await self._client.assistants.search(graph_id="code-mock-v1")
-        assert len(assistants) > 0, "No assistants found"
-        self.assistant = assistants[0]
-
-    def set_editor_state(self, state: EditorState):
-        self.editor_state = state
+        self.session_metadata = session_metadata
+        self._client = get_client(url=os.getenv("LANGGRAPH_API_URL"))
 
     def chat(
         self,
@@ -135,21 +117,23 @@ class LangGraphLLM(openai.LLM):
         """
 
         langchain_messages = convert_livekit_msgs_to_langchain_msgs(chat_ctx.messages)
+        session_metadata = self.session_metadata.result()
 
+        print(session_metadata)
         print("Following is copied_ctx.messages, not conmmitted yet!")
         pprint(langchain_messages)
 
         lang_graph_input = LangGraphInput(
             messages=langchain_messages,
             coding_question=QUESTION,
-            editor_content=self.editor_state.content,
-            content_last_updated=self.editor_state.last_updated,
+            editor_content="",
+            content_last_updated=0,
             interaction_type=interaction_type,
         )
 
         stream = self._client.runs.stream(
-            thread_id=self.thread["thread_id"],
-            assistant_id=self.assistant["assistant_id"],
+            thread_id=session_metadata.agent_thread_id,
+            assistant_id=session_metadata.assistant_id,
             input=lang_graph_input.dict(),
             stream_mode="updates",
         )

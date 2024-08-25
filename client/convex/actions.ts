@@ -4,9 +4,13 @@ import type { VideoGrant } from "livekit-server-sdk";
 import { action } from "./_generated/server";
 import { createToken, generateRandomAlphanumeric } from "@/lib/utils";
 import { TokenResult } from "@/lib/types";
+import { v } from "convex/values";
 
 export const createAgentThread = action({
-  handler: async (ctx) => {
+  args: {
+    graphId: v.string(),
+  },
+  handler: async (ctx, { graphId }) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
@@ -18,7 +22,18 @@ export const createAgentThread = action({
     const client = new Client({ apiKey, apiUrl });
 
     const thread = await client.threads.create();
-    return thread.thread_id;
+    const assistants = await client.assistants.search({ graphId });
+
+    if (assistants.length === 0) {
+      throw new Error("No assistants found");
+    }
+
+    const assistant = assistants[0];
+
+    return {
+      threadId: thread.thread_id,
+      assistantId: assistant.assistant_id,
+    };
   },
 });
 

@@ -47,11 +47,12 @@ export default function InterviewSelectionPage() {
   const onQuestionSelected = useCallback(
     async (questionId: Id<"questions">) => {
       // TODO: wrap inside an action
-      const promise = createAgentThread()
-        .then((agentThreadId) => {
+      const promise = createAgentThread({ graphId: "code-mock-v1" })
+        .then(({ threadId, assistantId }) => {
           return createSession({
             questionId: questionId,
-            agentThreadId: agentThreadId,
+            agentThreadId: threadId,
+            assistantId: assistantId,
           });
         })
         .then((sessionId) => {
