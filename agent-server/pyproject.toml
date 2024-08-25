@@ -22,6 +22,7 @@ debugpy = "^1.8.5"
 livekit = "^0.12.1"
 pydantic = "^2.8.2"
 livekit-agents = "^0.8.6"
+convex = "^0.6.0"
 
 
 [build-system]

@@ -4,8 +4,8 @@ export interface Language {
 }
 
 export const LANGUAGES: Language[] = [
-  { value: "javascript", label: "JavaScript" },
   { value: "python", label: "Python" },
+  { value: "javascript", label: "JavaScript" },
   { value: "java", label: "Java" },
   { value: "cpp", label: "C++" },
 ];

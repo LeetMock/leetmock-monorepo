@@ -4,15 +4,29 @@ import { defineSchema, defineTable } from "convex/server";
 // Schema definition
 export default defineSchema({
   sessions: defineTable({
-    code_block: v.string(),
-    last_code_update_timestamp: v.number(), // Unix timestamp in milliseconds
-    session_id: v.string(),
-    session_period: v.float64(),
-    start_time: v.number(), // Unix timestamp in milliseconds
-    time_remain: v.number(), // Time remaining in seconds
-    user_id: v.float64(),
-    question_id: v.number(),
+    userId: v.string(),
+    questionId: v.id("questions"),
+    agentThreadId: v.string(),
+    assistantId: v.string(),
+    sessionStatus: v.union(
+      v.literal("not_started"),
+      v.literal("in_progress"),
+      v.literal("completed")
+    ),
   }),
+  editorSnapshots: defineTable({
+    sessionId: v.id("sessions"),
+    editor: v.object({
+      language: v.string(),
+      content: v.string(),
+      lastUpdated: v.number(),
+    }),
+    terminal: v.object({
+      output: v.string(),
+      isError: v.boolean(),
+      executionTime: v.optional(v.number()),
+    }),
+  }).index("by_session_id", ["sessionId"]),
   questions: defineTable({
     category: v.array(v.string()),
     difficulty: v.float64(),
@@ -22,4 +36,3 @@ export default defineSchema({
     title: v.string(),
   }),
 });
-

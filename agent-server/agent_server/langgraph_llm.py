@@ -1,21 +1,20 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 import hashlib
 import os
 
 from pprint import pprint
-from langgraph_sdk import get_client
-from livekit.agents.voice_assistant import VoiceAssistant
-from livekit.agents import llm, utils
+from langgraph_sdk.client import get_client
+from livekit.agents import llm
 from livekit.plugins import openai
 from livekit.plugins.openai import LLMStream
 from typing import Any, AsyncIterator, List
-from openai.types.chat import ChatCompletionChunk, ChatCompletionMessageParam
+from openai.types.chat import  ChatCompletionMessageParam
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, FunctionMessage, BaseMessage
-from langgraph_sdk.client import LangGraphClient, StreamPart, Assistant, Thread
-from agent_server.types import EditorState
-from agent_server.constants import QUESTION
+from langgraph_sdk.client import StreamPart
+from agent_server.types import SessionMetadata, EditorSnapshot
 
 # LangGraph uses pydantic v1
 from pydantic.v1 import BaseModel
@@ -86,53 +85,18 @@ class LangGraphInput(BaseModel):
 
 
 class LangGraphLLM(openai.LLM):
-    def __init__(self,  *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        self._client = get_client(url=os.environ["LANGGRAPH_API_URL"])
-        self.thread = None
-        self.assistant = None
-        self.editor_state = EditorState()
-
-    @classmethod
-    async def create(cls, *args, **kwargs):
-        self = cls(*args, **kwargs)
-        await self.initialize()
-        return self
-
-    async def initialize(self):
-        self.thread = await self._client.threads.create()
-        assistants = await self._client.assistants.search(graph_id="code-mock-v1")
-        assert len(assistants) > 0, "No assistants found"
-        self.assistant = assistants[0]
-
-    def set_editor_state(self, state: EditorState):
-        self.editor_state = state
+        self._client = get_client(url=os.getenv("LANGGRAPH_API_URL"))
 
     def chat(
         self,
         *,
         chat_ctx: llm.ChatContext,
+        session_metadata: SessionMetadata,
+        snapshot: EditorSnapshot,
         interaction_type: str = "response_required",
-        fnc_ctx: llm.FunctionContext | None = None,
-        temperature: float | None = None,
-        n: int | None = 1,
-        parallel_tool_calls: bool | None = None
     ) -> LLMStream:
-
-        # No support for function context yet for LangGraph
-        """
-        opts: dict[str, Any] = dict()
-        if fnc_ctx and len(fnc_ctx.ai_functions) > 0:
-            fncs_desc = []
-            for fnc in fnc_ctx.ai_functions.values():
-                fncs_desc.append(llm._oai_api.build_oai_function_description(fnc))
-
-            opts["tools"] = fncs_desc
-
-            if fnc_ctx and parallel_tool_calls is not None:
-                opts["parallel_tool_calls"] = parallel_tool_calls
-        """
 
         langchain_messages = convert_livekit_msgs_to_langchain_msgs(chat_ctx.messages)
 
@@ -141,20 +105,21 @@ class LangGraphLLM(openai.LLM):
 
         lang_graph_input = LangGraphInput(
             messages=langchain_messages,
-            coding_question=QUESTION,
-            editor_content=self.editor_state.content,
-            content_last_updated=self.editor_state.last_updated,
+            coding_question=session_metadata.question_content,
+            editor_content=snapshot.editor.content,
+            content_last_updated=snapshot.editor.last_updated,
             interaction_type=interaction_type,
         )
 
         stream = self._client.runs.stream(
-            thread_id=self.thread["thread_id"],
-            assistant_id=self.assistant["assistant_id"],
+            thread_id=session_metadata.agent_thread_id,
+            assistant_id=session_metadata.assistant_id,
             input=lang_graph_input.dict(),
             stream_mode="updates",
+            multitask_strategy="interrupt",
         )
 
-        return SimpleLLMStream(stream=stream, chat_ctx=chat_ctx, fnc_ctx=fnc_ctx)
+        return SimpleLLMStream(stream=stream, chat_ctx=chat_ctx, fnc_ctx=None)
 
     async def update_state(self, messages: list[BaseMessage]):
         print("Updating state")

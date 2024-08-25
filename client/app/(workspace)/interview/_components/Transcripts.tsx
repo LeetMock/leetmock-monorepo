@@ -6,7 +6,7 @@ import {
   useTrackTranscription,
 } from "@livekit/components-react";
 import { LocalParticipant, Participant, Track, TranscriptionSegment } from "livekit-client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type ChatMessageType = {
   name: string;
@@ -36,6 +36,7 @@ const TranscriptsInner = ({
 }) => {
   const { localParticipant, microphoneTrack } = useLocalParticipant();
   const [transcripts, setTranscripts] = useState<Record<string, ChatMessageType>>({});
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const agentMessages = useTrackTranscription(agentAudioTrack);
   const localMessages = useTrackTranscription({
@@ -72,6 +73,12 @@ const TranscriptsInner = ({
     return allMessages;
   }, [transcripts]);
 
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
   return (
     <div className="relative h-full">
       <div className="absolute inset-0 overflow-y-auto">
@@ -89,6 +96,7 @@ const TranscriptsInner = ({
               </div>
             );
           })}
+          <div ref={messagesEndRef} />
         </div>
       </div>
     </div>

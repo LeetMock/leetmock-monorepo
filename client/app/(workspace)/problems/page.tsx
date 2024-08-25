@@ -1,19 +1,15 @@
 "use client";
 
-import { useQuery } from "convex/react";
+import { useCallback, useEffect } from "react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
-// import {
-//   SignedIn,
-//   SignedOut,
-//   useAuth
-// } from '@clerk/nextjs';
-import { Sign } from "crypto";
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { Id } from "@/convex/_generated/dataModel";
+import router from "next/router";
+import { toast } from "sonner";
 
 const getDifficultyColor = (difficulty: number) => {
   switch (difficulty) {
@@ -42,7 +38,37 @@ const getDifficultyText = (difficulty: number) => {
 };
 
 export default function InterviewSelectionPage() {
+  const router = useRouter();
+
   const questions = useQuery(api.questions.getAll);
+  const createAgentThread = useAction(api.actions.createAgentThread);
+  const createSession = useMutation(api.sessions.create);
+
+  const onQuestionSelected = useCallback(
+    async (questionId: Id<"questions">) => {
+      // TODO: wrap inside an action
+      const promise = createAgentThread({ graphId: "code-mock-v1" })
+        .then(({ threadId, assistantId }) => {
+          return createSession({
+            questionId: questionId,
+            agentThreadId: threadId,
+            assistantId: assistantId,
+          });
+        })
+        .then((sessionId) => {
+          // TODO: add session list page and let user select the session
+
+          router.push(`/interview/${sessionId}`);
+        });
+
+      toast.promise(promise, {
+        loading: "Creating interview",
+        success: "Interview created",
+        error: "Error creating interview",
+      });
+    },
+    [createAgentThread, createSession, router]
+  );
 
   if (questions === undefined) {
     return <div className="p-4">Loading...</div>;
@@ -62,36 +88,37 @@ export default function InterviewSelectionPage() {
         <p className="text-center">No questions available.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {questions.map((question) => (
-            <Link
-              href={`/interview/${question.question_id}`}
-              key={question.question_id}
-              className="block transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
+          {questions.map(({ _id, title, difficulty, category }) => (
+            <Card
+              key={_id}
+              className={cn(
+                "h-full cursor-pointer hover:bg-gray-50 dark:bg-secondary shadow-sm rounded-lg",
+                "block transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
+              )}
+              onClick={() => onQuestionSelected(_id)}
             >
-              <Card className="h-full cursor-pointer hover:bg-gray-50 dark:bg-secondary shadow-sm rounded-lg">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-xl">{question.title}</CardTitle>
-                  <Badge
-                    className={cn(
-                      getDifficultyColor(question.difficulty),
-                      "text-white border-transparent dark:text-primary-foreground"
-                    )}
-                    variant="outline"
-                  >
-                    {getDifficultyText(question.difficulty)}
-                  </Badge>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <div className="flex flex-wrap gap-2">
-                    {question.category.map((element: string, index: number) => (
-                      <Badge key={index} variant="secondary">
-                        {element}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="text-xl">{title}</CardTitle>
+                <Badge
+                  className={cn(
+                    getDifficultyColor(difficulty),
+                    "text-white border-transparent dark:text-primary-foreground"
+                  )}
+                  variant="outline"
+                >
+                  {getDifficultyText(difficulty)}
+                </Badge>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <div className="flex flex-wrap gap-2">
+                  {category.map((element: string, index: number) => (
+                    <Badge key={index} variant="secondary">
+                      {element}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       )}
