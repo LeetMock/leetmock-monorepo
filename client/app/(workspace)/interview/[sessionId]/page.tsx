@@ -165,7 +165,7 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
           output = exceptionLines.slice(1).join("\n").trim();
           isError = true;
         } else {
-          output = data.stdout;
+          output = data.stdout ? data.stdout : "";
           isError = false;
         }
 
@@ -278,12 +278,11 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
           <div className="w-[24rem] border-l h-full p-2 flex flex-col space-y-4">
             <Button
               className={cn(
-                "w-full",
-                "font-semibold",
+                "w-full font-semibold text-white",
                 connectionState === ConnectionState.Disconnected &&
-                  "bg-green-400 text-gray-900 hover:bg-green-500 transition-all",
+                  "bg-green-500 hover:bg-green-600 transition-all",
                 connectionState === ConnectionState.Connecting &&
-                  "bg-gray-400 text-gray-900 hover:bg-gray-500 transition-all",
+                  "bg-gray-400 hover:bg-gray-500 transition-all",
                 connectionState === ConnectionState.Connected &&
                   "bg-red-500 text-white hover:bg-red-600 transition-all"
               )}
