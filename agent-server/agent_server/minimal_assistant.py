@@ -54,17 +54,24 @@ async def entrypoint(ctx: JobContext):
     session_id_fut = asyncio.Future[str]()
     reminder_task: asyncio.Task | None = None
     reminder_delay = 24  # seconds
+    last_message_was_reminder = False
+    prevent_consecutive_reminders = True
 
     async def debounced_send_reminder():
-        nonlocal reminder_task
+        nonlocal reminder_task, last_message_was_reminder, prevent_consecutive_reminders
         if reminder_task:
             logger.info("Reminder task cancelled")
             reminder_task.cancel()
+        if prevent_consecutive_reminders and last_message_was_reminder:
+            logger.info("Last message was a reminder. Skipping sending another reminder.")
+            return  # Don't send another reminder if the last message was already a reminder
 
         async def delayed_reminder():
+            nonlocal last_message_was_reminder
             await asyncio.sleep(reminder_delay)
             await send_reminder()
-
+            if prevent_consecutive_reminders:
+                last_message_was_reminder = True
         reminder_task = asyncio.create_task(delayed_reminder())
 
     async def send_reminder():
@@ -130,7 +137,11 @@ async def entrypoint(ctx: JobContext):
 
     @assistant.on("user_speech_committed")
     def update_message_state_for_user(msg: llm.ChatMessage):
+        nonlocal last_message_was_reminder, prevent_consecutive_reminders
+        
         logger.info(f"user_speech_committed: {msg}")
+        if prevent_consecutive_reminders:
+            last_message_was_reminder = False  # Reset the flag when user speaks
 
         # Send a reminder event to the agent after 10 seconds of silence since the
         # last agent speech committed
