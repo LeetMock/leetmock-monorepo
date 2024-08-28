@@ -16,7 +16,7 @@ import { LANGUAGES } from "@/lib/constants";
 import { useTheme } from "next-themes";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { QuestionHolder } from "@/components/questions/QuestionHolder";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation, useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Toolbar } from "../_components/Toolbar";
 import { ConnectionState } from "livekit-client";
@@ -64,6 +64,7 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
 
   // Convex
   const createSnapshot = useMutation(api.editorSnapshots.create);
+  const runCode = useAction(api.codeRunner.runCode);
   const session = useQuery(api.sessions.getById, { sessionId });
   const question = useQuery(api.questions.getById, { questionId: session?.questionId });
   const initialEditorSnapshot = useQuery(api.editorSnapshots.getLatestSnapshotBySessionId, {
@@ -146,26 +147,22 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
     setIsRunning(true);
 
     try {
-      const response = await fetch("/api/runCode", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code: content, language: language }),
-      });
-
-      const data = await response.json();
-      if (data.status === "success") {
-        const executionTime = data.executionTime;
+      if (!session?.questionId) {
+        throw new Error("Question ID not found");
+      }
+      const result = await runCode({ language, code: content, questionId: session.questionId });
+      
+      if (result.status === "success") {
+        const executionTime = result.executionTime;
         let output = "";
         let isError = false;
 
-        if (data.exception !== null) {
-          const exceptionLines = data.exception.split("\n");
+        if (result.exception !== null) {
+          const exceptionLines = result.exception.split("\n");
           output = exceptionLines.slice(1).join("\n").trim();
           isError = true;
         } else {
-          output = data.stdout ? data.stdout : "";
+          output = result.stdout ? result.stdout : "";
           isError = false;
         }
 
@@ -174,6 +171,7 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
         toast.error("Error running code. Please try again.");
       }
     } catch (error) {
+      console.error("Error running code:", error);
       toast.error("Error running code. Please try again.");
     }
 
