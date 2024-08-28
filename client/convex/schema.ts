@@ -33,6 +33,14 @@ export default defineSchema({
     question: v.string(),
     question_id: v.float64(),
     solutions: v.any(),
+    function_name: v.string(),
+    inputParameters: v.array(v.string()),
+    tests: v.array(
+      v.object({
+        input: v.any(),
+        output: v.any(),
+      })
+    ),
     title: v.string(),
   }),
 });
