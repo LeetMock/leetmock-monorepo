@@ -1,0 +1,29 @@
+# fly.toml app configuration file generated for agent-server-winter-snow-3785 on 2024-08-26T23:27:18-07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'agent-server-winter-snow-3785'
+primary_region = 'sjc'
+
+[build]
+  dockerfile = "Dockerfile"
+
+[http_service]
+  internal_port = 8081
+  force_https = true
+  auto_stop_machines = "off"
+  auto_start_machines = false
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    timeout = "3s"
+    method = "get"
+    path = "/"
+  
+[[vm]]
+  memory = '2gb'
+  cpu_kind = 'shared'
+  cpus = 1
