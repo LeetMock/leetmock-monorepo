@@ -151,7 +151,7 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
         throw new Error("Question ID not found");
       }
       const result = await runCode({ language, code: content, questionId: session.questionId });
-      
+
       if (result.status === "success") {
         const executionTime = result.executionTime;
         let output = "";
