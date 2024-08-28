@@ -17,7 +17,6 @@ from livekit.agents.voice_assistant import (
     VoiceAssistant,
 )
 from livekit.plugins import deepgram, openai, silero
-from langgraph_sdk.client import get_client, LangGraphClient
 
 from agent_server.langgraph_llm import LangGraphLLM
 from agent_server.types import (
