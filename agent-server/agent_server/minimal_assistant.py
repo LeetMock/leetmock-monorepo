@@ -150,7 +150,8 @@ async def entrypoint(ctx: JobContext):
     @assistant.on("user_started_speaking")
     def on_user_started_speaking():
         logger.info("user_started_speaking")
-        reminder_task and reminder_task.cancel()
+        if reminder_task:
+            reminder_task.cancel()
 
     @assistant.on("user_stopped_speaking")
     def on_user_stopped_speaking():
@@ -160,7 +161,8 @@ async def entrypoint(ctx: JobContext):
     @assistant.on("agent_started_speaking")
     def on_agent_started_speaking():
         logger.info("agent_started_speaking")
-        reminder_task and reminder_task.cancel()
+        if reminder_task:
+            reminder_task.cancel()
 
     @assistant.on("agent_stopped_speaking")
     def on_agent_stopped_speaking():
