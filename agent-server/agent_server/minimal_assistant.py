@@ -50,7 +50,6 @@ def prewarm_fnc(proc: JobProcess):
 async def entrypoint(ctx: JobContext):
     initial_ctx = llm.ChatContext()
     convex_client = ConvexClient(deployment_url=os.getenv("CONVEX_URL") or "")
-    langgraph_client = get_client(url=os.getenv("LANGGRAPH_API_URL"))
 
     session_metadata_fut = asyncio.Future[SessionMetadata]()
     session_id_fut = asyncio.Future[str]()
