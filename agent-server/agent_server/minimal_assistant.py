@@ -17,6 +17,7 @@ from livekit.agents.voice_assistant import (
     VoiceAssistant,
 )
 from livekit.plugins import deepgram, openai, silero
+from langgraph_sdk.client import get_client, LangGraphClient
 
 from agent_server.langgraph_llm import LangGraphLLM
 from agent_server.types import (
@@ -48,7 +49,8 @@ def prewarm_fnc(proc: JobProcess):
 
 async def entrypoint(ctx: JobContext):
     initial_ctx = llm.ChatContext()
-    convex_client = ConvexClient(deployment_url=os.getenv("CONVEX_URL"))
+    convex_client = ConvexClient(deployment_url=os.getenv("CONVEX_URL") or "")
+    langgraph_client = get_client(url=os.getenv("LANGGRAPH_API_URL"))
 
     session_metadata_fut = asyncio.Future[SessionMetadata]()
     session_id_fut = asyncio.Future[str]()
@@ -106,12 +108,8 @@ async def entrypoint(ctx: JobContext):
             ),
         )
 
-        return agent.chat(
-            chat_ctx=chat_ctx,
-            snapshot=snapshot,
-            interaction_type=interaction_type,
-            session_metadata=session_metadata,
-        )
+        agent.set_agent_context(session_metadata, snapshot, interaction_type)
+        return agent.chat(chat_ctx=chat_ctx)
 
     def will_synthesize_assistant_reply(
         assistant: VoiceAssistant, chat_ctx: llm.ChatContext
@@ -119,6 +117,7 @@ async def entrypoint(ctx: JobContext):
         return invoke_agent(chat_ctx, "response_required")
 
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
+
     agent = LangGraphLLM()
     assistant = VoiceAssistant(
         vad=ctx.proc.userdata["vad"],
