@@ -1,8 +1,9 @@
-import { mutation, query } from "./_generated/server";
+import { query } from "./_generated/server";
 import { v } from "convex/values";
+import { userMutation, userQuery } from "./functions";
 
 // Get editor snapshot by ID
-export const getById = query({
+export const getById = userQuery({
   args: {
     snapshotId: v.optional(v.id("editorSnapshots")),
   },
@@ -15,7 +16,7 @@ export const getById = query({
 });
 
 // Get all editor snapshots by session ID
-export const getSnapshots = query({
+export const getSnapshots = userQuery({
   args: {
     sessionId: v.id("sessions"),
   },
@@ -48,7 +49,7 @@ export const getLatestSnapshotBySessionId = query({
   },
 });
 
-export const create = mutation({
+export const create = userMutation({
   args: {
     sessionId: v.id("sessions"),
     editor: v.object({
@@ -65,12 +66,6 @@ export const create = mutation({
     }),
   },
   handler: async (ctx, { sessionId, editor, terminal }) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new Error("Unauthorized");
-    }
-
     return await ctx.db.insert("editorSnapshots", {
       sessionId,
       editor,

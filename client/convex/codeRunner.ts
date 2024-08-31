@@ -2,6 +2,7 @@ import { action, query } from "./_generated/server";
 import { v } from "convex/values";
 import axios from "axios";
 import { api } from "./_generated/api";
+import { userAction } from "./functions";
 
 interface CodeRunResult {
   status: string;
@@ -22,7 +23,7 @@ function getFileExtension(language: string): string {
   return extensionMap[language] || "txt";
 }
 
-export const runTests = action({
+export const runTests = userAction({
   args: {
     language: v.string(),
     code: v.string(),
@@ -68,18 +69,18 @@ export const runTests = action({
         executionTime: data.executionTime,
         stdout: data.stdout || null,
         stderr: data.stderr || null,
-        isError: data.status !== 'success',
+        isError: data.status !== "success",
         exception: data.exception || null,
       };
     } catch (error) {
       console.error("Error running code:", error);
       return {
-        status: 'error',
+        status: "error",
         executionTime: 0,
         stdout: null,
         stderr: null,
         isError: true,
-        exception: 'Failed to run code',
+        exception: "Failed to run code",
       };
     }
   },
@@ -119,18 +120,18 @@ export const runCode = action({
         executionTime: data.executionTime,
         stdout: data.stdout || null,
         stderr: data.stderr || null,
-        isError: data.status !== 'success',
+        isError: data.status !== "success",
         exception: data.exception || null,
       };
     } catch (error) {
       console.log("error", error);
       return {
-        status: 'error',
+        status: "error",
         executionTime: 0,
         stdout: null,
         stderr: null,
         isError: true,
-        exception: 'Failed to run code',
+        exception: "Failed to run code",
       };
     }
   },

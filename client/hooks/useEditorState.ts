@@ -1,7 +1,12 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { useDebounceCallback } from "usehooks-ts";
-import { CODE_TEMPLATES, LANGUAGES } from "@/lib/constants";
-import { StringToBoolean } from "class-variance-authority/types";
+import { CODE_TEMPLATES } from "@/lib/constants";
+import { useCallback, useMemo } from "react";
+import { useNonReactiveQuery } from "./useNonReactiveQuery";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 export interface EditorState {
   editor: {
@@ -18,65 +23,100 @@ export interface EditorState {
   };
 }
 
-const getInitialContent = (language: string, functionName: string, params: string[]): string => {
-  return CODE_TEMPLATES[language](functionName, params);
+const defaultState: EditorState = {
+  editor: {
+    language: "python",
+    content: "",
+    lastUpdated: Date.now(),
+    functionName: "",
+    inputParameters: [],
+  },
+  terminal: {
+    output: "",
+    isError: false,
+  },
+};
+
+const getInitialContent = ({
+  language,
+  functionName,
+  inputParameters,
+}: EditorState["editor"]): string => {
+  return CODE_TEMPLATES[language](functionName, inputParameters);
 };
 
 export const useEditorState = (
+  sessionId: Id<"sessions">,
   onChange: (state: EditorState) => void,
-  initialFunctionName: string = "solution",
-  initialParams: string[] = [],
   delay: number = 1000
 ) => {
-  const [editorState, setEditorState] = useState<EditorState>(() => {
-    // Initialize the state with the default values
-    return {
-      editor: {
-        language: LANGUAGES[0].value,
-        content: getInitialContent(LANGUAGES[0].value, initialFunctionName, initialParams),
-        lastUpdated: Date.now(),
-        functionName: initialFunctionName, // Added functionName
-        inputParameters: initialParams, // Added inputParameters
-      },
-      terminal: {
-        output: "",
-        isError: false,
-      },
-    };
-  });
+  const initialEditorSnapshot = useNonReactiveQuery(
+    api.editorSnapshots.getLatestSnapshotBySessionId,
+    { sessionId }
+  );
 
+  const [initialized, setInitialized] = useState(false);
+  const [localEditorState, setLocalEditorState] = useState<EditorState>(defaultState);
   const [isRunning, setIsRunning] = useState(false);
 
-  const onChangeDebounced = useDebounceCallback(onChange, delay);
+  useEffect(() => {
+    if (initialized) return;
+    if (!initialEditorSnapshot) return;
 
-  const handleStateChange = (state: EditorState, debounce: boolean = false) => {
-    state.editor.lastUpdated = Date.now();
-    setEditorState(state);
-    debounce ? onChangeDebounced(state) : onChange(state);
-  };
+    const { terminal, editor } = initialEditorSnapshot;
+    setLocalEditorState({ terminal, editor });
+    setInitialized(true);
+  }, [initialEditorSnapshot, initialized]);
 
-  const onLanguageChange = (language: string) => {
-    handleStateChange({
-      ...editorState,
-      editor: {
-        ...editorState.editor,
-        language,
-        content: getInitialContent(language, editorState.editor.functionName, editorState.editor.inputParameters), // Use current functionName and inputParameters
-      },
-    });
-  };
+  const editorState = useMemo(() => {
+    return initialized ? localEditorState : undefined;
+  }, [initialized, localEditorState]);
 
-  const onContentChange = (content: string) => {
-    handleStateChange({ ...editorState, editor: { ...editorState.editor, content } }, true);
-  };
+  const handleStateChange = useCallback(
+    (state: EditorState) => {
+      state.editor.lastUpdated = Date.now();
+      setLocalEditorState(state);
+      onChange(state);
+    },
+    [onChange]
+  );
 
-  const onTerminalChange = (terminal: EditorState["terminal"]) => {
-    handleStateChange({ ...editorState, terminal });
-  };
+  const handleStateChangeDebounced = useDebounceCallback(handleStateChange, delay);
+
+  const onLanguageChange = useCallback(
+    (language: string) => {
+      handleStateChange({
+        ...localEditorState,
+        editor: {
+          ...localEditorState.editor,
+          language,
+          content: getInitialContent(localEditorState.editor),
+        },
+      });
+    },
+    [handleStateChange, localEditorState]
+  );
+
+  const onContentChange = useCallback(
+    (content: string) => {
+      handleStateChangeDebounced({
+        ...localEditorState,
+        editor: { ...localEditorState.editor, content },
+      });
+    },
+    [handleStateChangeDebounced, localEditorState]
+  );
+
+  const onTerminalChange = useCallback(
+    (terminal: EditorState["terminal"]) => {
+      handleStateChange({ ...localEditorState, terminal });
+    },
+    [handleStateChange, localEditorState]
+  );
 
   return {
     editorState,
-    setEditorState,
+    setEditorState: setLocalEditorState,
     isRunning,
     setIsRunning,
     onLanguageChange,

@@ -1,22 +1,16 @@
 import { Client } from "@langchain/langgraph-sdk";
 import type { VideoGrant } from "livekit-server-sdk";
 
-import { action } from "./_generated/server";
 import { createToken, generateRandomAlphanumeric } from "@/lib/utils";
 import { TokenResult } from "@/lib/types";
 import { v } from "convex/values";
+import { userAction } from "./functions";
 
-export const createAgentThread = action({
+export const createAgentThread = userAction({
   args: {
     graphId: v.string(),
   },
   handler: async (ctx, { graphId }) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
-
     const apiKey = process.env.LANGSMITH_API_KEY;
     const apiUrl = process.env.LANGGRAPH_API_URL;
     const client = new Client({ apiKey, apiUrl });
@@ -37,14 +31,8 @@ export const createAgentThread = action({
   },
 });
 
-export const getToken = action({
+export const getToken = userAction({
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
-
     const apiKey = process.env.LIVEKIT_API_KEY;
     const apiSecret = process.env.LIVEKIT_API_SECRET;
 
