@@ -31,9 +31,11 @@ const defaultState: EditorState = {
   },
 };
 
+const defaultOnChange = (state: EditorState) => {};
+
 export const useEditorState = (
   sessionId: Id<"sessions">,
-  onChange: (state: EditorState) => void,
+  onChange: (state: EditorState) => void = defaultOnChange,
   delay: number = 1000
 ) => {
   const initialEditorSnapshot = useNonReactiveQuery(

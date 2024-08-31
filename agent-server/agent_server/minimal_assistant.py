@@ -1,9 +1,10 @@
+import os
 import asyncio
 import logging
-import os
+import psutil
+import convex_client
 
 from dotenv import load_dotenv, find_dotenv
-from convex import ConvexClient
 from livekit.agents import (
     AutoSubscribe,
     JobContext,
@@ -15,11 +16,8 @@ from livekit.agents import (
 )
 from livekit.agents.worker import _DefaultLoadCalc
 from livekit.rtc import DataPacket
-from livekit.agents.voice_assistant import (
-    VoiceAssistant,
-)
+from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.plugins import deepgram, openai, silero
-import psutil
 from agent_server.langgraph_llm import LangGraphLLM
 from agent_server.types import (
     SessionMetadata,
@@ -96,7 +94,9 @@ def prewarm_fnc(proc: JobProcess):
 
 async def entrypoint(ctx: JobContext):
     initial_ctx = llm.ChatContext()
-    convex_client = ConvexClient(deployment_url=os.getenv("CONVEX_URL") or "")
+    # convex_client = ConvexClient(deployment_url=os.getenv("CONVEX_URL") or "")
+    configuration = convex_client.Configuration(host=os.getenv("CONVEX_URL") or "")
+    api_client = convex_client.ApiClient(configuration)
 
     session_metadata_fut = asyncio.Future[SessionMetadata]()
     session_id_fut = asyncio.Future[str]()
@@ -134,10 +134,23 @@ async def entrypoint(ctx: JobContext):
         )
 
     def invoke_agent(chat_ctx: llm.ChatContext, interaction_type: str) -> llm.LLMStream:
-        result = convex_client.query(
-            "editorSnapshots:getLatestSnapshotBySessionId",
-            {"sessionId": session_id_fut.result()},
+        # result = convex_client.query(
+        #     "editorSnapshots:getLatestSnapshotBySessionId",
+        #     {"sessionId": session_id_fut.result()},
+        # )
+
+        api_instance = convex_client.QueryApi(api_client)
+        args = convex_client.RequestSessionsGetByIdArgs(
+            sessionId=session_id_fut.result()
         )
+        request = convex_client.RequestEditorSnapshotsGetLatestSnapshotBySessionId(
+            args=args
+        )
+        result = api_instance.api_run_editor_snapshots_get_latest_snapshot_by_session_id_post(
+            request
+        ).to_dict()[
+            "value"
+        ]
 
         logger.info(f"Got snapshot: {result}")
         session_metadata = session_metadata_fut.result()
@@ -247,10 +260,19 @@ async def entrypoint(ctx: JobContext):
 
     async def prepare_session_and_acknowledge():
         print("Preparing session and acknowledging")
-        result = convex_client.query(
-            "sessions:getSessionMetadata",
-            {"sessionId": session_id_fut.result()},
+        # result = convex_client.query(
+        #     "sessions:getSessionMetadata",
+        #     {"sessionId": session_id_fut.result()},
+        # )
+
+        api_instance = convex_client.QueryApi(api_client)
+        args = convex_client.RequestSessionsGetByIdArgs(
+            sessionId=session_id_fut.result()
         )
+        request = convex_client.RequestSessionsGetSessionMetadata(args=args)
+        result = api_instance.api_run_sessions_get_session_metadata_post(
+            request
+        ).to_dict()["value"]
 
         session_metadata = SessionMetadata.model_validate(result)
         session_metadata_fut.set_result(session_metadata)
