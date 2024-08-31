@@ -97,6 +97,8 @@ export const getSessionMetadata = query({
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
+    console.log("session", sessionId);
+
     // TODO: should check user identity, but this api is used by the agent server
     // so we skip that for now
     const session = await ctx.db.get(sessionId);

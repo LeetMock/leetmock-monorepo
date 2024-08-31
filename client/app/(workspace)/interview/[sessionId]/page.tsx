@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import Editor from "@monaco-editor/react";
 import { editor as monacoEditor } from "monaco-editor";
@@ -20,17 +20,12 @@ import { useMutation, useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Toolbar } from "../_components/Toolbar";
 import { ConnectionState } from "livekit-client";
-import {
-  useConnectionState,
-  useDataChannel,
-  useLocalParticipant,
-  useRoomContext,
-} from "@livekit/components-react";
+import { useConnectionState, useLocalParticipant, useRoomContext } from "@livekit/components-react";
 import { useConnection } from "@/hooks/useConnection";
 import { useAgent } from "@/hooks/useAgent";
 import { Transcripts } from "../_components/Transcripts";
 import { LucideVolume2 } from "lucide-react";
-import { cn, encode } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react"; // Import a loading icon
 import { Clock } from "lucide-react"; // Import Clock icon
 import { Id } from "@/convex/_generated/dataModel";
@@ -48,7 +43,6 @@ const customEditorTheme: monacoEditor.IStandaloneThemeData = {
 
 const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { theme } = useTheme();
-  const [editorInitialized, setEditorInitialized] = useState(false);
   const editorContainerRef = useRef<HTMLDivElement>(null);
 
   // LiveKit
@@ -56,94 +50,53 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
   const connectionState = useConnectionState();
   const { connect, disconnect } = useConnection(room);
   const { localParticipant } = useLocalParticipant();
-  const { send: sendSessionId } = useDataChannel("session-id");
-
-  // Agent & Interview
-  const [agentReceivedSessionId, setAgentReceivedSessionId] = useState(false);
-  const { isAgentConnected, isAgentSpeaking } = useAgent();
+  const { isAgentConnected, isAgentSpeaking } = useAgent(sessionId);
 
   // Convex
   const createSnapshot = useMutation(api.editorSnapshots.create);
   const runCode = useAction(api.codeRunner.runCode);
   const session = useQuery(api.sessions.getById, { sessionId });
   const question = useQuery(api.questions.getById, { questionId: session?.questionId });
-  const initialEditorSnapshot = useQuery(api.editorSnapshots.getLatestSnapshotBySessionId, {
-    sessionId,
-  });
 
-  // Handle snapshot changes on convex backend
-  const handleSnapshotChanged = useCallback(
+  const handleSnapshotChange = useCallback(
     (snapshot: EditorState) => {
-      const promise = createSnapshot({
-        sessionId,
-        ...snapshot,
-      });
-
+      const promise = createSnapshot({ sessionId, ...snapshot });
       toast.promise(promise, {
         success: "Snapshot saved",
         error: "Error saving snapshot",
       });
     },
-    [createSnapshot, sessionId]
+    [sessionId, createSnapshot]
   );
 
   const {
     editorState,
-    setEditorState,
     isRunning,
     setIsRunning,
     onLanguageChange,
     onContentChange,
     onTerminalChange,
-  } = useEditorState(handleSnapshotChanged);
+  } = useEditorState(sessionId, handleSnapshotChange);
 
+  // Setup the participant device
   useEffect(() => {
-    // Initialize the local editor state from the initial snapshot
-    if (editorInitialized) return;
-    if (!initialEditorSnapshot) return;
-
-    const { editor, terminal } = initialEditorSnapshot;
-    setEditorState({ editor, terminal });
-    setEditorInitialized(true);
-  }, [editorInitialized, initialEditorSnapshot, setEditorState]);
-
-  useEffect(() => {
-    // Setup the participant device
     if (connectionState === ConnectionState.Connected) {
       localParticipant.setCameraEnabled(false);
       localParticipant.setMicrophoneEnabled(true);
     }
   }, [localParticipant, connectionState]);
 
-  useDataChannel("session-id-received", (message) => {
-    console.log("Received session id", message);
-    setAgentReceivedSessionId(true);
-  });
-
-  useEffect(() => {
-    if (agentReceivedSessionId) return;
-
-    if (connectionState === ConnectionState.Connected) {
-      const interval = setInterval(() => {
-        console.log("Sending session id", sessionId);
-        sendSessionId(encode(sessionId), { reliable: true });
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }
-  }, [agentReceivedSessionId, connectionState, sendSessionId, sessionId]);
-
+  // Connect to the room
   const handleConnect = useCallback(async () => {
     if (connectionState === ConnectionState.Connected) {
       disconnect();
-      setAgentReceivedSessionId(false);
     } else if (connectionState === ConnectionState.Disconnected) {
       await connect();
     }
   }, [connectionState, disconnect, connect]);
 
   const handleRunCode = async () => {
-    const { language, content } = editorState.editor;
+    const { language, content } = editorState!.editor;
     setIsRunning(true);
 
     try {
@@ -181,7 +134,7 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
   return (
     <>
       <Toolbar />
-      {!!session && !!question && editorInitialized ? (
+      {!!session && !!question && !!editorState ? (
         <div className="w-full h-full flex justify-center items-center">
           <ResizablePanelGroup direction="horizontal" className="w-full h-full">
             <ResizablePanel className="min-w-[5rem] h-full w-full relative">

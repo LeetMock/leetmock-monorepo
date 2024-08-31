@@ -31,9 +31,9 @@ from agent_server.types import (
 logger = logging.getLogger("minimal-assistant")
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 file_handler = logging.FileHandler("logs/minimal_assistant.log")
 file_handler.setLevel(logging.DEBUG)
@@ -56,6 +56,7 @@ class CustomLoadCalc(_DefaultLoadCalc):
 
     It calculates the load based on the CPU and memory usage.
     """
+
     def __init__(self) -> None:
         super().__init__()
         self._mem_avg = utils.MovingAverage(5)  # avg over 2.5 seconds, like CPU
@@ -87,9 +88,11 @@ class CustomLoadCalc(_DefaultLoadCalc):
 
         return cls._instance._get_avg()
 
+
 def prewarm_fnc(proc: JobProcess):
     # load silero weights and store to process userdata
     proc.userdata["vad"] = silero.VAD.load()
+
 
 async def entrypoint(ctx: JobContext):
     initial_ctx = llm.ChatContext()
@@ -216,16 +219,34 @@ async def entrypoint(ctx: JobContext):
 
     @ctx.room.on("data_received")
     def on_data_received(data: DataPacket):
-        if data.topic == "session-id":
-            logger.info("Received data for topic: %s", data.topic)
-            if not session_id_fut.done():
-                session_id_fut.set_result(data.data.decode("utf-8"))
-            else:
-                logger.warning("session_id_fut already set")
-        else:
+        if data.topic != "session-id":
             logger.warning("Unexpected data topic: %s", data.topic)
+            return
+
+        logger.info("Received data for topic: %s", data.topic)
+        logger.info("Received data: %s", data.data)
+
+        session_id = data.data.decode("utf-8")
+        if len(session_id) == 0:
+            logger.warning("Received empty session id")
+            return
+
+        if not session_id_fut.done():
+            session_id_fut.set_result(session_id)
+            return
+        else:
+            logger.warning("session_id_fut already set")
+
+        asyncio.create_task(
+            ctx.room.local_participant.publish_data(
+                payload="session-id-received",
+                topic="session-id-received",
+                reliable=True,
+            )
+        )
 
     async def prepare_session_and_acknowledge():
+        print("Preparing session and acknowledging")
         result = convex_client.query(
             "sessions:getSessionMetadata",
             {"sessionId": session_id_fut.result()},
@@ -233,12 +254,6 @@ async def entrypoint(ctx: JobContext):
 
         session_metadata = SessionMetadata.model_validate(result)
         session_metadata_fut.set_result(session_metadata)
-
-        await ctx.room.local_participant.publish_data(
-            payload="session-id-received",
-            topic="session-id-received",
-            reliable=True,
-        )
 
     logger.info("Waiting for session id")
     await session_id_fut
@@ -260,8 +275,8 @@ if __name__ == "__main__":
             host="0.0.0.0",
             port=8081,
             load_fnc=CustomLoadCalc.get_load,
-            load_threshold=0.8,             # max(cpu_load, mem_load)
-            shutdown_process_timeout=30,    # seconds
-            num_idle_processes=3,           # number of idle agents to keep
+            load_threshold=0.8,  # max(cpu_load, mem_load)
+            shutdown_process_timeout=30,  # seconds
+            num_idle_processes=3,  # number of idle agents to keep
         )
     )
