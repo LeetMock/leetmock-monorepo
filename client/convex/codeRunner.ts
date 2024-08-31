@@ -2,6 +2,7 @@ import { action, query } from "./_generated/server";
 import { v } from "convex/values";
 import axios from "axios";
 import { api } from "./_generated/api";
+import { userAction } from "./functions";
 
 function getFileExtension(language: string): string {
   const extensionMap: { [key: string]: string } = {
@@ -13,7 +14,7 @@ function getFileExtension(language: string): string {
   return extensionMap[language] || "txt";
 }
 
-export const runCode = action({
+export const runCode = userAction({
   args: {
     language: v.string(),
     code: v.string(),
