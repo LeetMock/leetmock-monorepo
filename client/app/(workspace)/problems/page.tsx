@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
 import router from "next/router";
 import { toast } from "sonner";
+import { useEditorState } from "@/hooks/useEditorState";
 
 const getDifficultyColor = (difficulty: number) => {
   switch (difficulty) {
@@ -46,6 +47,12 @@ export default function InterviewSelectionPage() {
 
   const onQuestionSelected = useCallback(
     async (questionId: Id<"questions">) => {
+      if (!questions) return; // Check if questions is undefined
+      const question = questions.find(q => q._id === questionId);
+      if (!question) return;
+
+      const { functionName, inputParameters } = question; // Assuming these fields exist in your question object
+
       // TODO: wrap inside an action
       const promise = createAgentThread({ graphId: "code-mock-v1" })
         .then(({ threadId, assistantId }) => {
@@ -53,11 +60,11 @@ export default function InterviewSelectionPage() {
             questionId: questionId,
             agentThreadId: threadId,
             assistantId: assistantId,
+            functionName: functionName,
+            inputParameters: inputParameters
           });
         })
         .then((sessionId) => {
-          // TODO: add session list page and let user select the session
-
           router.push(`/interview/${sessionId}`);
         });
 
@@ -67,7 +74,7 @@ export default function InterviewSelectionPage() {
         error: "Error creating interview",
       });
     },
-    [createAgentThread, createSession, router]
+    [createAgentThread, createSession, router, questions]
   );
 
   if (questions === undefined) {

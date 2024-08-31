@@ -28,6 +28,10 @@ from agent_server.types import (
     TerminalState,
 )
 
+# Add this near the top of your file, before setting up logging
+log_directory = os.path.join(os.path.dirname(__file__), 'logs')
+os.makedirs(log_directory, exist_ok=True)
+
 logger = logging.getLogger("minimal-assistant")
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter(
@@ -35,7 +39,7 @@ formatter = logging.Formatter(
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-file_handler = logging.FileHandler("logs/minimal_assistant.log")
+file_handler = logging.FileHandler(os.path.join(log_directory, "minimal_assistant.log"))
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(formatter)
 

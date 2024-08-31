@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDebounceCallback } from "usehooks-ts";
+import { CODE_TEMPLATES, LANGUAGES } from "@/lib/constants";
+import { StringToBoolean } from "class-variance-authority/types";
 
 export interface EditorState {
   editor: {
     language: string;
     content: string;
     lastUpdated: number;
+    functionName: string;
+    inputParameters: string[];
   };
   terminal: {
     output: string;
@@ -14,20 +18,33 @@ export interface EditorState {
   };
 }
 
-const initialState: EditorState = {
-  editor: {
-    language: "python",
-    content: "",
-    lastUpdated: Date.now(),
-  },
-  terminal: {
-    output: "",
-    isError: false,
-  },
+const getInitialContent = (language: string, functionName: string, params: string[]): string => {
+  return CODE_TEMPLATES[language](functionName, params);
 };
 
-export const useEditorState = (onChange: (state: EditorState) => void, delay: number = 1000) => {
-  const [editorState, setEditorState] = useState<EditorState>(initialState);
+export const useEditorState = (
+  onChange: (state: EditorState) => void,
+  initialFunctionName: string = "solution",
+  initialParams: string[] = [],
+  delay: number = 1000
+) => {
+  const [editorState, setEditorState] = useState<EditorState>(() => {
+    // Initialize the state with the default values
+    return {
+      editor: {
+        language: LANGUAGES[0].value,
+        content: getInitialContent(LANGUAGES[0].value, initialFunctionName, initialParams),
+        lastUpdated: Date.now(),
+        functionName: initialFunctionName, // Added functionName
+        inputParameters: initialParams, // Added inputParameters
+      },
+      terminal: {
+        output: "",
+        isError: false,
+      },
+    };
+  });
+
   const [isRunning, setIsRunning] = useState(false);
 
   const onChangeDebounced = useDebounceCallback(onChange, delay);
@@ -39,7 +56,14 @@ export const useEditorState = (onChange: (state: EditorState) => void, delay: nu
   };
 
   const onLanguageChange = (language: string) => {
-    handleStateChange({ ...editorState, editor: { ...editorState.editor, language } });
+    handleStateChange({
+      ...editorState,
+      editor: {
+        ...editorState.editor,
+        language,
+        content: getInitialContent(language, editorState.editor.functionName, editorState.editor.inputParameters), // Use current functionName and inputParameters
+      },
+    });
   };
 
   const onContentChange = (content: string) => {

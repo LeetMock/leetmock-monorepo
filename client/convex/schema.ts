@@ -20,6 +20,8 @@ export default defineSchema({
       language: v.string(),
       content: v.string(),
       lastUpdated: v.number(),
+      functionName: v.string(),
+      inputParameters: v.array(v.string())
     }),
     terminal: v.object({
       output: v.string(),
@@ -31,10 +33,10 @@ export default defineSchema({
     category: v.array(v.string()),
     difficulty: v.float64(),
     question: v.string(),
-    question_id: v.float64(),
     solutions: v.any(),
-    function_name: v.string(),
+    functionName: v.string(),
     inputParameters: v.array(v.string()),
+    startingCode: v.string(),
     tests: v.array(
       v.object({
         input: v.any(),

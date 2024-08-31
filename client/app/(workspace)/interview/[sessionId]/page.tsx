@@ -36,6 +36,7 @@ import { Clock } from "lucide-react"; // Import Clock icon
 import { Id } from "@/convex/_generated/dataModel";
 import { EditorState, useEditorState } from "@/hooks/useEditorState";
 import { toast } from "sonner";
+import { PlayCircle, TestTube2 } from "lucide-react"; // Import icons for the buttons
 
 const customEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -64,6 +65,7 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
 
   // Convex
   const createSnapshot = useMutation(api.editorSnapshots.create);
+  const runTests = useAction(api.codeRunner.runTests);
   const runCode = useAction(api.codeRunner.runCode);
   const session = useQuery(api.sessions.getById, { sessionId });
   const question = useQuery(api.questions.getById, { questionId: session?.questionId });
@@ -147,10 +149,39 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
     setIsRunning(true);
 
     try {
+      const result = await runCode({ language, code: content });
+
+      if (result.status === "success") {
+        const executionTime = result.executionTime;
+        let output = result.stdout || "";
+        let isError = false;
+
+        if (result.exception) {
+          output = result.exception;
+          isError = true;
+        }
+
+        onTerminalChange({ output, isError, executionTime });
+      } else {
+        toast.error("Error running code. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error running code:", error);
+      toast.error("Error running code. Please try again.");
+    }
+
+    setIsRunning(false);
+  };
+
+  const handleRunTests = async () => {
+    const { language, content } = editorState.editor;
+    setIsRunning(true);
+
+    try {
       if (!session?.questionId) {
         throw new Error("Question ID not found");
       }
-      const result = await runCode({ language, code: content, questionId: session.questionId });
+      const result = await runTests({ language, code: content, questionId: session.questionId });
 
       if (result.status === "success") {
         const executionTime = result.executionTime;
@@ -198,79 +229,105 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel className="min-w-[20rem]">
-              <div className="flex flex-col justify-start h-full w-full">
-                <div className="flex justify-between items-center p-2 border-b">
-                  <Select value={editorState.editor.language} onValueChange={onLanguageChange}>
-                    <SelectTrigger className="w-36 h-8">
-                      <SelectValue placeholder="Language" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {LANGUAGES.map((lang) => (
-                        <SelectItem key={lang.value} value={lang.value}>
-                          {lang.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    className="w-20 h-8 relative"
-                    onClick={handleRunCode}
-                    disabled={isRunning}
-                  >
-                    {isRunning ? (
-                      <Loader2 className="absolute inset-0 m-auto h-4 w-4 animate-spin" />
-                    ) : (
-                      "Run"
-                    )}
-                  </Button>
-                </div>
-                <div className="bg-blue-50 h-full relative" ref={editorContainerRef}>
-                  <Editor
-                    className="absolute inset-0"
-                    language={editorState.editor.language}
-                    theme={theme === "dark" ? "customDarkTheme" : "vs-light"}
-                    value={editorState.editor.content}
-                    options={{
-                      fontSize: 14,
-                      lineNumbers: "on",
-                      roundedSelection: false,
-                      scrollBeyondLastLine: false,
-                      readOnly: false,
-                      minimap: {
-                        enabled: false,
-                      },
-                    }}
-                    onChange={(value) => onContentChange(value || "")}
-                    beforeMount={(monaco) => {
-                      monaco.editor.defineTheme("customDarkTheme", customEditorTheme);
-                      monaco.editor.setTheme("customDarkTheme");
-                    }}
-                  />
-                </div>
-                <div className="flex p-3 border-t flex-col space-y-2 min-h-[10rem]">
-                  <div className="flex justify-between items-center">
-                    <p className="text-sm text-primary font-medium">Output</p>
-                    {!isRunning && (
-                      <div className="flex items-center text-sm text-gray-500">
-                        <Clock className="w-4 h-4 mr-1" />
-                        <span>{editorState.terminal.executionTime} ms</span>
+              <ResizablePanelGroup direction="vertical">
+                <ResizablePanel defaultSize={75} minSize={30}>
+                  <div className="flex flex-col justify-start h-full w-full">
+                    <div className="flex justify-between items-center p-2 border-b">
+                      <Select value={editorState.editor.language} onValueChange={onLanguageChange}>
+                        <SelectTrigger className="w-36 h-8">
+                          <SelectValue placeholder="Language" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {LANGUAGES.map((lang) => (
+                            <SelectItem key={lang.value} value={lang.value}>
+                              {lang.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <div className="flex space-x-2">
+                        <Button
+                          className="w-28 h-8 relative"
+                          onClick={handleRunCode}
+                          disabled={isRunning}
+                        >
+                          {isRunning ? (
+                            <Loader2 className="absolute inset-0 m-auto h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              <PlayCircle className="w-4 h-4 mr-1" />
+                              Run Code
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          className="w-28 h-8 relative"
+                          onClick={handleRunTests}
+                          disabled={isRunning}
+                        >
+                          {isRunning ? (
+                            <Loader2 className="absolute inset-0 m-auto h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              <TestTube2 className="w-4 h-4 mr-1" />
+                              Run Tests
+                            </>
+                          )}
+                        </Button>
                       </div>
-                    )}
+                    </div>
+                    <div className="bg-blue-50 h-full relative" ref={editorContainerRef}>
+                      <Editor
+                        className="absolute inset-0"
+                        language={editorState.editor.language}
+                        theme={theme === "dark" ? "customDarkTheme" : "vs-light"}
+                        value={editorState.editor.content}
+                        options={{
+                          fontSize: 14,
+                          lineNumbers: "on",
+                          roundedSelection: false,
+                          scrollBeyondLastLine: false,
+                          readOnly: false,
+                          minimap: {
+                            enabled: false,
+                          },
+                        }}
+                        onChange={(value) => onContentChange(value || "")}
+                        beforeMount={(monaco) => {
+                          monaco.editor.defineTheme("customDarkTheme", customEditorTheme);
+                          monaco.editor.setTheme("customDarkTheme");
+                        }}
+                      />
+                    </div>
                   </div>
-                  <div className="p-2 rounded-md bg-secondary h-full">
-                    <pre
-                      className={cn(
-                        "text-sm p-1 rounded-md",
-                        editorState.terminal.isError
-                          ? "text-red-500"
-                          : "text-gray-800 dark:text-gray-200"
+                </ResizablePanel>
+                <ResizableHandle withHandle />
+                <ResizablePanel defaultSize={25} minSize={10}>
+                  <div className="flex p-3 border-t flex-col space-y-2 h-full">
+                    <div className="flex justify-between items-center">
+                      <p className="text-sm text-primary font-medium">Output</p>
+                      {!isRunning && (
+                        <div className="flex items-center text-sm text-gray-500">
+                          <Clock className="w-4 h-4 mr-1" />
+                          <span>{editorState.terminal.executionTime} ms</span>
+                        </div>
                       )}
-                    >
-                      <code>{editorState.terminal.output}</code>
-                    </pre>
+                    </div>
+                    <div className="p-2 rounded-md bg-secondary h-full overflow-auto">
+                      <pre
+                        className={cn(
+                          "text-sm p-1 rounded-md",
+                          editorState.terminal.isError
+                            ? "text-red-500"
+                            : "text-gray-800 dark:text-gray-200"
+                        )}
+                      >
+                        <code>{editorState.terminal.output}</code>
+                      </pre>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
             </ResizablePanel>
           </ResizablePanelGroup>
           <div className="w-[24rem] border-l h-full p-2 flex flex-col space-y-4">

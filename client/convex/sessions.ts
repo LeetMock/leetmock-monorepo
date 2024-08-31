@@ -58,8 +58,10 @@ export const create = mutation({
     questionId: v.id("questions"),
     agentThreadId: v.string(),
     assistantId: v.string(),
+    functionName: v.string(),
+    inputParameters: v.array(v.string())
   },
-  handler: async (ctx, { questionId, agentThreadId, assistantId }) => {
+  handler: async (ctx, { questionId, agentThreadId, assistantId, inputParameters, functionName }) => { // Added missing parameters
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
@@ -75,12 +77,20 @@ export const create = mutation({
       sessionStatus: "not_started",
     });
 
+    // Fetch the question data to get the startingCode
+    const question = await ctx.db.get(questionId);
+    if (!question) {
+      throw new Error("Question not found");
+    }
+
     await ctx.db.insert("editorSnapshots", {
       sessionId,
       editor: {
-        language: "python",
-        content: "",
+        language: "python", // You might want to make this dynamic based on the question
+        content: question.startingCode || "", // Use startingCode from the question
         lastUpdated: Date.now(),
+        functionName: functionName,
+        inputParameters: inputParameters
       },
       terminal: {
         output: "",
