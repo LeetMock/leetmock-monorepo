@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-schema": "npx convex-helpers open-api-spec --output-file ../convex-client"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.4.1",
@@ -32,7 +33,7 @@
     "axios": "^1.7.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "convex": "^1.13.2",
+    "convex": "^1.15.0",
     "convex-helpers": "^0.1.54",
     "debounce": "^2.1.0",
     "eventemitter3": "^5.0.1",

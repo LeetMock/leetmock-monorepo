@@ -1,6 +1,8 @@
-import { query } from "./_generated/server";
-import { v } from "convex/values";
+import { internalQuery, QueryCtx } from "./_generated/server";
+import { ConvexError, v } from "convex/values";
 import { userMutation, userQuery } from "./functions";
+import { Id } from "./_generated/dataModel";
+import { isDefined } from "@/lib/utils";
 
 // Get editor snapshot by ID
 export const getById = userQuery({
@@ -30,19 +32,31 @@ export const getSnapshots = userQuery({
 });
 
 // Get latest snapshot by session ID
-export const getLatestSnapshotBySessionId = query({
+export const getLatestSnapshotBySessionId = userQuery({
   args: {
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-    const snapshot = await ctx.db
-      .query("editorSnapshots")
-      .withIndex("by_session_id", (q) => q.eq("sessionId", sessionId))
-      .order("desc")
-      .first();
+    const snapshot = await queryLatestSnapshot(ctx, sessionId);
 
-    if (!snapshot) {
-      throw new Error("No snapshot found");
+    if (!isDefined(snapshot)) {
+      throw new ConvexError({ name: "NoSnapshotFound", message: "No snapshot found" });
+    }
+
+    return snapshot;
+  },
+});
+
+// Same as getLatestSnapshotBySessionId, but for internal use
+export const getLatestSnapshotBySessionIdInternal = internalQuery({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  handler: async (ctx, { sessionId }) => {
+    const snapshot = await queryLatestSnapshot(ctx, sessionId);
+
+    if (!isDefined(snapshot)) {
+      throw new ConvexError({ name: "NoSnapshotFound", message: "No snapshot found" });
     }
 
     return snapshot;
@@ -73,3 +87,13 @@ export const create = userMutation({
     });
   },
 });
+
+const queryLatestSnapshot = (ctx: QueryCtx, sessionId: Id<"sessions">) => {
+  const snapshot = ctx.db
+    .query("editorSnapshots")
+    .withIndex("by_session_id", (q) => q.eq("sessionId", sessionId))
+    .order("desc")
+    .first();
+
+  return snapshot;
+};

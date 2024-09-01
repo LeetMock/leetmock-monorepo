@@ -1,13 +1,16 @@
 import { v } from "convex/values";
-import { query } from "./_generated/server";
+import { internalQuery, query } from "./_generated/server";
 
 export const getById = query({
-  args: { questionId: v.optional(v.id("questions")) },
+  args: { questionId: v.id("questions") },
   handler: async (ctx, { questionId }) => {
-    if (!questionId) {
-      return undefined;
-    }
+    return await ctx.db.get(questionId);
+  },
+});
 
+export const getByIdInternal = internalQuery({
+  args: { questionId: v.id("questions") },
+  handler: async (ctx, { questionId }) => {
     return await ctx.db.get(questionId);
   },
 });

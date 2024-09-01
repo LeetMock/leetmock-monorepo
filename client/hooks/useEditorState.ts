@@ -7,6 +7,7 @@ import { useCallback, useMemo } from "react";
 import { useNonReactiveQuery } from "./useNonReactiveQuery";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { isDefined } from "@/lib/utils";
 
 export interface EditorState {
   editor: {
@@ -45,9 +46,11 @@ const getInitialContent = ({
   return CODE_TEMPLATES[language](functionName, inputParameters);
 };
 
+const defaultOnChange = (state: EditorState) => {};
+
 export const useEditorState = (
   sessionId: Id<"sessions">,
-  onChange: (state: EditorState) => void,
+  onChange: (state: EditorState) => void = defaultOnChange,
   delay: number = 1000
 ) => {
   const initialEditorSnapshot = useNonReactiveQuery(
@@ -61,7 +64,7 @@ export const useEditorState = (
 
   useEffect(() => {
     if (initialized) return;
-    if (!initialEditorSnapshot) return;
+    if (!isDefined(initialEditorSnapshot)) return;
 
     const { terminal, editor } = initialEditorSnapshot;
     setLocalEditorState({ terminal, editor });
