@@ -1,9 +1,12 @@
 import { v } from "convex/values";
 import { internalQuery, query } from "./_generated/server";
+import { isDefined } from "@/lib/utils";
 
 export const getById = query({
-  args: { questionId: v.id("questions") },
+  args: { questionId: v.optional(v.id("questions")) },
   handler: async (ctx, { questionId }) => {
+    if (!isDefined(questionId)) return null;
+
     return await ctx.db.get(questionId);
   },
 });

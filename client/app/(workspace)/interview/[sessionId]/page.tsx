@@ -50,7 +50,7 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
   const connectionState = useConnectionState();
   const { connect, disconnect } = useConnection(room);
   const { localParticipant } = useLocalParticipant();
-  const { isAgentConnected, isAgentSpeaking } = useAgent(sessionId);
+  const { isAgentConnected, isAgentSpeaking, agentAudioTrack } = useAgent(sessionId);
 
   // Convex
   const createSnapshot = useMutation(api.editorSnapshots.create);
@@ -270,7 +270,7 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
                 />
               </div>
             </div>
-            <Transcripts />
+            <Transcripts agentAudioTrack={agentAudioTrack} />
           </div>
         </div>
       ) : (

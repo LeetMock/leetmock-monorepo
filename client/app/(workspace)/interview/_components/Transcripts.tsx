@@ -1,3 +1,4 @@
+import { Id } from "@/convex/_generated/dataModel";
 import { useAgent } from "@/hooks/useAgent";
 import { cn } from "@/lib/utils";
 import {
@@ -103,9 +104,11 @@ const TranscriptsInner = ({
   );
 };
 
-export const Transcripts = () => {
-  const { agentAudioTrack } = useAgent();
-
+export const Transcripts = ({
+  agentAudioTrack,
+}: {
+  agentAudioTrack: TrackReferenceOrPlaceholder | undefined;
+}) => {
   return agentAudioTrack ? (
     <TranscriptsInner agentAudioTrack={agentAudioTrack} />
   ) : (
