@@ -1,6 +1,8 @@
 import { query } from "./_generated/server";
 import { v } from "convex/values";
 import { userMutation, userQuery } from "./functions";
+import { DataModel } from "./_generated/dataModel";
+import { editorSnapshotSchema } from "./schema";
 
 // Get editor snapshot by ID
 export const getById = userQuery({
@@ -34,6 +36,11 @@ export const getLatestSnapshotBySessionId = query({
   args: {
     sessionId: v.id("sessions"),
   },
+  returns: v.object({
+    _id: v.id("editorSnapshots"),
+    _creationTime: v.number(),
+    ...editorSnapshotSchema,
+  }),
   handler: async (ctx, { sessionId }) => {
     const snapshot = await ctx.db
       .query("editorSnapshots")

@@ -6,25 +6,14 @@ import os
 from pprint import pprint
 from langgraph_sdk.client import get_client
 from livekit.agents import llm
-from typing import AsyncIterator, List
-from langchain_core.messages import BaseMessage
+from typing import AsyncIterator
 from langgraph_sdk.client import StreamPart
-from agent_server.types import SessionMetadata, EditorSnapshot
 from agent_server.utils.message_conversion import convert_livekit_msgs_to_langchain_msgs
+from agent_server.types import SessionMetadata, EditorSnapshot
 
-# LangGraph uses pydantic v1
-from pydantic.v1 import BaseModel
 
 logger = logging.getLogger("minimal-assistant")
 logger.setLevel(logging.DEBUG)
-
-
-class LangGraphInput(BaseModel):
-    messages: List[BaseMessage]
-    coding_question: str
-    editor_content: str
-    content_last_updated: int
-    interaction_type: str
 
 
 class LangGraphLLM(llm.LLM):
@@ -65,7 +54,7 @@ class LangGraphLLM(llm.LLM):
         assert self._snapshot is not None, "Snapshot is not set"
         assert self._interaction_type is not None, "Interaction type is not set"
 
-        lang_graph_input = LangGraphInput(
+        lang_graph_input = dict(
             messages=langchain_messages,
             coding_question=self._session_metadata.question_content,
             editor_content=self._snapshot.editor.content,
@@ -76,7 +65,7 @@ class LangGraphLLM(llm.LLM):
         stream = self._client.runs.stream(
             thread_id=self._session_metadata.agent_thread_id,
             assistant_id=self._session_metadata.assistant_id,
-            input=lang_graph_input.dict(),
+            input=lang_graph_input,
             stream_mode="updates",
             multitask_strategy="interrupt",
         )

@@ -36,6 +36,14 @@ export const getSessionMetadata = query({
   args: {
     sessionId: v.id("sessions"),
   },
+  returns: v.object({
+    session_id: v.id("sessions"),
+    question_title: v.string(),
+    question_content: v.string(),
+    agent_thread_id: v.string(),
+    assistant_id: v.string(),
+    session_status: v.string(),
+  }),
   handler: async (ctx, { sessionId }) => {
     console.log("session", sessionId);
 

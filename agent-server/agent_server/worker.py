@@ -18,12 +18,17 @@ from livekit.agents.worker import _DefaultLoadCalc
 from livekit.rtc import DataPacket
 from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.plugins import deepgram, openai, silero
-from agent_server.langgraph_llm import LangGraphLLM
-from agent_server.types import (
-    SessionMetadata,
-    EditorSnapshot,
-    EditorState,
-    TerminalState,
+from agent_server.agent import LangGraphLLM
+from agent_server.types import SessionMetadata
+
+from convex_client.models.request_editor_snapshots_get_latest_snapshot_by_session_id import (
+    RequestEditorSnapshotsGetLatestSnapshotBySessionId,
+)
+from convex_client.models.request_sessions_get_by_id_args import (
+    RequestSessionsGetByIdArgs,
+)
+from convex_client.models.request_sessions_get_session_metadata import (
+    RequestSessionsGetSessionMetadata,
 )
 
 logger = logging.getLogger("minimal-assistant")
@@ -94,9 +99,12 @@ def prewarm_fnc(proc: JobProcess):
 
 async def entrypoint(ctx: JobContext):
     initial_ctx = llm.ChatContext()
-    # convex_client = ConvexClient(deployment_url=os.getenv("CONVEX_URL") or "")
+
     configuration = convex_client.Configuration(host=os.getenv("CONVEX_URL") or "")
     api_client = convex_client.ApiClient(configuration)
+    query_api = convex_client.QueryApi(api_client)
+    mutation_api = convex_client.MutationApi(api_client)
+    action_api = convex_client.ActionApi(api_client)
 
     session_metadata_fut = asyncio.Future[SessionMetadata]()
     session_id_fut = asyncio.Future[str]()
@@ -134,40 +142,23 @@ async def entrypoint(ctx: JobContext):
         )
 
     def invoke_agent(chat_ctx: llm.ChatContext, interaction_type: str) -> llm.LLMStream:
-        # result = convex_client.query(
-        #     "editorSnapshots:getLatestSnapshotBySessionId",
-        #     {"sessionId": session_id_fut.result()},
-        # )
-
-        api_instance = convex_client.QueryApi(api_client)
-        args = convex_client.RequestSessionsGetByIdArgs(
-            sessionId=session_id_fut.result()
+        request = RequestEditorSnapshotsGetLatestSnapshotBySessionId(
+            args=RequestSessionsGetByIdArgs(sessionId=session_id_fut.result())
         )
-        request = convex_client.RequestEditorSnapshotsGetLatestSnapshotBySessionId(
-            args=args
+        response = (
+            query_api.api_run_editor_snapshots_get_latest_snapshot_by_session_id_post(
+                request
+            )
         )
-        result = api_instance.api_run_editor_snapshots_get_latest_snapshot_by_session_id_post(
-            request
-        ).to_dict()[
-            "value"
-        ]
 
-        logger.info(f"Got snapshot: {result}")
+        if response.status == "error" or response.value is None:
+            logger.error(f"Error getting snapshot: {response.error_message}")
+            raise Exception(f"Error getting snapshot: {response.error_message}")
+
+        logger.info(f"Got snapshot: {response.value}")
         session_metadata = session_metadata_fut.result()
-        snapshot = EditorSnapshot(
-            editor=EditorState(
-                language=result["editor"]["language"],
-                content=result["editor"]["content"],
-                last_updated=result["editor"]["lastUpdated"],
-            ),
-            terminal=TerminalState(
-                output=result["terminal"]["output"],
-                is_error=result["terminal"]["isError"],
-                execution_time=result["terminal"].get("executionTime", None),
-            ),
-        )
 
-        agent.set_agent_context(session_metadata, snapshot, interaction_type)
+        agent.set_agent_context(session_metadata, response.value, interaction_type)
         return agent.chat(chat_ctx=chat_ctx)
 
     def will_synthesize_assistant_reply(
@@ -259,23 +250,16 @@ async def entrypoint(ctx: JobContext):
         )
 
     async def prepare_session_and_acknowledge():
-        print("Preparing session and acknowledging")
-        # result = convex_client.query(
-        #     "sessions:getSessionMetadata",
-        #     {"sessionId": session_id_fut.result()},
-        # )
-
-        api_instance = convex_client.QueryApi(api_client)
-        args = convex_client.RequestSessionsGetByIdArgs(
-            sessionId=session_id_fut.result()
+        request = RequestSessionsGetSessionMetadata(
+            args=RequestSessionsGetByIdArgs(sessionId=session_id_fut.result())
         )
-        request = convex_client.RequestSessionsGetSessionMetadata(args=args)
-        result = api_instance.api_run_sessions_get_session_metadata_post(
-            request
-        ).to_dict()["value"]
+        response = query_api.api_run_sessions_get_session_metadata_post(request)
 
-        session_metadata = SessionMetadata.model_validate(result)
-        session_metadata_fut.set_result(session_metadata)
+        if response.status == "error" or response.value is None:
+            logger.error(f"Error getting session metadata: {response.error_message}")
+            raise Exception(f"Error getting session metadata: {response.error_message}")
+
+        session_metadata_fut.set_result(response.value)
 
     logger.info("Waiting for session id")
     await session_id_fut
