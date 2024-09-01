@@ -11,6 +11,7 @@ export const useNonReactiveQuery: UseNonReactiveQuery = (query, ...args) => {
   // but this is ideally the way to run convex query without subscribing to updates
   const convex = useConvex();
   const [value, setValue] = useState(undefined);
+
   const fetchQuery = useCallback(async () => {
     const result = await convex.query(query, ...(args as OptionalRestArgs<typeof query>));
     setValue(result);
