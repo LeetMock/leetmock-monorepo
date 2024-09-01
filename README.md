@@ -88,7 +88,9 @@ To test the local agent graph, run the following:
 
 ```bash
 pip install langgraph
+
 export LANGGRAPH_API_KEY=<your_key>
+
 langgraph up
 ```
 
