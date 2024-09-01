@@ -1,5 +1,5 @@
 # Generate the convex client openapi client types
-gen:
+gen-convex-client:
     rm -f convex-client.yaml
     cd client && npm run generate-schema && cd ..
     rm -rf convex-client
