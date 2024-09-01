@@ -12,10 +12,10 @@ export const useNonReactiveQuery: UseNonReactiveQuery = (query, ...args) => {
   const convex = useConvex();
   const [value, setValue] = useState(undefined);
 
-  const fetchQuery = useCallback(async () => {
+  const fetchQuery = async () => {
     const result = await convex.query(query, ...(args as OptionalRestArgs<typeof query>));
     setValue(result);
-  }, [query, args, convex]);
+  };
 
   useEffect(() => {
     fetchQuery();
