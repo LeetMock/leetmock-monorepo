@@ -1,10 +1,12 @@
 import { Client } from "@langchain/langgraph-sdk";
 import type { VideoGrant } from "livekit-server-sdk";
 
-import { createToken, generateRandomAlphanumeric } from "@/lib/utils";
+import { createToken, generateRandomAlphanumeric, isDefined } from "@/lib/utils";
 import { TokenResult } from "@/lib/types";
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { userAction } from "./functions";
+import { action } from "./_generated/server";
+import { internal } from "./_generated/api";
 
 export const createAgentThread = userAction({
   args: {
@@ -59,5 +61,79 @@ export const getToken = userAction({
     };
 
     return result;
+  },
+});
+
+// ============================================================================
+// Below are actions used for agent server
+// ============================================================================
+
+// TODO: should check user identity, but this api is used by the agent server so we skip that for now
+export const getEditorSnapshot = action({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  returns: v.object({
+    sessionId: v.id("sessions"),
+    editor: v.object({
+      language: v.string(),
+      content: v.string(),
+      lastUpdated: v.number(),
+    }),
+    terminal: v.object({
+      output: v.string(),
+      isError: v.boolean(),
+      executionTime: v.optional(v.number()),
+    }),
+  }),
+  handler: async (ctx, { sessionId }) => {
+    const snapshot = await ctx.runQuery(
+      internal.editorSnapshots.getLatestSnapshotBySessionIdInternal,
+      { sessionId }
+    );
+
+    if (!isDefined(snapshot)) {
+      throw new ConvexError({ name: "NoSnapshotFound", message: "No snapshot found" });
+    }
+
+    const { _id, _creationTime, ...rest } = snapshot;
+    return rest;
+  },
+});
+
+// TODO: should check user identity, but this api is used by the agent server so we skip that for now
+export const getSessionMetadata = action({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  returns: v.object({
+    session_id: v.id("sessions"),
+    question_title: v.string(),
+    question_content: v.string(),
+    agent_thread_id: v.string(),
+    assistant_id: v.string(),
+    session_status: v.string(),
+  }),
+  handler: async (ctx, { sessionId }) => {
+    const session = await ctx.runQuery(internal.sessions.getByIdInternal, { sessionId });
+    if (!isDefined(session)) {
+      throw new ConvexError({ name: "SessionNotFound", message: "Session not found" });
+    }
+
+    const question = await ctx.runQuery(internal.questions.getByIdInternal, {
+      questionId: session.questionId,
+    });
+    if (!isDefined(question)) {
+      throw new ConvexError({ name: "QuestionNotFound", message: "Question not found" });
+    }
+
+    return {
+      session_id: sessionId,
+      question_title: question.title,
+      question_content: question.question,
+      agent_thread_id: session.agentThreadId,
+      assistant_id: session.assistantId,
+      session_status: session.sessionStatus,
+    };
   },
 });

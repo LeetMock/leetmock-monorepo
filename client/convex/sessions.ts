@@ -1,5 +1,5 @@
 import { Id } from "./_generated/dataModel";
-import { query } from "./_generated/server";
+import { internalQuery, query } from "./_generated/server";
 import { v } from "convex/values";
 import { userMutation, userQuery } from "./functions";
 
@@ -32,38 +32,18 @@ export const getById = userQuery({
   },
 });
 
-export const getSessionMetadata = query({
+export const getByIdInternal = internalQuery({
   args: {
     sessionId: v.id("sessions"),
   },
-  returns: v.object({
-    session_id: v.id("sessions"),
-    question_title: v.string(),
-    question_content: v.string(),
-    agent_thread_id: v.string(),
-    assistant_id: v.string(),
-    session_status: v.string(),
-  }),
   handler: async (ctx, { sessionId }) => {
-    console.log("session", sessionId);
-
-    // TODO: should check user identity, but this api is used by the agent server
-    // so we skip that for now
     const session = await ctx.db.get(sessionId);
-    const question = await ctx.db.get(session!.questionId);
 
-    if (!session || !question) {
+    if (!session) {
       throw new Error("Session not found");
     }
 
-    return {
-      session_id: sessionId,
-      question_title: question.title,
-      question_content: question.question,
-      agent_thread_id: session.agentThreadId,
-      assistant_id: session.assistantId,
-      session_status: session.sessionStatus,
-    };
+    return session;
   },
 });
 

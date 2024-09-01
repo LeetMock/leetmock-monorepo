@@ -37,3 +37,7 @@ export const createToken = (
   at.addGrant(grant);
   return at.toJwt();
 };
+
+export const isDefined = <T>(value: T): value is Exclude<T, undefined | null> => {
+  return value !== undefined && value !== null;
+};

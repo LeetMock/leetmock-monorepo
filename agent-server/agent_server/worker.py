@@ -5,12 +5,17 @@ import psutil
 import convex_client
 
 from dotenv import load_dotenv, find_dotenv
+from convex_client.models import (
+    RequestActionsGetEditorSnapshot,
+    RequestActionsGetSessionMetadata,
+    RequestSessionsGetByIdArgs,
+)
 from livekit.agents import (
     AutoSubscribe,
     JobContext,
     JobProcess,
     WorkerOptions,
-    cli,
+    cli,  # type: ignore
     llm,
     utils,
 )
@@ -21,15 +26,6 @@ from livekit.plugins import deepgram, openai, silero
 from agent_server.agent import LangGraphLLM
 from agent_server.types import SessionMetadata
 
-from convex_client.models.request_editor_snapshots_get_latest_snapshot_by_session_id import (
-    RequestEditorSnapshotsGetLatestSnapshotBySessionId,
-)
-from convex_client.models.request_sessions_get_by_id_args import (
-    RequestSessionsGetByIdArgs,
-)
-from convex_client.models.request_sessions_get_session_metadata import (
-    RequestSessionsGetSessionMetadata,
-)
 
 logger = logging.getLogger("minimal-assistant")
 logger.setLevel(logging.INFO)
@@ -102,8 +98,6 @@ async def entrypoint(ctx: JobContext):
 
     configuration = convex_client.Configuration(host=os.getenv("CONVEX_URL") or "")
     api_client = convex_client.ApiClient(configuration)
-    query_api = convex_client.QueryApi(api_client)
-    mutation_api = convex_client.MutationApi(api_client)
     action_api = convex_client.ActionApi(api_client)
 
     session_metadata_fut = asyncio.Future[SessionMetadata]()
@@ -142,14 +136,10 @@ async def entrypoint(ctx: JobContext):
         )
 
     def invoke_agent(chat_ctx: llm.ChatContext, interaction_type: str) -> llm.LLMStream:
-        request = RequestEditorSnapshotsGetLatestSnapshotBySessionId(
+        request = RequestActionsGetEditorSnapshot(
             args=RequestSessionsGetByIdArgs(sessionId=session_id_fut.result())
         )
-        response = (
-            query_api.api_run_editor_snapshots_get_latest_snapshot_by_session_id_post(
-                request
-            )
-        )
+        response = action_api.api_run_actions_get_editor_snapshot_post(request)
 
         if response.status == "error" or response.value is None:
             logger.error(f"Error getting snapshot: {response.error_message}")
@@ -250,10 +240,10 @@ async def entrypoint(ctx: JobContext):
         )
 
     async def prepare_session_and_acknowledge():
-        request = RequestSessionsGetSessionMetadata(
+        request = RequestActionsGetSessionMetadata(
             args=RequestSessionsGetByIdArgs(sessionId=session_id_fut.result())
         )
-        response = query_api.api_run_sessions_get_session_metadata_post(request)
+        response = action_api.api_run_actions_get_session_metadata_post(request)
 
         if response.status == "error" or response.value is None:
             logger.error(f"Error getting session metadata: {response.error_message}")

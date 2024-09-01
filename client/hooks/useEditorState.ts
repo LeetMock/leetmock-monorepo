@@ -5,6 +5,7 @@ import { useDebounceCallback } from "usehooks-ts";
 import { useNonReactiveQuery } from "./useNonReactiveQuery";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { isDefined } from "@/lib/utils";
 
 export interface EditorState {
   editor: {
@@ -49,7 +50,7 @@ export const useEditorState = (
 
   useEffect(() => {
     if (initialized) return;
-    if (!initialEditorSnapshot) return;
+    if (!isDefined(initialEditorSnapshot)) return;
 
     const { terminal, editor } = initialEditorSnapshot;
     setLocalEditorState({ terminal, editor });
