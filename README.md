@@ -100,8 +100,8 @@ langgraph up
 
 ### client
 
-Go to [Vercel Dashboard](https://vercel.com/brian-yins-projects/leetmock-monorepo) and deploy the project. Resolve any
-deployment errors and the project should be deployed successfully.
+1. Go to [Vercel Dashboard](https://vercel.com/brian-yins-projects/leetmock-monorepo) and deploy the project.
+2. Resolve any deployment errors and the project should be deployed successfully.
 
 ### agent-server
 
