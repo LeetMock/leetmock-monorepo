@@ -57,7 +57,7 @@ cd client
 npx convex dev
 ```
 
-**Note**: everytime convex backend is updated, you need to manually run
+**Note**: The first time and everytime convex backend is updated, you need to manually run
 
 ```bash
 just gen-convex-client
