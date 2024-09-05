@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { internalQuery, query } from "./_generated/server";
+import { internalQuery, mutation, query } from "./_generated/server";
 import { isDefined } from "@/lib/utils";
 
 export const getById = query({
