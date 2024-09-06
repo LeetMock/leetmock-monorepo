@@ -19,7 +19,7 @@ export const useAgent = (sessionId: Id<"sessions">) => {
 
   // Agent server send ack to client that it received the session id
   useDataChannel("session-id-received", (message) => {
-    console.log("Received session id", message);
+    console.log("Received session id ack", message);
     setAgentReceivedSessionId(true);
   });
 
@@ -37,6 +37,7 @@ export const useAgent = (sessionId: Id<"sessions">) => {
     // Keep sending the session id to the agent server until it is received
     if (connectionState === ConnectionState.Connected) {
       const interval = setInterval(() => {
+        console.log("Sending session id to agent server", sessionId);
         sendSessionId(encode(sessionId), { reliable: true });
       }, 1000);
 

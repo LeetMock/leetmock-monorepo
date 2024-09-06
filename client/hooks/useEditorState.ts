@@ -1,6 +1,4 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDebounceCallback } from "usehooks-ts";
 import { CODE_TEMPLATES } from "@/lib/constants";
 import { useCallback, useMemo } from "react";
@@ -8,6 +6,7 @@ import { useNonReactiveQuery } from "./useNonReactiveQuery";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { isDefined } from "@/lib/utils";
+import { CODE_TEMPLATES, LANGUAGES } from "@/lib/constants";
 
 export interface EditorState {
   editor: {
@@ -23,6 +22,10 @@ export interface EditorState {
     executionTime?: number;
   };
 }
+
+const getInitialContent = (language: string, functionName: string, params: string[]): string => {
+  return CODE_TEMPLATES[language](functionName, params);
+};
 
 const defaultState: EditorState = {
   editor: {
@@ -71,10 +74,6 @@ export const useEditorState = (
     setInitialized(true);
   }, [initialEditorSnapshot, initialized]);
 
-  const editorState = useMemo(() => {
-    return initialized ? localEditorState : undefined;
-  }, [initialized, localEditorState]);
-
   const handleStateChange = useCallback(
     (state: EditorState) => {
       state.editor.lastUpdated = Date.now();
@@ -84,8 +83,6 @@ export const useEditorState = (
     [onChange]
   );
 
-  const handleStateChangeDebounced = useDebounceCallback(handleStateChange, delay);
-
   const onLanguageChange = useCallback(
     (language: string) => {
       handleStateChange({
@@ -93,12 +90,23 @@ export const useEditorState = (
         editor: {
           ...localEditorState.editor,
           language,
-          content: getInitialContent(localEditorState.editor),
+
+          content: getInitialContent(
+            language,
+            localEditorState.editor.functionName,
+            localEditorState.editor.inputParameters
+          ),
         },
       });
     },
     [handleStateChange, localEditorState]
   );
+
+  const editorState = useMemo(() => {
+    return initialized ? localEditorState : undefined;
+  }, [initialized, localEditorState]);
+
+  const handleStateChangeDebounced = useDebounceCallback(handleStateChange, delay);
 
   const onContentChange = useCallback(
     (content: string) => {
