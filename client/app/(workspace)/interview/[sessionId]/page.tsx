@@ -20,24 +20,16 @@ import { useMutation, useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Toolbar } from "../_components/Toolbar";
 import { ConnectionState } from "livekit-client";
-import {
-  useConnectionState,
-  useDataChannel,
-  useLocalParticipant,
-  useRoomContext,
-} from "@livekit/components-react";
+import { useConnectionState, useLocalParticipant, useRoomContext } from "@livekit/components-react";
 import { useConnection } from "@/hooks/useConnection";
 import { useAgent } from "@/hooks/useAgent";
 import { Transcripts } from "../_components/Transcripts";
 import { TestResultsBlock } from "../_components/TestResultsBlock";
-import { LucideVolume2 } from "lucide-react";
-import { cn, encode } from "@/lib/utils";
-import { Loader2 } from "lucide-react"; // Import a loading icon
-import { Clock } from "lucide-react"; // Import Clock icon
+import { LucideVolume2, PlayCircle, TestTube2, Clock, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
 import { EditorState, useEditorState } from "@/hooks/useEditorState";
 import { toast } from "sonner";
-import { PlayCircle, TestTube2 } from "lucide-react"; // Import icons for the buttons
 import { RunTestResult } from "@/lib/types";
 
 const customEditorTheme: monacoEditor.IStandaloneThemeData = {
@@ -51,7 +43,6 @@ const customEditorTheme: monacoEditor.IStandaloneThemeData = {
 
 const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { theme } = useTheme();
-  const [editorInitialized, setEditorInitialized] = useState(false);
   const editorContainerRef = useRef<HTMLDivElement>(null);
 
   // LiveKit
@@ -59,11 +50,7 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
   const connectionState = useConnectionState();
   const { connect, disconnect } = useConnection(room);
   const { localParticipant } = useLocalParticipant();
-  const { send: sendSessionId } = useDataChannel("session-id");
-
-  // Agent & Interview
-  const [agentReceivedSessionId, setAgentReceivedSessionId] = useState(false);
-  const { isAgentConnected, isAgentSpeaking } = useAgent();
+  const { isAgentConnected, isAgentSpeaking, agentAudioTrack } = useAgent(sessionId);
 
   // Convex
   const createSnapshot = useMutation(api.editorSnapshots.create);
@@ -71,85 +58,58 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
   const runCode = useAction(api.actions.runCode);
   const session = useQuery(api.sessions.getById, { sessionId });
   const question = useQuery(api.questions.getById, { questionId: session?.questionId });
-  const initialEditorSnapshot = useQuery(api.editorSnapshots.getLatestSnapshotBySessionId, {
-    sessionId,
-  });
 
-  // Handle snapshot changes on convex backend
-  const handleSnapshotChanged = useCallback(
+  const [testResults, setTestResults] = useState<RunTestResult | null>(null);
+  const [outputView, setOutputView] = useState<'output' | 'testResults'>('output');
+  const [testRunCounter, setTestRunCounter] = useState(0);
+  const [agentReceivedSessionId, setAgentReceivedSessionId] = useState(false);
+
+  const handleSnapshotChange = useCallback(
     (snapshot: EditorState) => {
-      const promise = createSnapshot({
-        sessionId,
-        ...snapshot,
-      });
-
+      const promise = createSnapshot({ sessionId, ...snapshot });
       toast.promise(promise, {
         success: "Snapshot saved",
         error: "Error saving snapshot",
       });
     },
-    [createSnapshot, sessionId]
+    [sessionId, createSnapshot]
   );
+
   const {
     editorState,
-    setEditorState,
     isRunning,
     setIsRunning,
     onLanguageChange,
     onContentChange,
     onTerminalChange,
-  } = useEditorState(handleSnapshotChanged);
-
-  const [testResults, setTestResults] = useState<RunTestResult | null>(null);
-  const [outputView, setOutputView] = useState<'output' | 'testResults'>('output');
-  const [testRunCounter, setTestRunCounter] = useState(0);
+  } = useEditorState(sessionId, handleSnapshotChange);
 
   useEffect(() => {
-    // Initialize the local editor state from the initial snapshot
-    if (editorInitialized) return;
-    if (!initialEditorSnapshot) return;
-
-    const { editor, terminal } = initialEditorSnapshot;
-    setEditorState({ editor, terminal });
-    setEditorInitialized(true);
-  }, [editorInitialized, initialEditorSnapshot, setEditorState]);
-
-  useEffect(() => {
-    // Setup the participant device
     if (connectionState === ConnectionState.Connected) {
       localParticipant.setCameraEnabled(false);
       localParticipant.setMicrophoneEnabled(true);
     }
   }, [localParticipant, connectionState]);
 
-  useDataChannel("session-id-received", (message) => {
-    console.log("Received session id", message);
-    setAgentReceivedSessionId(true);
-  });
+ // Setup the participant device
+ useEffect(() => {
+  if (connectionState === ConnectionState.Connected) {
+    localParticipant.setCameraEnabled(false);
+    localParticipant.setMicrophoneEnabled(true);
+  }
+}, [localParticipant, connectionState]);
 
-  useEffect(() => {
-    if (agentReceivedSessionId) return;
-
-    if (connectionState === ConnectionState.Connected) {
-      const interval = setInterval(() => {
-        console.log("Sending session id", sessionId);
-        sendSessionId(encode(sessionId), { reliable: true });
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }
-  }, [agentReceivedSessionId, connectionState, sendSessionId, sessionId]);
-  const handleConnect = useCallback(async () => {
-    if (connectionState === ConnectionState.Connected) {
-      disconnect();
-      setAgentReceivedSessionId(false);
-    } else if (connectionState === ConnectionState.Disconnected) {
-      await connect();
-    }
-  }, [connectionState, disconnect, connect]);
+// Connect to the room
+const handleConnect = useCallback(async () => {
+  if (connectionState === ConnectionState.Connected) {
+    disconnect();
+  } else if (connectionState === ConnectionState.Disconnected) {
+    await connect();
+  }
+}, [connectionState, disconnect, connect]);
 
   const handleRunCode = async () => {
-    const { language, content } = editorState.editor;
+    const { language, content } = editorState!.editor;
     setIsRunning(true);
     try {
       const result = await runCode({ language, code: content });
@@ -169,11 +129,11 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
   };
 
   const handleRunTests = async () => {
-    const { language, content } = editorState.editor;
+    const { language, content } = editorState!.editor;
     setIsRunning(true);
-    setTestResults(null); // Reset test results
-    setOutputView('testResults'); // Switch to test results view
-    setTestRunCounter(prev => prev + 1); // Increment the counter
+    setTestResults(null);
+    setOutputView('testResults');
+    setTestRunCounter(prev => prev + 1);
 
     try {
       if (!session?.questionId) {
@@ -202,10 +162,11 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
 
     setIsRunning(false);
   };
+
   return (
     <>
       <Toolbar />
-      {!!session && !!question && editorInitialized ? (
+      {!!session && !!question && !!editorState ? (
         <div className="w-full h-full flex justify-center items-center">
           <ResizablePanelGroup direction="horizontal" className="w-full h-full">
             <ResizablePanel className="min-w-[5rem] h-full w-full relative">
@@ -394,7 +355,7 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
                 />
               </div>
             </div>
-            <Transcripts />
+            <Transcripts agentAudioTrack={agentAudioTrack} />
           </div>
         </div>
       ) : (

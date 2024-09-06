@@ -1,76 +1,66 @@
 import { Id } from "./_generated/dataModel";
-import { mutation, query } from "./_generated/server";
+import { internalQuery, query } from "./_generated/server";
 import { v } from "convex/values";
+import { userMutation, userQuery } from "./functions";
 
-export const exists = query({
+export const exists = userQuery({
   args: {
     sessionId: v.string(),
   },
   handler: async (ctx, { sessionId }) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
-
     try {
       const session = await ctx.db.get(sessionId as Id<"sessions">);
-
-      if (!session) {
-        return false;
-      }
-
-      return session.userId === identity.subject;
+      return !!session;
     } catch (e) {
       return false;
     }
   },
 });
 
-export const getById = query({
+export const getById = userQuery({
   args: {
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
-
-    const userId = identity.subject;
     const session = await ctx.db.get(sessionId);
 
     if (!session) {
       throw new Error("Session not found");
     }
 
-    if (session.userId !== userId) {
-      throw new Error("Not authorized");
+    return session;
+  },
+});
+
+export const getByIdInternal = internalQuery({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  handler: async (ctx, { sessionId }) => {
+    const session = await ctx.db.get(sessionId);
+
+    if (!session) {
+      throw new Error("Session not found");
     }
 
     return session;
   },
 });
 
-export const create = mutation({
+export const create = userMutation({
   args: {
     questionId: v.id("questions"),
     agentThreadId: v.string(),
     assistantId: v.string(),
     functionName: v.string(),
-    inputParameters: v.array(v.string())
+    inputParameters: v.array(v.string()),
   },
-  handler: async (ctx, { questionId, agentThreadId, assistantId, inputParameters, functionName }) => { // Added missing parameters
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
-
-    const userId = identity.subject;
+  handler: async (
+    ctx,
+    { questionId, agentThreadId, assistantId, inputParameters, functionName }
+  ) => {
     const sessionId = await ctx.db.insert("sessions", {
-      userId,
+      userId: ctx.user.subject,
       questionId,
       agentThreadId,
       assistantId,
@@ -90,7 +80,7 @@ export const create = mutation({
         content: question.startingCode || "", // Use startingCode from the question
         lastUpdated: Date.now(),
         functionName: functionName,
-        inputParameters: inputParameters
+        inputParameters: inputParameters,
       },
       terminal: {
         output: "",
@@ -99,30 +89,5 @@ export const create = mutation({
     });
 
     return sessionId;
-  },
-});
-
-export const getSessionMetadata = query({
-  args: {
-    sessionId: v.id("sessions"),
-  },
-  handler: async (ctx, { sessionId }) => {
-    // TODO: should check user identity, but this api is used by the agent server
-    // so we skip that for now
-    const session = await ctx.db.get(sessionId);
-    const question = await ctx.db.get(session!.questionId);
-
-    if (!session || !question) {
-      throw new Error("Session not found");
-    }
-
-    return {
-      session_id: sessionId,
-      question_title: question.title,
-      question_content: question.question,
-      agent_thread_id: session.agentThreadId,
-      assistant_id: session.assistantId,
-      session_status: session.sessionStatus,
-    };
   },
 });

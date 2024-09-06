@@ -17,6 +17,7 @@ export function getFileExtension(language: string): string {
   return extensionMap[language] || "txt";
 }
 
+
 export function generateRandomAlphanumeric(length: number): string {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
@@ -108,3 +109,7 @@ if __name__ == '__main__':
 
   return testCode;
 }
+
+export const isDefined = <T>(value: T): value is Exclude<T, undefined | null> => {
+  return value !== undefined && value !== null;
+};

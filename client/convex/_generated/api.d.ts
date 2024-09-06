@@ -14,7 +14,9 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as actions from "../actions.js";
+import type * as codeRunner from "../codeRunner.js";
 import type * as editorSnapshots from "../editorSnapshots.js";
+import type * as functions from "../functions.js";
 import type * as questions from "../questions.js";
 import type * as sessions from "../sessions.js";
 
@@ -28,7 +30,9 @@ import type * as sessions from "../sessions.js";
  */
 declare const fullApi: ApiFromModules<{
   actions: typeof actions;
+  codeRunner: typeof codeRunner;
   editorSnapshots: typeof editorSnapshots;
+  functions: typeof functions;
   questions: typeof questions;
   sessions: typeof sessions;
 }>;

@@ -23,7 +23,8 @@ livekit = "^0.12.1"
 pydantic = "^2.8.2"
 livekit-agents = "^0.8.6"
 convex = "^0.6.0"
-
+openapi-generator-cli = "^4.3.1"
+convex_client = { path = "../convex-client", develop = true }
 
 [build-system]
 requires = ["poetry-core"]

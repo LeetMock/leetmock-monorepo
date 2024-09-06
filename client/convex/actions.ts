@@ -2,7 +2,7 @@ import { Client } from "@langchain/langgraph-sdk";
 import type { VideoGrant } from "livekit-server-sdk";
 
 import { action } from "./_generated/server";
-import { createToken, generateRandomAlphanumeric, getFileExtension, generateTestCode, executeCode } from "@/lib/utils";
+import { createToken, generateRandomAlphanumeric, getFileExtension, generateTestCode } from "@/lib/utils";
 import { TokenResult, CodeRunResult } from "@/lib/types";
 import { v } from "convex/values";
 import axios from "axios";
@@ -68,12 +68,6 @@ export const createAgentThread = action({
     graphId: v.string(),
   },
   handler: async (ctx, { graphId }) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
-
     const apiKey = process.env.LANGSMITH_API_KEY;
     const apiUrl = process.env.LANGGRAPH_API_URL;
     const client = new Client({ apiKey, apiUrl });
@@ -96,12 +90,6 @@ export const createAgentThread = action({
 
 export const getToken = action({
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
-
     const apiKey = process.env.LIVEKIT_API_KEY;
     const apiSecret = process.env.LIVEKIT_API_SECRET;
 
@@ -166,7 +154,6 @@ export const runTests = action({
         const jsonMatch = result.stdout.match(/START_RESULTS_JSON\n([\s\S]*?)\nEND_RESULTS_JSON/);
         if (jsonMatch && jsonMatch[1]) {
           const parsedResults: RunTestResult = JSON.parse(jsonMatch[1]);
-          console.log(parsedResults);
           return {
             ...result,
             testResults: parsedResults,

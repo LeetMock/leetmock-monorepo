@@ -9,12 +9,9 @@ export default function MonacoEditor() {
 
   return (
     <div className="w-full border">
-      <form action="#" onSubmit={handleSubmit} >
+      <form action="#" onSubmit={handleSubmit}>
         <div className="">
-          <Editor
-            height="70vh"
-            defaultValue='Deno.serve(req => new Response("Hello!"));'
-          />
+          <Editor height="70vh" defaultValue='Deno.serve(req => new Response("Hello!"));' />
         </div>
         <div className="flex justify-between pt-2">
           <div className="flex items-center space-x-5"></div>

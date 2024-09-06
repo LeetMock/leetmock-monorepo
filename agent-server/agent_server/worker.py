@@ -1,32 +1,31 @@
+import os
 import asyncio
 import logging
-import os
+import psutil
+import convex_client
 
 from dotenv import load_dotenv, find_dotenv
-from convex import ConvexClient
+from convex_client.models import (
+    RequestActionsGetEditorSnapshot,
+    RequestActionsGetSessionMetadata,
+    RequestSessionsGetByIdArgs,
+)
 from livekit.agents import (
     AutoSubscribe,
     JobContext,
     JobProcess,
     WorkerOptions,
-    cli,
+    cli,  # type: ignore
     llm,
     utils,
 )
 from livekit.agents.worker import _DefaultLoadCalc
 from livekit.rtc import DataPacket
-from livekit.agents.voice_assistant import (
-    VoiceAssistant,
-)
+from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.plugins import deepgram, openai, silero
-import psutil
-from agent_server.langgraph_llm import LangGraphLLM
-from agent_server.types import (
-    SessionMetadata,
-    EditorSnapshot,
-    EditorState,
-    TerminalState,
-)
+from agent_server.agent import LangGraphLLM
+from agent_server.types import SessionMetadata
+
 
 # Add this near the top of your file, before setting up logging
 log_directory = os.path.join(os.path.dirname(__file__), 'logs')
@@ -35,9 +34,9 @@ os.makedirs(log_directory, exist_ok=True)
 logger = logging.getLogger("minimal-assistant")
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 file_handler = logging.FileHandler(os.path.join(log_directory, "minimal_assistant.log"))
 file_handler.setLevel(logging.DEBUG)
@@ -60,6 +59,7 @@ class CustomLoadCalc(_DefaultLoadCalc):
 
     It calculates the load based on the CPU and memory usage.
     """
+
     def __init__(self) -> None:
         super().__init__()
         self._mem_avg = utils.MovingAverage(5)  # avg over 2.5 seconds, like CPU
@@ -91,13 +91,18 @@ class CustomLoadCalc(_DefaultLoadCalc):
 
         return cls._instance._get_avg()
 
+
 def prewarm_fnc(proc: JobProcess):
     # load silero weights and store to process userdata
     proc.userdata["vad"] = silero.VAD.load()
 
+
 async def entrypoint(ctx: JobContext):
     initial_ctx = llm.ChatContext()
-    convex_client = ConvexClient(deployment_url=os.getenv("CONVEX_URL") or "")
+
+    configuration = convex_client.Configuration(host=os.getenv("CONVEX_URL") or "")
+    api_client = convex_client.ApiClient(configuration)
+    action_api = convex_client.ActionApi(api_client)
 
     session_metadata_fut = asyncio.Future[SessionMetadata]()
     session_id_fut = asyncio.Future[str]()
@@ -135,27 +140,19 @@ async def entrypoint(ctx: JobContext):
         )
 
     def invoke_agent(chat_ctx: llm.ChatContext, interaction_type: str) -> llm.LLMStream:
-        result = convex_client.query(
-            "editorSnapshots:getLatestSnapshotBySessionId",
-            {"sessionId": session_id_fut.result()},
+        request = RequestActionsGetEditorSnapshot(
+            args=RequestSessionsGetByIdArgs(sessionId=session_id_fut.result())
         )
+        response = action_api.api_run_actions_get_editor_snapshot_post(request)
 
-        logger.info(f"Got snapshot: {result}")
+        if response.status == "error" or response.value is None:
+            logger.error(f"Error getting snapshot: {response.error_message}")
+            raise Exception(f"Error getting snapshot: {response.error_message}")
+
+        logger.info(f"Got snapshot: {response.value}")
         session_metadata = session_metadata_fut.result()
-        snapshot = EditorSnapshot(
-            editor=EditorState(
-                language=result["editor"]["language"],
-                content=result["editor"]["content"],
-                last_updated=result["editor"]["lastUpdated"],
-            ),
-            terminal=TerminalState(
-                output=result["terminal"]["output"],
-                is_error=result["terminal"]["isError"],
-                execution_time=result["terminal"].get("executionTime", None),
-            ),
-        )
 
-        agent.set_agent_context(session_metadata, snapshot, interaction_type)
+        agent.set_agent_context(session_metadata, response.value, interaction_type)
         return agent.chat(chat_ctx=chat_ctx)
 
     def will_synthesize_assistant_reply(
@@ -220,29 +217,43 @@ async def entrypoint(ctx: JobContext):
 
     @ctx.room.on("data_received")
     def on_data_received(data: DataPacket):
-        if data.topic == "session-id":
-            logger.info("Received data for topic: %s", data.topic)
-            if not session_id_fut.done():
-                session_id_fut.set_result(data.data.decode("utf-8"))
-            else:
-                logger.warning("session_id_fut already set")
-        else:
+        if data.topic != "session-id":
             logger.warning("Unexpected data topic: %s", data.topic)
+            return
+
+        logger.info("Received data for topic: %s", data.topic)
+        logger.info("Received data: %s", data.data)
+
+        session_id = data.data.decode("utf-8")
+        if len(session_id) == 0:
+            logger.warning("Received empty session id")
+            return
+
+        if not session_id_fut.done():
+            session_id_fut.set_result(session_id)
+            return
+        else:
+            logger.warning("session_id_fut already set")
+
+        asyncio.create_task(
+            ctx.room.local_participant.publish_data(
+                payload="session-id-received",
+                topic="session-id-received",
+                reliable=True,
+            )
+        )
 
     async def prepare_session_and_acknowledge():
-        result = convex_client.query(
-            "sessions:getSessionMetadata",
-            {"sessionId": session_id_fut.result()},
+        request = RequestActionsGetSessionMetadata(
+            args=RequestSessionsGetByIdArgs(sessionId=session_id_fut.result())
         )
+        response = action_api.api_run_actions_get_session_metadata_post(request)
 
-        session_metadata = SessionMetadata.model_validate(result)
-        session_metadata_fut.set_result(session_metadata)
+        if response.status == "error" or response.value is None:
+            logger.error(f"Error getting session metadata: {response.error_message}")
+            raise Exception(f"Error getting session metadata: {response.error_message}")
 
-        await ctx.room.local_participant.publish_data(
-            payload="session-id-received",
-            topic="session-id-received",
-            reliable=True,
-        )
+        session_metadata_fut.set_result(response.value)
 
     logger.info("Waiting for session id")
     await session_id_fut
@@ -264,8 +275,8 @@ if __name__ == "__main__":
             host="0.0.0.0",
             port=8081,
             load_fnc=CustomLoadCalc.get_load,
-            load_threshold=0.8,             # max(cpu_load, mem_load)
-            shutdown_process_timeout=30,    # seconds
-            num_idle_processes=3,           # number of idle agents to keep
+            load_threshold=0.8,  # max(cpu_load, mem_load)
+            shutdown_process_timeout=30,  # seconds
+            num_idle_processes=3,  # number of idle agents to keep
         )
     )
