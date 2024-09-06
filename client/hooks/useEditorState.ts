@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDebounceCallback } from "usehooks-ts";
+import { CODE_TEMPLATES } from "@/lib/constants";
+import { useCallback, useMemo } from "react";
 import { useNonReactiveQuery } from "./useNonReactiveQuery";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -37,6 +39,14 @@ const defaultState: EditorState = {
     output: "",
     isError: false,
   },
+};
+
+const getInitialContent = ({
+  language,
+  functionName,
+  inputParameters,
+}: EditorState["editor"]): string => {
+  return CODE_TEMPLATES[language](functionName, inputParameters);
 };
 
 const defaultOnChange = (state: EditorState) => {};
@@ -80,6 +90,7 @@ export const useEditorState = (
         editor: {
           ...localEditorState.editor,
           language,
+
           content: getInitialContent(
             language,
             localEditorState.editor.functionName,
