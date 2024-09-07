@@ -76,7 +76,7 @@ def convert_oai_message_to_langchain_message(
             content = (
                 message["content"]
                 if isinstance(message["content"], str)
-                else list(message["content"])
+                else list(message["content"])  # type: ignore
             )
 
         if "function_call" in message:
@@ -95,7 +95,7 @@ def convert_oai_message_to_langchain_message(
         content = (
             message["content"]
             if isinstance(message["content"], str)
-            else list(message["content"])
+            else list(message["content"])  # type: ignore
         )
         lc_message = ToolMessage(content=content, tool_call_id=message["tool_call_id"])  # type: ignore
 
@@ -186,7 +186,7 @@ def convert_livekit_msgs_to_langchain_msgs(
                         "arguments": call.raw_arguments,
                     },
                 }
-                for call in msg.tool_calls
+                for call in msg.tool_calls  # type: ignore
             ]
         if msg.tool_call_id:
             additional_kwargs["tool_call_id"] = msg.tool_call_id

@@ -12,7 +12,7 @@ import {
   generateTestCode,
   isDefined,
 } from "@/lib/utils";
-import { TokenResult, CodeRunResult, RunCodeResult } from "@/lib/types";
+import { TokenResult, CodeRunResult, RunCodeResult, RunTestResult } from "@/lib/types";
 import { ConvexError, v } from "convex/values";
 
 function formatRuntimeError(stderr: string): string {
