@@ -42,6 +42,14 @@ def convert_oai_messages_to_langchain_messages(
     return langchain_messages
 
 
+def convert_chat_ctx_to_langchain_messages(
+    chat_ctx: llm.ChatContext, cache_key: Any = None
+) -> List[BaseMessage]:
+    return convert_oai_messages_to_langchain_messages(
+        convert_chat_ctx_to_oai_messages(chat_ctx, cache_key)
+    )
+
+
 def convert_oai_message_to_langchain_message(
     message: ChatCompletionMessageParam,
 ) -> BaseMessage | None:

@@ -8,7 +8,7 @@ from langgraph_sdk.client import get_client
 from livekit.agents import llm
 from typing import AsyncIterator
 from langgraph_sdk.client import StreamPart
-from agent_server.utils.message_conversion import convert_livekit_msgs_to_langchain_msgs
+from agent_server.utils.messages import convert_livekit_msgs_to_langchain_msgs
 from agent_server.types import SessionMetadata, EditorSnapshot
 
 
