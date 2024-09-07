@@ -54,10 +54,31 @@ class TestActionApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_actions_run_code_post(self) -> None:
+        """Test case for api_run_actions_run_code_post
+
+        Calls a action at the path actions.js:runCode
+        """
+        pass
+
+    def test_api_run_actions_run_tests_post(self) -> None:
+        """Test case for api_run_actions_run_tests_post
+
+        Calls a action at the path actions.js:runTests
+        """
+        pass
+
     def test_api_run_code_runner_run_code_post(self) -> None:
         """Test case for api_run_code_runner_run_code_post
 
         Calls a action at the path codeRunner.js:runCode
+        """
+        pass
+
+    def test_api_run_code_runner_run_tests_post(self) -> None:
+        """Test case for api_run_code_runner_run_tests_post
+
+        Calls a action at the path codeRunner.js:runTests
         """
         pass
 

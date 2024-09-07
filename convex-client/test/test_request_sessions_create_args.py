@@ -37,12 +37,20 @@ class TestRequestSessionsCreateArgs(unittest.TestCase):
             return RequestSessionsCreateArgs(
                 agent_thread_id = '',
                 assistant_id = '',
+                function_name = '',
+                input_parameters = [
+                    ''
+                    ],
                 question_id = ''
             )
         else:
             return RequestSessionsCreateArgs(
                 agent_thread_id = '',
                 assistant_id = '',
+                function_name = '',
+                input_parameters = [
+                    ''
+                    ],
                 question_id = '',
         )
         """

@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.request_code_runner_run_code_args import RequestCodeRunnerRunCodeArgs
+from convex_client.models.response_code_runner_run_tests import ResponseCodeRunnerRunTests
 
-class TestRequestCodeRunnerRunCodeArgs(unittest.TestCase):
-    """RequestCodeRunnerRunCodeArgs unit test stubs"""
+class TestResponseCodeRunnerRunTests(unittest.TestCase):
+    """ResponseCodeRunnerRunTests unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,30 +25,29 @@ class TestRequestCodeRunnerRunCodeArgs(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> RequestCodeRunnerRunCodeArgs:
-        """Test RequestCodeRunnerRunCodeArgs
+    def make_instance(self, include_optional) -> ResponseCodeRunnerRunTests:
+        """Test ResponseCodeRunnerRunTests
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `RequestCodeRunnerRunCodeArgs`
+        # uncomment below to create an instance of `ResponseCodeRunnerRunTests`
         """
-        model = RequestCodeRunnerRunCodeArgs()
+        model = ResponseCodeRunnerRunTests()
         if include_optional:
-            return RequestCodeRunnerRunCodeArgs(
-                code = '',
-                language = '',
-                question_id = ''
+            return ResponseCodeRunnerRunTests(
+                status = 'success',
+                error_message = '',
+                error_data = None,
+                value = None
             )
         else:
-            return RequestCodeRunnerRunCodeArgs(
-                code = '',
-                language = '',
-                question_id = '',
+            return ResponseCodeRunnerRunTests(
+                status = 'success',
         )
         """
 
-    def testRequestCodeRunnerRunCodeArgs(self):
-        """Test RequestCodeRunnerRunCodeArgs"""
+    def testResponseCodeRunnerRunTests(self):
+        """Test ResponseCodeRunnerRunTests"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

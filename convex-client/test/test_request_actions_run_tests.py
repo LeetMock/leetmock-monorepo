@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.request_code_runner_run_code import RequestCodeRunnerRunCode
+from convex_client.models.request_actions_run_tests import RequestActionsRunTests
 
-class TestRequestCodeRunnerRunCode(unittest.TestCase):
-    """RequestCodeRunnerRunCode unit test stubs"""
+class TestRequestActionsRunTests(unittest.TestCase):
+    """RequestActionsRunTests unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,30 +25,32 @@ class TestRequestCodeRunnerRunCode(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> RequestCodeRunnerRunCode:
-        """Test RequestCodeRunnerRunCode
+    def make_instance(self, include_optional) -> RequestActionsRunTests:
+        """Test RequestActionsRunTests
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `RequestCodeRunnerRunCode`
+        # uncomment below to create an instance of `RequestActionsRunTests`
         """
-        model = RequestCodeRunnerRunCode()
+        model = RequestActionsRunTests()
         if include_optional:
-            return RequestCodeRunnerRunCode(
-                args = convex_client.models.request_actions_run_code_args.Request_actions_runCode_args(
+            return RequestActionsRunTests(
+                args = convex_client.models.request_actions_run_tests_args.Request_actions_runTests_args(
                     code = '', 
-                    language = '', )
+                    language = '', 
+                    question_id = '', )
             )
         else:
-            return RequestCodeRunnerRunCode(
-                args = convex_client.models.request_actions_run_code_args.Request_actions_runCode_args(
+            return RequestActionsRunTests(
+                args = convex_client.models.request_actions_run_tests_args.Request_actions_runTests_args(
                     code = '', 
-                    language = '', ),
+                    language = '', 
+                    question_id = '', ),
         )
         """
 
-    def testRequestCodeRunnerRunCode(self):
-        """Test RequestCodeRunnerRunCode"""
+    def testRequestActionsRunTests(self):
+        """Test RequestActionsRunTests"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

@@ -38,6 +38,10 @@ class TestRequestSessionsCreate(unittest.TestCase):
                 args = convex_client.models.request_sessions_create_args.Request_sessions_create_args(
                     agent_thread_id = '', 
                     assistant_id = '', 
+                    function_name = '', 
+                    input_parameters = [
+                        ''
+                        ], 
                     question_id = '', )
             )
         else:
@@ -45,6 +49,10 @@ class TestRequestSessionsCreate(unittest.TestCase):
                 args = convex_client.models.request_sessions_create_args.Request_sessions_create_args(
                     agent_thread_id = '', 
                     assistant_id = '', 
+                    function_name = '', 
+                    input_parameters = [
+                        ''
+                        ], 
                     question_id = '', ),
         )
         """

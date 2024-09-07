@@ -19,7 +19,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict
 from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_code_runner_run_code_args import RequestCodeRunnerRunCodeArgs
+from convex_client.models.request_actions_run_code_args import RequestActionsRunCodeArgs
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -27,7 +27,7 @@ class RequestCodeRunnerRunCode(BaseModel):
     """
     RequestCodeRunnerRunCode
     """ # noqa: E501
-    args: RequestCodeRunnerRunCodeArgs
+    args: RequestActionsRunCodeArgs
     __properties: ClassVar[List[str]] = ["args"]
 
     model_config = ConfigDict(
@@ -84,7 +84,7 @@ class RequestCodeRunnerRunCode(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "args": RequestCodeRunnerRunCodeArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
+            "args": RequestActionsRunCodeArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
         })
         return _obj
 

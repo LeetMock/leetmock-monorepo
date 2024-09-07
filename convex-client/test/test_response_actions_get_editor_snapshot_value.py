@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.request_editor_snapshots_create_args import RequestEditorSnapshotsCreateArgs
+from convex_client.models.response_actions_get_editor_snapshot_value import ResponseActionsGetEditorSnapshotValue
 
-class TestRequestEditorSnapshotsCreateArgs(unittest.TestCase):
-    """RequestEditorSnapshotsCreateArgs unit test stubs"""
+class TestResponseActionsGetEditorSnapshotValue(unittest.TestCase):
+    """ResponseActionsGetEditorSnapshotValue unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,22 +25,18 @@ class TestRequestEditorSnapshotsCreateArgs(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> RequestEditorSnapshotsCreateArgs:
-        """Test RequestEditorSnapshotsCreateArgs
+    def make_instance(self, include_optional) -> ResponseActionsGetEditorSnapshotValue:
+        """Test ResponseActionsGetEditorSnapshotValue
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `RequestEditorSnapshotsCreateArgs`
+        # uncomment below to create an instance of `ResponseActionsGetEditorSnapshotValue`
         """
-        model = RequestEditorSnapshotsCreateArgs()
+        model = ResponseActionsGetEditorSnapshotValue()
         if include_optional:
-            return RequestEditorSnapshotsCreateArgs(
-                editor = convex_client.models.request_editor_snapshots_create_args_editor.Request_editorSnapshots_create_args_editor(
+            return ResponseActionsGetEditorSnapshotValue(
+                editor = convex_client.models.response_actions_get_editor_snapshot_value_editor.Response_actions_getEditorSnapshot_value_editor(
                     content = '', 
-                    function_name = '', 
-                    input_parameters = [
-                        ''
-                        ], 
                     language = '', 
                     last_updated = 1.337, ),
                 session_id = '',
@@ -50,13 +46,9 @@ class TestRequestEditorSnapshotsCreateArgs(unittest.TestCase):
                     output = '', )
             )
         else:
-            return RequestEditorSnapshotsCreateArgs(
-                editor = convex_client.models.request_editor_snapshots_create_args_editor.Request_editorSnapshots_create_args_editor(
+            return ResponseActionsGetEditorSnapshotValue(
+                editor = convex_client.models.response_actions_get_editor_snapshot_value_editor.Response_actions_getEditorSnapshot_value_editor(
                     content = '', 
-                    function_name = '', 
-                    input_parameters = [
-                        ''
-                        ], 
                     language = '', 
                     last_updated = 1.337, ),
                 session_id = '',
@@ -67,8 +59,8 @@ class TestRequestEditorSnapshotsCreateArgs(unittest.TestCase):
         )
         """
 
-    def testRequestEditorSnapshotsCreateArgs(self):
-        """Test RequestEditorSnapshotsCreateArgs"""
+    def testResponseActionsGetEditorSnapshotValue(self):
+        """Test ResponseActionsGetEditorSnapshotValue"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

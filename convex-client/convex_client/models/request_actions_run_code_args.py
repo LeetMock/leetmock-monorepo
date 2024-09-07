@@ -17,21 +17,18 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Union
+from pydantic import BaseModel, ConfigDict, StrictStr
+from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestEditorSnapshotsCreateArgsEditor(BaseModel):
+class RequestActionsRunCodeArgs(BaseModel):
     """
-    RequestEditorSnapshotsCreateArgsEditor
+    RequestActionsRunCodeArgs
     """ # noqa: E501
-    content: StrictStr
-    function_name: StrictStr = Field(alias="functionName")
-    input_parameters: List[StrictStr] = Field(alias="inputParameters")
+    code: StrictStr
     language: StrictStr
-    last_updated: Union[StrictFloat, StrictInt] = Field(alias="lastUpdated")
-    __properties: ClassVar[List[str]] = ["content", "functionName", "inputParameters", "language", "lastUpdated"]
+    __properties: ClassVar[List[str]] = ["code", "language"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -51,7 +48,7 @@ class RequestEditorSnapshotsCreateArgsEditor(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestEditorSnapshotsCreateArgsEditor from a JSON string"""
+        """Create an instance of RequestActionsRunCodeArgs from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -76,7 +73,7 @@ class RequestEditorSnapshotsCreateArgsEditor(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestEditorSnapshotsCreateArgsEditor from a dict"""
+        """Create an instance of RequestActionsRunCodeArgs from a dict"""
         if obj is None:
             return None
 
@@ -84,11 +81,8 @@ class RequestEditorSnapshotsCreateArgsEditor(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "content": obj.get("content"),
-            "functionName": obj.get("functionName"),
-            "inputParameters": obj.get("inputParameters"),
-            "language": obj.get("language"),
-            "lastUpdated": obj.get("lastUpdated")
+            "code": obj.get("code"),
+            "language": obj.get("language")
         })
         return _obj
 

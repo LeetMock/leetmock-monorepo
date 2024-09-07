@@ -17,19 +17,18 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic import BaseModel, ConfigDict
 from typing import Any, ClassVar, Dict, List
+from convex_client.models.request_actions_run_code_args import RequestActionsRunCodeArgs
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestCodeRunnerRunCodeArgs(BaseModel):
+class RequestActionsRunCode(BaseModel):
     """
-    RequestCodeRunnerRunCodeArgs
+    RequestActionsRunCode
     """ # noqa: E501
-    code: StrictStr
-    language: StrictStr
-    question_id: StrictStr = Field(description="ID from table \"questions\"", alias="questionId")
-    __properties: ClassVar[List[str]] = ["code", "language", "questionId"]
+    args: RequestActionsRunCodeArgs
+    __properties: ClassVar[List[str]] = ["args"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -49,7 +48,7 @@ class RequestCodeRunnerRunCodeArgs(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestCodeRunnerRunCodeArgs from a JSON string"""
+        """Create an instance of RequestActionsRunCode from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -70,11 +69,14 @@ class RequestCodeRunnerRunCodeArgs(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of args
+        if self.args:
+            _dict['args'] = self.args.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestCodeRunnerRunCodeArgs from a dict"""
+        """Create an instance of RequestActionsRunCode from a dict"""
         if obj is None:
             return None
 
@@ -82,9 +84,7 @@ class RequestCodeRunnerRunCodeArgs(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "code": obj.get("code"),
-            "language": obj.get("language"),
-            "questionId": obj.get("questionId")
+            "args": RequestActionsRunCodeArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
         })
         return _obj
 

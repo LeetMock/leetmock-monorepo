@@ -1,29 +1,35 @@
+import axios from "axios";
 import { Client } from "@langchain/langgraph-sdk";
 import type { VideoGrant } from "livekit-server-sdk";
 
 import { action } from "./_generated/server";
-import { createToken, generateRandomAlphanumeric, getFileExtension, generateTestCode } from "@/lib/utils";
-import { TokenResult, CodeRunResult } from "@/lib/types";
-import { v } from "convex/values";
-import axios from "axios";
-import { api } from "./_generated/api";
-import { RunTestResult } from "@/lib/types";
+import { api, internal } from "./_generated/api";
+
+import {
+  createToken,
+  generateRandomAlphanumeric,
+  getFileExtension,
+  generateTestCode,
+  isDefined,
+} from "@/lib/utils";
+import { TokenResult, CodeRunResult, RunCodeResult } from "@/lib/types";
+import { ConvexError, v } from "convex/values";
 
 function formatRuntimeError(stderr: string): string {
-  const lines = stderr.split('\n');
-  let formattedError = '';
+  const lines = stderr.split("\n");
+  let formattedError = "";
   let isRelevantError = false;
 
   for (const line of lines) {
-    if (line.startsWith('Traceback') || line.startsWith('  File "/solution.py"')) {
+    if (line.startsWith("Traceback") || line.startsWith('  File "/solution.py"')) {
       isRelevantError = true;
     }
     if (isRelevantError) {
       if (line.startsWith('  File "tests.py"')) {
         isRelevantError = false;
-        formattedError += '\n';
+        formattedError += "\n";
       } else {
-        formattedError += line + '\n';
+        formattedError += line + "\n";
       }
     }
   }
@@ -47,18 +53,18 @@ async function executeCode(payload: any): Promise<CodeRunResult> {
       executionTime: data.executionTime,
       stdout: data.stdout || null,
       stderr: data.stderr || null,
-      isError: data.status !== 'success',
+      isError: data.status !== "success",
       exception: data.exception || null,
     };
   } catch (error) {
     console.error("Error running code:", error);
     return {
-      status: 'error',
+      status: "error",
       executionTime: 0,
       stdout: null,
       stderr: null,
       isError: true,
-      exception: 'Failed to run code',
+      exception: "Failed to run code",
     };
   }
 }
@@ -119,6 +125,41 @@ export const getToken = action({
   },
 });
 
+export const runCode = action({
+  args: {
+    language: v.string(),
+    code: v.string(),
+  },
+  handler: async (ctx, { language, code }): Promise<RunCodeResult | undefined> => {
+    const payload = {
+      language,
+      stdin: "",
+      files: [
+        {
+          name: `solution.${getFileExtension(language)}`,
+          content: code,
+        },
+      ],
+    };
+
+    const result = await executeCode(payload);
+
+    return result
+      ? {
+          status: !result.isError, //true if API call was successful
+          executionTime: result.executionTime,
+          isError: !!result.stderr, //true if there's an error in the code
+          output: result.stderr || result.stdout || "",
+        }
+      : undefined;
+  },
+});
+
+// ============================================================================
+// Below are actions used for agent server
+// ============================================================================
+
+// TODO: should check user identity, but this api is used by the agent server so we skip that for now
 export const runTests = action({
   args: {
     language: v.string(),
@@ -168,39 +209,72 @@ export const runTests = action({
   },
 });
 
-export const runCode = action({
+// TODO: should check user identity, but this api is used by the agent server so we skip that for now
+export const getEditorSnapshot = action({
   args: {
-    language: v.string(),
-    code: v.string(),
+    sessionId: v.id("sessions"),
   },
-  handler: async (ctx, { language, code }): Promise<RunCodeResult | undefined> => {
-    const payload = {
-      language,
-      stdin: "",
-      files: [
-        {
-          name: `solution.${getFileExtension(language)}`,
-          content: code,
-        },
-      ],
-    };
+  returns: v.object({
+    sessionId: v.id("sessions"),
+    editor: v.object({
+      language: v.string(),
+      content: v.string(),
+      lastUpdated: v.number(),
+    }),
+    terminal: v.object({
+      output: v.string(),
+      isError: v.boolean(),
+      executionTime: v.optional(v.number()),
+    }),
+  }),
+  handler: async (ctx, { sessionId }) => {
+    const snapshot = await ctx.runQuery(
+      internal.editorSnapshots.getLatestSnapshotBySessionIdInternal,
+      { sessionId }
+    );
 
-    const result = await executeCode(payload);
+    if (!isDefined(snapshot)) {
+      throw new ConvexError({ name: "NoSnapshotFound", message: "No snapshot found" });
+    }
 
-    return result ? {
-      status: !result.isError,//true if API call was successful
-      executionTime: result.executionTime,
-      isError: !!result.stderr,//true if there's an error in the code
-      output: result.stderr || result.stdout || '',
-    } : undefined;
+    const { _id, _creationTime, ...rest } = snapshot;
+    return rest;
   },
 });
 
+// TODO: should check user identity, but this api is used by the agent server so we skip that for now
+export const getSessionMetadata = action({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  returns: v.object({
+    session_id: v.id("sessions"),
+    question_title: v.string(),
+    question_content: v.string(),
+    agent_thread_id: v.string(),
+    assistant_id: v.string(),
+    session_status: v.string(),
+  }),
+  handler: async (ctx, { sessionId }) => {
+    const session = await ctx.runQuery(internal.sessions.getByIdInternal, { sessionId });
+    if (!isDefined(session)) {
+      throw new ConvexError({ name: "SessionNotFound", message: "Session not found" });
+    }
 
-type RunCodeResult = {
-  status: boolean;
-  executionTime: number;
-  isError: boolean;
-  output: string;
-};
+    const question = await ctx.runQuery(internal.questions.getByIdInternal, {
+      questionId: session.questionId,
+    });
+    if (!isDefined(question)) {
+      throw new ConvexError({ name: "QuestionNotFound", message: "Question not found" });
+    }
 
+    return {
+      session_id: sessionId,
+      question_title: question.title,
+      question_content: question.question,
+      agent_thread_id: session.agentThreadId,
+      assistant_id: session.assistantId,
+      session_status: session.sessionStatus,
+    };
+  },
+});

@@ -98,7 +98,10 @@ Class | Method | HTTP request | Description
 *ActionApi* | [**api_run_actions_get_editor_snapshot_post**](docs/ActionApi.md#api_run_actions_get_editor_snapshot_post) | **POST** /api/run/actions/getEditorSnapshot | Calls a action at the path actions.js:getEditorSnapshot
 *ActionApi* | [**api_run_actions_get_session_metadata_post**](docs/ActionApi.md#api_run_actions_get_session_metadata_post) | **POST** /api/run/actions/getSessionMetadata | Calls a action at the path actions.js:getSessionMetadata
 *ActionApi* | [**api_run_actions_get_token_post**](docs/ActionApi.md#api_run_actions_get_token_post) | **POST** /api/run/actions/getToken | Calls a action at the path actions.js:getToken
+*ActionApi* | [**api_run_actions_run_code_post**](docs/ActionApi.md#api_run_actions_run_code_post) | **POST** /api/run/actions/runCode | Calls a action at the path actions.js:runCode
+*ActionApi* | [**api_run_actions_run_tests_post**](docs/ActionApi.md#api_run_actions_run_tests_post) | **POST** /api/run/actions/runTests | Calls a action at the path actions.js:runTests
 *ActionApi* | [**api_run_code_runner_run_code_post**](docs/ActionApi.md#api_run_code_runner_run_code_post) | **POST** /api/run/codeRunner/runCode | Calls a action at the path codeRunner.js:runCode
+*ActionApi* | [**api_run_code_runner_run_tests_post**](docs/ActionApi.md#api_run_code_runner_run_tests_post) | **POST** /api/run/codeRunner/runTests | Calls a action at the path codeRunner.js:runTests
 *MutationApi* | [**api_run_editor_snapshots_create_post**](docs/MutationApi.md#api_run_editor_snapshots_create_post) | **POST** /api/run/editorSnapshots/create | Calls a mutation at the path editorSnapshots.js:create
 *MutationApi* | [**api_run_sessions_create_post**](docs/MutationApi.md#api_run_sessions_create_post) | **POST** /api/run/sessions/create | Calls a mutation at the path sessions.js:create
 *QueryApi* | [**api_run_editor_snapshots_get_by_id_post**](docs/QueryApi.md#api_run_editor_snapshots_get_by_id_post) | **POST** /api/run/editorSnapshots/getById | Calls a query at the path editorSnapshots.js:getById
@@ -117,8 +120,12 @@ Class | Method | HTTP request | Description
  - [RequestActionsGetEditorSnapshot](docs/RequestActionsGetEditorSnapshot.md)
  - [RequestActionsGetSessionMetadata](docs/RequestActionsGetSessionMetadata.md)
  - [RequestActionsGetToken](docs/RequestActionsGetToken.md)
+ - [RequestActionsRunCode](docs/RequestActionsRunCode.md)
+ - [RequestActionsRunCodeArgs](docs/RequestActionsRunCodeArgs.md)
+ - [RequestActionsRunTests](docs/RequestActionsRunTests.md)
+ - [RequestActionsRunTestsArgs](docs/RequestActionsRunTestsArgs.md)
  - [RequestCodeRunnerRunCode](docs/RequestCodeRunnerRunCode.md)
- - [RequestCodeRunnerRunCodeArgs](docs/RequestCodeRunnerRunCodeArgs.md)
+ - [RequestCodeRunnerRunTests](docs/RequestCodeRunnerRunTests.md)
  - [RequestEditorSnapshotsCreate](docs/RequestEditorSnapshotsCreate.md)
  - [RequestEditorSnapshotsCreateArgs](docs/RequestEditorSnapshotsCreateArgs.md)
  - [RequestEditorSnapshotsCreateArgsEditor](docs/RequestEditorSnapshotsCreateArgsEditor.md)
@@ -142,10 +149,15 @@ Class | Method | HTTP request | Description
  - [RequestSessionsGetByIdInternal](docs/RequestSessionsGetByIdInternal.md)
  - [ResponseActionsCreateAgentThread](docs/ResponseActionsCreateAgentThread.md)
  - [ResponseActionsGetEditorSnapshot](docs/ResponseActionsGetEditorSnapshot.md)
+ - [ResponseActionsGetEditorSnapshotValue](docs/ResponseActionsGetEditorSnapshotValue.md)
+ - [ResponseActionsGetEditorSnapshotValueEditor](docs/ResponseActionsGetEditorSnapshotValueEditor.md)
  - [ResponseActionsGetSessionMetadata](docs/ResponseActionsGetSessionMetadata.md)
  - [ResponseActionsGetSessionMetadataValue](docs/ResponseActionsGetSessionMetadataValue.md)
  - [ResponseActionsGetToken](docs/ResponseActionsGetToken.md)
+ - [ResponseActionsRunCode](docs/ResponseActionsRunCode.md)
+ - [ResponseActionsRunTests](docs/ResponseActionsRunTests.md)
  - [ResponseCodeRunnerRunCode](docs/ResponseCodeRunnerRunCode.md)
+ - [ResponseCodeRunnerRunTests](docs/ResponseCodeRunnerRunTests.md)
  - [ResponseEditorSnapshotsCreate](docs/ResponseEditorSnapshotsCreate.md)
  - [ResponseEditorSnapshotsGetById](docs/ResponseEditorSnapshotsGetById.md)
  - [ResponseEditorSnapshotsGetLatestSnapshotBySessionId](docs/ResponseEditorSnapshotsGetLatestSnapshotBySessionId.md)

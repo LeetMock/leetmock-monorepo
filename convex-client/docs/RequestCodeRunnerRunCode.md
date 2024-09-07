@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**args** | [**RequestCodeRunnerRunCodeArgs**](RequestCodeRunnerRunCodeArgs.md) |  | 
+**args** | [**RequestActionsRunCodeArgs**](RequestActionsRunCodeArgs.md) |  | 
 
 ## Example
 

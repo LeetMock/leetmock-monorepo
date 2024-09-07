@@ -7,6 +7,8 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **agent_thread_id** | **str** |  | 
 **assistant_id** | **str** |  | 
+**function_name** | **str** |  | 
+**input_parameters** | **List[str]** |  | 
 **question_id** | **str** | ID from table \&quot;questions\&quot; | 
 
 ## Example

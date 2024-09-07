@@ -28,8 +28,10 @@ class RequestSessionsCreateArgs(BaseModel):
     """ # noqa: E501
     agent_thread_id: StrictStr = Field(alias="agentThreadId")
     assistant_id: StrictStr = Field(alias="assistantId")
+    function_name: StrictStr = Field(alias="functionName")
+    input_parameters: List[StrictStr] = Field(alias="inputParameters")
     question_id: StrictStr = Field(description="ID from table \"questions\"", alias="questionId")
-    __properties: ClassVar[List[str]] = ["agentThreadId", "assistantId", "questionId"]
+    __properties: ClassVar[List[str]] = ["agentThreadId", "assistantId", "functionName", "inputParameters", "questionId"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -84,6 +86,8 @@ class RequestSessionsCreateArgs(BaseModel):
         _obj = cls.model_validate({
             "agentThreadId": obj.get("agentThreadId"),
             "assistantId": obj.get("assistantId"),
+            "functionName": obj.get("functionName"),
+            "inputParameters": obj.get("inputParameters"),
             "questionId": obj.get("questionId")
         })
         return _obj

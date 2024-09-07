@@ -1,8 +1,8 @@
 from convex_client.models import (
-    RequestEditorSnapshotsCreateArgs,
     ResponseActionsGetSessionMetadataValue,
+    ResponseActionsGetEditorSnapshotValue,
 )
 
 
 SessionMetadata = ResponseActionsGetSessionMetadataValue
-EditorSnapshot = RequestEditorSnapshotsCreateArgs
+EditorSnapshot = ResponseActionsGetEditorSnapshotValue

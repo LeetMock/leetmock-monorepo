@@ -3,6 +3,13 @@ export interface TokenResult {
   accessToken: string;
 }
 
+export type RunCodeResult = {
+  status: boolean;
+  executionTime: number;
+  isError: boolean;
+  output: string;
+};
+
 export type RunTestResult = Array<{
   caseNumber: number;
   passed: boolean;
