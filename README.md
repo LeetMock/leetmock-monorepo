@@ -60,6 +60,9 @@ npx convex dev
 **Note**: The first time and everytime convex backend is updated, you need to manually run
 
 ```bash
+# npm install -g @openapitools/openapi-generator-cli
+# npm install -g convex
+# sudo apt install default-jre default-jdk
 just gen-convex-client
 ```
 
@@ -106,7 +109,9 @@ langgraph up
 
 ### agent-server
 
-[TODO]
+Per each commit, the following github actions will run:
+
+- deploy-to-fly: Deploy the agent server to fly.io
 
 ### agent-graph
 

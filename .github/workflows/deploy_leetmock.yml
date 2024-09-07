@@ -1,80 +1,21 @@
-# Sample workflow for building and deploying a Next.js site to GitHub Pages
-#
-# To get started with Next.js see: https://nextjs.org/docs/getting-started
-#
 name: Deploy LeetMock
 
 on:
+  push:
+    branches:
+      - main
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "leetmock"
-  cancel-in-progress: false
-
 jobs:
-  build-leetmock-nextjs:
+  deploy-to-fly:
     runs-on: ubuntu-latest
     steps:
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: 22
-          script: |
-            cd ~/leetmock-monorepo
-            git remote set-url origin https://${{ secrets.USERNAME_GITHUB }}:${{ secrets.TOKEN_GITHUB }}@github.com/LeetMock/leetmock-monorepo.git
-            git pull origin main
-            cd client
-            npm install
-            npx convex deploy -y --cmd 'npm run build'
-            pm2 delete leetmock
-            pm2 start npm --name leetmock -- start
-            
-  build-voice-pipeline:
-    runs-on: ubuntu-latest
-    steps:
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: 22
-          script: |
-            cd ~/leetmock-monorepo
-            git remote set-url origin https://${{ secrets.USERNAME_GITHUB }}:${{ secrets.TOKEN_GITHUB }}@github.com/LeetMock/leetmock-monorepo.git
-            git pull origin main
-            cd voice-pipeline
-            poetry install
-            pm2 delete voice-pipeline
-            poetry run pm2 start ../deployment/voice_pipeline.json
-  
-  build-llm-server:
-    runs-on: ubuntu-latest
-    steps:
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: 22
-          script: |
-            cd ~/leetmock-monorepo
-            git remote set-url origin https://${{ secrets.USERNAME_GITHUB }}:${{ secrets.TOKEN_GITHUB }}@github.com/LeetMock/leetmock-monorepo.git
-            git pull origin main
-            cd llm-server
-            poetry install
-            pm2 delete llm-server
-            poetry run pm2 start ../deployment/llm_server.json
+      - uses: actions/checkout@v3
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Deploy to fly.io
+        run: |
+          cd agent-server
+          flyctl deploy -c fly.toml
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
