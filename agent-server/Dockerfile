@@ -62,5 +62,5 @@ COPY --chown=appuser:appuser . .
 EXPOSE 8081
 
 # Run the application
-ENTRYPOINT ["python", "-m", "agent_server.minimal_assistant"]
+ENTRYPOINT ["python", "-m", "agent_server.worker"]
 CMD ["start"]
