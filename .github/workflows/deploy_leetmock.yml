@@ -20,6 +20,6 @@ jobs:
       - name: Deploy to fly.io
         run: |
           cd agent-server
-          cp -r ../convex-client .
+          cp -r ../convex-client ./convex-client
           flyctl deploy -c fly.toml
         
