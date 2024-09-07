@@ -113,6 +113,20 @@ Per each commit, the following github actions will run:
 
 - deploy-to-fly: Deploy the agent server to fly.io
 
+
+Run worker image locally:
+
+```bash
+cd agent-server
+```
+
+Comment out the `.env` in `.dockerignore` and rebuild the image locally:
+
+```bash
+docker build -t test .
+docker run test
+```
+
 ### agent-graph
 
 1. Go to [Langgraph Cloud](https://smith.langchain.com/o/a1dd4f2f-afd6-4f46-9cc3-4573dea18ebd/host) and choose the current
