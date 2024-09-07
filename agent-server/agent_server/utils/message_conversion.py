@@ -62,7 +62,7 @@ def convert_oai_message_to_langchain_message(
         content = (
             message["content"]
             if isinstance(message["content"], str)
-            else list(message["content"])
+            else list(message["content"])  # type: ignore
         )
         lc_message = SystemMessage(content=content)  # type: ignore
 

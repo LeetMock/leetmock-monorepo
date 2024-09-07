@@ -8,4 +8,3 @@ gen-convex-client:
     -g python \
     -o convex-client \
     --package-name convex_client
-
