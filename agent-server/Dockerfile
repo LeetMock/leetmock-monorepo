@@ -45,9 +45,9 @@ RUN pip install poetry
 RUN poetry config virtualenvs.create false
 
 # Copy only requirements to cache them in docker layer
-COPY pyproject.toml poetry.lock* ./
+COPY pyproject.toml ./
 
-COPY convex-client ..
+COPY convex-client /convex-client
 
 # Install project dependencies
 RUN poetry install --no-interaction --no-ansi
