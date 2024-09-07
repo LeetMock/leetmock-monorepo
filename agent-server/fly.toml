@@ -24,6 +24,5 @@ primary_region = 'sjc'
     path = "/"
   
 [[vm]]
-  memory = '2gb'
-  cpu_kind = 'shared'
-  cpus = 2
+  size = "shared-cpu-4x"
+  memory = "2gb"
