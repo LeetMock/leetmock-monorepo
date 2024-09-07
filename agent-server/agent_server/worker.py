@@ -28,7 +28,7 @@ from agent_server.types import SessionMetadata
 
 
 # Add this near the top of your file, before setting up logging
-log_directory = os.path.join(os.path.dirname(__file__), 'logs')
+log_directory = os.path.join(os.path.dirname(__file__), "logs")
 os.makedirs(log_directory, exist_ok=True)
 
 logger = logging.getLogger("minimal-assistant")
@@ -50,8 +50,6 @@ logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 
 load_dotenv(find_dotenv())
-
-import psutil
 
 
 class CustomLoadCalc(_DefaultLoadCalc):
