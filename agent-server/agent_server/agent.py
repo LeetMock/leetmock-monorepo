@@ -4,15 +4,13 @@ import hashlib
 import logging
 import os
 
+from datetime import datetime
 from pprint import pprint
 from langgraph_sdk.client import get_client
 from livekit.agents import llm
-from typing import AsyncIterator
+from typing import AsyncGenerator, AsyncIterator
 from langgraph_sdk.client import StreamPart
-from agent_server.utils.messages import (
-    convert_chat_ctx_to_langchain_messages,
-    convert_livekit_msgs_to_langchain_msgs,
-)
+from agent_server.utils.messages import convert_chat_ctx_to_langchain_messages
 from agent_server.types import SessionMetadata, EditorSnapshot
 
 
@@ -24,6 +22,8 @@ class LangGraphLLM(llm.LLM):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.counter: int = 0
+        self._unix_timestamp = int(datetime.now().timestamp())
         self._client = get_client(url=os.getenv("LANGGRAPH_API_URL"))
         self._session_metadata: SessionMetadata | None = None
         self._snapshot: EditorSnapshot | None = None
@@ -51,7 +51,7 @@ class LangGraphLLM(llm.LLM):
 
         langchain_messages = convert_chat_ctx_to_langchain_messages(chat_ctx)
         for i, message in enumerate(langchain_messages):
-            key = f"{i}-{message.type}-{message.content}"
+            key = f"{self._unix_timestamp}-{i}-{message.type}-{message.content}"
             message.id = hashlib.md5(key.encode()).hexdigest()
 
         print("Following is copied_ctx.messages, not conmmitted yet!")
@@ -73,7 +73,7 @@ class LangGraphLLM(llm.LLM):
             thread_id=self._session_metadata.agent_thread_id,
             assistant_id=self._session_metadata.assistant_id,
             input=lang_graph_input,
-            stream_mode="updates",
+            stream_mode="events",
             multitask_strategy="interrupt",
         )
 
@@ -90,65 +90,39 @@ class SimpleLLMStream(llm.LLMStream):
         fnc_ctx: llm.FunctionContext | None,
     ):
         super().__init__(chat_ctx=chat_ctx, fnc_ctx=fnc_ctx)
+        self._stream = self.generate_llm_stream(stream)
 
-        self._stream = stream
+    def _create_llm_chunk(self, content: str) -> llm.ChatChunk:
+        choice = llm.Choice(
+            delta=llm.ChoiceDelta(content=content, role="assistant"),
+            index=0,
+        )
+        return llm.ChatChunk(choices=[choice])
+
+    async def generate_llm_stream(
+        self, stream: AsyncIterator[StreamPart]
+    ) -> AsyncGenerator[llm.ChatChunk, None]:
+        logger.info("Agent stream started")
+
+        async for chunk in stream:
+            tags = chunk.data.get("tags", [])
+            if "chatbot" not in tags:
+                continue
+
+            event = chunk.data.get("event", None)
+            if event != "on_chat_model_stream":
+                continue
+
+            content = chunk.data.get("data", {}).get("chunk", {}).get("content", "")
+            logger.info(f"Received chunk content: `{content}`")
+            yield self._create_llm_chunk(content)
+
+        # default empty chunk, in case no content is streamed out
+        yield self._create_llm_chunk("")
+        logger.info("Agent stream ended")
 
     async def __anext__(self) -> llm.ChatChunk:
         try:
-            chunk = await anext(self._stream)
-
-            logger.debug(f"Received chunk: {chunk}")
-
-            if chunk.event != "updates" or "chatbot" not in chunk.data:
-                return await self.__anext__()
-
-            chatbot_data = chunk.data["chatbot"]
-            if "response" not in chatbot_data:
-                return await self.__anext__()
-
-            response = chatbot_data["response"]
-            content = response.get("content", "")
-
-            return llm.ChatChunk(
-                choices=[
-                    llm.Choice(
-                        delta=llm.ChoiceDelta(content=content, role="assistant"),
-                        index=0,
-                    )
-                ]
-            )
+            return await anext(self._stream)
         except StopAsyncIteration:
             raise StopAsyncIteration
-
-    """
-    # Stateful LLMStream
-    async def __anext__(self) -> llm.ChatChunk:
-        while True:
-            try:
-                chunk = await anext(self._stream)
-
-                logger.debug(f"Received chunk: {chunk}")
-
-                # Skip chunks without data or metadata events
-                if not chunk.data or chunk.event == "metadata":
-                    continue
-
-                # Skip chunks that don't have the required tags or events
-                if ("chatbot" not in chunk.data.get("tags", []) or
-                    chunk.data.get("event") != "on_chat_model_stream"):
-                    continue
-
-                content = chunk.data.get("data", {}).get("chunk", {}).get("content", "")
-
-                return llm.ChatChunk(
-                    choices=[
-                        llm.Choice(
-                            delta=llm.ChoiceDelta(content=content, role="assistant"),
-                            index=0,
-                        )
-                    ]
-                )
-            except StopAsyncIteration:
-                # Maybe more to do here?
-                raise StopAsyncIteration
-    """

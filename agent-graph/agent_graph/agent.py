@@ -110,11 +110,9 @@ def chatbot(state: AgentState, config: RunnableConfig):
     )
 
     # Keep track of SLIENT token in message history, but not send to voice engine
-    message = AIMessage(
-        content=(response.content if len(response.content) > 0 else stop_token)
-    )
+    message = AIMessage(content=stop_token) if len(response.content) == 0 else None
 
-    return {"messages": [message]}
+    return {"messages": [message]} if message is not None else None
 
 
 def reminder(state: AgentState, config: RunnableConfig):
