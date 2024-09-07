@@ -1,33 +1,23 @@
-from typing import Dict, TypeVar, Type, Any
+from typing import TypeVar, Type, Any, cast
+from langchain_core.runnables.config import RunnableConfig
 
 T = TypeVar("T")
 
 
-def create_init_state_node(default_state: Dict):
+def with_default(type: Type[T], value: Any, default: Any) -> T:
+    result = {k: v for k, v in value.items()}
 
-    def init_state_node(state: Dict):
-        state_update = {}
+    for key in default.keys():
+        if key not in result:
+            result[key] = default[key]
 
-        for key, value in default_state.items():
-            state_value = state.get(key, None)
-
-            if state_value is not None:
-                continue
-
-            state_update[key] = value
-
-        return state_update if len(state_update) > 0 else None
-
-    return init_state_node
+    return cast(type, result)
 
 
-def safe_get(type: Type[T], state: Any, key: str, default: T) -> T:
-    value = state.get(key, None)
+def get_default_state(type: Type[T], value: Any, default: Any) -> T:
+    return with_default(type, value, default)
 
-    if value is None:
-        return default
 
-    if not isinstance(value, type):
-        return default
-
-    return value
+def get_default_config(type: Type[T], value: RunnableConfig, default: Any) -> T:
+    configurable = value.get("configurable", {})
+    return with_default(type, configurable, default)

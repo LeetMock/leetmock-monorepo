@@ -1,7 +1,8 @@
 {
-  "dependencies": ["./agent-graph", "./libs"],
+  "dockerfile_lines": [],
   "graphs": {
     "code-mock-v1": "./agent-graph/agent_graph/agent.py:graph"
   },
-  "env": ".env"
+  "env": ".env",
+  "dependencies": ["./agent-graph", "./libs"]
 }

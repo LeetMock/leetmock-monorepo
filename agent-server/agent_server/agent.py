@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import logging
 import os
 
@@ -8,7 +9,10 @@ from langgraph_sdk.client import get_client
 from livekit.agents import llm
 from typing import AsyncIterator
 from langgraph_sdk.client import StreamPart
-from agent_server.utils.messages import convert_livekit_msgs_to_langchain_msgs
+from agent_server.utils.messages import (
+    convert_chat_ctx_to_langchain_messages,
+    convert_livekit_msgs_to_langchain_msgs,
+)
 from agent_server.types import SessionMetadata, EditorSnapshot
 
 
@@ -45,7 +49,10 @@ class LangGraphLLM(llm.LLM):
         parallel_tool_calls: bool | None = None,
     ) -> llm.LLMStream:
 
-        langchain_messages = convert_livekit_msgs_to_langchain_msgs(chat_ctx.messages)
+        langchain_messages = convert_chat_ctx_to_langchain_messages(chat_ctx)
+        for i, message in enumerate(langchain_messages):
+            key = f"{i}-{message.type}-{message.content}"
+            message.id = hashlib.md5(key.encode()).hexdigest()
 
         print("Following is copied_ctx.messages, not conmmitted yet!")
         pprint(langchain_messages)

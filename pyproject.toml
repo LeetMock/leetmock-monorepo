@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "leetmock"
+version = "0.1.0"
+description = ""
+authors = ["Brian Yin <toubatbrian@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9.0,<3.13"
+libs = { path = "libs", develop = true }
+agent_graph = { path = "agent-graph", develop = true }
+langgraph = "^0.2.4"
+langgraph-cli = "^0.1.50"
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.29.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
