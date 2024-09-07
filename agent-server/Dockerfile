@@ -56,8 +56,8 @@ WORKDIR /home/appuser
 # Copy project
 COPY --chown=appuser:appuser . .
 
-# Copy convex-client directory
-COPY --chown=appuser:appuser ../convex-client ../convex-client
+# move convex-client to parent directory
+RUN mv convex-client ..
 
 # Expose port 8081 for TCP
 EXPOSE 8081
