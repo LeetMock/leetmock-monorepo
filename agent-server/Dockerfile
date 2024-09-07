@@ -47,6 +47,8 @@ RUN poetry config virtualenvs.create false
 # Copy only requirements to cache them in docker layer
 COPY pyproject.toml poetry.lock* ./
 
+COPY convex-client ..
+
 # Install project dependencies
 RUN poetry install --no-interaction --no-ansi
 
@@ -55,9 +57,6 @@ WORKDIR /home/appuser
 
 # Copy project
 COPY --chown=appuser:appuser . .
-
-# move convex-client to parent directory
-RUN mv convex-client ..
 
 # Expose port 8081 for TCP
 EXPOSE 8081
