@@ -29,13 +29,22 @@ class LangGraphLLM(llm.LLM):
         self._snapshot: EditorSnapshot | None = None
         self._interaction_type: str | None = None
 
+    async def get_state(self):
+        assert self._session_metadata is not None, "Session metadata is not set"
+
+        state = await self._client.threads.get_state(
+            thread_id=self._session_metadata.agent_thread_id
+        )
+        return state["values"]
+
+    def set_agent_session(self, session_data: SessionMetadata):
+        self._session_metadata = session_data
+
     def set_agent_context(
         self,
-        session_metadata: SessionMetadata,
         snapshot: EditorSnapshot,
         interaction_type: str,
     ):
-        self._session_metadata = session_metadata
         self._snapshot = snapshot
         self._interaction_type = interaction_type
 

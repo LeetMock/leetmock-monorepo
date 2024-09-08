@@ -1,6 +1,7 @@
 import os
 import asyncio
 import logging
+from typing import List, cast
 import psutil
 import convex_client
 
@@ -102,7 +103,6 @@ async def entrypoint(ctx: JobContext):
     api_client = convex_client.ApiClient(configuration)
     action_api = convex_client.ActionApi(api_client)
 
-    session_metadata_fut = asyncio.Future[SessionMetadata]()
     session_id_fut = asyncio.Future[str]()
     reminder_task: asyncio.Task | None = None
     reminder_delay = 24  # seconds
@@ -148,9 +148,8 @@ async def entrypoint(ctx: JobContext):
             raise Exception(f"Error getting snapshot: {response.error_message}")
 
         logger.info(f"Got snapshot: {response.value}")
-        session_metadata = session_metadata_fut.result()
 
-        agent.set_agent_context(session_metadata, response.value, interaction_type)
+        agent.set_agent_context(response.value, interaction_type)
         return agent.chat(chat_ctx=chat_ctx)
 
     def will_synthesize_assistant_reply(
@@ -251,13 +250,23 @@ async def entrypoint(ctx: JobContext):
             logger.error(f"Error getting session metadata: {response.error_message}")
             raise Exception(f"Error getting session metadata: {response.error_message}")
 
-        session_metadata_fut.set_result(response.value)
+        agent.set_agent_session(response.value)
+        logger.info("Acked session id")
 
-    logger.info("Waiting for session id")
+    async def prepare_initial_agent_context():
+        state = await agent.get_state()
+        messages = state.get("messages", [])  # type: ignore
+        logger.info(f"Got initial context: {messages}")
+
+        if len(messages) != 0:
+            initial_ctx.append(
+                text="(User has disconnected and reconnected back to the interview, you would say:)",
+                role="user",
+            )
+
     await session_id_fut
     await prepare_session_and_acknowledge()
-    logger.info("Acked session id")
-
+    await prepare_initial_agent_context()
     await assistant.say(
         will_synthesize_assistant_reply(assistant, initial_ctx),
         allow_interruptions=True,
