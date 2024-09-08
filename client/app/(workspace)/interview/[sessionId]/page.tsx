@@ -235,7 +235,7 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
                     </div>
                     <div className="bg-blue-50 h-full relative" ref={editorContainerRef}>
                       <Editor
-                        className="absolute inset-0"
+                        className="absolute inset-0 bg-background"
                         language={editorState.editor.language}
                         theme={theme === "dark" ? "customDarkTheme" : "vs-light"}
                         value={editorState.editor.content}
