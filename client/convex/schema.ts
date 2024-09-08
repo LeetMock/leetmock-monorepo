@@ -13,7 +13,7 @@ export default defineSchema({
       v.literal("in_progress"),
       v.literal("completed")
     ),
-  }),
+  }).index("by_user_id", ["userId"]),
   editorSnapshots: defineTable({
     sessionId: v.id("sessions"),
     editor: v.object({

@@ -155,11 +155,6 @@ export const runCode = action({
   },
 });
 
-// ============================================================================
-// Below are actions used for agent server
-// ============================================================================
-
-// TODO: should check user identity, but this api is used by the agent server so we skip that for now
 export const runTests = action({
   args: {
     language: v.string(),
@@ -209,6 +204,10 @@ export const runTests = action({
   },
 });
 
+// ============================================================================
+// Below are actions used for agent server
+// ============================================================================
+
 // TODO: should check user identity, but this api is used by the agent server so we skip that for now
 export const getEditorSnapshot = action({
   args: {
@@ -256,6 +255,7 @@ export const getSessionMetadata = action({
     agent_thread_id: v.string(),
     assistant_id: v.string(),
     session_status: v.string(),
+    question_id: v.id("questions"),
   }),
   handler: async (ctx, { sessionId }) => {
     const session = await ctx.runQuery(internal.sessions.getByIdInternal, { sessionId });
@@ -277,6 +277,7 @@ export const getSessionMetadata = action({
       agent_thread_id: session.agentThreadId,
       assistant_id: session.assistantId,
       session_status: session.sessionStatus,
+      question_id: question._id,
     };
   },
 });

@@ -9,6 +9,7 @@ readme = "README.md"
 python = ">=3.9.0,<3.13"
 libs = { path = "libs", develop = true }
 agent_graph = { path = "agent-graph", develop = true }
+convex-client = { path = "convex-client", develop = true }
 langgraph = "^0.2.4"
 langgraph-cli = "^0.1.50"
 

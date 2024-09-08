@@ -42,6 +42,7 @@ class TestResponseActionsGetSessionMetadata(unittest.TestCase):
                     agent_thread_id = '', 
                     assistant_id = '', 
                     question_content = '', 
+                    question_id = '', 
                     question_title = '', 
                     session_id = '', 
                     session_status = '', )

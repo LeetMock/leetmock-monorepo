@@ -111,6 +111,7 @@ Class | Method | HTTP request | Description
 *QueryApi* | [**api_run_questions_get_by_id_post**](docs/QueryApi.md#api_run_questions_get_by_id_post) | **POST** /api/run/questions/getById | Calls a query at the path questions.js:getById
 *QueryApi* | [**api_run_sessions_exists_post**](docs/QueryApi.md#api_run_sessions_exists_post) | **POST** /api/run/sessions/exists | Calls a query at the path sessions.js:exists
 *QueryApi* | [**api_run_sessions_get_by_id_post**](docs/QueryApi.md#api_run_sessions_get_by_id_post) | **POST** /api/run/sessions/getById | Calls a query at the path sessions.js:getById
+*QueryApi* | [**api_run_sessions_get_by_user_id_post**](docs/QueryApi.md#api_run_sessions_get_by_user_id_post) | **POST** /api/run/sessions/getByUserId | Calls a query at the path sessions.js:getByUserId
 
 
 ## Documentation For Models
@@ -147,10 +148,10 @@ Class | Method | HTTP request | Description
  - [RequestSessionsGetById](docs/RequestSessionsGetById.md)
  - [RequestSessionsGetByIdArgs](docs/RequestSessionsGetByIdArgs.md)
  - [RequestSessionsGetByIdInternal](docs/RequestSessionsGetByIdInternal.md)
+ - [RequestSessionsGetByUserId](docs/RequestSessionsGetByUserId.md)
+ - [RequestSessionsGetByUserIdArgs](docs/RequestSessionsGetByUserIdArgs.md)
  - [ResponseActionsCreateAgentThread](docs/ResponseActionsCreateAgentThread.md)
  - [ResponseActionsGetEditorSnapshot](docs/ResponseActionsGetEditorSnapshot.md)
- - [ResponseActionsGetEditorSnapshotValue](docs/ResponseActionsGetEditorSnapshotValue.md)
- - [ResponseActionsGetEditorSnapshotValueEditor](docs/ResponseActionsGetEditorSnapshotValueEditor.md)
  - [ResponseActionsGetSessionMetadata](docs/ResponseActionsGetSessionMetadata.md)
  - [ResponseActionsGetSessionMetadataValue](docs/ResponseActionsGetSessionMetadataValue.md)
  - [ResponseActionsGetToken](docs/ResponseActionsGetToken.md)
@@ -170,6 +171,7 @@ Class | Method | HTTP request | Description
  - [ResponseSessionsExists](docs/ResponseSessionsExists.md)
  - [ResponseSessionsGetById](docs/ResponseSessionsGetById.md)
  - [ResponseSessionsGetByIdInternal](docs/ResponseSessionsGetByIdInternal.md)
+ - [ResponseSessionsGetByUserId](docs/ResponseSessionsGetByUserId.md)
 
 
 <a id="documentation-for-authorization"></a>

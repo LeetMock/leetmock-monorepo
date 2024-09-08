@@ -1,15 +1,26 @@
+import os
 import time
+import convex_client
+
 from typing import Annotated, List, Literal, TypedDict
 
-from langchain import hub
+from convex_client.models.request_actions_run_tests import RequestActionsRunTests
+from convex_client.models.request_actions_run_tests_args import (
+    RequestActionsRunTestsArgs,
+)
 
-from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
+
+from langchain import hub  # type: ignore
+from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, SystemMessage
 from langchain_core.runnables.config import RunnableConfig
 from langchain_core.prompts import ChatPromptTemplate
 
 from langgraph.graph import END, StateGraph, add_messages, START
 from langgraph.checkpoint.memory import MemorySaver
-
+from agent_graph.prompts import (
+    TESTCASE_INTERNAL_ERROR_PROMPT,
+    format_test_context,
+)
 from agent_graph.utils import (
     get_default_config,
     get_default_state,
@@ -31,6 +42,12 @@ class AgentState(TypedDict):
 
     interaction_type: InteractionType
     """The type of interaction, either response_required or reminder_required"""
+
+    question_id: str | None
+    """The id of the question"""
+
+    test_context: str | None
+    """The context for the test, including test cases and expected output"""
 
     coding_question: str
     """The coding question to ask the user"""
@@ -62,6 +79,8 @@ DEFAULT_STATE: AgentState = {
     "messages": [],
     "incoming_messages": [],
     "interaction_type": "response_required",
+    "question_id": None,
+    "test_context": None,
     "coding_question": "Write a function that takes in a string and returns the string reversed",
     "editor_content": "def reverse_string(s: str) -> str:\n    return s[::-1]",
     "content_last_updated": 0,
@@ -73,6 +92,10 @@ DEFAULT_CONFIG: AgentConfig = {
     "chatbot_stop_token": "SILENT",
     "chatbot_temperature": 0.9,
 }
+
+configuration = convex_client.Configuration(host=os.getenv("CONVEX_URL") or "")
+api_client = convex_client.ApiClient(configuration)
+action_api = convex_client.ActionApi(api_client)
 
 
 def prepare_state(state: AgentState, config: RunnableConfig):
@@ -90,6 +113,30 @@ def sync_messages(state: AgentState):
     }
 
 
+def run_test(state: AgentState):
+    agent_state = get_default_state(AgentState, state, DEFAULT_STATE)
+
+    if agent_state["question_id"] is None or len(agent_state["question_id"]) == 0:
+        return {"test_context": TESTCASE_INTERNAL_ERROR_PROMPT}
+
+    request = RequestActionsRunTests(
+        args=RequestActionsRunTestsArgs(
+            language="python",
+            code=agent_state["editor_content"],
+            questionId=agent_state["question_id"],
+        )
+    )
+
+    try:
+        response = action_api.api_run_actions_run_tests_post(request)
+        assert response.value is not None
+        result = response.value["testResults"]
+    except Exception as _:
+        return {"test_context": TESTCASE_INTERNAL_ERROR_PROMPT}
+
+    return {"test_context": format_test_context(result)}
+
+
 def chatbot(state: AgentState, config: RunnableConfig):
     system_prompt_tpl: ChatPromptTemplate = hub.pull("leetmock-v1")
 
@@ -97,6 +144,9 @@ def chatbot(state: AgentState, config: RunnableConfig):
     agent_config = get_default_config(AgentConfig, config, DEFAULT_CONFIG)
 
     messages = agent_state["messages"]
+    if agent_state["test_context"] is not None:
+        messages.append(SystemMessage(content=agent_state["test_context"]))
+
     model_name = agent_config["model_name"]
     temperature = agent_config["chatbot_temperature"]
     stop_token = agent_config["chatbot_stop_token"]
@@ -161,12 +211,13 @@ def check_user_activity(state: AgentState):
     if agent_state["interaction_type"] == "reminder_required":
         return "reminder"
 
-    return "chatbot"
+    return "run_test"
 
 
 graph_builder = StateGraph(state_schema=AgentState, config_schema=AgentConfig)
 graph_builder.add_node("prepare_state", prepare_state)  # type: ignore
 graph_builder.add_node("sync_messages", sync_messages)  # type: ignore
+graph_builder.add_node("run_test", run_test)  # type: ignore
 graph_builder.add_node("reminder", reminder)  # type: ignore
 graph_builder.add_node("chatbot", chatbot)  # type: ignore
 
@@ -177,10 +228,11 @@ graph_builder.add_conditional_edges(
     check_user_activity,
     {
         "reminder": "reminder",
-        "chatbot": "chatbot",
+        "run_test": "run_test",
         END: END,
     },
 )
+graph_builder.add_edge("run_test", "chatbot")
 graph_builder.add_edge("reminder", "chatbot")
 graph_builder.add_edge("chatbot", END)
 

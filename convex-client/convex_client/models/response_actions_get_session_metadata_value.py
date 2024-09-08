@@ -29,10 +29,11 @@ class ResponseActionsGetSessionMetadataValue(BaseModel):
     agent_thread_id: StrictStr
     assistant_id: StrictStr
     question_content: StrictStr
+    question_id: StrictStr = Field(description="ID from table \"questions\"")
     question_title: StrictStr
     session_id: StrictStr = Field(description="ID from table \"sessions\"")
     session_status: StrictStr
-    __properties: ClassVar[List[str]] = ["agent_thread_id", "assistant_id", "question_content", "question_title", "session_id", "session_status"]
+    __properties: ClassVar[List[str]] = ["agent_thread_id", "assistant_id", "question_content", "question_id", "question_title", "session_id", "session_status"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -88,6 +89,7 @@ class ResponseActionsGetSessionMetadataValue(BaseModel):
             "agent_thread_id": obj.get("agent_thread_id"),
             "assistant_id": obj.get("assistant_id"),
             "question_content": obj.get("question_content"),
+            "question_id": obj.get("question_id"),
             "question_title": obj.get("question_title"),
             "session_id": obj.get("session_id"),
             "session_status": obj.get("session_status")

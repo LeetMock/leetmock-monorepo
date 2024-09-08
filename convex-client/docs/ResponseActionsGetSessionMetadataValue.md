@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **agent_thread_id** | **str** |  | 
 **assistant_id** | **str** |  | 
 **question_content** | **str** |  | 
+**question_id** | **str** | ID from table \&quot;questions\&quot; | 
 **question_title** | **str** |  | 
 **session_id** | **str** | ID from table \&quot;sessions\&quot; | 
 **session_status** | **str** |  | 

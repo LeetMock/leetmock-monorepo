@@ -60,9 +60,8 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
   const question = useQuery(api.questions.getById, { questionId: session?.questionId });
 
   const [testResults, setTestResults] = useState<RunTestResult | null>(null);
-  const [outputView, setOutputView] = useState<'output' | 'testResults'>('output');
+  const [outputView, setOutputView] = useState<"output" | "testResults">("output");
   const [testRunCounter, setTestRunCounter] = useState(0);
-  const [agentReceivedSessionId, setAgentReceivedSessionId] = useState(false);
 
   const handleSnapshotChange = useCallback(
     (snapshot: EditorState) => {
@@ -84,6 +83,7 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
     onTerminalChange,
   } = useEditorState(sessionId, handleSnapshotChange);
 
+  // Setup the participant device
   useEffect(() => {
     if (connectionState === ConnectionState.Connected) {
       localParticipant.setCameraEnabled(false);
@@ -91,22 +91,14 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
     }
   }, [localParticipant, connectionState]);
 
- // Setup the participant device
- useEffect(() => {
-  if (connectionState === ConnectionState.Connected) {
-    localParticipant.setCameraEnabled(false);
-    localParticipant.setMicrophoneEnabled(true);
-  }
-}, [localParticipant, connectionState]);
-
-// Connect to the room
-const handleConnect = useCallback(async () => {
-  if (connectionState === ConnectionState.Connected) {
-    disconnect();
-  } else if (connectionState === ConnectionState.Disconnected) {
-    await connect();
-  }
-}, [connectionState, disconnect, connect]);
+  // Connect to the room
+  const handleConnect = useCallback(async () => {
+    if (connectionState === ConnectionState.Connected) {
+      disconnect();
+    } else if (connectionState === ConnectionState.Disconnected) {
+      await connect();
+    }
+  }, [connectionState, disconnect, connect]);
 
   const handleRunCode = async () => {
     const { language, content } = editorState!.editor;
@@ -132,8 +124,8 @@ const handleConnect = useCallback(async () => {
     const { language, content } = editorState!.editor;
     setIsRunning(true);
     setTestResults(null);
-    setOutputView('testResults');
-    setTestRunCounter(prev => prev + 1);
+    setOutputView("testResults");
+    setTestRunCounter((prev) => prev + 1);
 
     try {
       if (!session?.questionId) {
@@ -144,20 +136,31 @@ const handleConnect = useCallback(async () => {
       if (result.status === "success" && result.testResults) {
         const executionTime = result.executionTime;
         setTestResults(result.testResults);
-        const allPassed = result.testResults.every(testCase => testCase.passed);
-        
-        onTerminalChange({ 
-          output: allPassed ? "All test cases passed!" : "Some test cases failed. See details above.", 
-          isError: !allPassed, 
-          executionTime 
+        const allPassed = result.testResults.every((testCase) => testCase.passed);
+
+        onTerminalChange({
+          output: allPassed
+            ? "All test cases passed!"
+            : "Some test cases failed. See details above.",
+          isError: !allPassed,
+          executionTime,
         });
       } else {
-        const errorMessage = result.stderr || result.exception || "Error running tests. Please try again.";
-        onTerminalChange({ output: errorMessage, isError: true, executionTime: result.executionTime });
+        const errorMessage =
+          result.stderr || result.exception || "Error running tests. Please try again.";
+        onTerminalChange({
+          output: errorMessage,
+          isError: true,
+          executionTime: result.executionTime,
+        });
       }
     } catch (error) {
       console.error("Error running tests:", error);
-      onTerminalChange({ output: "Error running tests. Please try again.", isError: true, executionTime: 0 });
+      onTerminalChange({
+        output: "Error running tests. Please try again.",
+        isError: true,
+        executionTime: 0,
+      });
     }
 
     setIsRunning(false);
@@ -263,10 +266,10 @@ const handleConnect = useCallback(async () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setOutputView('output')}
+                          onClick={() => setOutputView("output")}
                           className={cn(
                             "text-sm font-medium",
-                            outputView === 'output' ? "bg-secondary" : "hover:bg-secondary/50"
+                            outputView === "output" ? "bg-secondary" : "hover:bg-secondary/50"
                           )}
                         >
                           Output
@@ -274,16 +277,16 @@ const handleConnect = useCallback(async () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setOutputView('testResults')}
+                          onClick={() => setOutputView("testResults")}
                           className={cn(
                             "text-sm font-medium",
-                            outputView === 'testResults' ? "bg-secondary" : "hover:bg-secondary/50"
+                            outputView === "testResults" ? "bg-secondary" : "hover:bg-secondary/50"
                           )}
                         >
                           Test Results
                         </Button>
                       </div>
-                      {!isRunning && outputView === 'output' && (
+                      {!isRunning && outputView === "output" && (
                         <div className="flex items-center text-sm text-gray-500">
                           <Clock className="w-4 h-4 mr-1" />
                           <span>{editorState.terminal.executionTime} ms</span>
@@ -291,7 +294,7 @@ const handleConnect = useCallback(async () => {
                       )}
                     </div>
                     <div className="p-2 rounded-md bg-secondary h-full overflow-auto">
-                      {outputView === 'testResults' && testResults ? (
+                      {outputView === "testResults" && testResults ? (
                         <TestResultsBlock key={testRunCounter} results={testResults} />
                       ) : (
                         <pre

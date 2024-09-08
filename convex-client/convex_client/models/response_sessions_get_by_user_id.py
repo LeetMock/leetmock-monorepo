@@ -19,18 +19,17 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
-from convex_client.models.request_editor_snapshots_create_args import RequestEditorSnapshotsCreateArgs
 from typing import Optional, Set
 from typing_extensions import Self
 
-class ResponseActionsGetEditorSnapshot(BaseModel):
+class ResponseSessionsGetByUserId(BaseModel):
     """
-    ResponseActionsGetEditorSnapshot
+    ResponseSessionsGetByUserId
     """ # noqa: E501
     status: StrictStr
     error_message: Optional[StrictStr] = Field(default=None, alias="errorMessage")
     error_data: Optional[Dict[str, Any]] = Field(default=None, alias="errorData")
-    value: Optional[RequestEditorSnapshotsCreateArgs] = None
+    value: Optional[Any] = None
     __properties: ClassVar[List[str]] = ["status", "errorMessage", "errorData", "value"]
 
     @field_validator('status')
@@ -58,7 +57,7 @@ class ResponseActionsGetEditorSnapshot(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of ResponseActionsGetEditorSnapshot from a JSON string"""
+        """Create an instance of ResponseSessionsGetByUserId from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -79,14 +78,16 @@ class ResponseActionsGetEditorSnapshot(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of value
-        if self.value:
-            _dict['value'] = self.value.to_dict()
+        # set to None if value (nullable) is None
+        # and model_fields_set contains the field
+        if self.value is None and "value" in self.model_fields_set:
+            _dict['value'] = None
+
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of ResponseActionsGetEditorSnapshot from a dict"""
+        """Create an instance of ResponseSessionsGetByUserId from a dict"""
         if obj is None:
             return None
 
@@ -97,7 +98,7 @@ class ResponseActionsGetEditorSnapshot(BaseModel):
             "status": obj.get("status"),
             "errorMessage": obj.get("errorMessage"),
             "errorData": obj.get("errorData"),
-            "value": RequestEditorSnapshotsCreateArgs.from_dict(obj["value"]) if obj.get("value") is not None else None
+            "value": obj.get("value")
         })
         return _obj
 

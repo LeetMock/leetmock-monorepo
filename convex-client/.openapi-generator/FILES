@@ -46,10 +46,10 @@ convex_client/models/request_sessions_exists_args.py
 convex_client/models/request_sessions_get_by_id.py
 convex_client/models/request_sessions_get_by_id_args.py
 convex_client/models/request_sessions_get_by_id_internal.py
+convex_client/models/request_sessions_get_by_user_id.py
+convex_client/models/request_sessions_get_by_user_id_args.py
 convex_client/models/response_actions_create_agent_thread.py
 convex_client/models/response_actions_get_editor_snapshot.py
-convex_client/models/response_actions_get_editor_snapshot_value.py
-convex_client/models/response_actions_get_editor_snapshot_value_editor.py
 convex_client/models/response_actions_get_session_metadata.py
 convex_client/models/response_actions_get_session_metadata_value.py
 convex_client/models/response_actions_get_token.py
@@ -69,6 +69,7 @@ convex_client/models/response_sessions_create.py
 convex_client/models/response_sessions_exists.py
 convex_client/models/response_sessions_get_by_id.py
 convex_client/models/response_sessions_get_by_id_internal.py
+convex_client/models/response_sessions_get_by_user_id.py
 convex_client/py.typed
 convex_client/rest.py
 docs/ActionApi.md
@@ -106,10 +107,10 @@ docs/RequestSessionsExistsArgs.md
 docs/RequestSessionsGetById.md
 docs/RequestSessionsGetByIdArgs.md
 docs/RequestSessionsGetByIdInternal.md
+docs/RequestSessionsGetByUserId.md
+docs/RequestSessionsGetByUserIdArgs.md
 docs/ResponseActionsCreateAgentThread.md
 docs/ResponseActionsGetEditorSnapshot.md
-docs/ResponseActionsGetEditorSnapshotValue.md
-docs/ResponseActionsGetEditorSnapshotValueEditor.md
 docs/ResponseActionsGetSessionMetadata.md
 docs/ResponseActionsGetSessionMetadataValue.md
 docs/ResponseActionsGetToken.md
@@ -129,6 +130,7 @@ docs/ResponseSessionsCreate.md
 docs/ResponseSessionsExists.md
 docs/ResponseSessionsGetById.md
 docs/ResponseSessionsGetByIdInternal.md
+docs/ResponseSessionsGetByUserId.md
 git_push.sh
 pyproject.toml
 requirements.txt
@@ -171,10 +173,10 @@ test/test_request_sessions_exists_args.py
 test/test_request_sessions_get_by_id.py
 test/test_request_sessions_get_by_id_args.py
 test/test_request_sessions_get_by_id_internal.py
+test/test_request_sessions_get_by_user_id.py
+test/test_request_sessions_get_by_user_id_args.py
 test/test_response_actions_create_agent_thread.py
 test/test_response_actions_get_editor_snapshot.py
-test/test_response_actions_get_editor_snapshot_value.py
-test/test_response_actions_get_editor_snapshot_value_editor.py
 test/test_response_actions_get_session_metadata.py
 test/test_response_actions_get_session_metadata_value.py
 test/test_response_actions_get_token.py
@@ -194,4 +196,5 @@ test/test_response_sessions_create.py
 test/test_response_sessions_exists.py
 test/test_response_sessions_get_by_id.py
 test/test_response_sessions_get_by_id_internal.py
+test/test_response_sessions_get_by_user_id.py
 tox.ini

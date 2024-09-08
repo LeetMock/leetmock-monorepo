@@ -12,6 +12,7 @@ from typing import AsyncGenerator, AsyncIterator
 from langgraph_sdk.client import StreamPart
 from agent_server.utils.messages import convert_chat_ctx_to_langchain_messages
 from agent_server.types import SessionMetadata, EditorSnapshot
+from matplotlib.pyplot import disconnect
 
 
 logger = logging.getLogger("minimal-assistant")
@@ -76,6 +77,7 @@ class LangGraphLLM(llm.LLM):
             editor_content=self._snapshot.editor.content,
             content_last_updated=self._snapshot.editor.last_updated,
             interaction_type=self._interaction_type,
+            question_id=self._session_metadata.question_id,
         )
 
         stream = self._client.runs.stream(

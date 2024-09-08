@@ -17,19 +17,17 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Union
+from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
 
-class ResponseActionsGetEditorSnapshotValueEditor(BaseModel):
+class RequestSessionsGetByUserIdArgs(BaseModel):
     """
-    ResponseActionsGetEditorSnapshotValueEditor
+    RequestSessionsGetByUserIdArgs
     """ # noqa: E501
-    content: StrictStr
-    language: StrictStr
-    last_updated: Union[StrictFloat, StrictInt] = Field(alias="lastUpdated")
-    __properties: ClassVar[List[str]] = ["content", "language", "lastUpdated"]
+    user_id: StrictStr = Field(alias="userId")
+    __properties: ClassVar[List[str]] = ["userId"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -49,7 +47,7 @@ class ResponseActionsGetEditorSnapshotValueEditor(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of ResponseActionsGetEditorSnapshotValueEditor from a JSON string"""
+        """Create an instance of RequestSessionsGetByUserIdArgs from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -74,7 +72,7 @@ class ResponseActionsGetEditorSnapshotValueEditor(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of ResponseActionsGetEditorSnapshotValueEditor from a dict"""
+        """Create an instance of RequestSessionsGetByUserIdArgs from a dict"""
         if obj is None:
             return None
 
@@ -82,9 +80,7 @@ class ResponseActionsGetEditorSnapshotValueEditor(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "content": obj.get("content"),
-            "language": obj.get("language"),
-            "lastUpdated": obj.get("lastUpdated")
+            "userId": obj.get("userId")
         })
         return _obj
 

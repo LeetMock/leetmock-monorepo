@@ -4,5 +4,5 @@
     "code-mock-v1": "./agent-graph/agent_graph/agent.py:graph"
   },
   "env": ".env",
-  "dependencies": ["./agent-graph", "./libs"]
+  "dependencies": ["./agent-graph", "./libs", "./convex-client"]
 }

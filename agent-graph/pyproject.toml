@@ -19,7 +19,9 @@ langchainhub = "^0.1.20"
 python-dotenv = "^1.0.1"
 langgraph = "^0.2.3"
 libs = { path = "../libs", develop = true }
+convex_client = { path = "../convex-client", develop = true }
 langchain-core = "^0.2.30"
+jinja2 = "^3.1.4"
 
 
 [tool.poetry.group.dev.dependencies]

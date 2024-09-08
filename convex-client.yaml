@@ -169,6 +169,37 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/sessions/getByUserId:
+    post:
+      summary: Calls a query at the path sessions.js:getByUserId
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_sessions.getByUserId"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_sessions.getByUserId"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
   /api/run/editorSnapshots/create:
     post:
       summary: Calls a mutation at the path editorSnapshots.js:create
@@ -732,6 +763,35 @@ components:
           type: object
         value: {}
 
+    Request_sessions.getByUserId:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - userId
+          properties:
+            userId:
+              type: string
+
+    Response_sessions.getByUserId:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
     Request_sessions.getByIdInternal:
       type: object
       required:
@@ -1104,11 +1164,19 @@ components:
               type: object
               required:
                 - content
+                - functionName
+                - inputParameters
                 - language
                 - lastUpdated
               properties:
                 content:
                   type: string
+                functionName:
+                  type: string
+                inputParameters:
+                  type: array
+                  items:
+                    type: string
                 language:
                   type: string
                 lastUpdated:
@@ -1163,6 +1231,7 @@ components:
             - agent_thread_id
             - assistant_id
             - question_content
+            - question_id
             - question_title
             - session_id
             - session_status
@@ -1173,6 +1242,9 @@ components:
               type: string
             question_content:
               type: string
+            question_id:
+              type: string
+              description: ID from table "questions"
             question_title:
               type: string
             session_id:
