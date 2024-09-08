@@ -32,6 +32,20 @@ export const getById = userQuery({
   },
 });
 
+export const getByUserId = userQuery({
+  args: {
+    userId: v.string(),
+  },
+  handler: async (ctx, { userId }) => {
+    const sessions = await ctx.db
+      .query("sessions")
+      .withIndex("by_user_id", (q) => q.eq("userId", userId))
+      .collect();
+
+    return sessions;
+  },
+});
+
 export const getByIdInternal = internalQuery({
   args: {
     sessionId: v.id("sessions"),
