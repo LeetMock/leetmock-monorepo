@@ -42,7 +42,12 @@ export const getByUserId = userQuery({
       .withIndex("by_user_id", (q) => q.eq("userId", userId))
       .collect();
 
-    return sessions;
+    return Promise.all(
+      sessions.map(async (session) => {
+        const question = await ctx.db.get(session.questionId);
+        return { ...session, question: question };
+      })
+    );
   },
 });
 
