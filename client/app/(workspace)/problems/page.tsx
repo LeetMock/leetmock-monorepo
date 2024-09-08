@@ -61,7 +61,7 @@ export default function InterviewSelectionPage() {
             agentThreadId: threadId,
             assistantId: assistantId,
             functionName: functionName,
-            inputParameters: inputParameters
+            inputParameters: inputParameters,
           });
         })
         .then((sessionId) => {

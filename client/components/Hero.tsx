@@ -58,7 +58,7 @@ export const Hero = () => {
         {isLoaded && (
           <div className="space-y-4 md:space-y-0 md:space-x-4">
             {!!isSignedIn ? (
-              <Link href="/problems" passHref>
+              <Link href="/dashboard" passHref>
                 <Button className="w-full md:w-1/3" variant="default" size="lg">
                   Go to Workspace
                 </Button>

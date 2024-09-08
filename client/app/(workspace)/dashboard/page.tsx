@@ -90,20 +90,71 @@ import { api } from "@/convex/_generated/api"
 import { Doc, Id } from "@/convex/_generated/dataModel"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { ThemeToggleButton } from "@/components/ThemeToggleButton"
-import { UserButton } from "@clerk/clerk-react"
+import { UserButton, useUser } from "@clerk/clerk-react"
 import { useTheme } from "next-themes"
 import { PersonIcon } from "@radix-ui/react-icons";
 
 export const description =
     "A products dashboard with a sidebar navigation and a main content area. The dashboard has a header with a search input and a user menu. The sidebar has a logo, navigation links, and a card with a call to action. The main content area shows an empty state with a call to action."
 
+
+
+
+interface InterviewCardProps {
+    resume: boolean;
+    sessionId: Id<"sessions"> | undefined;
+}
+
+const InterviewCard = ({ resume, sessionId }: InterviewCardProps) => {
+    return (
+        <Card
+            className="col-span-full relative overflow-hidden" x-chunk="dashboard-05-chunk-0"
+        >
+            <Image
+                src="/coding.jpg"
+                alt="Coding background"
+                fill
+                sizes="100vw"
+                style={{ objectFit: 'cover' }}
+                className="opacity-15"
+                priority
+            />
+            <div className="relative z-10">
+                <CardHeader className="pb-3">
+                    <CardTitle>{resume ? "Resume" : "Start"} Interview</CardTitle>
+                    <CardDescription className="max-w-lg text-balance leading-relaxed">
+                        {resume ? "Resume the interview" : "Start a mock interview with our AI interviewer!"}
+                    </CardDescription>
+                </CardHeader>
+                <CardFooter className="flex justify-end gap-4">
+                    {resume ? (
+                        <Link href={`/interview/${sessionId}`} passHref>
+                            <Button size="lg">Resume Interview</Button>
+                        </Link>
+                    ) : (
+                        <Link href={`/problems`} passHref>
+                            <Button size="lg">Start Interview</Button>
+                        </Link>
+                    )}
+                </CardFooter>
+            </div>
+        </Card>
+    )
+}
+
 const Dashboard: React.FC = () => {
     const { theme } = useTheme();
-
-    const sessions = useQuery(api.sessions.getByUserId, { userId: "user_2l0CgXdHXXShSwtApSLaRxfs1yc" });
+    const { user } = useUser();
+    const sessions = useQuery(api.sessions.getByUserId, { userId: user!.id });
     if (sessions === undefined) {
         return <div className="flex justify-center items-center h-screen"><LoadingSpinner /></div>
     }
+
+    //TODO: this needs to be "in_progress"
+    const sessionInProgress = sessions.find((session) => session.sessionStatus === "not_started");
+    const resume = sessionInProgress ? true : false;
+    const sessionId = sessionInProgress ? sessionInProgress._id : undefined;
+
     console.log(sessions)
     return (
         <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -119,7 +170,7 @@ const Dashboard: React.FC = () => {
                         <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
                             <Link
                                 href="#"
-                                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                                className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
                             >
                                 <PersonIcon className="h-4 w-4" />
                                 Interviews
@@ -129,7 +180,7 @@ const Dashboard: React.FC = () => {
                             </Link>
                             <Link
                                 href="#"
-                                className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
+                                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                             >
                                 <Settings className="h-4 w-4" />
                                 Settings{" "}
@@ -222,29 +273,7 @@ const Dashboard: React.FC = () => {
                 <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-2 xl:grid-cols-2 mt-4">
                     <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
                         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
-                            <Card
-                                className="col-span-full relative overflow-hidden" x-chunk="dashboard-05-chunk-0"
-                            >
-                                <Image
-                                    src="/coding.jpg"
-                                    alt="Coding background"
-                                    layout="fill"
-                                    objectFit="cover"
-                                    className="opacity-15"
-                                />
-                                <div className="relative z-10">
-                                    <CardHeader className="pb-3">
-                                        <CardTitle>Start Interview</CardTitle>
-                                        <CardDescription className="max-w-lg text-balance leading-relaxed">
-                                            Start a mock interview with our AI interviewer!
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardFooter className="flex justify-end gap-4">
-                                        <Button size="lg">Start</Button>
-                                        <Button variant="destructive" size="lg">Destroy</Button>
-                                    </CardFooter>
-                                </div>
-                            </Card>
+                            <InterviewCard resume={resume} sessionId={sessionId} />
                         </div>
 
                         <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex ">
