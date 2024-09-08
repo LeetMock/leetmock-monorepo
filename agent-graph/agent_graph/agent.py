@@ -117,7 +117,7 @@ def run_test(state: AgentState):
     agent_state = get_default_state(AgentState, state, DEFAULT_STATE)
 
     if agent_state["question_id"] is None or len(agent_state["question_id"]) == 0:
-        return {"test_context": TESTCASE_INTERNAL_ERROR_PROMPT}
+        return {"test_context": f"question id is not set: {agent_state['question_id']}"}
 
     request = RequestActionsRunTests(
         args=RequestActionsRunTestsArgs(
@@ -131,8 +131,8 @@ def run_test(state: AgentState):
         response = action_api.api_run_actions_run_tests_post(request)
         assert response.value is not None
         result = response.value["testResults"]
-    except Exception as _:
-        return {"test_context": TESTCASE_INTERNAL_ERROR_PROMPT}
+    except Exception as e:
+        return {"test_context": str(e)}
 
     return {"test_context": format_test_context(result)}
 
