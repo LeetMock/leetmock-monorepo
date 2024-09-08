@@ -143,10 +143,6 @@ def chatbot(state: AgentState, config: RunnableConfig):
     agent_state = get_default_state(AgentState, state, DEFAULT_STATE)
     agent_config = get_default_config(AgentConfig, config, DEFAULT_CONFIG)
 
-    messages = agent_state["messages"]
-    if agent_state["test_context"] is not None:
-        messages.append(SystemMessage(content=agent_state["test_context"]))
-
     model_name = agent_config["model_name"]
     temperature = agent_config["chatbot_temperature"]
     stop_token = agent_config["chatbot_stop_token"]
@@ -162,7 +158,8 @@ def chatbot(state: AgentState, config: RunnableConfig):
         {
             "coding_question": agent_state["coding_question"],
             "editor_content": agent_state["editor_content"],
-            "messages": messages,
+            "test_context": agent_state["test_context"],
+            "messages": agent_state["messages"],
         }
     )
 
