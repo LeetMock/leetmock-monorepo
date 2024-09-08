@@ -25,7 +25,7 @@ import {
     Users,
     Users2,
 } from "lucide-react"
-
+import { dark } from "@clerk/themes";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -83,30 +83,28 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { DataTable } from "@/components/dashboard/DataTable"
-import { columns } from "@/components/dashboard/Columns"
+import { columns, SessionDoc } from "@/components/dashboard/Columns"
 import { useQuery } from "convex/react"
 import { api } from "@/convex/_generated/api"
 
 import { Doc, Id } from "@/convex/_generated/dataModel"
-type SessionDoc = Doc<"sessions">;
+import { LoadingSpinner } from "@/components/ui/loading-spinner"
+import { ThemeToggleButton } from "@/components/ThemeToggleButton"
+import { UserButton } from "@clerk/clerk-react"
+import { useTheme } from "next-themes"
+import { PersonIcon } from "@radix-ui/react-icons";
 
 export const description =
     "A products dashboard with a sidebar navigation and a main content area. The dashboard has a header with a search input and a user menu. The sidebar has a logo, navigation links, and a card with a call to action. The main content area shows an empty state with a call to action."
 
+const Dashboard: React.FC = () => {
+    const { theme } = useTheme();
 
-export default function Dashboard() {
-    // const sessions = useQuery(api.sessions.getByUserId, { userId: "q815101630@gmail.com" });
-    const sessions: SessionDoc[] = [
-        {
-            _creationTime: 1504095567183,
-            _id: "jd73fy5fsx61ap65yfk0xmfmxd70dxz3" as Id<"sessions">,
-            agentThreadId: "123123123",
-            assistantId: "123123123",
-            questionId: "j972ypyypctt8b9tbc5mnd0z7x70cmc6" as Id<"questions">,
-            sessionStatus: "not_started",
-            userId: "q815101630@gmail.com",
-        }
-    ]
+    const sessions = useQuery(api.sessions.getByUserId, { userId: "user_2l0CgXdHXXShSwtApSLaRxfs1yc" });
+    if (sessions === undefined) {
+        return <div className="flex justify-center items-center h-screen"><LoadingSpinner /></div>
+    }
+    console.log(sessions)
     return (
         <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
             <div className="hidden border-r bg-muted/40 md:block">
@@ -116,10 +114,6 @@ export default function Dashboard() {
                             <Package2 className="h-6 w-6" />
                             <span className="">LeetMock</span>
                         </Link>
-                        <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-                            <Bell className="h-4 w-4" />
-                            <span className="sr-only">Toggle notifications</span>
-                        </Button>
                     </div>
                     <div className="flex-1">
                         <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
@@ -127,24 +121,17 @@ export default function Dashboard() {
                                 href="#"
                                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                             >
-                                <Home className="h-4 w-4" />
-                                Dashboard
-                            </Link>
-                            <Link
-                                href="#"
-                                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                            >
-                                <ShoppingCart className="h-4 w-4" />
+                                <PersonIcon className="h-4 w-4" />
                                 Interviews
                                 <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                                    6
+                                    {sessions.length}
                                 </Badge>
                             </Link>
                             <Link
                                 href="#"
                                 className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
                             >
-                                <Package className="h-4 w-4" />
+                                <Settings className="h-4 w-4" />
                                 Settings{" "}
                             </Link>
                         </nav>
@@ -183,48 +170,20 @@ export default function Dashboard() {
                             <nav className="grid gap-2 text-lg font-medium">
                                 <Link
                                     href="#"
-                                    className="flex items-center gap-2 text-lg font-semibold"
-                                >
-                                    <Package2 className="h-6 w-6" />
-                                    <span className="sr-only">Acme Inc</span>
-                                </Link>
-                                <Link
-                                    href="#"
-                                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                                >
-                                    <Home className="h-5 w-5" />
-                                    Dashboard
-                                </Link>
-                                <Link
-                                    href="#"
                                     className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
                                 >
-                                    <ShoppingCart className="h-5 w-5" />
-                                    Orders
+                                    <PersonIcon className="h-5 w-5" />
+                                    Interviews
                                     <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                                        6
+                                        {sessions.length}
                                     </Badge>
                                 </Link>
                                 <Link
                                     href="#"
                                     className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
                                 >
-                                    <Package className="h-5 w-5" />
-                                    Products
-                                </Link>
-                                <Link
-                                    href="#"
-                                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                                >
-                                    <Users className="h-5 w-5" />
-                                    Customers
-                                </Link>
-                                <Link
-                                    href="#"
-                                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                                >
-                                    <LineChart className="h-5 w-5" />
-                                    Analytics
+                                    <Settings className="h-5 w-5" />
+                                    Settings
                                 </Link>
                             </nav>
                             <div className="mt-auto">
@@ -252,44 +211,44 @@ export default function Dashboard() {
                             </AlertDescription>
                         </Alert>
                     </div>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="secondary" size="icon" className="rounded-full">
-                                <CircleUser className="h-5 w-5" />
-                                <span className="sr-only">Toggle user menu</span>
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>Settings</DropdownMenuItem>
-                            <DropdownMenuItem>Support</DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>Logout</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <ThemeToggleButton variant="ghost" />
+                    <UserButton
+                        appearance={{
+                            baseTheme: theme === "dark" ? dark : undefined,
+                        }}
+                    />
+
                 </header>
                 <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-2 xl:grid-cols-2 mt-4">
                     <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
                         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
                             <Card
-                                className="col-span-full" x-chunk="dashboard-05-chunk-0"
+                                className="col-span-full relative overflow-hidden" x-chunk="dashboard-05-chunk-0"
                             >
-                                <CardHeader className="pb-3">
-                                    <CardTitle>Start Interview</CardTitle>
-                                    <CardDescription className="max-w-lg text-balance leading-relaxed">
-                                        Start a mock interview with our AI interviewer!
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardFooter className="flex justify-end gap-4">
-                                    <Button variant="destructive" size="lg">Destroy</Button>
-                                    <Button size="lg">Start</Button>
-                                </CardFooter>
+                                <Image
+                                    src="/coding.jpg"
+                                    alt="Coding background"
+                                    layout="fill"
+                                    objectFit="cover"
+                                    className="opacity-15"
+                                />
+                                <div className="relative z-10">
+                                    <CardHeader className="pb-3">
+                                        <CardTitle>Start Interview</CardTitle>
+                                        <CardDescription className="max-w-lg text-balance leading-relaxed">
+                                            Start a mock interview with our AI interviewer!
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardFooter className="flex justify-end gap-4">
+                                        <Button size="lg">Start</Button>
+                                        <Button variant="destructive" size="lg">Destroy</Button>
+                                    </CardFooter>
+                                </div>
                             </Card>
                         </div>
 
                         <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex ">
-                            <DataTable data={sessions} columns={columns} />
+                            <DataTable data={sessions as SessionDoc[]} columns={columns} />
                         </div>
                     </div>
                 </main>
@@ -297,3 +256,5 @@ export default function Dashboard() {
         </div >
     )
 }
+
+export default Dashboard;

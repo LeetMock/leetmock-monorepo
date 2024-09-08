@@ -38,8 +38,8 @@ export function DataTableRowActions<TData>({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[160px]">
-                <DropdownMenuItem>Edit</DropdownMenuItem>
-                <DropdownMenuItem>Favorite</DropdownMenuItem>
+                <DropdownMenuItem>Edit (TODO)</DropdownMenuItem>
+                <DropdownMenuItem>Favorite (TODO)</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
                     Delete (TODO)

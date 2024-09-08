@@ -10,8 +10,35 @@ import { DataTableRowActions } from "@/components/dashboard/DataTableRowActions"
 import { Checkbox } from "@radix-ui/react-checkbox"
 import { useQuery } from "convex/react"
 import { api } from "@/convex/_generated/api"
+import { Button } from "../ui/button"
 
-type SessionDoc = Doc<"sessions">;
+/*
+{
+    "_creationTime": 1725764789756.072,
+    "_id": "j970zbrvzqqb7854m37n3bfa5n70cwwm",
+    "agentThreadId": "508b6fff-7a52-4100-b072-46ba66d4a63e",
+    "assistantId": "1906893f-ce3d-51c1-bc77-68c6bf3f29c6",
+    "question": {
+        "category": [
+            "Array",
+            "Hash Table"
+        ],
+        "difficulty": 1,
+        "title": "Two Sum"
+    },
+    "questionId": "j57cb2bgmf95ndc8nrreqfa0gn70ahyh",
+    "sessionStatus": "not_started",
+    "userId": "user_2l0CgXdHXXShSwtApSLaRxfs1yc"
+}
+*/
+
+export type SessionDoc = Doc<"sessions"> & {
+    question: {
+        category: string[];
+        difficulty: number;
+        title: string;
+    }
+}
 
 export const columns: ColumnDef<SessionDoc>[] = [
     {
@@ -51,19 +78,24 @@ export const columns: ColumnDef<SessionDoc>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "questionId",
+        accessorKey: "question.title",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Title" />
         ),
         cell: ({ row }) => {
-            const question = useQuery(api.questions.getById, { questionId: row.getValue("questionId") as Id<"questions"> });
             return (
                 <div className="flex space-x-2">
                     <span className="max-w-[500px] truncate font-medium">
-                        {question?.title}
+                        {row.original.question.title}
                     </span>
                 </div>
             )
+        },
+        filterFn: (row, id, value) => {
+            const date = new Date(row.getValue("_creationTime") as number).toLocaleDateString()
+            return row.original.question.title.toLowerCase().includes(value.toLowerCase()) ||
+                row.original.question.category.some(category => category.toLowerCase().includes(value.toLowerCase())) ||
+                date.toLowerCase().includes(value.toLowerCase())
         },
     },
     {
@@ -81,7 +113,7 @@ export const columns: ColumnDef<SessionDoc>[] = [
             }
 
             return (
-                <div className="flex w-[100px] items-center">
+                <div className="flex items-center">
                     {status.icon && (
                         <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                     )}
@@ -94,13 +126,13 @@ export const columns: ColumnDef<SessionDoc>[] = [
         },
     },
     {
-        accessorKey: "difficulty",
+        accessorKey: "question.difficulty",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Difficulty" />
         ),
         cell: ({ row }) => {
             const difficulty = difficulties.find(
-                (difficulty) => difficulty.value === row.getValue("difficulty")
+                (difficulty) => difficulty.value === row.original.question.difficulty.toString()
             )
 
             if (!difficulty) {
@@ -117,7 +149,16 @@ export const columns: ColumnDef<SessionDoc>[] = [
             )
         },
         filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id))
+            return value.includes(row.original.question.difficulty.toString())
+        },
+    },
+    {
+        id: "feedback",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Feedback" />
+        ),
+        cell: ({ row }) => {
+            return <Button variant="secondary" size="sm">View Feedback</Button>
         },
     },
     {
