@@ -138,7 +138,7 @@ def run_test(state: AgentState):
 
 
 def chatbot(state: AgentState, config: RunnableConfig):
-    system_prompt_tpl: ChatPromptTemplate = hub.pull("leetmock-v1")
+    system_prompt_tpl: ChatPromptTemplate = hub.pull("leetmock-v2")
 
     agent_state = get_default_state(AgentState, state, DEFAULT_STATE)
     agent_config = get_default_config(AgentConfig, config, DEFAULT_CONFIG)
