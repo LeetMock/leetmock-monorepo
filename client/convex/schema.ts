@@ -43,8 +43,25 @@ export default defineSchema({
     question: v.string(),
     solutions: v.any(),
     functionName: v.string(),
-    inputParameters: v.array(v.string()),
-    startingCode: v.string(),
+    inputParameters: 
+    v.object({
+      python: v.array(v.string()),
+      java: v.array(v.string()),
+      cpp: v.array(v.string()),
+      javascript: v.array(v.string()),
+    }),
+    startingCode: v.object({
+      python: v.string(),
+      java: v.string(),
+      cpp: v.string(),
+      javascript: v.string(),
+    }),
+    // dataStructure:v.union(
+    //   v.literal("ListNode"),
+    //   v.literal("TreeNode"),
+    //   v.literal("DoubleListNode"),
+    //   v.literal("None"),
+    // ),
     tests: v.array(
       v.object({
         input: v.any(),
