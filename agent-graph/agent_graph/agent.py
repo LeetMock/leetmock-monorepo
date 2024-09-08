@@ -7,7 +7,7 @@ from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
 from langchain_core.runnables.config import RunnableConfig
 from langchain_core.prompts import ChatPromptTemplate
 
-from langgraph.graph import END, StateGraph, add_messages
+from langgraph.graph import END, StateGraph, add_messages, START
 from langgraph.checkpoint.memory import MemorySaver
 
 from agent_graph.utils import (
@@ -17,6 +17,7 @@ from agent_graph.utils import (
 from agent_graph.llms import get_model, ModelName
 
 InteractionType = Literal["response_required", "reminder_required"]
+InterviewStatus = Literal["not_started", "in_progress", "completed"]
 
 
 class AgentState(TypedDict):
@@ -72,6 +73,12 @@ DEFAULT_CONFIG: AgentConfig = {
     "chatbot_stop_token": "SILENT",
     "chatbot_temperature": 0.9,
 }
+
+
+def prepare_state(state: AgentState, config: RunnableConfig):
+    agent_state = get_default_state(AgentState, state, DEFAULT_STATE)
+
+    return agent_state
 
 
 def sync_messages(state: AgentState):
@@ -158,11 +165,13 @@ def check_user_activity(state: AgentState):
 
 
 graph_builder = StateGraph(state_schema=AgentState, config_schema=AgentConfig)
+graph_builder.add_node("prepare_state", prepare_state)  # type: ignore
 graph_builder.add_node("sync_messages", sync_messages)  # type: ignore
 graph_builder.add_node("reminder", reminder)  # type: ignore
 graph_builder.add_node("chatbot", chatbot)  # type: ignore
 
-graph_builder.set_entry_point("sync_messages")
+graph_builder.add_edge(START, "prepare_state")
+graph_builder.add_edge("prepare_state", "sync_messages")
 graph_builder.add_conditional_edges(
     "sync_messages",
     check_user_activity,

@@ -51,7 +51,7 @@ class LangGraphLLM(llm.LLM):
 
         langchain_messages = convert_chat_ctx_to_langchain_messages(chat_ctx)
         for i, message in enumerate(langchain_messages):
-            key = f"{self._unix_timestamp}-{i}-{message.type}-{message.content}"
+            key = f"{self._unix_timestamp}-{i}-{message.type}"
             message.id = hashlib.md5(key.encode()).hexdigest()
 
         print("Following is copied_ctx.messages, not conmmitted yet!")

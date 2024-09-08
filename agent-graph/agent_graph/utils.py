@@ -5,7 +5,7 @@ T = TypeVar("T")
 
 
 def with_default(type: Type[T], value: Any, default: Any) -> T:
-    result = {k: v for k, v in value.items()}
+    result = {k: v for k, v in value.items() if v is not None}
 
     for key in default.keys():
         if key not in result:
