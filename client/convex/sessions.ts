@@ -45,7 +45,13 @@ export const getByUserId = userQuery({
     return Promise.all(
       sessions.map(async (session) => {
         const question = await ctx.db.get(session.questionId);
-        return { ...session, question: question };
+
+        if (!question) {
+          return { ...session, question: undefined };
+        }
+
+        const { title, difficulty, category } = question;
+        return { ...session, question: { title, difficulty, category } };
       })
     );
   },
