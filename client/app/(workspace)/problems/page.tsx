@@ -48,7 +48,7 @@ export default function InterviewSelectionPage() {
   const onQuestionSelected = useCallback(
     async (questionId: Id<"questions">) => {
       if (!questions) return; // Check if questions is undefined
-      const question = questions.find(q => q._id === questionId);
+      const question = questions.find((q) => q._id === questionId);
       if (!question) return;
 
       const { functionName, inputParameters } = question; // Assuming these fields exist in your question object

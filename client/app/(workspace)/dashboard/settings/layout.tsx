@@ -1,8 +1,7 @@
 "use client";
 
-import { SidebarNav } from "@/components/dashboard/SettingsSidebarNav"
-import { Separator } from "@/components/ui/separator"
-
+import { SidebarNav } from "@/components/dashboard/SettingsSidebarNav";
+import { Separator } from "@/components/ui/separator";
 
 const sidebarNavItems = [
   {
@@ -21,10 +20,10 @@ const sidebarNavItems = [
     title: "Display (PLACEHOLDER)",
     href: "/dashboard/settings/display",
   },
-]
+];
 
 interface SettingsLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export default function SettingsLayout({ children }: SettingsLayoutProps) {
@@ -46,5 +45,5 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
         </div>
       </div>
     </>
-  )
+  );
 }

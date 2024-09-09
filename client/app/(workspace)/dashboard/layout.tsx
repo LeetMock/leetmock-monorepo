@@ -4,30 +4,30 @@ import { Navbar } from "@/components/NavBar";
 import { useAuth } from "@clerk/clerk-react";
 import { Authenticated, AuthLoading } from "convex/react";
 import { redirect } from "next/navigation";
-import { LoadingSpinner } from "@/components/ui/loading-spinner"
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import DashboardNavBar from "@/components/dashboard/DashboardNavBar";
 
 export default function ProblemsLayout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    const { isSignedIn, isLoaded } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
 
-    if (!isSignedIn && isLoaded) {
-        return redirect("/auth?action=signin");
-    }
+  if (!isSignedIn && isLoaded) {
+    return redirect("/auth?action=signin");
+  }
 
-    return (
-        <>
-            <Authenticated>
-                <DashboardNavBar>
-                    {children}
-                </DashboardNavBar>
-            </Authenticated>
-            <AuthLoading>
-                <div className="flex justify-center items-center h-screen"><LoadingSpinner /></div>
-            </AuthLoading>
-        </>
-    );
+  return (
+    <>
+      <Authenticated>
+        <DashboardNavBar>{children}</DashboardNavBar>
+      </Authenticated>
+      <AuthLoading>
+        <div className="flex justify-center items-center h-screen">
+          <LoadingSpinner />
+        </div>
+      </AuthLoading>
+    </>
+  );
 }

@@ -373,8 +373,10 @@ const InterviewWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId
 const InterviewPage: React.FC = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const sessionExists = useQuery(api.sessions.exists, { sessionId });
-  const sessions = useQuery(api.sessions.getByUserId, { userId: "user_2l0CgXdHXXShSwtApSLaRxfs1yc" });
-  console.log(sessions)
+  const sessions = useQuery(api.sessions.getByUserId, {
+    userId: "user_2l0CgXdHXXShSwtApSLaRxfs1yc",
+  });
+  console.log(sessions);
   const interviewWorkspace = useMemo(() => {
     if (sessionExists === undefined) {
       return <div>Loading...</div>;
