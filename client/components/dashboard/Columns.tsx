@@ -1,16 +1,15 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef } from "@tanstack/react-table";
 
-
-import { difficulties, statuses } from "@/components/dashboard/Data"
-import { Doc, Id } from "@/convex/_generated/dataModel"
-import { DataTableColumnHeader } from "@/components/dashboard/DataTableColumnHeader"
-import { DataTableRowActions } from "@/components/dashboard/DataTableRowActions"
-import { Checkbox } from "@radix-ui/react-checkbox"
-import { useQuery } from "convex/react"
-import { api } from "@/convex/_generated/api"
-import { Button } from "../ui/button"
+import { difficulties, statuses } from "@/components/dashboard/Data";
+import { Doc, Id } from "@/convex/_generated/dataModel";
+import { DataTableColumnHeader } from "@/components/dashboard/DataTableColumnHeader";
+import { DataTableRowActions } from "@/components/dashboard/DataTableRowActions";
+import { Checkbox } from "@radix-ui/react-checkbox";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Button } from "../ui/button";
 
 /*
 {
@@ -33,136 +32,125 @@ import { Button } from "../ui/button"
 */
 
 export type SessionDoc = Doc<"sessions"> & {
-    question: {
-        category: string[];
-        difficulty: number;
-        title: string;
-    }
-}
+  question: {
+    category: string[];
+    difficulty: number;
+    title: string;
+  };
+};
 
 export const columns: ColumnDef<SessionDoc>[] = [
-    {
-        id: "select",
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-                className="translate-y-[2px]"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-                className="translate-y-[2px]"
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+        className="translate-y-[2px]"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+        className="translate-y-[2px]"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "_creationTime",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Date" />,
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("_creationTime") as number).toLocaleDateString();
+      return <div className="w-[80px]">{date}</div>;
     },
-    {
-        accessorKey: "_creationTime",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Date" />
-        ),
-        cell: ({ row }) => {
-            const date = new Date(row.getValue("_creationTime") as number).toLocaleDateString();
-            return <div className="w-[80px]">{date}</div>;
-        },
-        enableSorting: true,
-        enableHiding: false,
+    enableSorting: true,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "question.title",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
+    cell: ({ row }) => {
+      return (
+        <div className="flex space-x-2">
+          <span className="max-w-[500px] truncate font-medium">{row.original.question.title}</span>
+        </div>
+      );
     },
-    {
-        accessorKey: "question.title",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Title" />
-        ),
-        cell: ({ row }) => {
-            return (
-                <div className="flex space-x-2">
-                    <span className="max-w-[500px] truncate font-medium">
-                        {row.original.question.title}
-                    </span>
-                </div>
-            )
-        },
-        filterFn: (row, id, value) => {
-            const date = new Date(row.getValue("_creationTime") as number).toLocaleDateString()
-            return row.original.question.title.toLowerCase().includes(value.toLowerCase()) ||
-                row.original.question.category.some(category => category.toLowerCase().includes(value.toLowerCase())) ||
-                date.toLowerCase().includes(value.toLowerCase())
-        },
+    filterFn: (row, id, value) => {
+      const date = new Date(row.getValue("_creationTime") as number).toLocaleDateString();
+      return (
+        row.original.question.title.toLowerCase().includes(value.toLowerCase()) ||
+        row.original.question.category.some((category) =>
+          category.toLowerCase().includes(value.toLowerCase())
+        ) ||
+        date.toLowerCase().includes(value.toLowerCase())
+      );
     },
-    {
-        accessorKey: "sessionStatus",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Status" />
-        ),
-        cell: ({ row }) => {
-            const status = statuses.find(
-                (status) => status.value === row.getValue("sessionStatus")
-            )
+  },
+  {
+    accessorKey: "sessionStatus",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+    cell: ({ row }) => {
+      const status = statuses.find((status) => status.value === row.getValue("sessionStatus"));
 
-            if (!status) {
-                return null
-            }
+      if (!status) {
+        return null;
+      }
 
-            return (
-                <div className="flex items-center">
-                    {status.icon && (
-                        <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-                    )}
-                    <span>{status.label}</span>
-                </div>
-            )
-        },
-        filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id))
-        },
+      return (
+        <div className="flex items-center">
+          {status.icon && <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />}
+          <span>{status.label}</span>
+        </div>
+      );
     },
-    {
-        accessorKey: "question.difficulty",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Difficulty" />
-        ),
-        cell: ({ row }) => {
-            const difficulty = difficulties.find(
-                (difficulty) => difficulty.value === row.original.question.difficulty.toString()
-            )
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
+  },
+  {
+    accessorKey: "question.difficulty",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Difficulty" />,
+    cell: ({ row }) => {
+      const difficulty = difficulties.find(
+        (difficulty) => difficulty.value === row.original.question.difficulty.toString()
+      );
 
-            if (!difficulty) {
-                return null
-            }
+      if (!difficulty) {
+        return null;
+      }
 
-            return (
-                <div className="flex items-center">
-                    {difficulty.icon && (
-                        <difficulty.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-                    )}
-                    <span>{difficulty.label}</span>
-                </div>
-            )
-        },
-        filterFn: (row, id, value) => {
-            return value.includes(row.original.question.difficulty.toString())
-        },
+      return (
+        <div className="flex items-center">
+          {difficulty.icon && <difficulty.icon className="mr-2 h-4 w-4 text-muted-foreground" />}
+          <span>{difficulty.label}</span>
+        </div>
+      );
     },
-    {
-        id: "feedback",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Feedback" />
-        ),
-        cell: ({ row }) => {
-            return <Button variant="secondary" size="sm">View Feedback</Button>
-        },
+    filterFn: (row, id, value) => {
+      return value.includes(row.original.question.difficulty.toString());
     },
-    {
-        id: "actions",
-        cell: ({ row }) => <DataTableRowActions row={row} />,
+  },
+  {
+    id: "feedback",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Feedback" />,
+    cell: ({ row }) => {
+      return (
+        <Button variant="secondary" size="sm">
+          View Feedback
+        </Button>
+      );
     },
-]
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => <DataTableRowActions row={row} />,
+  },
+];
