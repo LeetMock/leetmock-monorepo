@@ -5,6 +5,7 @@ import { useAuth } from "@clerk/clerk-react";
 import { Authenticated, AuthLoading } from "convex/react";
 import { redirect } from "next/navigation";
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
+import DashboardNavBar from "@/components/dashboard/DashboardNavBar";
 
 export default function ProblemsLayout({
     children,
@@ -20,7 +21,9 @@ export default function ProblemsLayout({
     return (
         <>
             <Authenticated>
-                {children}
+                <DashboardNavBar>
+                    {children}
+                </DashboardNavBar>
             </Authenticated>
             <AuthLoading>
                 <div className="flex justify-center items-center h-screen"><LoadingSpinner /></div>
