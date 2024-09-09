@@ -5,7 +5,7 @@ import { useAuth } from "@clerk/clerk-react";
 import { Authenticated, AuthLoading } from "convex/react";
 import { redirect } from "next/navigation";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import DashboardNavBar from "@/components/dashboard/DashboardNavBar";
+import DashboardNavBar from "./_components/dashboard-navbar";
 
 export default function ProblemsLayout({
   children,

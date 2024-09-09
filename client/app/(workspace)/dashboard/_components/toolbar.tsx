@@ -3,19 +3,19 @@
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
 
-import { DataTableViewOptions } from "@/components/dashboard/DataTableViewOptions";
+import { ViewOptions } from "./view-options";
 
-import { DataTableFacetedFilter } from "@/components/dashboard/DataTableFacetedFilter";
+import { FacetedFilter } from "./faceted-filter";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import { difficulties, statuses } from "@/components/dashboard/Data";
+import { difficulties, statuses } from "./data";
 
-interface DataTableToolbarProps<TData> {
+interface ToolbarProps<TData> {
   table: Table<TData>;
 }
 
-export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
+export function Toolbar<TData>({ table }: ToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
@@ -30,14 +30,14 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
           className="h-8 w-[150px] lg:w-[250px]"
         />
         {table.getColumn("sessionStatus") && (
-          <DataTableFacetedFilter
+          <FacetedFilter
             column={table.getColumn("sessionStatus")}
             title="Status"
             options={statuses}
           />
         )}
         {table.getColumn("question_difficulty") && (
-          <DataTableFacetedFilter
+          <FacetedFilter
             column={table.getColumn("question_difficulty")}
             title="Difficulty"
             options={difficulties}
@@ -54,7 +54,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
           </Button>
         )}
       </div>
-      <DataTableViewOptions table={table} />
+      <ViewOptions table={table} />
     </div>
   );
 }

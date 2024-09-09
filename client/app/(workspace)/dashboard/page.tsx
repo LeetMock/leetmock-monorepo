@@ -5,8 +5,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { DataTable } from "@/components/dashboard/DataTable";
-import { columns, SessionDoc } from "@/components/dashboard/Columns";
+import { DataTable } from "./_components/data-table";
+import { columns, SessionDoc } from "./_components/columns";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 

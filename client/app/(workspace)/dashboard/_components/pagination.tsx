@@ -12,13 +12,13 @@ import {
   SelectValue,
 } from "@radix-ui/react-select";
 import { Table } from "@tanstack/react-table";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
-interface DataTablePaginationProps<TData> {
+interface PaginationProps<TData> {
   table: Table<TData>;
 }
 
-export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
+export function Pagination<TData>({ table }: PaginationProps<TData>) {
   return (
     <div className="flex items-center justify-between px-2">
       <div className="flex-1 text-sm text-muted-foreground">

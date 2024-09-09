@@ -2,14 +2,12 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { difficulties, statuses } from "@/components/dashboard/Data";
-import { Doc, Id } from "@/convex/_generated/dataModel";
-import { DataTableColumnHeader } from "@/components/dashboard/DataTableColumnHeader";
-import { DataTableRowActions } from "@/components/dashboard/DataTableRowActions";
+import { difficulties, statuses } from "./data";
+import { Doc } from "@/convex/_generated/dataModel";
+import { ColumnHeader } from "./column-header";
+import { RowActions } from "./row-actions";
 import { Checkbox } from "@radix-ui/react-checkbox";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 /*
 {
@@ -65,7 +63,7 @@ export const columns: ColumnDef<SessionDoc>[] = [
   },
   {
     accessorKey: "_creationTime",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Date" />,
+    header: ({ column }) => <ColumnHeader column={column} title="Date" />,
     cell: ({ row }) => {
       const date = new Date(row.getValue("_creationTime") as number).toLocaleDateString();
       return <div className="w-[80px]">{date}</div>;
@@ -75,7 +73,7 @@ export const columns: ColumnDef<SessionDoc>[] = [
   },
   {
     accessorKey: "question.title",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
+    header: ({ column }) => <ColumnHeader column={column} title="Title" />,
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
@@ -96,7 +94,7 @@ export const columns: ColumnDef<SessionDoc>[] = [
   },
   {
     accessorKey: "sessionStatus",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+    header: ({ column }) => <ColumnHeader column={column} title="Status" />,
     cell: ({ row }) => {
       const status = statuses.find((status) => status.value === row.getValue("sessionStatus"));
 
@@ -117,7 +115,7 @@ export const columns: ColumnDef<SessionDoc>[] = [
   },
   {
     accessorKey: "question.difficulty",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Difficulty" />,
+    header: ({ column }) => <ColumnHeader column={column} title="Difficulty" />,
     cell: ({ row }) => {
       const difficulty = difficulties.find(
         (difficulty) => difficulty.value === row.original.question.difficulty.toString()
@@ -140,7 +138,7 @@ export const columns: ColumnDef<SessionDoc>[] = [
   },
   {
     id: "feedback",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Feedback" />,
+    header: ({ column }) => <ColumnHeader column={column} title="Feedback" />,
     cell: ({ row }) => {
       return (
         <Button variant="secondary" size="sm">
@@ -151,6 +149,6 @@ export const columns: ColumnDef<SessionDoc>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
+    cell: ({ row }) => <RowActions row={row} />,
   },
 ];
