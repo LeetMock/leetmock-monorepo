@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/dashboard", icon: PersonIcon, title: "Interviews" },
-  { href: "/dashboard/settings", icon: Settings, title: "Settings" },
+  { href: "/dashboard/settings/account", icon: Settings, title: "Settings" },
 ];
 
 function Nav({ items, mobile, className, ...props }: NavProps) {
@@ -138,7 +138,7 @@ export default function DashboardNavBar({
             }}
           />
         </header>
-        <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-2 xl:grid-cols-2 mt-4">
+        <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8  mt-4">
           {children}
         </main>
       </div>
