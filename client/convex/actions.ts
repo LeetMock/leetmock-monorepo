@@ -167,7 +167,7 @@ export const runTests = action({
       throw new Error("Question not found");
     }
 
-    const testCode = generateTestCode(question);
+    const testCode = generateTestCode(question, language);
 
     const payload = {
       language,
@@ -185,6 +185,7 @@ export const runTests = action({
     };
 
     const result = await executeCode(payload);
+    console.log(result);
     if (result.status === "success" && result.stdout) {
       try {
         const jsonMatch = result.stdout.match(/START_RESULTS_JSON\n([\s\S]*?)\nEND_RESULTS_JSON/);

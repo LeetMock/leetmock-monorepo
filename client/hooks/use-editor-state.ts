@@ -11,8 +11,6 @@ export interface EditorState {
     language: string;
     content: string;
     lastUpdated: number;
-    functionName: string;
-    inputParameters: string[];
   };
   terminal: {
     output: string;
@@ -30,8 +28,6 @@ const defaultState: EditorState = {
     language: "python",
     content: "",
     lastUpdated: Date.now(),
-    functionName: "",
-    inputParameters: [],
   },
   terminal: {
     output: "",
@@ -43,6 +39,7 @@ const defaultOnChange = (state: EditorState) => {};
 
 export const useEditorState = (
   sessionId: Id<"sessions">,
+  question: any | undefined,
   onChange: (state: EditorState) => void = defaultOnChange,
   delay: number = 1000
 ) => {
@@ -60,9 +57,16 @@ export const useEditorState = (
     if (!isDefined(initialEditorSnapshot)) return;
 
     const { terminal, editor } = initialEditorSnapshot;
-    setLocalEditorState({ terminal, editor });
+    const initialContent = question?.startingCode?.[editor.language] || editor.content;
+    setLocalEditorState({
+      terminal,
+      editor: {
+        ...editor,
+        content: initialContent,
+      },
+    });
     setInitialized(true);
-  }, [initialEditorSnapshot, initialized]);
+  }, [initialEditorSnapshot, initialized, question]);
 
   const handleStateChange = useCallback(
     (state: EditorState) => {
@@ -80,16 +84,17 @@ export const useEditorState = (
         editor: {
           ...localEditorState.editor,
           language,
-
-          content: getInitialContent(
-            language,
-            localEditorState.editor.functionName,
-            localEditorState.editor.inputParameters
-          ),
+          content: question
+            ? getInitialContent(
+                language,
+                question.functionName || '',
+                question.inputParameters?.[language] || []
+              )
+            : localEditorState.editor.content,
         },
       });
     },
-    [handleStateChange, localEditorState]
+    [handleStateChange, localEditorState, question]
   );
 
   const editorState = useMemo(() => {

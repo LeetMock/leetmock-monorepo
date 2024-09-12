@@ -142,12 +142,10 @@ export const create = userMutation({
     questionId: v.id("questions"),
     agentThreadId: v.string(),
     assistantId: v.string(),
-    functionName: v.string(),
-    inputParameters: v.array(v.string()),
   },
   handler: async (
     ctx,
-    { questionId, agentThreadId, assistantId, inputParameters, functionName }
+    { questionId, agentThreadId, assistantId}
   ) => {
     const activeSession = await getActiveSessionQuery(ctx, ctx.user.subject);
 
@@ -175,11 +173,9 @@ export const create = userMutation({
     await ctx.db.insert("editorSnapshots", {
       sessionId,
       editor: {
-        language: "python", // You might want to make this dynamic based on the question
-        content: question.startingCode || "", // Use startingCode from the question
+        language: "python", // will be selected by user later on
+        content: question.startingCode["python"] || "", // Use startingCode from the question
         lastUpdated: Date.now(),
-        functionName: functionName,
-        inputParameters: inputParameters,
       },
       terminal: {
         output: "",

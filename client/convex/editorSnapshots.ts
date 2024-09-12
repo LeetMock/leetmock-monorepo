@@ -70,8 +70,6 @@ export const create = userMutation({
       language: v.string(),
       content: v.string(),
       lastUpdated: v.number(),
-      functionName: v.string(),
-      inputParameters: v.array(v.string()),
     }),
     terminal: v.object({
       output: v.string(),

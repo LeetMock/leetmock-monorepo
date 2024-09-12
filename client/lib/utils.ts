@@ -88,13 +88,47 @@ export const createToken = (
   return at.toJwt();
 };
 
-export function generateTestCode(question: any): string {
+interface InputParameters {
+  cpp: string[];
+  java: string[];
+  javascript: string[];
+  python: string[];
+}
+
+interface TestCase {
+  input: Record<string, any>;
+  output: any;
+}
+
+interface Question {
+  functionName: string;
+  inputParameters: InputParameters;
+  tests: TestCase[];
+}
+
+export function generateTestCode(question: any, language: string): string {
+  switch (language) {
+    case 'python':
+      return generatePythonTestCode(question);
+    case 'java':
+      return generateJavaTestCode(question);
+    case 'cpp':
+      return generateCppTestCode(question);
+    case 'javascript':
+      return generateJavaScriptTestCode(question);
+    default:
+      throw new Error(`Unsupported language: ${language}`);
+  }
+}
+
+function generatePythonTestCode(question: Question): string {
   const { functionName, inputParameters, tests } = question;
+  const params = inputParameters['python'];
 
   let testCode = `
 import unittest
 import json
-from solution import Solution
+import traceback
 
 class TestSolution(unittest.TestCase):
     @classmethod
@@ -108,17 +142,18 @@ class TestSolution(unittest.TestCase):
         print("END_RESULTS_JSON")
 `;
 
-  tests.forEach((test: any, index: number) => {
-    const selectedParams = inputParameters.filter((_, i) => i % 2 === 0);
-    const inputArgs = selectedParams
-      .map((param: string) => JSON.stringify(test.input[param]))
+  tests.forEach((test, index) => {
+    const inputArgs = params
+      .filter((_, i) => i % 2 === 0)
+      .map(param => JSON.stringify(test.input[param]))
       .join(", ");
 
     testCode += `
     def test_case_${index + 1}(self):
         try:
-            solution = Solution()
-            result = solution.${functionName}(${inputArgs})
+            from solution import Solution
+            sol = Solution()
+            result = sol.${functionName}(${inputArgs})
             expected = ${JSON.stringify(test.output)}
             passed = result == expected
             self.__class__.results.append({
@@ -136,7 +171,7 @@ class TestSolution(unittest.TestCase):
                 "input": ${JSON.stringify(test.input)},
                 "expected": ${JSON.stringify(test.output)},
                 "actual": None,
-                "error": str(e)
+                "error": traceback.format_exc()
             })
 `;
   });
@@ -149,7 +184,178 @@ if __name__ == '__main__':
   return testCode;
 }
 
-export const isDefined = <T>(value: T): value is Defined<T> => {
+function generateJavaTestCode(question: Question): string {
+  const { functionName, inputParameters, tests } = question;
+  const params = inputParameters['java'];
+
+  let testCode = `
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+class SolutionTest {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final Solution solution = new Solution();
+`;
+
+  tests.forEach((test, index) => {
+    const inputArgs = params
+      .filter((_, i) => i % 2 === 0)
+      .map(param => JSON.stringify(test.input[param]))
+      .join(", ");
+
+    testCode += `
+    @Test
+    void testCase${index + 1}() throws Exception {
+        var result = solution.${functionName}(${inputArgs});
+        var expected = ${JSON.stringify(test.output)};
+        assertEquals(expected, result);
+        System.out.println(objectMapper.writeValueAsString(new TestResult(${index + 1}, true, ${JSON.stringify(test.input)}, expected, result, null)));
+    }
+`;
+  });
+
+  testCode += `
+}
+
+class TestResult {
+    public int caseNumber;
+    public boolean passed;
+    public Object input;
+    public Object expected;
+    public Object actual;
+    public String error;
+
+    public TestResult(int caseNumber, boolean passed, Object input, Object expected, Object actual, String error) {
+        this.caseNumber = caseNumber;
+        this.passed = passed;
+        this.input = input;
+        this.expected = expected;
+        this.actual = actual;
+        this.error = error;
+    }
+}
+`;
+
+  return testCode;
+}
+
+function generateCppTestCode(question: Question): string {
+  const { functionName, inputParameters, tests } = question;
+  const params = inputParameters['cpp'];
+
+  let testCode = `
+#include <iostream>
+#include <vector>
+#include <string>
+#include <nlohmann/json.hpp>
+#include "solution.h"
+
+using json = nlohmann::json;
+
+int main() {
+    Solution solution;
+    std::vector<json> results;
+`;
+
+  tests.forEach((test, index) => {
+    const inputArgs = params
+      .filter((_, i) => i % 2 === 0)
+      .map(param => JSON.stringify(test.input[param]))
+      .join(", ");
+
+    testCode += `
+    try {
+        auto result = solution.${functionName}(${inputArgs});
+        auto expected = ${JSON.stringify(test.output)};
+        bool passed = (result == expected);
+        results.push_back({
+            {"caseNumber", ${index + 1}},
+            {"passed", passed},
+            {"input", ${JSON.stringify(test.input)}},
+            {"expected", expected},
+            {"actual", result},
+            {"error", nullptr}
+        });
+    } catch (const std::exception& e) {
+        results.push_back({
+            {"caseNumber", ${index + 1}},
+            {"passed", false},
+            {"input", ${JSON.stringify(test.input)}},
+            {"expected", ${JSON.stringify(test.output)}},
+            {"actual", nullptr},
+            {"error", e.what()}
+        });
+    }
+`;
+  });
+
+  testCode += `
+    std::cout << "START_RESULTS_JSON" << std::endl;
+    std::cout << json(results).dump() << std::endl;
+    std::cout << "END_RESULTS_JSON" << std::endl;
+    return 0;
+}
+`;
+
+  return testCode;
+}
+
+function generateJavaScriptTestCode(question: Question): string {
+  const { functionName, inputParameters, tests } = question;
+  const params = inputParameters['javascript'];
+
+  let testCode = `
+const assert = require('assert');
+const Solution = require('./solution');
+
+const solution = new Solution();
+const results = [];
+
+`;
+
+  tests.forEach((test, index) => {
+    const inputArgs = params
+      .filter((_, i) => i % 2 === 0)
+      .map(param => JSON.stringify(test.input[param]))
+      .join(", ");
+
+    testCode += `
+try {
+    const result = solution.${functionName}(${inputArgs});
+    const expected = ${JSON.stringify(test.output)};
+    const passed = JSON.stringify(result) === JSON.stringify(expected);
+    results.push({
+        caseNumber: ${index + 1},
+        passed,
+        input: ${JSON.stringify(test.input)},
+        expected,
+        actual: result,
+        error: null
+    });
+} catch (error) {
+    results.push({
+        caseNumber: ${index + 1},
+        passed: false,
+        input: ${JSON.stringify(test.input)},
+        expected: ${JSON.stringify(test.output)},
+        actual: null,
+        error: error.message
+    });
+}
+`;
+  });
+
+  testCode += `
+console.log("START_RESULTS_JSON");
+console.log(JSON.stringify(results));
+console.log("END_RESULTS_JSON");
+`;
+
+  return testCode;
+}
+
+export const isDefined = <T>(value: T): value is Exclude<T, undefined | null> => {
   return value !== undefined && value !== null;
 };
 

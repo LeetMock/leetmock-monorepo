@@ -35,43 +35,13 @@ interface CodeTemplate {
   (functionName: string, params: string[]): string;
 }
 
-const typeMap = {
-  python: {
-    string: "str",
-    int: "int",
-    list: "List[Any]",
-    boolean: "bool",
-    float: "float",
-  },
-  java: {
-    string: "String",
-    int: "int",
-    list: "List<Object>",
-    boolean: "boolean",
-    float: "float",
-  },
-  cpp: {
-    string: "string",
-    int: "int",
-    list: "vector<void*>",
-    boolean: "bool",
-    float: "float",
-  },
-} as const;
-
 export const CODE_TEMPLATES: { [key: string]: CodeTemplate } = {
   python: (functionName, params) =>
     `
 from typing import List, Any
 
 class Solution:
-    def ${functionName}(self, ${params
-      .filter((_, i) => i % 2 === 0)
-      .map((param, i) => {
-        const type = params[i * 2 + 1].toLowerCase();
-        return `${param}: ${typeMap.python[type as keyof typeof typeMap.python] || params[i * 2 + 1]}`;
-      })
-      .join(", ")}):
+    def ${functionName}(self, ${params.filter((_, i) => i % 2 === 0).map((param, i) => `${param}: ${params[i * 2 + 1]}`).join(', ')}):
         # TODO: Write your Python code here
         pass
 `.trim(),
@@ -80,22 +50,7 @@ class Solution:
     `
 class Solution {
     /**
-     * @param {${params
-       .filter((_, i) => i % 2 !== 0)
-       .map((type) =>
-         type.toLowerCase() === "list"
-           ? "any[]"
-           : type.toLowerCase() === "string"
-             ? "string"
-             : type.toLowerCase() === "int"
-               ? "number"
-               : type.toLowerCase() === "boolean"
-                 ? "boolean"
-                 : type.toLowerCase() === "float"
-                   ? "number"
-                   : type
-       )
-       .join("} @param {")}
+     * @param {${params.filter((_, i) => i % 2 !== 0).join('} @param {')}
      */
     ${functionName}(${params.filter((_, i) => i % 2 === 0).join(", ")}) {
         // TODO: Write your JavaScript code here
@@ -108,13 +63,7 @@ class Solution {
 import java.util.List;
 
 class Solution {
-    public Object ${functionName}(${params
-      .filter((_, i) => i % 2 === 0)
-      .map((param, i) => {
-        const type = params[i * 2 + 1].toLowerCase();
-        return `${typeMap.java[type as keyof typeof typeMap.java] || params[i * 2 + 1]} ${param}`;
-      })
-      .join(", ")}) {
+    public Object ${functionName}(${params.filter((_, i) => i % 2 === 0).map((param, i) => `${params[i * 2 + 1]} ${param}`).join(', ')}) {
         // TODO: Write your Java code here
         return null;
     }
@@ -128,13 +77,7 @@ class Solution {
 
 class Solution {
 public:
-    int ${functionName}(${params
-      .filter((_, i) => i % 2 === 0)
-      .map((param, i) => {
-        const type = params[i * 2 + 1].toLowerCase();
-        return `${typeMap.cpp[type as keyof typeof typeMap.cpp] || params[i * 2 + 1]}${type === "list" ? "" : "*"} ${param}`;
-      })
-      .join(", ")}) {
+    int ${functionName}(${params.filter((_, i) => i % 2 === 0).map((param, i) => `${params[i * 2 + 1]} ${param}`).join(', ')}) {
         // TODO: Write your C++ code here
         return 0;
     }
