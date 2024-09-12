@@ -14,6 +14,9 @@ import {
 } from "../lib/utils";
 import { TokenResult, CodeRunResult, RunCodeResult, RunTestResult } from "../lib/types";
 import { ConvexError, v } from "convex/values";
+import { DATA_STRUCTURES } from "@/lib/constants";
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 function formatRuntimeError(stderr: string): string {
   const lines = stderr.split("\n");
@@ -37,7 +40,7 @@ function formatRuntimeError(stderr: string): string {
   return formattedError.trim();
 }
 
-async function executeCode(payload: any): Promise<CodeRunResult> {
+async function executeCode(payload: any, maxRetries = 3): Promise<CodeRunResult> {
   const url = "https://onecompiler-apis.p.rapidapi.com/api/v1/run";
   const headers = {
     "Content-Type": "application/json",
@@ -45,28 +48,34 @@ async function executeCode(payload: any): Promise<CodeRunResult> {
     "x-rapidapi-key": process.env.RAPIDAPI_KEY,
   };
 
-  try {
-    const response = await axios.post(url, payload, { headers });
-    const data = response.data;
-    return {
-      status: data.status,
-      executionTime: data.executionTime,
-      stdout: data.stdout || null,
-      stderr: data.stderr || null,
-      isError: data.status !== "success",
-      exception: data.exception || null,
-    };
-  } catch (error) {
-    console.error("Error running code:", error);
-    return {
-      status: "error",
-      executionTime: 0,
-      stdout: null,
-      stderr: null,
-      isError: true,
-      exception: "Failed to run code",
-    };
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await axios.post(url, payload, { headers });
+      const data = response.data;
+      return {
+        status: data.status,
+        executionTime: data.executionTime,
+        stdout: data.stdout || null,
+        stderr: data.stderr || null,
+        isError: data.status !== "success",
+        exception: data.exception || null,
+      };
+    } catch (error) {
+      if (attempt === maxRetries) {
+        console.error("Error running code after max retries:", error);
+        return {
+          status: "error",
+          executionTime: 0,
+          stdout: null,
+          stderr: null,
+          isError: true,
+          exception: "Failed to run code after multiple attempts",
+        };
+      }
+      await sleep(1000 * attempt); // Exponential backoff
+    }
   }
+  throw new Error("This should never be reached");
 }
 
 export const createAgentThread = action({
@@ -137,7 +146,11 @@ export const runCode = action({
       files: [
         {
           name: `solution.${getFileExtension(language)}`,
-          content: code,
+          content: `from data_structure import *\n\n${code}`,
+        },
+        {
+          name: `data_structure.${getFileExtension(language)}`,
+          content: DATA_STRUCTURES[language],
         },
       ],
     };
@@ -174,13 +187,17 @@ export const runTests = action({
       stdin: "",
       files: [
         {
-          name: "tests.py",
-          content: testCode,
+          name: `tests.${getFileExtension(language)}`,
+          content: `from data_structure import *\n\n${testCode}`,
+        },
+        {
+          name: `data_structure.${getFileExtension(language)}`,
+          content: DATA_STRUCTURES[language],
         },
         {
           name: `solution.${getFileExtension(language)}`,
-          content: code,
-        },
+          content: `from data_structure import *\n\n${code}`,
+        }
       ],
     };
 

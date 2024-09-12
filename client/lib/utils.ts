@@ -104,6 +104,7 @@ interface Question {
   functionName: string;
   inputParameters: InputParameters;
   tests: TestCase[];
+  evalMode: string;
 }
 
 export function generateTestCode(question: any, language: string): string {
@@ -122,13 +123,33 @@ export function generateTestCode(question: any, language: string): string {
 }
 
 function generatePythonTestCode(question: Question): string {
-  const { functionName, inputParameters, tests } = question;
+  const { functionName, inputParameters, tests, evalMode } = question;
   const params = inputParameters['python'];
 
   let testCode = `
 import unittest
 import json
 import traceback
+
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def arrayToListNode(arr):
+    dummy = ListNode(0)
+    current = dummy
+    for val in arr:
+        current.next = ListNode(val)
+        current = current.next
+    return dummy.next
+
+def listToArray(node):
+    result = []
+    while node:
+        result.append(node.val)
+        node = node.next
+    return result
 
 class TestSolution(unittest.TestCase):
     @classmethod
@@ -145,8 +166,29 @@ class TestSolution(unittest.TestCase):
   tests.forEach((test, index) => {
     const inputArgs = params
       .filter((_, i) => i % 2 === 0)
-      .map(param => JSON.stringify(test.input[param]))
+      .map((param, i) => {
+        const paramType = params[i * 2 + 1];
+        if (paramType === 'Optional[ListNode]' || paramType === 'ListNode') {
+          return `arrayToListNode(${JSON.stringify(test.input[param])})`;
+        }
+        return JSON.stringify(test.input[param]);
+      })
       .join(", ");
+
+    let comparisonCode;
+    switch (evalMode) {
+      case "exactMatch":
+        comparisonCode = `passed = (result == expected)`;
+        break;
+      case "ListNodeIter":
+        comparisonCode = `passed = (listToArray(result) == expected)`;
+        break;
+      case "SortedMatch":
+        comparisonCode = `passed = (sorted(result) == sorted(expected))`;
+        break;
+      default:
+        comparisonCode = `passed = (result == expected)`;
+    }
 
     testCode += `
     def test_case_${index + 1}(self):
@@ -155,13 +197,13 @@ class TestSolution(unittest.TestCase):
             sol = Solution()
             result = sol.${functionName}(${inputArgs})
             expected = ${JSON.stringify(test.output)}
-            passed = result == expected
+            ${comparisonCode}
             self.__class__.results.append({
                 "caseNumber": ${index + 1},
                 "passed": passed,
                 "input": ${JSON.stringify(test.input)},
                 "expected": expected,
-                "actual": result,
+                "actual": listToArray(result) if isinstance(result, ListNode) else result,
                 "error": None
             })
         except Exception as e:

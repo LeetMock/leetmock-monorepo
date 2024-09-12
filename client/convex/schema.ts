@@ -48,18 +48,17 @@ export default defineSchema({
       cpp: v.array(v.string()),
       javascript: v.array(v.string()),
     }),
+    evalMode: v.union(
+      v.literal("exactMatch"),
+      v.literal("ListNodeIter"),
+      v.literal("SortedMatch")
+    ),
     startingCode: v.object({
       python: v.string(),
       java: v.string(),
       cpp: v.string(),
       javascript: v.string(),
     }),
-    // dataStructure:v.union(
-    //   v.literal("ListNode"),
-    //   v.literal("TreeNode"),
-    //   v.literal("DoubleListNode"),
-    //   v.literal("None"),
-    // ),
     tests: v.array(
       v.object({
         input: v.any(),
