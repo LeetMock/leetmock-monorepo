@@ -1,6 +1,5 @@
 "use client";
 
-import { Navbar } from "@/components/NavBar";
 import { useAuth } from "@clerk/clerk-react";
 import { Authenticated, AuthLoading } from "convex/react";
 import { redirect } from "next/navigation";

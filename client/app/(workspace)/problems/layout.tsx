@@ -1,6 +1,5 @@
 "use client";
 
-import { Navbar } from "@/components/NavBar";
 import { useAuth } from "@clerk/clerk-react";
 import { Authenticated, AuthLoading } from "convex/react";
 import { redirect } from "next/navigation";
@@ -18,10 +17,7 @@ export default function ProblemsLayout({
 
   return (
     <>
-      <Authenticated>
-        <Navbar />
-        {children}
-      </Authenticated>
+      <Authenticated>{children}</Authenticated>
       <AuthLoading>Is Loading</AuthLoading>
     </>
   );

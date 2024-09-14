@@ -15,7 +15,7 @@ import {
 import { LANGUAGES } from "@/lib/constants";
 import { useTheme } from "next-themes";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { QuestionHolder } from "@/components/questions/QuestionHolder";
+import { QuestionHolder } from "@/components/QuestionHolder";
 import { useMutation, useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Toolbar } from "../_components/Toolbar";
