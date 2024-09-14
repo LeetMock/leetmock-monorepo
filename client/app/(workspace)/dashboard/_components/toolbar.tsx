@@ -23,22 +23,16 @@ export function Toolbar<TData>({ table }: ToolbarProps<TData>) {
       <div className="flex flex-1 items-center space-x-2">
         <Input
           placeholder="Filter Interviews..."
-          value={(table.getColumn("question_title")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("question_title")?.setFilterValue(event.target.value)
-          }
+          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+          onChange={(event) => table.getColumn("title")?.setFilterValue(event.target.value)}
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {table.getColumn("sessionStatus") && (
-          <FacetedFilter
-            column={table.getColumn("sessionStatus")}
-            title="Status"
-            options={statuses}
-          />
+        {table.getColumn("status") && (
+          <FacetedFilter column={table.getColumn("status")} title="Status" options={statuses} />
         )}
-        {table.getColumn("question_difficulty") && (
+        {table.getColumn("difficulty") && (
           <FacetedFilter
-            column={table.getColumn("question_difficulty")}
+            column={table.getColumn("difficulty")}
             title="Difficulty"
             options={difficulties}
           />

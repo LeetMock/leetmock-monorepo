@@ -62,16 +62,22 @@ export const columns: ColumnDef<SessionDoc>[] = [
     enableHiding: false,
   },
   {
+    id: "date",
     accessorKey: "_creationTime",
     header: ({ column }) => <ColumnHeader column={column} title="Date" />,
     cell: ({ row }) => {
-      const date = new Date(row.getValue("_creationTime") as number).toLocaleDateString();
+      const date = new Date(row.getValue("date") as number).toLocaleDateString();
       return <div className="w-[80px]">{date}</div>;
+    },
+    filterFn: (row, id, value) => {
+      const date = new Date(row.getValue("date") as number).toLocaleDateString();
+      return date.toLowerCase().includes(value.toLowerCase());
     },
     enableSorting: true,
     enableHiding: false,
   },
   {
+    id: "title",
     accessorKey: "question.title",
     header: ({ column }) => <ColumnHeader column={column} title="Title" />,
     cell: ({ row }) => {
@@ -82,21 +88,15 @@ export const columns: ColumnDef<SessionDoc>[] = [
       );
     },
     filterFn: (row, id, value) => {
-      const date = new Date(row.getValue("_creationTime") as number).toLocaleDateString();
-      return (
-        row.original.question.title.toLowerCase().includes(value.toLowerCase()) ||
-        row.original.question.category.some((category) =>
-          category.toLowerCase().includes(value.toLowerCase())
-        ) ||
-        date.toLowerCase().includes(value.toLowerCase())
-      );
+      return row.original.question.title.toLowerCase().includes(value.toLowerCase());
     },
   },
   {
+    id: "status",
     accessorKey: "sessionStatus",
     header: ({ column }) => <ColumnHeader column={column} title="Status" />,
     cell: ({ row }) => {
-      const status = statuses.find((status) => status.value === row.getValue("sessionStatus"));
+      const status = statuses.find((status) => status.value === row.getValue("status"));
 
       if (!status) {
         return null;
@@ -114,6 +114,7 @@ export const columns: ColumnDef<SessionDoc>[] = [
     },
   },
   {
+    id: "difficulty",
     accessorKey: "question.difficulty",
     header: ({ column }) => <ColumnHeader column={column} title="Difficulty" />,
     cell: ({ row }) => {
@@ -131,9 +132,6 @@ export const columns: ColumnDef<SessionDoc>[] = [
           <span>{difficulty.label}</span>
         </div>
       );
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.original.question.difficulty.toString());
     },
   },
   {
