@@ -10,45 +10,50 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { difficulties, statuses } from "./data";
+import { cn } from "@/lib/utils";
 
 interface DataToolbarProps<TData> {
   table: Table<TData>;
 }
+
+const height = "h-10";
 
 export function DataToolbar<TData>({ table }: DataToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
     <div className="flex items-center justify-between">
-      <div className="flex flex-1 items-center space-x-2">
+      <div className="flex flex-1 items-center space-x-3">
         <Input
           placeholder="Filter Interviews..."
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(event) => table.getColumn("title")?.setFilterValue(event.target.value)}
-          className="h-8 w-[150px] lg:w-[250px]"
+          className={cn("w-[250px]", height)}
         />
         {table.getColumn("status") && (
-          <FacetedFilter column={table.getColumn("status")} title="Status" options={statuses} />
+          <FacetedFilter
+            column={table.getColumn("status")}
+            title="Status"
+            options={statuses}
+            className={cn(height)}
+          />
         )}
         {table.getColumn("difficulty") && (
           <FacetedFilter
             column={table.getColumn("difficulty")}
             title="Difficulty"
             options={difficulties}
+            className={cn(height)}
           />
         )}
         {isFiltered && (
-          <Button
-            variant="ghost"
-            onClick={() => table.resetColumnFilters()}
-            className="h-8 px-2 lg:px-3"
-          >
+          <Button variant="ghost" onClick={() => table.resetColumnFilters()} className={cn(height)}>
             Reset
             <Cross2Icon className="ml-2 h-4 w-4" />
           </Button>
         )}
       </div>
-      <ViewOptions table={table} />
+      <ViewOptions table={table} className={cn(height)} />
     </div>
   );
 }

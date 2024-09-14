@@ -66,11 +66,11 @@ export const columns: ColumnDef<SessionDoc>[] = [
     accessorKey: "_creationTime",
     header: ({ column }) => <ColumnHeader column={column} title="Date" />,
     cell: ({ row }) => {
-      const date = new Date(row.getValue("date") as number).toLocaleDateString();
+      const date = new Date(row.getValue("date")).toLocaleDateString();
       return <div className="w-[80px]">{date}</div>;
     },
     filterFn: (row, id, value) => {
-      const date = new Date(row.getValue("date") as number).toLocaleDateString();
+      const date = new Date(row.getValue("date")).toLocaleDateString();
       return date.toLowerCase().includes(value.toLowerCase());
     },
     enableSorting: true,
