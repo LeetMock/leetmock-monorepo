@@ -6,7 +6,7 @@ import { difficulties, statuses } from "./data";
 import { Doc } from "@/convex/_generated/dataModel";
 import { ColumnHeader } from "./column-header";
 import { RowActions } from "./row-actions";
-import { Checkbox } from "@/components/ui/checkbox"
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 
 /*
