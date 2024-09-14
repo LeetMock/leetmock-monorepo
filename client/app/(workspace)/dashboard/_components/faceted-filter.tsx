@@ -25,12 +25,14 @@ interface FacetedFilterProps<TData, TValue> {
     value: string;
     icon?: React.ComponentType<{ className?: string }>;
   }[];
+  className?: string;
 }
 
 export function FacetedFilter<TData, TValue>({
   column,
   title,
   options,
+  className,
 }: FacetedFilterProps<TData, TValue>) {
   const facets = column?.getFacetedUniqueValues();
   const selectedValues = new Set(column?.getFilterValue() as string[]);
@@ -38,7 +40,7 @@ export function FacetedFilter<TData, TValue>({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="h-8 border-dashed">
+        <Button variant="outline" size="sm" className={cn("h-8 border-dashed", className)}>
           <PlusCircledIcon className="mr-2 h-4 w-4" />
           {title}
           {selectedValues?.size > 0 && (
@@ -70,7 +72,7 @@ export function FacetedFilter<TData, TValue>({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0 z-50" align="start">
+      <PopoverContent className={"w-[200px] p-0 z-50"} align="start">
         <Command>
           <CommandInput placeholder={title} />
           <CommandList>

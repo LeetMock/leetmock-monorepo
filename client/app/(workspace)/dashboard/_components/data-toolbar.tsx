@@ -11,11 +11,11 @@ import { Button } from "@/components/ui/button";
 
 import { difficulties, statuses } from "./data";
 
-interface ToolbarProps<TData> {
+interface DataToolbarProps<TData> {
   table: Table<TData>;
 }
 
-export function Toolbar<TData>({ table }: ToolbarProps<TData>) {
+export function DataToolbar<TData>({ table }: DataToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
