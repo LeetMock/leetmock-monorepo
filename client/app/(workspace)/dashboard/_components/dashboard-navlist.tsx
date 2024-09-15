@@ -21,10 +21,7 @@ export const NavList: React.FC<NavProps> = ({ className, ...props }) => {
   const pathname = usePathname();
 
   return (
-    <nav
-      className={cn("flex flex-col justify-center items-center space-y-2 mx-2", className)}
-      {...props}
-    >
+    <nav className={cn("flex flex-col items-center space-y-2", className)} {...props}>
       {navItems.map((item) => (
         <Link
           key={item.href}

@@ -2,16 +2,14 @@ import { cn, getInitials } from "@/lib/utils";
 import { useUser, useAuth } from "@clerk/clerk-react";
 import { ChevronsUpDown, LaptopIcon, LogOut, MoonIcon, SunIcon, UserIcon } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button, ButtonProps } from "@/components/ui/button";
+import { ButtonProps } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -20,13 +18,13 @@ import {
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { CreditCard } from "lucide-react";
-import { PriceTier, TierBadge } from "./tier-badge";
+import { PriceTier, TierBadge } from "../app/(workspace)/dashboard/_components/tier-badge";
 
 interface ProfileItemProps extends ButtonProps {
   user: ReturnType<typeof useUser>["user"];
 }
 
-const ProfileItem: React.FC<ProfileItemProps> = ({ user, ...props }) => {
+const UserButton: React.FC<ProfileItemProps> = ({ user, ...props }) => {
   const initials = getInitials(user?.firstName, user?.lastName);
 
   return (
@@ -52,7 +50,9 @@ const ProfileItem: React.FC<ProfileItemProps> = ({ user, ...props }) => {
   );
 };
 
-export const UserProfile = () => {
+export const UserDropdown: React.FC<{
+  children: React.ReactNode;
+}> = ({ children }) => {
   const { user } = useUser();
   const { signOut } = useAuth();
   const { theme, setTheme } = useTheme();
@@ -62,9 +62,7 @@ export const UserProfile = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <ProfileItem user={user} />
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger className="focus:outline-none">{children}</DropdownMenuTrigger>
       <DropdownMenuContent className="w-64" forceMount>
         <div className="flex flex-col space-y-4 mt-3">
           <div className="flex flex-col items-center space-y-2">
