@@ -107,12 +107,12 @@ const HomePage = () => {
           </span>
         </div>
         <div className="flex space-x-6 items-center">
-          <Link href="/auth" legacyBehavior>
+          <Link href="/auth?action=signin" legacyBehavior>
             <a className="text-lg font-medium text-white hover:text-red-500 transition duration-300">
               Login
             </a>
           </Link>
-          <Link href="/auth" legacyBehavior>
+          <Link href="/auth?action=signup" legacyBehavior>
             <a className="px-6 py-2 text-lg font-medium text-white bg-gradient-to-r from-red-500 to-blue-500 rounded-full shadow-lg hover:shadow-red-500/50 transition duration-300">
               Sign Up
             </a>
@@ -146,7 +146,7 @@ const HomePage = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <Link href="/auth" legacyBehavior>
+          <Link href="/dashboard" legacyBehavior>
             <a>Get Started</a>
           </Link>
         </motion.button>
@@ -389,7 +389,7 @@ const HomePage = () => {
           <p className="text-xl mb-12">
             Join thousands of successful candidates. Start your journey with LeetMock today.
           </p>
-          <Link href="/auth" legacyBehavior>
+          <Link href="/dashboard" legacyBehavior>
             <a className="px-12 py-4 text-xl font-medium text-white bg-gradient-to-r from-red-500 to-blue-500 rounded-full shadow-lg hover:shadow-red-500/50 transition duration-300">
               Get Started Now
             </a>
