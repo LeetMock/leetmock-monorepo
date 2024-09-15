@@ -17,7 +17,7 @@ const navItems: NavItem[] = [
   { href: "/dashboard/settings/account", icon: Settings, title: "Settings" },
 ];
 
-const NavList: React.FC<NavProps> = ({ className, ...props }) => {
+export const NavList: React.FC<NavProps> = ({ className, ...props }) => {
   const pathname = usePathname();
 
   return (
@@ -31,6 +31,7 @@ const NavList: React.FC<NavProps> = ({ className, ...props }) => {
           href={item.href}
           className={cn(
             "flex items-center text-base px-2 py-2 space-x-3 font-medium w-full rounded-md",
+            "transition-all duration-200",
             pathname === item.href ? "bg-muted hover:bg-muted" : "hover:bg-muted/60"
           )}
         >
@@ -41,5 +42,3 @@ const NavList: React.FC<NavProps> = ({ className, ...props }) => {
     </nav>
   );
 };
-
-export default NavList;

@@ -2,18 +2,15 @@
 
 import { useTheme } from "next-themes";
 import { redirect } from "next/navigation";
-import { Menu, Terminal, X } from "lucide-react";
+import { Terminal, X } from "lucide-react";
 import { Authenticated, AuthLoading } from "convex/react";
-import { dark } from "@clerk/themes";
-import { useAuth, UserButton } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/clerk-react";
 
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { ThemeToggleButton } from "@/components/ThemeToggleButton";
-import DashboardSidebar from "./_components/dashboard-sidebar";
+
+import { DashboardSidebar } from "./_components/dashboard-sidebar";
 import Link from "next/link";
 
 export default function DashboardLayout({

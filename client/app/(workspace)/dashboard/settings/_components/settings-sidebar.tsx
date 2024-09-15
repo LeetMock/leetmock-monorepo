@@ -17,23 +17,18 @@ export function SettingsSidebar({ className, items, ...props }: SettingsSidebarP
   const pathname = usePathname();
 
   return (
-    <nav
-      className={cn("flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1", className)}
-      {...props}
-    >
+    <nav className={cn("flex flex-col items-center space-y-2", className)} {...props}>
       {items.map((item) => (
         <Link
           key={item.href}
           href={item.href}
           className={cn(
-            buttonVariants({ variant: "ghost" }),
-            pathname === item.href
-              ? "bg-muted hover:bg-muted"
-              : "hover:bg-transparent hover:underline",
-            "justify-start"
+            "flex items-center text-base px-4 py-2 space-x-3 font-medium w-full rounded-md",
+            "transition-all duration-200",
+            pathname === item.href ? "bg-muted hover:bg-muted" : "hover:bg-muted/60"
           )}
         >
-          {item.title}
+          <span>{item.title}</span>
         </Link>
       ))}
     </nav>
