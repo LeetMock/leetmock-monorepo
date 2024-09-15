@@ -3,11 +3,11 @@ import { Package2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-import NavList from "./nav-list";
+import NavList from "./dashboard-navlist";
 
 const DashboardSidebar = () => {
   return (
-    <div className="flex h-full flex-col gap-2 border-r bg-muted/40 w-72 flex-shrink-0">
+    <div className="flex h-full flex-col space-y-2 border-r bg-muted/30 w-72 flex-shrink-0">
       {/* Logo */}
       <div className="flex h-14 items-center border-b px-4">
         <Link href="/" className="flex items-center gap-3">

@@ -5,8 +5,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { DataTable } from "../_components/data-table";
-import { columns, SessionDoc } from "../_components/columns";
+import { DataTable } from "./_components/data-table";
+import { columns, SessionDoc } from "./_components/columns";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
@@ -34,7 +34,9 @@ const InterviewCard = ({ resume, sessionId }: InterviewCardProps) => {
       />
       <div className="relative z-10">
         <CardHeader className="pb-3">
-          <CardTitle>{resume ? "Resume" : "Start"} Interview</CardTitle>
+          <CardTitle className="text-xl font-semibold">
+            {resume ? "Resume" : "Start"} Interview
+          </CardTitle>
           <CardDescription className="max-w-lg text-balance leading-relaxed">
             {resume ? "Resume the interview" : "Start a mock interview with our AI interviewer!"}
           </CardDescription>

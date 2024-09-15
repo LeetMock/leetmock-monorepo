@@ -1,6 +1,6 @@
 "use client";
 
-import { SidebarNav } from "../_components/SettingsSidebarNav";
+import { SettingsSidebar } from "./_components/settings-sidebar";
 import { Separator } from "@/components/ui/separator";
 
 const sidebarNavItems = [
@@ -24,7 +24,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
       <Separator className="my-6" />
       <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
         <aside className="-mx-4 lg:w-1/5">
-          <SidebarNav items={sidebarNavItems} />
+          <SettingsSidebar items={sidebarNavItems} />
         </aside>
         <div className="flex-1 lg:max-w-5xl">{children}</div>
       </div>
