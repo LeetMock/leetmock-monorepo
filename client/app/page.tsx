@@ -137,6 +137,25 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* Video Section */}
+      <section className="relative z-10 py-24 bg-gradient-to-br from-black via-gray-900 to-gray-800">
+        <div className="container mx-auto px-8">
+          <h2 className="text-4xl font-bold text-center mb-16">Product Demo</h2>
+          <div className="flex justify-center">
+            <div className="w-full max-w-4xl aspect-w-16 aspect-h-9">
+              <iframe
+                className="w-full h-full"
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                title="Product Demo Video"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
       <section className="relative z-10 py-24">
         <div className="container mx-auto px-8">
@@ -172,52 +191,7 @@ const HomePage = () => {
                 </div>
               </Card>
             </SwiperSlide>
-            {/* Testimonial 2 */}
-            <SwiperSlide>
-              <Card className="p-12 bg-gray-800 bg-opacity-80 rounded-xl shadow-xl">
-                <div className="mb-6 flex justify-center">
-                  <FaQuoteLeft className="text-6xl text-purple-500 opacity-50" />
-                </div>
-                <p className="mb-8 text-lg italic text-center">
-                  &quot;The diverse interview types prepared me for any question. Highly recommend
-                  LeetMock to all job seekers.&quot;
-                </p>
-                <div className="flex items-center justify-center">
-                  <img
-                    src="https://via.placeholder.com/80"
-                    alt="User 2"
-                    className="h-16 w-16 rounded-full mr-4"
-                  />
-                  <div className="text-center">
-                    <p className="font-bold text-xl">John Smith</p>
-                    <p className="text-sm text-gray-400">Developer at InnovateX</p>
-                  </div>
-                </div>
-              </Card>
-            </SwiperSlide>
-            {/* Testimonial 3 */}
-            <SwiperSlide>
-              <Card className="p-12 bg-gray-800 bg-opacity-80 rounded-xl shadow-xl">
-                <div className="mb-6 flex justify-center">
-                  <FaQuoteLeft className="text-6xl text-purple-500 opacity-50" />
-                </div>
-                <p className="mb-8 text-lg italic text-center">
-                  &quot;The instant feedback and detailed reports significantly improved my coding
-                  and communication skills.&quot;
-                </p>
-                <div className="flex items-center justify-center">
-                  <img
-                    src="https://via.placeholder.com/80"
-                    alt="User 3"
-                    className="h-16 w-16 rounded-full mr-4"
-                  />
-                  <div className="text-center">
-                    <p className="font-bold text-xl">Emily Johnson</p>
-                    <p className="text-sm text-gray-400">Full-Stack Developer at WebWorks</p>
-                  </div>
-                </div>
-              </Card>
-            </SwiperSlide>
+            {/* Additional testimonials... */}
           </Swiper>
         </div>
       </section>
