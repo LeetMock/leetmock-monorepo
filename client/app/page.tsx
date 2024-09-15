@@ -1,13 +1,12 @@
 "use client";
+// pages/index.tsx
 
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import { FiCode, FiMic, FiBarChart2 } from "react-icons/fi"; // Importing icons
-import { FaQuoteLeft } from "react-icons/fa"; // For testimonials
+import { FiCode, FiMic, FiBarChart2 } from "react-icons/fi";
+import { FaQuoteLeft } from "react-icons/fa";
 
 const HomePage = () => {
   return (
@@ -26,10 +25,12 @@ const HomePage = () => {
           </span>
         </div>
         <div className="flex space-x-4">
-          <Button variant="ghost" className="text-lg">
+          <button className="text-lg bg-transparent hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded">
             Login
-          </Button>
-          <Button className="text-lg">Sign Up</Button>
+          </button>
+          <button className="text-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded">
+            Sign Up
+          </button>
         </div>
       </nav>
 
@@ -46,7 +47,9 @@ const HomePage = () => {
           Practice coding interviews with advanced AI. Get instant feedback and detailed analysis to
           improve your interview performance.
         </p>
-        <Button className="px-12 py-4 text-xl">Get Started</Button>
+        <button className="px-12 py-4 text-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded">
+          Get Started
+        </button>
       </section>
 
       {/* Companies Section */}
@@ -95,7 +98,7 @@ const HomePage = () => {
           <h2 className="text-4xl font-bold text-center mb-16">Our Cutting-Edge Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {/* Feature 1 */}
-            <Card className="p-8 bg-transparent hover:bg-gray-800 transition duration-300 rounded-lg shadow-lg">
+            <div className="p-8 bg-transparent hover:bg-gray-800 transition duration-300 rounded-lg shadow-lg">
               <div className="mb-6 flex justify-center">
                 <div className="p-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full">
                   <FiMic className="text-4xl text-white" />
@@ -106,9 +109,9 @@ const HomePage = () => {
                 Engage in realistic interviews with AI-powered voice assistants using GPT-4, Claude,
                 and LLaMA models.
               </p>
-            </Card>
+            </div>
             {/* Feature 2 */}
-            <Card className="p-8 bg-transparent hover:bg-gray-800 transition duration-300 rounded-lg shadow-lg">
+            <div className="p-8 bg-transparent hover:bg-gray-800 transition duration-300 rounded-lg shadow-lg">
               <div className="mb-6 flex justify-center">
                 <div className="p-4 bg-gradient-to-r from-green-400 to-blue-500 rounded-full">
                   <FiCode className="text-4xl text-white" />
@@ -119,9 +122,9 @@ const HomePage = () => {
                 Practice behavioral, system design, coding interviews, and general coding with
                 guided assistance.
               </p>
-            </Card>
+            </div>
             {/* Feature 3 */}
-            <Card className="p-8 bg-transparent hover:bg-gray-800 transition duration-300 rounded-lg shadow-lg">
+            <div className="p-8 bg-transparent hover:bg-gray-800 transition duration-300 rounded-lg shadow-lg">
               <div className="mb-6 flex justify-center">
                 <div className="p-4 bg-gradient-to-r from-yellow-400 to-red-500 rounded-full">
                   <FiBarChart2 className="text-4xl text-white" />
@@ -132,7 +135,7 @@ const HomePage = () => {
                 Receive comprehensive analysis reports covering communication, problem-solving, and
                 technical skills.
               </p>
-            </Card>
+            </div>
           </div>
         </div>
       </section>
@@ -170,7 +173,7 @@ const HomePage = () => {
           >
             {/* Testimonial 1 */}
             <SwiperSlide>
-              <Card className="p-12 bg-gray-800 bg-opacity-80 rounded-xl shadow-xl">
+              <div className="p-12 bg-gray-800 bg-opacity-80 rounded-xl shadow-xl">
                 <div className="mb-6 flex justify-center">
                   <FaQuoteLeft className="text-6xl text-purple-500 opacity-50" />
                 </div>
@@ -189,7 +192,7 @@ const HomePage = () => {
                     <p className="text-sm text-gray-400">Software Engineer at TechCorp</p>
                   </div>
                 </div>
-              </Card>
+              </div>
             </SwiperSlide>
             {/* Additional testimonials... */}
           </Swiper>
@@ -202,17 +205,19 @@ const HomePage = () => {
           <h2 className="text-4xl font-bold text-center mb-16">Pricing Plans</h2>
           <div className="flex flex-col md:flex-row justify-center items-center md:space-x-12">
             {/* Free Plan */}
-            <Card className="p-12 bg-gray-800 bg-opacity-60 text-center mb-8 md:mb-0 rounded-lg shadow-lg transform hover:scale-105 transition duration-300">
+            <div className="p-12 bg-gray-800 bg-opacity-60 text-center mb-8 md:mb-0 rounded-lg shadow-lg transform hover:scale-105 transition duration-300">
               <h3 className="text-3xl font-bold mb-4">Free Plan</h3>
               <p className="text-2xl mb-6">Free</p>
               <ul className="mb-8 space-y-2 text-left">
                 <li>✔️ 3 Interviews per Month</li>
                 <li>✔️ Access to Basic Features</li>
               </ul>
-              <Button className="px-12 py-4 text-xl">Sign Up for Free</Button>
-            </Card>
+              <button className="px-12 py-4 text-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded">
+                Sign Up for Free
+              </button>
+            </div>
             {/* Pro Plan */}
-            <Card className="p-12 bg-gradient-to-br from-purple-600 to-pink-600 text-center rounded-lg shadow-lg transform hover:scale-105 transition duration-300">
+            <div className="p-12 bg-gradient-to-br from-purple-600 to-pink-600 text-center rounded-lg shadow-lg transform hover:scale-105 transition duration-300">
               <h3 className="text-3xl font-bold mb-4 text-white">Pro Plan</h3>
               <p className="text-2xl mb-6 text-white">$0.10 per Minute</p>
               <ul className="mb-8 space-y-2 text-left text-white">
@@ -221,10 +226,10 @@ const HomePage = () => {
                 <li>✔️ Detailed Analytics</li>
                 <li>✔️ Priority Support</li>
               </ul>
-              <Button className="px-12 py-4 text-xl bg-white text-purple-600">
+              <button className="px-12 py-4 text-xl bg-white text-purple-600 font-semibold rounded">
                 Upgrade to Pro
-              </Button>
-            </Card>
+              </button>
+            </div>
           </div>
         </div>
       </section>
