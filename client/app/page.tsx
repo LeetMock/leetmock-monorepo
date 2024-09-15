@@ -158,11 +158,11 @@ const HomePage = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1 }}
         >
-          {/* Replace this iframe src with your interactive demo URL */}
+          {/* Never gonna give you up */}
           <iframe
-            src="https://your-interactive-workspace-demo.com"
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=Z5X5X5X5X5X5X5X5"
             title="LeetMock Interactive Demo"
-            className="w-full h-96 rounded-lg shadow-xl"
+            className="w-full h-[500px] rounded-lg shadow-xl"
           ></iframe>
         </motion.div>
       </section>
