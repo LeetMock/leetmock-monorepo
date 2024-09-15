@@ -8,7 +8,7 @@ import { FiCode, FiMic, FiBarChart2 } from "react-icons/fi";
 import { FaQuoteLeft } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import Image from "next/image"; // Importing Next.js Image component
+import Image from "next/image";
 
 const HomePage = () => {
   return (
@@ -50,6 +50,52 @@ const HomePage = () => {
             </defs>
           </svg>
         </motion.div>
+        {/* Animated Particles */}
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 bg-gradient-to-br from-red-500 to-blue-500 rounded-full"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: ["0%", "100%", "0%"],
+              opacity: [0, 1, 0],
+            }}
+            transition={{
+              duration: Math.random() * 10 + 5,
+              repeat: Infinity,
+              delay: Math.random() * 5,
+              ease: "easeInOut",
+            }}
+          ></motion.div>
+        ))}
+        {/* Moving Gradient Blobs */}
+        <motion.div
+          className="absolute top-0 left-0 w-64 h-64 bg-gradient-to-br from-red-500 to-blue-500 rounded-full filter blur-3xl opacity-50"
+          animate={{
+            x: [0, -50, 0],
+            y: [0, 50, 0],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        ></motion.div>
+        <motion.div
+          className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500 to-red-500 rounded-full filter blur-3xl opacity-50"
+          animate={{
+            x: [0, 50, 0],
+            y: [0, -50, 0],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        ></motion.div>
       </motion.div>
 
       {/* Navbar */}
@@ -105,11 +151,11 @@ const HomePage = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1 }}
         >
-          {/* Never gonna give you up */}
+          {/* Replace this iframe src with your interactive demo URL */}
           <iframe
-            src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=Z5X5X5X5X5X5X5X5"
+            src="https://your-interactive-workspace-demo.com"
             title="LeetMock Interactive Demo"
-            className="w-full h-[560px] rounded-lg shadow-xl"
+            className="w-full h-96 rounded-lg shadow-xl"
           ></iframe>
         </motion.div>
       </section>
