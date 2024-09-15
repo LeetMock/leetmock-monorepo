@@ -6,7 +6,7 @@ export const UpgradeCard = () => {
   const router = useRouter();
 
   return (
-    <Card className="rounded-md shadow-none bg-background">
+    <Card className="rounded-md shadow-none bg-background shadow-md">
       <CardHeader className="p-4">
         <CardTitle>Upgrade to Pro</CardTitle>
         <CardDescription>Unlock all features and get more interview time now!</CardDescription>

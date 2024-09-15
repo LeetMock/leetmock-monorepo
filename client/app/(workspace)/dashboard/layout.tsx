@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 
 import { DashboardSidebar } from "./_components/dashboard-sidebar";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export default function DashboardLayout({
   children,
@@ -28,18 +29,24 @@ export default function DashboardLayout({
   return (
     <>
       <Authenticated>
-        <div className="flex h-screen">
+        <div className="flex h-screen bg-muted/40">
           {/* Left Sidebar */}
           <DashboardSidebar />
           {/* Right Content */}
-          <div className="flex flex-col flex-1">
-            <div className="flex items-center justify-between p-4 border-b h-14">
+          <div className="flex flex-col flex-1 rounded-md m-3 ml-0 bg-background shadow-lg">
+            <div
+              className={cn(
+                "flex items-center justify-between p-4 border-b h-12 rounded-t-md",
+                theme === "dark" ? "bg-gray-100" : "bg-gray-800",
+                theme === "dark" ? "text-gray-900" : "text-gray-50"
+              )}
+            >
               <div className="flex items-center space-x-3">
                 <Terminal className="w-4 h-4" />
                 <AlertDescription>
-                  <span className="font-medium text-base">
+                  <span className="font-medium">
                     Upgrade to Pro to get more interview time! Check out our{" "}
-                    <Link href="/pricing" className="text-blue-500 hover:underline">
+                    <Link href="/pricing" className="text-blue-400 hover:underline">
                       pricing
                     </Link>
                     .

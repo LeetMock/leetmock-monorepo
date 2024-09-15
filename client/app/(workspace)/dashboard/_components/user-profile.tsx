@@ -72,8 +72,8 @@ const ProfileItem: React.FC<ProfileItemProps> = ({ user, ...props }) => {
   return (
     <div
       className={cn(
-        "flex items-center justify-between rounded-md hover:bg-accent p-3 py-4",
-        "transition-all duration-200 cursor-pointer",
+        "flex items-center justify-between hover:bg-muted rounded-sm pl-3 pr-2.5 py-4",
+        "transition-all duration-200 cursor-pointer mx-3",
         props
       )}
     >
@@ -87,7 +87,7 @@ const ProfileItem: React.FC<ProfileItemProps> = ({ user, ...props }) => {
           <p className="text-sm text-muted-foreground">{user?.emailAddresses[0].emailAddress}</p>
         </div>
       </div>
-      <ChevronsUpDown className="w-[1.2rem] h-[1.2rem] text-muted-foreground mr-1.5" />
+      <ChevronsUpDown className="w-[1.2rem] h-[1.2rem] text-muted-foreground" />
     </div>
   );
 };
@@ -106,7 +106,7 @@ export const UserProfile = () => {
         <ProfileItem user={user} />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64" forceMount>
-        <div className="flex flex-col space-y-4 p-2">
+        <div className="flex flex-col space-y-4">
           <div className="flex flex-col items-center space-y-2">
             <Avatar>
               <AvatarImage src={user?.imageUrl} />
