@@ -1,4 +1,4 @@
-// pages/index.tsx
+// app/page.tsx
 
 "use client";
 
@@ -9,6 +9,7 @@ import { FaQuoteLeft } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import Image from "next/image";
+import Link from "next/link"; // Importing Link from Next.js
 
 const HomePage = () => {
   return (
@@ -105,13 +106,17 @@ const HomePage = () => {
             LeetMock
           </span>
         </div>
-        <div className="flex space-x-6">
-          <button className="text-lg font-medium text-white hover:text-red-500 transition duration-300">
-            Login
-          </button>
-          <button className="px-6 py-2 text-lg font-medium text-white bg-gradient-to-r from-red-500 to-blue-500 rounded-full shadow-lg hover:shadow-red-500/50 transition duration-300">
-            Sign Up
-          </button>
+        <div className="flex space-x-6 items-center">
+          <Link href="/auth" legacyBehavior>
+            <a className="text-lg font-medium text-white hover:text-red-500 transition duration-300">
+              Login
+            </a>
+          </Link>
+          <Link href="/auth" legacyBehavior>
+            <a className="px-6 py-2 text-lg font-medium text-white bg-gradient-to-r from-red-500 to-blue-500 rounded-full shadow-lg hover:shadow-red-500/50 transition duration-300">
+              Sign Up
+            </a>
+          </Link>
         </div>
       </nav>
 
@@ -141,7 +146,9 @@ const HomePage = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          Get Started
+          <Link href="/auth" legacyBehavior>
+            <a>Get Started</a>
+          </Link>
         </motion.button>
 
         {/* Interactive Workspace Demo */}
@@ -382,9 +389,11 @@ const HomePage = () => {
           <p className="text-xl mb-12">
             Join thousands of successful candidates. Start your journey with LeetMock today.
           </p>
-          <button className="px-12 py-4 text-xl font-medium text-white bg-gradient-to-r from-red-500 to-blue-500 rounded-full shadow-lg hover:shadow-red-500/50 transition duration-300">
-            Get Started Now
-          </button>
+          <Link href="/auth" legacyBehavior>
+            <a className="px-12 py-4 text-xl font-medium text-white bg-gradient-to-r from-red-500 to-blue-500 rounded-full shadow-lg hover:shadow-red-500/50 transition duration-300">
+              Get Started Now
+            </a>
+          </Link>
         </div>
       </section>
 
