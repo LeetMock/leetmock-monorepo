@@ -106,7 +106,7 @@ export const UserProfile = () => {
         <ProfileItem user={user} />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64" forceMount>
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-4 mt-3">
           <div className="flex flex-col items-center space-y-2">
             <Avatar>
               <AvatarImage src={user?.imageUrl} />
