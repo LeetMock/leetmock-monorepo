@@ -8,6 +8,7 @@ import { FiCode, FiMic, FiBarChart2 } from "react-icons/fi";
 import { FaQuoteLeft } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import Image from "next/image"; // Importing Next.js Image component
 
 const HomePage = () => {
   return (
@@ -104,11 +105,11 @@ const HomePage = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1 }}
         >
-          {/* Replace this iframe src with your interactive demo URL */}
+          {/* Never gonna give you up */}
           <iframe
-            src="https://your-interactive-workspace-demo.com"
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=Z5X5X5X5X5X5X5X5"
             title="LeetMock Interactive Demo"
-            className="w-full h-96 rounded-lg shadow-xl"
+            className="w-full h-[560px] rounded-lg shadow-xl"
           ></iframe>
         </motion.div>
       </section>
@@ -121,12 +122,48 @@ const HomePage = () => {
           </h2>
           <div className="flex flex-wrap justify-center items-center space-x-8">
             {/* Company Logos */}
-            <img src="/logos/google.png" alt="Google" className="h-12 object-contain m-4" />
-            <img src="/logos/amazon.png" alt="Amazon" className="h-12 object-contain m-4" />
-            <img src="/logos/facebook.png" alt="Facebook" className="h-12 object-contain m-4" />
-            <img src="/logos/microsoft.png" alt="Microsoft" className="h-12 object-contain m-4" />
-            <img src="/logos/apple.png" alt="Apple" className="h-12 object-contain m-4" />
-            <img src="/logos/tesla.png" alt="Tesla" className="h-12 object-contain m-4" />
+            <Image
+              src="/logos/google.png"
+              alt="Google"
+              className="h-12 object-contain m-4"
+              width={150}
+              height={50}
+            />
+            <Image
+              src="/logos/amazon.png"
+              alt="Amazon"
+              className="h-12 object-contain m-4"
+              width={150}
+              height={50}
+            />
+            <Image
+              src="/logos/facebook.png"
+              alt="Facebook"
+              className="h-12 object-contain m-4"
+              width={150}
+              height={50}
+            />
+            <Image
+              src="/logos/microsoft.png"
+              alt="Microsoft"
+              className="h-12 object-contain m-4"
+              width={150}
+              height={50}
+            />
+            <Image
+              src="/logos/apple.png"
+              alt="Apple"
+              className="h-12 object-contain m-4"
+              width={150}
+              height={50}
+            />
+            <Image
+              src="/logos/tesla.png"
+              alt="Tesla"
+              className="h-12 object-contain m-4"
+              width={150}
+              height={50}
+            />
           </div>
         </div>
       </section>
@@ -212,10 +249,12 @@ const HomePage = () => {
                   spot-on!&quot;
                 </p>
                 <div className="flex items-center justify-center">
-                  <img
+                  <Image
                     src="/testimonials/user1.jpg"
                     alt="Alex Turner"
                     className="h-16 w-16 rounded-full mr-4"
+                    width={64}
+                    height={64}
                   />
                   <div className="text-center">
                     <p className="font-bold text-xl">Alex Turner</p>
@@ -240,10 +279,12 @@ const HomePage = () => {
                   prepared for my real interviews.&quot;
                 </p>
                 <div className="flex items-center justify-center">
-                  <img
+                  <Image
                     src="/testimonials/user2.jpg"
                     alt="Samantha Lee"
                     className="h-16 w-16 rounded-full mr-4"
+                    width={64}
+                    height={64}
                   />
                   <div className="text-center">
                     <p className="font-bold text-xl">Samantha Lee</p>
@@ -264,14 +305,16 @@ const HomePage = () => {
                   <FaQuoteLeft className="text-5xl text-red-500 opacity-70" />
                 </div>
                 <p className="mb-8 text-lg italic text-center">
-                  &quot;LeetMock's feedback helped me identify my weaknesses. I secured a job offer
-                  within weeks!&quot;
+                  &quot;LeetMock&apos;s feedback helped me identify my weaknesses. I secured a job
+                  offer within weeks!&quot;
                 </p>
                 <div className="flex items-center justify-center">
-                  <img
+                  <Image
                     src="/testimonials/user3.jpg"
                     alt="Michael Chen"
                     className="h-16 w-16 rounded-full mr-4"
+                    width={64}
+                    height={64}
                   />
                   <div className="text-center">
                     <p className="font-bold text-xl">Michael Chen</p>
