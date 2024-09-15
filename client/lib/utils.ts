@@ -17,7 +17,6 @@ export function getFileExtension(language: string): string {
   return extensionMap[language] || "txt";
 }
 
-
 export function generateRandomAlphanumeric(length: number): string {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
@@ -36,6 +35,13 @@ export function encode(text: string): Uint8Array {
 
 export function getCurrentUnixTimestamp(): number {
   return Math.floor(Date.now() / 1000);
+}
+
+export function getInitials(
+  firstName: string | null | undefined,
+  lastName: string | null | undefined
+) {
+  return `${firstName?.[0] ?? ""}${lastName?.[0] ?? ""}`;
 }
 
 export const createToken = (

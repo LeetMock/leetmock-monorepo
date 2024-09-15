@@ -37,7 +37,7 @@ export default function DashboardLayout({
             <div
               className={cn(
                 "flex items-center justify-between p-4 border-b h-12 rounded-t-md",
-                theme === "dark" ? "bg-gray-100" : "bg-gray-800",
+                theme === "dark" ? "bg-gray-50" : "bg-gray-800",
                 theme === "dark" ? "text-gray-900" : "text-gray-50"
               )}
             >
@@ -46,7 +46,7 @@ export default function DashboardLayout({
                 <AlertDescription>
                   <span className="font-medium">
                     Upgrade to Pro to get more interview time! Check out our{" "}
-                    <Link href="/pricing" className="text-blue-400 hover:underline">
+                    <Link href="/pricing" className="text-blue-500 hover:underline">
                       pricing
                     </Link>
                     .

@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn, getInitials } from "@/lib/utils";
 import { useUser, useAuth } from "@clerk/clerk-react";
 import { ChevronsUpDown, LaptopIcon, LogOut, MoonIcon, SunIcon, UserIcon } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -18,52 +18,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useTheme } from "next-themes";
-import { Badge } from "@/components/ui/badge";
-import { User } from "@clerk/nextjs/server";
 import Link from "next/link";
-import { Settings, CreditCard, Star } from "lucide-react";
-
-enum PriceTier {
-  FREE = 0,
-  PRO = 1,
-}
-
-const priceTiers = [
-  {
-    name: "Free",
-    description: "Free tier",
-    value: PriceTier.FREE,
-    className: "bg-gray-100 text-gray-800",
-  },
-  {
-    name: "Premium",
-    description: "Premium tier",
-    value: PriceTier.PRO,
-    className: "bg-blue-100 text-blue-800",
-  },
-];
-
-const TierBadge = ({ tier }: { tier: PriceTier }) => {
-  const tierData = priceTiers.find((t) => t.value === tier);
-  return (
-    <div
-      className={cn(
-        "flex items-center px-2 py-1 rounded-full text-xs font-medium",
-        tierData?.className
-      )}
-    >
-      <Star className="w-3 h-3 mr-1" />
-      {tierData?.name}
-    </div>
-  );
-};
+import { CreditCard } from "lucide-react";
+import { PriceTier, TierBadge } from "./tier-badge";
 
 interface ProfileItemProps extends ButtonProps {
   user: ReturnType<typeof useUser>["user"];
-}
-
-function getInitials(firstName: string | null | undefined, lastName: string | null | undefined) {
-  return `${firstName?.[0] ?? ""}${lastName?.[0] ?? ""}`;
 }
 
 const ProfileItem: React.FC<ProfileItemProps> = ({ user, ...props }) => {
@@ -97,8 +57,8 @@ export const UserProfile = () => {
   const { signOut } = useAuth();
   const { theme, setTheme } = useTheme();
 
-  // Assuming the user's tier is stored somewhere. For this example, we'll use PRO.
-  const userTier = PriceTier.PRO;
+  // Assuming the user's tier is stored somewhere. For this example, we'll use Premium.
+  const userTier = PriceTier.Premium;
 
   return (
     <DropdownMenu>
