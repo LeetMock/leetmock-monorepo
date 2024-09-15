@@ -8,9 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
-import router from "next/router";
 import { toast } from "sonner";
-import { useEditorState } from "@/hooks/useEditorState";
 
 const getDifficultyColor = (difficulty: number) => {
   switch (difficulty) {
@@ -65,7 +63,7 @@ export default function InterviewSelectionPage() {
           });
         })
         .then((sessionId) => {
-          router.push(`/interview/${sessionId}`);
+          router.push(`/dashboard/interviews/${sessionId}`);
         });
 
       toast.promise(promise, {

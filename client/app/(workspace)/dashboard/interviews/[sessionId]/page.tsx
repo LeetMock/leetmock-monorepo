@@ -18,13 +18,13 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 import { QuestionHolder } from "@/components/QuestionHolder";
 import { useMutation, useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Toolbar } from "../_components/Toolbar";
+import { Toolbar } from "./_components/Toolbar";
 import { ConnectionState } from "livekit-client";
 import { useConnectionState, useLocalParticipant, useRoomContext } from "@livekit/components-react";
 import { useConnection } from "@/hooks/useConnection";
 import { useAgent } from "@/hooks/useAgent";
-import { Transcripts } from "../_components/Transcripts";
-import { TestResultsBlock } from "../_components/TestResultsBlock";
+import { Transcripts } from "./_components/Transcripts";
+import { TestResultsBlock } from "./_components/TestResultsBlock";
 import { LucideVolume2, PlayCircle, TestTube2, Clock, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
