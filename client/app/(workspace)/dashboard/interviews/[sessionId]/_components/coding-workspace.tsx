@@ -13,8 +13,6 @@ import {
 } from "@/components/ui/select";
 import { LANGUAGES } from "@/lib/constants";
 import { useTheme } from "next-themes";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { QuestionHolder } from "@/components/QuestionHolder";
 import { useMutation, useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { WorkspaceToolbar } from "./workspace-toolbar";
@@ -30,6 +28,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { EditorState, useEditorState } from "@/hooks/useEditorState";
 import { toast } from "sonner";
 import { RunTestResult } from "@/lib/types";
+import { CodingQuestionPanel } from "./coding-question-panel";
 
 const customEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -40,7 +39,7 @@ const customEditorTheme: monacoEditor.IStandaloneThemeData = {
   },
 };
 
-export const CodeingWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
+export const CodingWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { theme } = useTheme();
   const editorContainerRef = useRef<HTMLDivElement>(null);
 
@@ -169,20 +168,12 @@ export const CodeingWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sess
     <>
       <WorkspaceToolbar />
       {!!session && !!question && !!editorState ? (
-        <div className={cn("w-full h-full flex justify-center items-center")}>
+        <div className="w-full h-full flex justify-center items-center space-x-3">
           {/* Question Panel */}
-          <div className="h-full w-full relative bg-background border bg-blue-100">
-            <div className="absolute inset-0 overflow-y-auto">
-              {question ? (
-                <QuestionHolder
-                  question_title={question.title}
-                  question_description={question.question}
-                />
-              ) : (
-                <div>Loading question...</div>
-              )}
-            </div>
-          </div>
+          <CodingQuestionPanel
+            className="border bg-blue-100"
+            question={{ title: question.title, content: question.question }}
+          />
           {/* Coding Panel */}
           <div className="h-full w-full flex flex-col">
             <div className="flex flex-col justify-start h-full w-full border bg-green-100">
