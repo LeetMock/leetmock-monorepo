@@ -7,17 +7,16 @@ import { useTheme } from "next-themes";
 
 export interface TimerCountdownProps {
   timeLeft: number;
-  progressPercentage: number;
 }
 
-export const TimerCountdown = ({ timeLeft, progressPercentage }: TimerCountdownProps) => {
+export const TimerCountdown = ({ timeLeft }: TimerCountdownProps) => {
   const { theme } = useTheme();
 
   return (
     <div
       className={cn(
-        "flex items-center justify-center space-x-2 font-semibold -mb-0.5",
-        "px-2 py-1 rounded-sm shadow-sm select-none cursor-pointer text-sm",
+        "flex items-center justify-center space-x-2 font-semibold",
+        "px-2 py-1 pr-1 rounded-sm shadow-sm select-none cursor-pointer text-sm",
         theme === "dark" ? "bg-transparent" : "bg-yellow-50",
         theme === "dark" ? "text-yellow-200" : "text-yellow-600",
         theme === "dark" && "border border-yellow-600"

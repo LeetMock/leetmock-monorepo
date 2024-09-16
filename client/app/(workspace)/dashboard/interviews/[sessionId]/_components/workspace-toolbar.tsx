@@ -8,7 +8,16 @@ import { cn, getFirstLetter } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { TimerCountdown } from "./timer-countdown";
 import { Button } from "@/components/ui/button";
-import { Settings } from "lucide-react";
+import {
+  ChevronDown,
+  CirclePauseIcon,
+  CirclePlayIcon,
+  CircleStopIcon,
+  CircleXIcon,
+  Octagon,
+  OctagonX,
+  Settings,
+} from "lucide-react";
 
 export const WorkspaceToolbar: React.FC = () => {
   const { user } = useUser();
@@ -32,8 +41,6 @@ export const WorkspaceToolbar: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Format time as MM:SS
-
   const handleEndInterview = () => {
     if (confirm("Are you sure you want to end the interview?")) {
       alert("Interview ended.");
@@ -42,11 +49,20 @@ export const WorkspaceToolbar: React.FC = () => {
     }
   };
 
-  const progressPercentage = (timeLeft / (30 * 60)) * 100;
-
   return (
     <div className="flex items-center w-full justify-between p-2 px-3 space-x-3 bg-background rounded-md shadow-md">
-      <TimerCountdown timeLeft={timeLeft} progressPercentage={progressPercentage} />
+      <TimerCountdown timeLeft={timeLeft} />
+
+      <div className="flex items-center space-x-px">
+        <Button className="h-8 font-semibold rounded-r-none text-red-400">
+          <CircleXIcon className="w-4 h-4 mr-2" />
+          <span className="-mb-[1px]">Stop</span>
+        </Button>
+        <Button size="icon" className="h-8 w-4 font-semibold rounded-l-none">
+          <ChevronDown className="w-2.5 h-2.5" />
+        </Button>
+      </div>
+
       <div className="flex items-center space-x-3">
         <Button variant="ghost" size="icon">
           <Settings className="w-4 h-4" />
