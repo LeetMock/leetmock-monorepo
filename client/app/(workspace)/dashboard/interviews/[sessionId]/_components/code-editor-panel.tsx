@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Editor from "@monaco-editor/react";
 import { editor as monacoEditor } from "monaco-editor";
@@ -13,22 +13,15 @@ import {
 } from "@/components/ui/select";
 import { LANGUAGES } from "@/lib/constants";
 import { useTheme } from "next-themes";
-import { useMutation, useQuery, useAction } from "convex/react";
+import { useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { WorkspaceToolbar } from "./workspace-toolbar";
-import { ConnectionState } from "livekit-client";
-import { useConnectionState, useLocalParticipant, useRoomContext } from "@livekit/components-react";
-import { useConnection } from "@/hooks/useConnection";
-import { useAgent } from "@/hooks/useAgent";
-import { AgentTranscripts } from "./agent-transcripts";
 import { TestResultsBlock } from "./test-results-block";
-import { LucideVolume2, PlayCircle, TestTube2, Clock, Loader2 } from "lucide-react";
+import { PlayCircle, TestTube2, Clock, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
 import { EditorState, useEditorState } from "@/hooks/useEditorState";
 import { toast } from "sonner";
 import { RunTestResult } from "@/lib/types";
-import { CodeQuestionPanel } from "./code-question-panel";
 import { useResizePanel } from "@/hooks/use-resize-panel";
 
 const customEditorTheme: monacoEditor.IStandaloneThemeData = {

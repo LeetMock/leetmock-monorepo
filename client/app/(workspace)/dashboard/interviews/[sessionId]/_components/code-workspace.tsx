@@ -59,6 +59,7 @@ export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ session
   return (
     <>
       <WorkspaceToolbar />
+      {/* <Header /> */}
       {!!session && !!question ? (
         <div className="w-full h-full flex justify-center items-center">
           {/* Question Panel */}
@@ -77,7 +78,7 @@ export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ session
           />
           {/* Coding Panel */}
           <CodeEditorPanel sessionId={sessionId} questionId={question._id} />
-          <div className="w-[24rem] h-full p-2 flex flex-col space-y-4">
+          {/* <div className="w-[24rem] h-full p-2 flex flex-col space-y-4">
             <Button
               className={cn(
                 "w-full font-semibold text-white",
@@ -122,7 +123,7 @@ export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ session
               </div>
             </div>
             <AgentTranscripts agentAudioTrack={agentAudioTrack} />
-          </div>
+          </div> */}
         </div>
       ) : (
         <div className="flex justify-center items-center h-full">

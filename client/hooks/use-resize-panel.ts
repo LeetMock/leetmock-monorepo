@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useLocalStorage } from "usehooks-ts";
+import { useLocalStorage, useWindowSize } from "usehooks-ts";
 
 export const useResizePanel = ({
   defaultSize,
@@ -18,16 +18,28 @@ export const useResizePanel = ({
   inverted?: boolean;
   storageId: string;
 }) => {
+  const { width = 200, height = 200 } = useWindowSize();
   const [size, setSize] = useLocalStorage<number>(storageId, defaultSize);
   const [isResizing, setIsResizing] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(width);
+  const [windowHeight, setWindowHeight] = useState(height);
 
   const clientXRef = useRef<number | null>(null);
   const clientYRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (size <= maxSize) return;
-    setSize(maxSize);
-  }, [size, maxSize, setSize]);
+    if (direction === "horizontal") {
+      const widthDelta = width - windowWidth;
+      const newSize = Math.max(minSize, Math.min(maxSize, size + widthDelta));
+      setSize(newSize);
+      setWindowWidth(width);
+    } else {
+      const heightDelta = height - windowHeight;
+      const newSize = Math.max(minSize, Math.min(maxSize, size + heightDelta));
+      setSize(newSize);
+      setWindowHeight(height);
+    }
+  }, [width, height, windowWidth, windowHeight, minSize, maxSize, size, setSize, direction]);
 
   const handleMouseMove = useCallback(
     (event: MouseEvent) => {
