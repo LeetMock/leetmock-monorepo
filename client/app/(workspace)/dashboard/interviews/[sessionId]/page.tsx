@@ -5,7 +5,7 @@ import React, { useMemo } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { CodingWorkspace } from "./_components/coding-workspace";
+import { CodeWorkspace } from "./_components/code-workspace";
 
 const InterviewPage: React.FC = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -23,11 +23,11 @@ const InterviewPage: React.FC = () => {
       return <div>Session not found</div>;
     }
 
-    return <CodingWorkspace sessionId={sessionId as Id<"sessions">} />;
+    return <CodeWorkspace sessionId={sessionId as Id<"sessions">} />;
   }, [sessionExists, sessionId]);
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen bg-muted/80 w-full p-3 space-y-3">
+    <div className="flex flex-col justify-center items-center h-screen bg-muted/80 w-full p-2 space-y-2">
       {interviewWorkspace}
     </div>
   );

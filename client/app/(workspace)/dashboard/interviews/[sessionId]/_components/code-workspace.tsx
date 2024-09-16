@@ -28,7 +28,8 @@ import { Id } from "@/convex/_generated/dataModel";
 import { EditorState, useEditorState } from "@/hooks/useEditorState";
 import { toast } from "sonner";
 import { RunTestResult } from "@/lib/types";
-import { CodingQuestionPanel } from "./coding-question-panel";
+import { CodeQuestionPanel } from "./code-question-panel";
+import { useResizePanel } from "@/hooks/use-resize-panel";
 
 const customEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -39,7 +40,7 @@ const customEditorTheme: monacoEditor.IStandaloneThemeData = {
   },
 };
 
-export const CodingWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
+export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { theme } = useTheme();
   const editorContainerRef = useRef<HTMLDivElement>(null);
 
@@ -60,6 +61,14 @@ export const CodingWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessi
   const [testResults, setTestResults] = useState<RunTestResult | null>(null);
   const [outputView, setOutputView] = useState<"output" | "testResults">("output");
   const [testRunCounter, setTestRunCounter] = useState(0);
+
+  const { size, isResizing, resizeHandleProps } = useResizePanel({
+    defaultSize: 400,
+    minSize: 200,
+    maxSize: 2400,
+    direction: "horizontal",
+    storageId: "leetmock.workspace.coding-question",
+  });
 
   const handleSnapshotChange = useCallback(
     (snapshot: EditorState) => {
@@ -168,11 +177,20 @@ export const CodingWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessi
     <>
       <WorkspaceToolbar />
       {!!session && !!question && !!editorState ? (
-        <div className="w-full h-full flex justify-center items-center space-x-3">
+        <div className="w-full h-full flex justify-center items-center">
           {/* Question Panel */}
-          <CodingQuestionPanel
-            className="border bg-blue-100"
+          <CodeQuestionPanel
+            className="border rounded-md shadow-lg"
+            style={{ width: size }}
             question={{ title: question.title, content: question.question }}
+          />
+          {/* Resize Handle */}
+          <div
+            className={cn(
+              "w-px h-full cursor-ew-resize px-1 transition-all",
+              isResizing ? "bg-muted-foreground/10" : "bg-transparent"
+            )}
+            {...resizeHandleProps}
           />
           {/* Coding Panel */}
           <div className="h-full w-full flex flex-col">

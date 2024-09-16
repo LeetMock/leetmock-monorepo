@@ -28,8 +28,8 @@ export const useResizePanel = ({
     (event: MouseEvent) => {
       if (clientXRef === null || clientYRef === null) return;
 
-      const deltaX = event.clientX - clientXRef.current!;
-      const deltaY = event.clientY - clientYRef.current!;
+      const deltaX = (event.clientX - clientXRef.current!) * 2;
+      const deltaY = (event.clientY - clientYRef.current!) * 2;
       const delta = direction === "horizontal" ? deltaX : deltaY;
 
       let newSize = inverted ? size - delta : size + delta;
@@ -37,7 +37,7 @@ export const useResizePanel = ({
       if (newSize > maxSize) newSize = maxSize;
       setSize(newSize);
     },
-    [size]
+    [direction, inverted, maxSize, minSize, setSize, size]
   );
 
   const handleMouseUp = useCallback(
@@ -46,6 +46,7 @@ export const useResizePanel = ({
       clientYRef.current = null;
       setIsResizing(false);
 
+      document.body.style.cursor = "default";
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     },
@@ -61,10 +62,11 @@ export const useResizePanel = ({
       clientYRef.current = event.clientY;
       setIsResizing(true);
 
+      document.body.style.cursor = direction === "horizontal" ? "ew-resize" : "ns-resize";
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
     },
-    [handleMouseMove, handleMouseUp]
+    [direction, handleMouseMove, handleMouseUp]
   );
 
   return {
