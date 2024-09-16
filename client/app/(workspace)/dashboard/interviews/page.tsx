@@ -58,9 +58,9 @@ const InterviewCard = ({ resume, sessionId }: InterviewCardProps) => {
 };
 
 const InterviewPage: React.FC = () => {
-  const { theme } = useTheme();
   const { user } = useUser();
   const sessions = useQuery(api.sessions.getByUserId, { userId: user!.id });
+
   if (sessions === undefined) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -74,7 +74,6 @@ const InterviewPage: React.FC = () => {
   const resume = sessionInProgress ? true : false;
   const sessionId = sessionInProgress ? sessionInProgress._id : undefined;
 
-  console.log(sessions);
   return (
     <div className="flex flex-col p-8 space-y-8">
       <div className="">

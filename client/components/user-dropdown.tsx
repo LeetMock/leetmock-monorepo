@@ -52,7 +52,8 @@ const UserButton: React.FC<ProfileItemProps> = ({ user, ...props }) => {
 
 export const UserDropdown: React.FC<{
   children: React.ReactNode;
-}> = ({ children }) => {
+  align?: "center" | "end" | "start";
+}> = ({ children, align }) => {
   const { user } = useUser();
   const { signOut } = useAuth();
   const { theme, setTheme } = useTheme();
@@ -63,7 +64,7 @@ export const UserDropdown: React.FC<{
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none">{children}</DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64" forceMount>
+      <DropdownMenuContent className="w-64" forceMount align={align}>
         <div className="flex flex-col space-y-4 mt-3">
           <div className="flex flex-col items-center space-y-2">
             <Avatar>
