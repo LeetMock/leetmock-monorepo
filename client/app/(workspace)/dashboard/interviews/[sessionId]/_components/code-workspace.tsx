@@ -47,7 +47,7 @@ export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ session
     }
   }, [localParticipant, connectionState]);
 
-  // Connect to the room
+  // Connect to room
   const handleConnect = useCallback(async () => {
     if (connectionState === ConnectionState.Connected) {
       disconnect();
