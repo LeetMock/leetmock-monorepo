@@ -16,7 +16,7 @@ export const useAgent = (sessionId: Id<"sessions">) => {
   const tracks = useTracks();
   const connectionState = useConnectionState();
   const { send: sendSessionId } = useDataChannel("session-id");
-
+  console.log(connectionState);
   // Agent server send ack to client that it received the session id
   useDataChannel("session-id-received", (message) => {
     console.log("Received session id ack", message);
