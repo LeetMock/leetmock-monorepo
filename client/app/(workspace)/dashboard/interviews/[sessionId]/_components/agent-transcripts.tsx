@@ -102,7 +102,7 @@ const TranscriptsInner = ({
   );
 };
 
-export const Transcripts = ({
+export const AgentTranscripts = ({
   agentAudioTrack,
 }: {
   agentAudioTrack: TrackReferenceOrPlaceholder | undefined;

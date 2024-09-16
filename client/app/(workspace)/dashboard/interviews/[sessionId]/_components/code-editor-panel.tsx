@@ -20,7 +20,7 @@ import { ConnectionState } from "livekit-client";
 import { useConnectionState, useLocalParticipant, useRoomContext } from "@livekit/components-react";
 import { useConnection } from "@/hooks/useConnection";
 import { useAgent } from "@/hooks/useAgent";
-import { Transcripts } from "./transcripts";
+import { AgentTranscripts } from "./agent-transcripts";
 import { TestResultsBlock } from "./test-results-block";
 import { LucideVolume2, PlayCircle, TestTube2, Clock, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";

@@ -1,28 +1,16 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import Editor from "@monaco-editor/react";
-import { editor as monacoEditor } from "monaco-editor";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { LANGUAGES } from "@/lib/constants";
-import { useTheme } from "next-themes";
-import { useMutation, useQuery, useAction } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { WorkspaceToolbar } from "./workspace-toolbar";
 import { ConnectionState } from "livekit-client";
 import { useConnectionState, useLocalParticipant, useRoomContext } from "@livekit/components-react";
 import { useConnection } from "@/hooks/useConnection";
 import { useAgent } from "@/hooks/useAgent";
-import { Transcripts } from "./transcripts";
-import { TestResultsBlock } from "./test-results-block";
-import { LucideVolume2, PlayCircle, TestTube2, Clock, Loader2 } from "lucide-react";
+import { AgentTranscripts } from "./agent-transcripts";
+import { LucideVolume2, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
 import { CodeQuestionPanel } from "./code-question-panel";
@@ -133,7 +121,7 @@ export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ session
                 />
               </div>
             </div>
-            <Transcripts agentAudioTrack={agentAudioTrack} />
+            <AgentTranscripts agentAudioTrack={agentAudioTrack} />
           </div>
         </div>
       ) : (
