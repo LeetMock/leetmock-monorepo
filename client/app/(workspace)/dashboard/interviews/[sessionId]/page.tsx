@@ -27,7 +27,7 @@ const InterviewPage: React.FC = () => {
   }, [sessionExists, sessionId]);
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen w-full bg-muted/80 p-3 space-y-3">
+    <div className="flex flex-col justify-center items-center h-screen bg-muted/80 w-full p-3 space-y-3">
       {interviewWorkspace}
     </div>
   );

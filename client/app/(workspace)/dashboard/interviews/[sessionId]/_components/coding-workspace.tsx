@@ -22,8 +22,8 @@ import { ConnectionState } from "livekit-client";
 import { useConnectionState, useLocalParticipant, useRoomContext } from "@livekit/components-react";
 import { useConnection } from "@/hooks/useConnection";
 import { useAgent } from "@/hooks/useAgent";
-import { Transcripts } from "./Transcripts";
-import { TestResultsBlock } from "./TestResultsBlock";
+import { Transcripts } from "./transcripts";
+import { TestResultsBlock } from "./test-results-block";
 import { LucideVolume2, PlayCircle, TestTube2, Clock, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
@@ -169,156 +169,143 @@ export const CodeingWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sess
     <>
       <WorkspaceToolbar />
       {!!session && !!question && !!editorState ? (
-        <div
-          className={cn(
-            "w-full h-full flex justify-center items-center bg-background",
-            "rounded-md shadow-lg"
-          )}
-        >
-          <ResizablePanelGroup direction="horizontal" className="w-full h-full">
-            <ResizablePanel className="min-w-[5rem] h-full w-full relative">
-              <div className="absolute inset-0 overflow-y-auto overflow-auto">
-                {question ? (
-                  <QuestionHolder
-                    question_title={question.title}
-                    question_description={question.question}
-                  />
-                ) : (
-                  <div>Loading question...</div>
+        <div className={cn("w-full h-full flex justify-center items-center")}>
+          {/* Question Panel */}
+          <div className="h-full w-full relative bg-background border bg-blue-100">
+            <div className="absolute inset-0 overflow-y-auto">
+              {question ? (
+                <QuestionHolder
+                  question_title={question.title}
+                  question_description={question.question}
+                />
+              ) : (
+                <div>Loading question...</div>
+              )}
+            </div>
+          </div>
+          {/* Coding Panel */}
+          <div className="h-full w-full flex flex-col">
+            <div className="flex flex-col justify-start h-full w-full border bg-green-100">
+              <div className="flex justify-between items-center p-2 border-b">
+                <Select value={editorState.editor.language} onValueChange={onLanguageChange}>
+                  <SelectTrigger className="w-36 h-8">
+                    <SelectValue placeholder="Language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {LANGUAGES.map((lang) => (
+                      <SelectItem key={lang.value} value={lang.value}>
+                        {lang.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="flex space-x-2">
+                  <Button
+                    className="w-28 h-8 relative"
+                    onClick={handleRunCode}
+                    disabled={isRunning}
+                  >
+                    {isRunning ? (
+                      <Loader2 className="absolute inset-0 m-auto h-4 w-4 animate-spin" />
+                    ) : (
+                      <>
+                        <PlayCircle className="w-4 h-4 mr-1" />
+                        Run Code
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    className="w-28 h-8 relative"
+                    onClick={handleRunTests}
+                    disabled={isRunning}
+                  >
+                    {isRunning ? (
+                      <Loader2 className="absolute inset-0 m-auto h-4 w-4 animate-spin" />
+                    ) : (
+                      <>
+                        <TestTube2 className="w-4 h-4 mr-1" />
+                        Run Tests
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+              <div className="bg-blue-50 h-full relative" ref={editorContainerRef}>
+                <Editor
+                  className="absolute inset-0 bg-background"
+                  language={editorState.editor.language}
+                  theme={theme === "dark" ? "customDarkTheme" : "vs-light"}
+                  value={editorState.editor.content}
+                  options={{
+                    fontSize: 14,
+                    lineNumbers: "on",
+                    roundedSelection: false,
+                    scrollBeyondLastLine: false,
+                    readOnly: false,
+                    minimap: {
+                      enabled: false,
+                    },
+                  }}
+                  onChange={(value) => onContentChange(value || "")}
+                  beforeMount={(monaco) => {
+                    monaco.editor.defineTheme("customDarkTheme", customEditorTheme);
+                    monaco.editor.setTheme("customDarkTheme");
+                  }}
+                />
+              </div>
+            </div>
+            <div className="flex p-3 flex-col space-y-2 h-full w-full border bg-red-100">
+              <div className="flex justify-between items-center">
+                <div className="flex space-x-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setOutputView("output")}
+                    className={cn(
+                      "text-sm font-medium",
+                      outputView === "output" ? "bg-secondary" : "hover:bg-secondary/50"
+                    )}
+                  >
+                    Output
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setOutputView("testResults")}
+                    className={cn(
+                      "text-sm font-medium",
+                      outputView === "testResults" ? "bg-secondary" : "hover:bg-secondary/50"
+                    )}
+                  >
+                    Test Results
+                  </Button>
+                </div>
+                {!isRunning && outputView === "output" && (
+                  <div className="flex items-center text-sm text-gray-500">
+                    <Clock className="w-4 h-4 mr-1" />
+                    <span>{editorState.terminal.executionTime} ms</span>
+                  </div>
                 )}
               </div>
-            </ResizablePanel>
-            <ResizableHandle withHandle />
-            <ResizablePanel className="min-w-[20rem]">
-              <ResizablePanelGroup direction="vertical">
-                <ResizablePanel defaultSize={75} minSize={30}>
-                  <div className="flex flex-col justify-start h-full w-full">
-                    <div className="flex justify-between items-center p-2 border-b">
-                      <Select value={editorState.editor.language} onValueChange={onLanguageChange}>
-                        <SelectTrigger className="w-36 h-8">
-                          <SelectValue placeholder="Language" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {LANGUAGES.map((lang) => (
-                            <SelectItem key={lang.value} value={lang.value}>
-                              {lang.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <div className="flex space-x-2">
-                        <Button
-                          className="w-28 h-8 relative"
-                          onClick={handleRunCode}
-                          disabled={isRunning}
-                        >
-                          {isRunning ? (
-                            <Loader2 className="absolute inset-0 m-auto h-4 w-4 animate-spin" />
-                          ) : (
-                            <>
-                              <PlayCircle className="w-4 h-4 mr-1" />
-                              Run Code
-                            </>
-                          )}
-                        </Button>
-                        <Button
-                          className="w-28 h-8 relative"
-                          onClick={handleRunTests}
-                          disabled={isRunning}
-                        >
-                          {isRunning ? (
-                            <Loader2 className="absolute inset-0 m-auto h-4 w-4 animate-spin" />
-                          ) : (
-                            <>
-                              <TestTube2 className="w-4 h-4 mr-1" />
-                              Run Tests
-                            </>
-                          )}
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="bg-blue-50 h-full relative" ref={editorContainerRef}>
-                      <Editor
-                        className="absolute inset-0 bg-background"
-                        language={editorState.editor.language}
-                        theme={theme === "dark" ? "customDarkTheme" : "vs-light"}
-                        value={editorState.editor.content}
-                        options={{
-                          fontSize: 14,
-                          lineNumbers: "on",
-                          roundedSelection: false,
-                          scrollBeyondLastLine: false,
-                          readOnly: false,
-                          minimap: {
-                            enabled: false,
-                          },
-                        }}
-                        onChange={(value) => onContentChange(value || "")}
-                        beforeMount={(monaco) => {
-                          monaco.editor.defineTheme("customDarkTheme", customEditorTheme);
-                          monaco.editor.setTheme("customDarkTheme");
-                        }}
-                      />
-                    </div>
-                  </div>
-                </ResizablePanel>
-                <ResizableHandle withHandle />
-                <ResizablePanel defaultSize={25} minSize={10}>
-                  <div className="flex p-3 border-t flex-col space-y-2 h-full">
-                    <div className="flex justify-between items-center">
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setOutputView("output")}
-                          className={cn(
-                            "text-sm font-medium",
-                            outputView === "output" ? "bg-secondary" : "hover:bg-secondary/50"
-                          )}
-                        >
-                          Output
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setOutputView("testResults")}
-                          className={cn(
-                            "text-sm font-medium",
-                            outputView === "testResults" ? "bg-secondary" : "hover:bg-secondary/50"
-                          )}
-                        >
-                          Test Results
-                        </Button>
-                      </div>
-                      {!isRunning && outputView === "output" && (
-                        <div className="flex items-center text-sm text-gray-500">
-                          <Clock className="w-4 h-4 mr-1" />
-                          <span>{editorState.terminal.executionTime} ms</span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-2 rounded-md bg-secondary h-full overflow-auto">
-                      {outputView === "testResults" && testResults ? (
-                        <TestResultsBlock key={testRunCounter} results={testResults} />
-                      ) : (
-                        <pre
-                          className={cn(
-                            "text-sm p-1 rounded-md",
-                            editorState.terminal.isError
-                              ? "text-red-500"
-                              : "text-gray-800 dark:text-gray-200"
-                          )}
-                        >
-                          <code>{editorState.terminal.output}</code>
-                        </pre>
-                      )}
-                    </div>
-                  </div>
-                </ResizablePanel>
-              </ResizablePanelGroup>
-            </ResizablePanel>
-          </ResizablePanelGroup>
-          <div className="w-[24rem] border-l h-full p-2 flex flex-col space-y-4">
+              <div className="p-2 rounded-md bg-secondary h-full overflow-auto">
+                {outputView === "testResults" && testResults ? (
+                  <TestResultsBlock key={testRunCounter} results={testResults} />
+                ) : (
+                  <pre
+                    className={cn(
+                      "text-sm p-1 rounded-md",
+                      editorState.terminal.isError
+                        ? "text-red-500"
+                        : "text-gray-800 dark:text-gray-200"
+                    )}
+                  >
+                    <code>{editorState.terminal.output}</code>
+                  </pre>
+                )}
+              </div>
+            </div>
+          </div>
+          {/* <div className="w-[24rem] h-full p-2 flex flex-col space-y-4">
             <Button
               className={cn(
                 "w-full font-semibold text-white",
@@ -363,7 +350,7 @@ export const CodeingWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sess
               </div>
             </div>
             <Transcripts agentAudioTrack={agentAudioTrack} />
-          </div>
+          </div> */}
         </div>
       ) : (
         <div className="flex justify-center items-center h-full">
