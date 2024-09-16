@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
 export const useResizePanel = ({
@@ -24,12 +24,17 @@ export const useResizePanel = ({
   const clientXRef = useRef<number | null>(null);
   const clientYRef = useRef<number | null>(null);
 
+  useEffect(() => {
+    if (size <= maxSize) return;
+    setSize(maxSize);
+  }, [size, maxSize, setSize]);
+
   const handleMouseMove = useCallback(
     (event: MouseEvent) => {
       if (clientXRef === null || clientYRef === null) return;
 
-      const deltaX = (event.clientX - clientXRef.current!) * 2;
-      const deltaY = (event.clientY - clientYRef.current!) * 2;
+      const deltaX = event.clientX - clientXRef.current!;
+      const deltaY = event.clientY - clientYRef.current!;
       const delta = direction === "horizontal" ? deltaX : deltaY;
 
       let newSize = inverted ? size - delta : size + delta;
