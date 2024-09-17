@@ -46,7 +46,6 @@ export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ session
   return (
     <>
       <WorkspaceToolbar />
-      {/* <Header /> */}
       {!!session && !!question ? (
         <div className="w-full h-full flex justify-center items-center">
           {/* Question Panel */}
