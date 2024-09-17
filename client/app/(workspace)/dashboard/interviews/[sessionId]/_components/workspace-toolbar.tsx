@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { UserDropdown } from "@/components/user-dropdown";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,21 +8,20 @@ import { cn, getFirstLetter } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { TimerCountdown } from "./timer-countdown";
 import { Button } from "@/components/ui/button";
-import {
-  ChevronDown,
-  CirclePauseIcon,
-  CirclePlayIcon,
-  CircleStopIcon,
-  CircleXIcon,
-  Octagon,
-  OctagonX,
-  Settings,
-} from "lucide-react";
+import { Loader2, Settings } from "lucide-react";
+import { useConnectionState, useRoomContext } from "@livekit/components-react";
+import { useConnection } from "@/hooks/useConnection";
+import { ConnectionState } from "livekit-client";
 
 export const WorkspaceToolbar: React.FC = () => {
   const { user } = useUser();
-  const [timeLeft, setTimeLeft] = useState(15 * 60); // 30 minutes in seconds
   const router = useRouter();
+
+  const [timeLeft, setTimeLeft] = useState(15 * 60); // 30 minutes in seconds
+
+  const room = useRoomContext();
+  const connectionState = useConnectionState();
+  const { connect, disconnect } = useConnection(room);
 
   useEffect(() => {
     // Timer functionality
@@ -41,6 +40,15 @@ export const WorkspaceToolbar: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // Connect to room
+  const handleConnect = useCallback(async () => {
+    if (connectionState === ConnectionState.Connected) {
+      disconnect();
+    } else if (connectionState === ConnectionState.Disconnected) {
+      await connect();
+    }
+  }, [connectionState, disconnect, connect]);
+
   const handleEndInterview = () => {
     if (confirm("Are you sure you want to end the interview?")) {
       alert("Interview ended.");
@@ -54,12 +62,30 @@ export const WorkspaceToolbar: React.FC = () => {
       <TimerCountdown timeLeft={timeLeft} />
 
       <div className="flex items-center space-x-px">
-        <Button className="h-8 font-semibold rounded-r-none text-red-400">
-          <CircleXIcon className="w-4 h-4 mr-2" />
-          <span className="-mb-[1px]">Stop</span>
-        </Button>
-        <Button size="icon" className="h-8 w-4 font-semibold rounded-l-none">
-          <ChevronDown className="w-2.5 h-2.5" />
+        <Button
+          className={cn(
+            "w-full font-semibold text-white",
+            connectionState === ConnectionState.Disconnected &&
+              "bg-green-500 hover:bg-green-600 transition-all",
+            connectionState === ConnectionState.Connecting &&
+              "bg-gray-400 hover:bg-gray-500 transition-all",
+            connectionState === ConnectionState.Connected &&
+              "bg-red-500 text-white hover:bg-red-600 transition-all"
+          )}
+          variant={connectionState === ConnectionState.Connected ? "destructive" : "secondary"}
+          disabled={connectionState === ConnectionState.Connecting}
+          onClick={handleConnect}
+        >
+          {connectionState === ConnectionState.Connected ? (
+            "Disconnect"
+          ) : connectionState === ConnectionState.Connecting ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+              Connecting...
+            </>
+          ) : (
+            <>Connect</>
+          )}
         </Button>
       </div>
 
