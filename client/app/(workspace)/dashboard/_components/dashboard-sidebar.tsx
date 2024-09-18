@@ -4,7 +4,7 @@ import { Package2 } from "lucide-react";
 import { NavList } from "./dashboard-navlist";
 import { UpgradeCard } from "./upgrade-card";
 import { UserDropdown } from "../../../../components/user-dropdown";
-import { UserButton } from "../../../../components/user-button";
+import { ProfileItem } from "../../../../components/profile-item";
 
 export const DashboardSidebar = () => {
   return (
@@ -19,7 +19,7 @@ export const DashboardSidebar = () => {
       <NavList className="flex-1" />
       <UpgradeCard />
       <UserDropdown>
-        <UserButton />
+        <ProfileItem />
       </UserDropdown>
     </div>
   );

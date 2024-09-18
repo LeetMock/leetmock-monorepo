@@ -5,7 +5,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface ProfileItemProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export const UserButton: React.FC<ProfileItemProps> = ({ className, ...props }) => {
+export const ProfileItem: React.FC<ProfileItemProps> = ({ className, ...props }) => {
   const { user } = useUser();
   const initials = getInitials(user?.firstName, user?.lastName);
 

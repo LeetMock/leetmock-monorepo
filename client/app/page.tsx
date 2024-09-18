@@ -10,8 +10,15 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import Image from "next/image";
 import Link from "next/link"; // Importing Link from Next.js
+import { useAuth, useUser } from "@clerk/clerk-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getFirstLetter } from "@/lib/utils";
+import { UserDropdown } from "@/components/user-dropdown";
 
 const HomePage = () => {
+  const { user } = useUser();
+  const { isSignedIn } = useAuth();
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-black text-white font-sans">
       {/* Background Elements */}
@@ -107,16 +114,27 @@ const HomePage = () => {
           </span>
         </div>
         <div className="flex space-x-6 items-center">
-          <Link href="/auth?action=signin" legacyBehavior>
-            <a className="text-lg font-medium text-white hover:text-red-500 transition duration-300">
-              Login
-            </a>
-          </Link>
-          <Link href="/auth?action=signup" legacyBehavior>
-            <a className="px-6 py-2 text-lg font-medium text-white bg-gradient-to-r from-red-500 to-blue-500 rounded-full shadow-lg hover:shadow-red-500/50 transition duration-300">
-              Sign Up
-            </a>
-          </Link>
+          {isSignedIn ? (
+            <UserDropdown align="end">
+              <Avatar className="cursor-pointer w-12 h-12">
+                <AvatarImage src={user?.imageUrl} />
+                <AvatarFallback>{getFirstLetter(user?.fullName)}</AvatarFallback>
+              </Avatar>
+            </UserDropdown>
+          ) : (
+            <>
+              <Link href="/auth?action=signin" legacyBehavior>
+                <a className="text-lg font-medium text-white hover:text-red-500 transition duration-300">
+                  Login
+                </a>
+              </Link>
+              <Link href="/auth?action=signup" legacyBehavior>
+                <a className="px-6 py-2 text-lg font-medium text-white bg-gradient-to-r from-red-500 to-blue-500 rounded-full shadow-lg hover:shadow-red-500/50 transition duration-300">
+                  Sign Up
+                </a>
+              </Link>
+            </>
+          )}
         </div>
       </nav>
 

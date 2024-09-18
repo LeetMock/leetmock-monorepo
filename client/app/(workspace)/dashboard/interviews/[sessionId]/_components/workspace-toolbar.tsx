@@ -12,8 +12,15 @@ import { Loader2, Settings } from "lucide-react";
 import { useConnectionState, useRoomContext } from "@livekit/components-react";
 import { useConnection } from "@/hooks/useConnection";
 import { ConnectionState } from "livekit-client";
+import { Id } from "@/convex/_generated/dataModel";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
-export const WorkspaceToolbar: React.FC = () => {
+interface WorkspaceToolbarProps {
+  sessionId?: Id<"sessions">;
+}
+
+export const WorkspaceToolbar: React.FC<WorkspaceToolbarProps> = ({ sessionId }) => {
   const { user } = useUser();
   const router = useRouter();
 
@@ -22,6 +29,7 @@ export const WorkspaceToolbar: React.FC = () => {
   const room = useRoomContext();
   const connectionState = useConnectionState();
   const { connect, disconnect } = useConnection(room);
+  const updateSessionStatus = useMutation(api.sessions.changeStatus);
 
   useEffect(() => {
     // Timer functionality

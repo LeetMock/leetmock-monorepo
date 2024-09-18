@@ -72,6 +72,16 @@ export const getByIdInternal = internalQuery({
   },
 });
 
+export const changeStatus = userMutation({
+  args: {
+    sessionId: v.id("sessions"),
+    status: v.union(v.literal("not_started"), v.literal("in_progress"), v.literal("completed")),
+  },
+  handler: async (ctx, { sessionId, status }) => {
+    await ctx.db.patch(sessionId, { sessionStatus: status });
+  },
+});
+
 export const create = userMutation({
   args: {
     questionId: v.id("questions"),
