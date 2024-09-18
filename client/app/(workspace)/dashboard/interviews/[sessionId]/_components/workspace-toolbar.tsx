@@ -15,6 +15,7 @@ import { ConnectionState } from "livekit-client";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
 
 interface WorkspaceToolbarProps {
   sessionId?: Id<"sessions">;
@@ -60,11 +61,22 @@ export const WorkspaceToolbar: React.FC<WorkspaceToolbarProps> = ({ sessionId })
     }
   }, [connectionState, disconnect, updateSessionStatus, sessionId, connect]);
 
-  const handleEndInterview = () => {
+  const handleEndInterview = async () => {
+    if (!sessionId) return;
+
     if (confirm("Are you sure you want to end the interview?")) {
       alert("Interview ended.");
       // Implement additional logic here (e.g., navigate to summary page)
-      router.push("/summary");
+      disconnect();
+      const promise = updateSessionStatus({ sessionId, status: "completed" }).then(() => {
+        router.push("/dashboard/interviews");
+      });
+
+      toast.promise(promise, {
+        loading: "Ending interview...",
+        success: "Interview ended!",
+        error: "Failed to end interview",
+      });
     }
   };
 
@@ -97,6 +109,9 @@ export const WorkspaceToolbar: React.FC<WorkspaceToolbarProps> = ({ sessionId })
           ) : (
             <>Connect</>
           )}
+        </Button>
+        <Button variant="destructive" onClick={handleEndInterview}>
+          End Interview
         </Button>
       </div>
 
