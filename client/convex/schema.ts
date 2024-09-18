@@ -13,6 +13,8 @@ export default defineSchema({
       v.literal("in_progress"),
       v.literal("completed")
     ),
+    sessionStartTime: v.optional(v.number()),
+    sessionEndTime: v.optional(v.number()),
   }).index("by_user_id", ["userId"]),
   editorSnapshots: defineTable({
     sessionId: v.id("sessions"),

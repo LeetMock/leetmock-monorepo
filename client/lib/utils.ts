@@ -37,6 +37,18 @@ export function getCurrentUnixTimestamp(): number {
   return Math.floor(Date.now() / 1000);
 }
 
+export function getTimeDurationSeconds(startTime: number, endTime: number): number {
+  return Math.floor((endTime - startTime) / 1000);
+}
+
+export function minutesToMilliseconds(minutes: number): number {
+  return minutes * 60 * 1000;
+}
+
+export function secondsToMilliseconds(seconds: number): number {
+  return seconds * 1000;
+}
+
 export function getInitials(
   firstName: string | null | undefined,
   lastName: string | null | undefined

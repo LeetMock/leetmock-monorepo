@@ -10,9 +10,6 @@ import { CodeWorkspace } from "./_components/code-workspace";
 const InterviewPage: React.FC = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const sessionExists = useQuery(api.sessions.exists, { sessionId });
-  const sessions = useQuery(api.sessions.getByUserId, {
-    userId: "user_2l0CgXdHXXShSwtApSLaRxfs1yc",
-  });
 
   const interviewWorkspace = useMemo(() => {
     if (sessionExists === undefined) {
