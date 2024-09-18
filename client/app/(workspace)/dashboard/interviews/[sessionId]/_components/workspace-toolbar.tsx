@@ -50,12 +50,15 @@ export const WorkspaceToolbar: React.FC<WorkspaceToolbarProps> = ({ sessionId })
 
   // Connect to room
   const handleConnect = useCallback(async () => {
+    if (!sessionId) return;
+
     if (connectionState === ConnectionState.Connected) {
       disconnect();
     } else if (connectionState === ConnectionState.Disconnected) {
+      await updateSessionStatus({ sessionId, status: "in_progress" });
       await connect();
     }
-  }, [connectionState, disconnect, connect]);
+  }, [connectionState, disconnect, updateSessionStatus, sessionId, connect]);
 
   const handleEndInterview = () => {
     if (confirm("Are you sure you want to end the interview?")) {

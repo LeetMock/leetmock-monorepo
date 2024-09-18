@@ -1,6 +1,6 @@
 import { Id } from "./_generated/dataModel";
-import { internalQuery, query } from "./_generated/server";
-import { v } from "convex/values";
+import { internalQuery, query, QueryCtx } from "./_generated/server";
+import { ConvexError, v } from "convex/values";
 import { userMutation, userQuery } from "./functions";
 
 export const exists = userQuery({
@@ -82,6 +82,16 @@ export const changeStatus = userMutation({
   },
 });
 
+export const getActiveSession = userQuery({
+  args: {
+    userId: v.string(),
+  },
+  handler: async (ctx, { userId }) => {
+    const session = await getActiveSessionQuery(ctx, userId);
+    return session;
+  },
+});
+
 export const create = userMutation({
   args: {
     questionId: v.id("questions"),
@@ -94,6 +104,15 @@ export const create = userMutation({
     ctx,
     { questionId, agentThreadId, assistantId, inputParameters, functionName }
   ) => {
+    const activeSession = await getActiveSessionQuery(ctx, ctx.user.subject);
+
+    if (activeSession) {
+      return new ConvexError({
+        name: "ActiveSessionAlreadyExists",
+        message: "You already have an active session",
+      });
+    }
+
     const sessionId = await ctx.db.insert("sessions", {
       userId: ctx.user.subject,
       questionId,
@@ -126,3 +145,13 @@ export const create = userMutation({
     return sessionId;
   },
 });
+
+async function getActiveSessionQuery(ctx: QueryCtx, userId: string) {
+  const session = await ctx.db
+    .query("sessions")
+    .withIndex("by_user_id", (q) => q.eq("userId", userId))
+    .filter((q) => q.eq(q.field("sessionStatus"), "in_progress"))
+    .first();
+
+  return session;
+}

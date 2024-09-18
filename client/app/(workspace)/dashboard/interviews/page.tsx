@@ -11,16 +11,15 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 import { Id } from "@/convex/_generated/dataModel";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useUser } from "@clerk/clerk-react";
-import { useTheme } from "next-themes";
+import { useMemo } from "react";
 
 interface InterviewCardProps {
-  resume: boolean;
-  sessionId: Id<"sessions"> | undefined;
+  activeSessionId: Id<"sessions"> | undefined;
+  questionTitle: string | undefined;
 }
 
-const InterviewCard = ({ resume, sessionId }: InterviewCardProps) => {
+const InterviewCard = ({ activeSessionId, questionTitle }: InterviewCardProps) => {
   return (
     <Card className="col-span-full relative overflow-hidden" x-chunk="dashboard-05-chunk-0">
       <Image
@@ -35,15 +34,17 @@ const InterviewCard = ({ resume, sessionId }: InterviewCardProps) => {
       <div className="relative z-10">
         <CardHeader className="pb-3">
           <CardTitle className="text-xl font-semibold">
-            {resume ? "Resume" : "Start"} Interview
+            {activeSessionId && questionTitle ? questionTitle : "Start Interview"}
           </CardTitle>
           <CardDescription className="max-w-lg text-balance leading-relaxed">
-            {resume ? "Resume the interview" : "Start a mock interview with our AI interviewer!"}
+            {activeSessionId
+              ? "Resume your interview"
+              : "Start a mock interview with our AI interviewer!"}
           </CardDescription>
         </CardHeader>
         <CardFooter className="flex justify-end gap-4">
-          {resume ? (
-            <Link href={`/interview/${sessionId}`} passHref>
+          {activeSessionId ? (
+            <Link href={`/dashboard/interviews/${activeSessionId}`} passHref>
               <Button size="lg">Resume Interview</Button>
             </Link>
           ) : (
@@ -60,27 +61,21 @@ const InterviewCard = ({ resume, sessionId }: InterviewCardProps) => {
 const InterviewPage: React.FC = () => {
   const { user } = useUser();
   const sessions = useQuery(api.sessions.getByUserId, { userId: user!.id });
+  const activeSession = useQuery(api.sessions.getActiveSession, { userId: user!.id });
+  const question = useQuery(api.questions.getById, { questionId: activeSession?.questionId });
 
-  if (sessions === undefined) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <LoadingSpinner />
-      </div>
-    );
-  }
-
-  //TODO: this needs to be "in_progress"
-  const sessionInProgress = sessions.find((session) => session.sessionStatus === "in_progress");
-  const resume = sessionInProgress ? true : false;
-  const sessionId = sessionInProgress ? sessionInProgress._id : undefined;
+  const sessionList = useMemo(() => {
+    if (!sessions) return [];
+    return sessions as SessionDoc[];
+  }, [sessions]);
 
   return (
     <div className="flex flex-col p-8 space-y-8">
       <div className="">
-        <InterviewCard resume={resume} sessionId={sessionId} />
+        <InterviewCard activeSessionId={activeSession?._id} questionTitle={question?.title} />
       </div>
       <div className="">
-        <DataTable data={sessions as SessionDoc[]} columns={columns} />
+        <DataTable data={sessionList} columns={columns} />
       </div>
     </div>
   );
