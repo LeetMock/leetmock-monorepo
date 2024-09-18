@@ -78,6 +78,16 @@ export const changeStatus = userMutation({
     status: v.union(v.literal("not_started"), v.literal("in_progress"), v.literal("completed")),
   },
   handler: async (ctx, { sessionId, status }) => {
+    if (status === "in_progress") {
+      const activeSession = await getActiveSessionQuery(ctx, ctx.user.subject);
+      if (activeSession && activeSession._id !== sessionId) {
+        return new ConvexError({
+          name: "ActiveSessionAlreadyExists",
+          message: "You already have an active session",
+        });
+      }
+    }
+
     await ctx.db.patch(sessionId, { sessionStatus: status });
   },
 });
