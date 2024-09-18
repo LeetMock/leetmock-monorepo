@@ -14,7 +14,7 @@ import {
 } from "../lib/utils";
 import { TokenResult, CodeRunResult, RunCodeResult, RunTestResult } from "../lib/types";
 import { ConvexError, v } from "convex/values";
-import { DATA_STRUCTURES } from "@/lib/constants";
+import { DATA_STRUCTURES } from "../lib/constants";
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -202,7 +202,6 @@ export const runTests = action({
     };
 
     const result = await executeCode(payload);
-    console.log(result);
     if (result.status === "success" && result.stdout) {
       try {
         const jsonMatch = result.stdout.match(/START_RESULTS_JSON\n([\s\S]*?)\nEND_RESULTS_JSON/);
@@ -218,7 +217,7 @@ export const runTests = action({
       }
     }
 
-    return result;
+    return result; 
   },
 });
 

@@ -57,7 +57,7 @@ export const useEditorState = (
     if (!isDefined(initialEditorSnapshot)) return;
 
     const { terminal, editor } = initialEditorSnapshot;
-    const initialContent = question?.startingCode?.[editor.language] || editor.content;
+    const initialContent = editor.content;
     setLocalEditorState({
       terminal,
       editor: {

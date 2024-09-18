@@ -3,15 +3,8 @@ import { v } from "convex/values";
 import axios from "axios";
 import { api } from "./_generated/api";
 import { userAction } from "./functions";
+import { CodeRunResult } from "../lib/types";
 
-interface CodeRunResult {
-  status: string;
-  executionTime: number;
-  stdout: string | null;
-  stderr: string | null;
-  isError: boolean;
-  exception: string | null;
-}
 
 function getFileExtension(language: string): string {
   const extensionMap: { [key: string]: string } = {
@@ -148,7 +141,7 @@ class TestSolution(unittest.TestCase):
 `;
 
   tests.forEach((test: any, index: number) => {
-    const selectedParams = inputParameters.filter((_, i) => i % 2 === 0);
+    const selectedParams = inputParameters.filter((_:any, i: number) => i % 2 === 0);
     const inputArgs = selectedParams
       .map((param: string) => JSON.stringify(test.input[param]))
       .join(", ");

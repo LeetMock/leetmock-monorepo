@@ -41,24 +41,12 @@ export default defineSchema({
     question: v.string(),
     solutions: v.any(),
     functionName: v.string(),
-    inputParameters: 
-    v.object({
-      python: v.array(v.string()),
-      java: v.array(v.string()),
-      cpp: v.array(v.string()),
-      javascript: v.array(v.string()),
-    }),
+    inputParameters: v.record(v.string(), v.array(v.string())),
     evalMode: v.union(
       v.literal("exactMatch"),
-      v.literal("ListNodeIter"),
-      v.literal("SortedMatch")
+      v.literal("listNodeIter"),
+      v.literal("sortedMatch")
     ),
-    startingCode: v.object({
-      python: v.string(),
-      java: v.string(),
-      cpp: v.string(),
-      javascript: v.string(),
-    }),
     tests: v.array(
       v.object({
         input: v.any(),
@@ -66,6 +54,7 @@ export default defineSchema({
       })
     ),
     title: v.string(),
+    metaData: v.record(v.string(), v.any()),
   }),
   inviteCodes: defineTable({
     code: v.string(),
