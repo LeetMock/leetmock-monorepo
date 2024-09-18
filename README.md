@@ -60,11 +60,18 @@ npx convex dev
 **Note**: The first time and everytime convex backend is updated, you need to manually run
 
 ```bash
-# npm install -g @openapitools/openapi-generator-cli
-# npm install -g convex
-# sudo apt install default-jre default-jdk
 just gen-convex-client
 ```
+or 
+```bash
+just gen-convex-client-podman "<deploy_key>"
+```
+or 
+```bash
+just gen-convex-client-docker "<deploy_key>"
+```
+depending on the docker engine you are using, wrapping the deploy key in double quotes is necessary.
+you can generate a deploy key [here](https://dashboard.convex.dev/)
 
 in the root directory to generate the updated client openapi python types for agent-server to use.
 
