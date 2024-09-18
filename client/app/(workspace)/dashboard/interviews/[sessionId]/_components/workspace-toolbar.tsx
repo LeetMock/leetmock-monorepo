@@ -80,7 +80,7 @@ export const WorkspaceToolbar: React.FC<WorkspaceToolbarProps> = ({ session }) =
     const promise = endSession({ sessionId: session.sessionId });
     toast.promise(promise, {
       loading: "Ending interview...",
-      success: "Interview ended!",
+      success: "Congratulations! You've completed the interview. 🎉",
       error: "Failed to end interview",
     });
   };
