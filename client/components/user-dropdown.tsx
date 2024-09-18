@@ -126,7 +126,14 @@ export const UserDropdown: React.FC<{
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="rounded-t-none py-2" onClick={() => signOut()}>
+        <DropdownMenuItem
+          className="rounded-t-none py-2"
+          onClick={() =>
+            signOut({
+              redirectUrl: "/auth?action=signin",
+            })
+          }
+        >
           <LogOut className="w-4 h-4 mr-2" />
           Logout
         </DropdownMenuItem>

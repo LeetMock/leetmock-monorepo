@@ -24,9 +24,9 @@ const AuthPageContent = () => {
   return (
     <>
       {action === "signin" ? (
-        <SignIn signUpUrl="/auth?action=signup" />
+        <SignIn signUpUrl="/auth?action=signup" forceRedirectUrl="/dashboard" />
       ) : (
-        <SignUp signInUrl="/auth?action=signin" />
+        <SignUp signInUrl="/auth?action=signin" forceRedirectUrl="/dashboard" />
       )}
     </>
   );
