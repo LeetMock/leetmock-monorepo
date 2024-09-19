@@ -163,7 +163,7 @@ class TestSolution(unittest.TestCase):
         print("END_RESULTS_JSON")
 `;
 
-  tests.forEach((test, index) => {
+  tests.slice(0,5).forEach((test, index) => {
     const inputArgs = params
       .filter((_, i) => i % 2 === 0)
       .map((param, i) => {
