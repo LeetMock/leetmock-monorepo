@@ -5,7 +5,7 @@ import { defineSchema, defineTable } from "convex/server";
 export default defineSchema({
   userProfiles: defineTable({
     userId: v.string(),
-    role: v.union(v.literal("admin"), v.literal("user"), v.literal("waitlist")),
+    role: v.union(v.literal("admin"), v.literal("user")),
   })
     .index("by_user_id", ["userId"])
     .index("by_role", ["role"]),
@@ -53,4 +53,8 @@ export default defineSchema({
     ),
     title: v.string(),
   }),
+  inviteCodes: defineTable({
+    code: v.string(),
+    assignedRole: v.union(v.literal("admin"), v.literal("user")),
+  }).index("by_code", ["code"]),
 });

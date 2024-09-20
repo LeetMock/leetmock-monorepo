@@ -1,6 +1,7 @@
 import { api } from "@/convex/_generated/api";
+import { isDefined } from "@/lib/utils";
 import { useAuth } from "@clerk/clerk-react";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { useCallback, useEffect, useState } from "react";
 
 interface UserProfile {
@@ -9,19 +10,8 @@ interface UserProfile {
 }
 
 export const useUserProfile = () => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [userProfile, setUserProfile] = useState<UserProfile | undefined>(undefined);
-  const fetchUserProfile = useMutation(api.userProfiles.fetchUserProfile);
+  const userProfile = useQuery(api.userProfiles.getUserProfile);
+  const isLoaded = isDefined(userProfile);
 
-  const getUserProfile = useCallback(async () => {
-    const profile = await fetchUserProfile();
-    setUserProfile(profile);
-    setIsLoaded(true);
-  }, [fetchUserProfile]);
-
-  useEffect(() => {
-    getUserProfile();
-  }, [getUserProfile]);
-
-  return { userProfile, isLoaded };
+  return { userProfile: userProfile?.profile, isLoaded };
 };

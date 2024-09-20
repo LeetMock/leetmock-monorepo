@@ -1,16 +1,44 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useTheme } from "next-themes";
 import { Sun, Moon } from "lucide-react";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
 
 const WaitlistPage = () => {
   const [inviteCode, setInviteCode] = useState("");
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const applyInviteCode = useMutation(api.inviteCodes.applyInviteCode);
+  const router = useRouter();
+
+  const handleApplyInviteCode = useCallback(() => {
+    if (inviteCode.length === 0) {
+      toast.error("Please enter an valid invite code");
+      return;
+    }
+
+    const promise = applyInviteCode({ code: inviteCode })
+      .then(() => {
+        router.push("/dashboard");
+      })
+      .finally(() => {
+        setInviteCode("");
+      });
+
+    toast.promise(promise, {
+      loading: "Applying invite code...",
+      success: "Invite code applied successfully",
+      error: "Invalid invite code",
+    });
+  }, [inviteCode, applyInviteCode, router]);
 
   useEffect(() => {
     setMounted(true);
@@ -56,7 +84,7 @@ const WaitlistPage = () => {
               onChange={(e) => setInviteCode(e.target.value)}
               required
             />
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" onClick={handleApplyInviteCode}>
               Submit
             </Button>
           </div>

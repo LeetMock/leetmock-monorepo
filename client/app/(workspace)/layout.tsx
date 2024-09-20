@@ -24,16 +24,12 @@ export default function WorkspaceLayout({
   const { isSignedIn, isLoaded } = useAuth();
   const { isLoaded: isUserProfileLoaded, userProfile } = useUserProfile();
 
-  if (!isSignedIn && isLoaded) {
+  if (isLoaded && !isSignedIn) {
     return redirect("/auth?action=signin");
   }
 
   if (isUserProfileLoaded && !isDefined(userProfile)) {
-    toast.error("Something went wrong. Please contact support.");
-    return redirect("/auth?action=signin");
-  }
-
-  if (userProfile?.role === "waitlist") {
+    toast.info("Please wait for an invite code to join this workspace");
     return redirect("/waitlist");
   }
 
