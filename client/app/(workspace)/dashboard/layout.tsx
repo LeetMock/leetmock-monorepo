@@ -1,11 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { redirect, usePathname } from "next/navigation";
-import { Authenticated, AuthLoading } from "convex/react";
-import { useAuth } from "@clerk/clerk-react";
-
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { usePathname } from "next/navigation";
 import { DashboardSidebar } from "./_components/dashboard-sidebar";
 import { UpgradeBanner } from "./_components/upgrade-banner";
 
@@ -19,7 +15,9 @@ const DashboardSkeleton: React.FC<{ children: React.ReactNode }> = ({ children }
       {/* Right Content */}
       <div className="flex flex-col flex-1 rounded-md m-3 ml-0 bg-background shadow-lg">
         <UpgradeBanner className="rounded-t-md" />
-        {children}
+        <div className="relative w-full h-full">
+          <div className="absolute inset-0 overflow-y-auto">{children}</div>
+        </div>
       </div>
     </div>
   );
