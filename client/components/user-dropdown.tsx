@@ -19,36 +19,11 @@ import { useTheme } from "next-themes";
 import Link from "next/link";
 import { CreditCard } from "lucide-react";
 import { PriceTier, TierBadge } from "../app/(workspace)/dashboard/_components/tier-badge";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 interface ProfileItemProps extends ButtonProps {
   user: ReturnType<typeof useUser>["user"];
 }
-
-const UserButton: React.FC<ProfileItemProps> = ({ user, ...props }) => {
-  const initials = getInitials(user?.firstName, user?.lastName);
-
-  return (
-    <div
-      className={cn(
-        "flex items-center justify-between hover:bg-muted rounded-sm pl-3 pr-2.5 py-4",
-        "transition-all duration-200 cursor-pointer mx-3",
-        props
-      )}
-    >
-      <div className="flex items-center space-x-3">
-        <Avatar>
-          <AvatarImage src={user?.imageUrl} />
-          <AvatarFallback>{initials}</AvatarFallback>
-        </Avatar>
-        <div className="flex flex-col items-start">
-          <p className="text-sm font-medium">{user?.fullName}</p>
-          <p className="text-sm text-muted-foreground">{user?.emailAddresses[0].emailAddress}</p>
-        </div>
-      </div>
-      <ChevronsUpDown className="w-[1.2rem] h-[1.2rem] text-muted-foreground" />
-    </div>
-  );
-};
 
 export const UserDropdown: React.FC<{
   children: React.ReactNode;
@@ -57,9 +32,7 @@ export const UserDropdown: React.FC<{
   const { user } = useUser();
   const { signOut } = useAuth();
   const { theme, setTheme } = useTheme();
-
-  // Assuming the user's tier is stored somewhere. For this example, we'll use Premium.
-  const userTier = PriceTier.Premium;
+  const { userProfile } = useUserProfile();
 
   return (
     <DropdownMenu>
@@ -76,12 +49,16 @@ export const UserDropdown: React.FC<{
               {user?.primaryEmailAddress?.emailAddress}
             </p>
           </div>
-          <div className="bg-muted p-3 rounded-md">
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-medium">Current Plan</span>
-              <TierBadge tier={userTier} />
+          {userProfile && (
+            <div className="bg-muted p-3 rounded-md">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium">Current Plan</span>
+                <TierBadge
+                  tier={userProfile.role === "admin" ? PriceTier.Premium : PriceTier.Free}
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuSub>
