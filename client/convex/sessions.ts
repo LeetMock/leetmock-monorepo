@@ -1,9 +1,9 @@
 import { Id } from "./_generated/dataModel";
-import { internalMutation, internalQuery, MutationCtx, query, QueryCtx } from "./_generated/server";
+import { internalMutation, internalQuery, MutationCtx, QueryCtx } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
 import { userMutation, userQuery } from "./functions";
 import { internal } from "./_generated/api";
-import { isDefined, minutesToMilliseconds, secondsToMilliseconds } from "@/lib/utils";
+import { isDefined, minutesToMilliseconds } from "@/lib/utils";
 
 export const exists = userQuery({
   args: {
