@@ -3,10 +3,12 @@ import { defineSchema, defineTable } from "convex/server";
 
 // Schema definition
 export default defineSchema({
-  users: defineTable({
+  userProfiles: defineTable({
     userId: v.string(),
     role: v.union(v.literal("admin"), v.literal("user"), v.literal("waitlist")),
-  }),
+  })
+    .index("by_user_id", ["userId"])
+    .index("by_role", ["role"]),
   sessions: defineTable({
     userId: v.string(),
     questionId: v.id("questions"),

@@ -19,6 +19,7 @@ import type * as editorSnapshots from "../editorSnapshots.js";
 import type * as functions from "../functions.js";
 import type * as questions from "../questions.js";
 import type * as sessions from "../sessions.js";
+import type * as userProfiles from "../userProfiles.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   functions: typeof functions;
   questions: typeof questions;
   sessions: typeof sessions;
+  userProfiles: typeof userProfiles;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

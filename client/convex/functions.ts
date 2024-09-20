@@ -37,6 +37,10 @@ const rules: Rules<Ctx, DataModel> = {
   editorSnapshots: {
     modify: async () => false,
   },
+  userProfiles: {
+    modify: async ({ user }, { userId }) => user.subject === userId,
+    insert: async ({ user }, { userId }) => user.subject === userId,
+  },
 };
 
 export const userQuery = customQuery(

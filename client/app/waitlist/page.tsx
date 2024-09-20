@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useTheme } from "next-themes";
 import { Sun, Moon } from "lucide-react";
-import { ThemeToggleButton } from "@/components/ThemeToggleButton";
 
 const WaitlistPage = () => {
   const [inviteCode, setInviteCode] = useState("");
@@ -16,12 +15,6 @@ const WaitlistPage = () => {
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  const handleInviteCodeSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Implement your invite code verification logic here
-    alert(`Invite code submitted: ${inviteCode}`);
-  };
 
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
@@ -36,7 +29,7 @@ const WaitlistPage = () => {
           <div className="absolute rounded-full bg-blue-400 opacity-5 h-[900px] w-[900px]"></div>
         </div>
       </div>
-      <Card className="relative z-10 w-full max-w-md mx-auto p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg">
+      <Card className="relative z-10 w-full max-w-md mx-auto p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg mx-2">
         {mounted && (
           <div className="absolute top-4 right-4">
             <Button variant="ghost" size="icon" onClick={toggleTheme}>
@@ -54,9 +47,10 @@ const WaitlistPage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col space-y-4 mt-4">
+          <div className="flex flex-col space-y-4 mt-2">
             <Input
               type="text"
+              className="dark:border-gray-700"
               placeholder="Enter your invite code"
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value)}
