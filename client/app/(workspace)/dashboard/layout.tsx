@@ -30,7 +30,6 @@ export default function DashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { isSignedIn, isLoaded } = useAuth();
   const pathname = usePathname();
   const shouldWrapSkeleton = useMemo(() => {
     return (
@@ -46,18 +45,5 @@ export default function DashboardLayout({
     return children;
   }, [shouldWrapSkeleton, children]);
 
-  if (!isSignedIn && isLoaded) {
-    return redirect("/auth?action=signin");
-  }
-
-  return (
-    <>
-      <Authenticated>{wrappedChildren}</Authenticated>
-      <AuthLoading>
-        <div className="flex justify-center items-center h-screen">
-          <LoadingSpinner />
-        </div>
-      </AuthLoading>
-    </>
-  );
+  return wrappedChildren;
 }

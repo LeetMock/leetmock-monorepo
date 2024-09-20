@@ -17,7 +17,7 @@ const AuthPageContent = () => {
     return redirect("/dashboard");
   }
 
-  if (searchParams.get("action") !== "signin" && searchParams.get("action") !== "signup") {
+  if (searchParams.get("action") !== "signin" || searchParams.get("action") !== "signup") {
     return redirect("/auth?action=signin");
   }
 

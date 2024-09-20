@@ -1,10 +1,11 @@
 "use client";
 
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useAuth } from "@clerk/clerk-react";
 import { Authenticated, AuthLoading } from "convex/react";
 import { redirect } from "next/navigation";
 
-export default function ProblemsLayout({
+export default function WorkspaceLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -18,7 +19,11 @@ export default function ProblemsLayout({
   return (
     <>
       <Authenticated>{children}</Authenticated>
-      <AuthLoading>Is Loading</AuthLoading>
+      <AuthLoading>
+        <div className="flex justify-center items-center h-screen">
+          <LoadingSpinner />
+        </div>
+      </AuthLoading>
     </>
   );
 }
