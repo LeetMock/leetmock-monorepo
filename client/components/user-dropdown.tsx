@@ -96,7 +96,7 @@ export const UserDropdown: React.FC<{
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild className="rounded-none py-2">
-            <Link href="/dashboard/settings/billing" className="w-full flex items-center">
+            <Link href="/dashboard/settings/pricing" className="w-full flex items-center">
               <CreditCard className="mr-2 h-4 w-4" />
               <span className="-mt-0.5">Billing</span>
             </Link>
