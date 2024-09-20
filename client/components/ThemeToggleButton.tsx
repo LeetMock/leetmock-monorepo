@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { Button, ButtonProps } from "./ui/button";
-import { SunIcon, MoonIcon } from "@radix-ui/react-icons";
+import { Sun, Moon } from "lucide-react";
 import { useCallback } from "react";
 
 export const ThemeToggleButton = ({ className, ...props }: ButtonProps) => {
@@ -15,9 +15,9 @@ export const ThemeToggleButton = ({ className, ...props }: ButtonProps) => {
   return (
     <Button className={className} onClick={toggleTheme} variant="outline" size="icon" {...props}>
       {theme === "dark" ? (
-        <SunIcon className="h-[1rem] w-[1rem]" />
+        <Sun className="h-[1rem] w-[1rem]" />
       ) : (
-        <MoonIcon className="h-[1rem] w-[1rem]" />
+        <Moon className="h-[1rem] w-[1rem]" />
       )}
     </Button>
   );
