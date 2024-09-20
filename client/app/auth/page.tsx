@@ -1,24 +1,25 @@
 "use client";
 
-import { Suspense, useMemo } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { Unauthenticated } from "convex/react";
 import { useSearchParams, redirect } from "next/navigation";
 import { SignIn, SignUp, useAuth } from "@clerk/clerk-react";
+import { useRouter } from "next/navigation";
 
 type AuthAction = "signin" | "signup";
 
 const AuthPageContent = () => {
   const searchParams = useSearchParams();
   const { isSignedIn } = useAuth();
-
+  const router = useRouter();
   const action = useMemo(() => searchParams.get("action") as AuthAction, [searchParams]);
 
-  if (isSignedIn) {
-    return redirect("/dashboard");
+  if (searchParams.get("action") !== "signin" && searchParams.get("action") !== "signup") {
+    router.push("/auth?action=signin");
   }
 
-  if (searchParams.get("action") !== "signin" || searchParams.get("action") !== "signup") {
-    return redirect("/auth?action=signin");
+  if (isSignedIn) {
+    router.push("/dashboard");
   }
 
   return (
