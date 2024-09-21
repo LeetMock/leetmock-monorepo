@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.request_sessions_get_by_user_id_args import RequestSessionsGetByUserIdArgs
+from convex_client.models.request_sessions_end_session_args import RequestSessionsEndSessionArgs
 
-class TestRequestSessionsGetByUserIdArgs(unittest.TestCase):
-    """RequestSessionsGetByUserIdArgs unit test stubs"""
+class TestRequestSessionsEndSessionArgs(unittest.TestCase):
+    """RequestSessionsEndSessionArgs unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,26 +25,26 @@ class TestRequestSessionsGetByUserIdArgs(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> RequestSessionsGetByUserIdArgs:
-        """Test RequestSessionsGetByUserIdArgs
+    def make_instance(self, include_optional) -> RequestSessionsEndSessionArgs:
+        """Test RequestSessionsEndSessionArgs
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `RequestSessionsGetByUserIdArgs`
+        # uncomment below to create an instance of `RequestSessionsEndSessionArgs`
         """
-        model = RequestSessionsGetByUserIdArgs()
+        model = RequestSessionsEndSessionArgs()
         if include_optional:
-            return RequestSessionsGetByUserIdArgs(
-                user_id = ''
+            return RequestSessionsEndSessionArgs(
+                session_id = ''
             )
         else:
-            return RequestSessionsGetByUserIdArgs(
-                user_id = '',
+            return RequestSessionsEndSessionArgs(
+                session_id = '',
         )
         """
 
-    def testRequestSessionsGetByUserIdArgs(self):
-        """Test RequestSessionsGetByUserIdArgs"""
+    def testRequestSessionsEndSessionArgs(self):
+        """Test RequestSessionsEndSessionArgs"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

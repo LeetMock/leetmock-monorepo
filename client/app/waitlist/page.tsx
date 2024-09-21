@@ -57,7 +57,7 @@ const WaitlistPage = () => {
           <div className="absolute rounded-full bg-blue-400 opacity-5 h-[900px] w-[900px]"></div>
         </div>
       </div>
-      <Card className="relative z-10 w-full max-w-md mx-auto p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg mx-2">
+      <Card className="relative z-10 w-full max-w-md p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg mx-2">
         {mounted && (
           <div className="absolute top-4 right-4">
             <Button variant="ghost" size="icon" onClick={toggleTheme}>

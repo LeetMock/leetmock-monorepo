@@ -9,7 +9,7 @@ from dotenv import load_dotenv, find_dotenv
 from convex_client.models import (
     RequestActionsGetEditorSnapshot,
     RequestActionsGetSessionMetadata,
-    RequestSessionsGetByIdArgs,
+    RequestSessionsEndSessionArgs,
 )
 from livekit.agents import (
     AutoSubscribe,
@@ -139,7 +139,7 @@ async def entrypoint(ctx: JobContext):
 
     def invoke_agent(chat_ctx: llm.ChatContext, interaction_type: str) -> llm.LLMStream:
         request = RequestActionsGetEditorSnapshot(
-            args=RequestSessionsGetByIdArgs(sessionId=session_id_fut.result())
+            args=RequestSessionsEndSessionArgs(sessionId=session_id_fut.result())
         )
         response = action_api.api_run_actions_get_editor_snapshot_post(request)
 
@@ -242,7 +242,7 @@ async def entrypoint(ctx: JobContext):
 
     async def prepare_session_and_acknowledge():
         request = RequestActionsGetSessionMetadata(
-            args=RequestSessionsGetByIdArgs(sessionId=session_id_fut.result())
+            args=RequestSessionsEndSessionArgs(sessionId=session_id_fut.result())
         )
         response = action_api.api_run_actions_get_session_metadata_post(request)
 

@@ -19,7 +19,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict
 from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_sessions_get_by_id_args import RequestSessionsGetByIdArgs
+from convex_client.models.request_sessions_end_session_args import RequestSessionsEndSessionArgs
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -27,7 +27,7 @@ class RequestActionsGetEditorSnapshot(BaseModel):
     """
     RequestActionsGetEditorSnapshot
     """ # noqa: E501
-    args: RequestSessionsGetByIdArgs
+    args: RequestSessionsEndSessionArgs
     __properties: ClassVar[List[str]] = ["args"]
 
     model_config = ConfigDict(
@@ -84,7 +84,7 @@ class RequestActionsGetEditorSnapshot(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "args": RequestSessionsGetByIdArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
+            "args": RequestSessionsEndSessionArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
         })
         return _obj
 

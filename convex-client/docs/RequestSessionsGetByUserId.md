@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**args** | [**RequestSessionsGetByUserIdArgs**](RequestSessionsGetByUserIdArgs.md) |  | 
+**args** | [**RequestSessionsGetActiveSessionArgs**](RequestSessionsGetActiveSessionArgs.md) |  | 
 
 ## Example
 

@@ -26,6 +26,13 @@ class TestMutationApi(unittest.TestCase):
     def tearDown(self) -> None:
         pass
 
+    def test_api_run_admins_create_user_profile_post(self) -> None:
+        """Test case for api_run_admins_create_user_profile_post
+
+        Calls a mutation at the path admins.js:createUserProfile
+        """
+        pass
+
     def test_api_run_editor_snapshots_create_post(self) -> None:
         """Test case for api_run_editor_snapshots_create_post
 
@@ -33,10 +40,31 @@ class TestMutationApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_invite_codes_apply_invite_code_post(self) -> None:
+        """Test case for api_run_invite_codes_apply_invite_code_post
+
+        Calls a mutation at the path inviteCodes.js:applyInviteCode
+        """
+        pass
+
     def test_api_run_sessions_create_post(self) -> None:
         """Test case for api_run_sessions_create_post
 
         Calls a mutation at the path sessions.js:create
+        """
+        pass
+
+    def test_api_run_sessions_end_session_post(self) -> None:
+        """Test case for api_run_sessions_end_session_post
+
+        Calls a mutation at the path sessions.js:endSession
+        """
+        pass
+
+    def test_api_run_sessions_start_session_post(self) -> None:
+        """Test case for api_run_sessions_start_session_post
+
+        Calls a mutation at the path sessions.js:startSession
         """
         pass
 

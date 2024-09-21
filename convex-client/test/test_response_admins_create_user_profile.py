@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.request_sessions_get_by_id_args import RequestSessionsGetByIdArgs
+from convex_client.models.response_admins_create_user_profile import ResponseAdminsCreateUserProfile
 
-class TestRequestSessionsGetByIdArgs(unittest.TestCase):
-    """RequestSessionsGetByIdArgs unit test stubs"""
+class TestResponseAdminsCreateUserProfile(unittest.TestCase):
+    """ResponseAdminsCreateUserProfile unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,26 +25,29 @@ class TestRequestSessionsGetByIdArgs(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> RequestSessionsGetByIdArgs:
-        """Test RequestSessionsGetByIdArgs
+    def make_instance(self, include_optional) -> ResponseAdminsCreateUserProfile:
+        """Test ResponseAdminsCreateUserProfile
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `RequestSessionsGetByIdArgs`
+        # uncomment below to create an instance of `ResponseAdminsCreateUserProfile`
         """
-        model = RequestSessionsGetByIdArgs()
+        model = ResponseAdminsCreateUserProfile()
         if include_optional:
-            return RequestSessionsGetByIdArgs(
-                session_id = ''
+            return ResponseAdminsCreateUserProfile(
+                status = 'success',
+                error_message = '',
+                error_data = None,
+                value = None
             )
         else:
-            return RequestSessionsGetByIdArgs(
-                session_id = '',
+            return ResponseAdminsCreateUserProfile(
+                status = 'success',
         )
         """
 
-    def testRequestSessionsGetByIdArgs(self):
-        """Test RequestSessionsGetByIdArgs"""
+    def testResponseAdminsCreateUserProfile(self):
+        """Test ResponseAdminsCreateUserProfile"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

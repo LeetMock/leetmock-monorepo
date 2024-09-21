@@ -35,12 +35,12 @@ class TestRequestEditorSnapshotsGetLatestSnapshotBySessionId(unittest.TestCase):
         model = RequestEditorSnapshotsGetLatestSnapshotBySessionId()
         if include_optional:
             return RequestEditorSnapshotsGetLatestSnapshotBySessionId(
-                args = convex_client.models.request_sessions_get_by_id_args.Request_sessions_getById_args(
+                args = convex_client.models.request_sessions_end_session_args.Request_sessions_endSession_args(
                     session_id = '', )
             )
         else:
             return RequestEditorSnapshotsGetLatestSnapshotBySessionId(
-                args = convex_client.models.request_sessions_get_by_id_args.Request_sessions_getById_args(
+                args = convex_client.models.request_sessions_end_session_args.Request_sessions_endSession_args(
                     session_id = '', ),
         )
         """

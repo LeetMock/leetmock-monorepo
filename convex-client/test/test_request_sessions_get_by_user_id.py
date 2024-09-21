@@ -35,12 +35,12 @@ class TestRequestSessionsGetByUserId(unittest.TestCase):
         model = RequestSessionsGetByUserId()
         if include_optional:
             return RequestSessionsGetByUserId(
-                args = convex_client.models.request_sessions_get_by_user_id_args.Request_sessions_getByUserId_args(
+                args = convex_client.models.request_sessions_get_active_session_args.Request_sessions_getActiveSession_args(
                     user_id = '', )
             )
         else:
             return RequestSessionsGetByUserId(
-                args = convex_client.models.request_sessions_get_by_user_id_args.Request_sessions_getByUserId_args(
+                args = convex_client.models.request_sessions_get_active_session_args.Request_sessions_getActiveSession_args(
                     user_id = '', ),
         )
         """

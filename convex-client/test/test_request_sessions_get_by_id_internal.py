@@ -35,12 +35,12 @@ class TestRequestSessionsGetByIdInternal(unittest.TestCase):
         model = RequestSessionsGetByIdInternal()
         if include_optional:
             return RequestSessionsGetByIdInternal(
-                args = convex_client.models.request_sessions_get_by_id_args.Request_sessions_getById_args(
+                args = convex_client.models.request_sessions_end_session_args.Request_sessions_endSession_args(
                     session_id = '', )
             )
         else:
             return RequestSessionsGetByIdInternal(
-                args = convex_client.models.request_sessions_get_by_id_args.Request_sessions_getById_args(
+                args = convex_client.models.request_sessions_end_session_args.Request_sessions_endSession_args(
                     session_id = '', ),
         )
         """
