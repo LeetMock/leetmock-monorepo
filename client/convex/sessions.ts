@@ -3,7 +3,7 @@ import { internalMutation, internalQuery, MutationCtx, QueryCtx } from "./_gener
 import { ConvexError, v } from "convex/values";
 import { userMutation, userQuery } from "./functions";
 import { internal } from "./_generated/api";
-import { isDefined, minutesToMilliseconds } from "@/lib/utils";
+import { isDefined, minutesToMilliseconds } from "../lib/utils";
 
 export const exists = userQuery({
   args: {

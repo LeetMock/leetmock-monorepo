@@ -1,7 +1,7 @@
 import { ConvexError, v } from "convex/values";
 import { userMutation } from "./functions";
 import { getOrCreateUserProfile } from "./userProfiles";
-import { isDefined } from "@/lib/utils";
+import { isDefined } from "../lib/utils";
 import { internalMutation } from "./_generated/server";
 
 export const createInviteCode = internalMutation({

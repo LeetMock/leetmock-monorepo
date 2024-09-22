@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { internalQuery, mutation, query } from "./_generated/server";
-import { isDefined } from "@/lib/utils";
+import { isDefined } from "../lib/utils";
 
 export const getById = query({
   args: { questionId: v.optional(v.id("questions")) },

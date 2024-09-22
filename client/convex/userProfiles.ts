@@ -1,4 +1,4 @@
-import { isDefined } from "@/lib/utils";
+import { isDefined } from "../lib/utils";
 import { userQuery } from "./functions";
 import { MutationCtx } from "./_generated/server";
 import { ConvexError } from "convex/values";

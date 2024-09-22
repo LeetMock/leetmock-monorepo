@@ -11,8 +11,8 @@ import {
   getFileExtension,
   generateTestCode,
   isDefined,
-} from "@/lib/utils";
-import { TokenResult, CodeRunResult, RunCodeResult, RunTestResult } from "@/lib/types";
+} from "../lib/utils";
+import { TokenResult, CodeRunResult, RunCodeResult, RunTestResult } from "../lib/types";
 import { ConvexError, v } from "convex/values";
 
 function formatRuntimeError(stderr: string): string {
