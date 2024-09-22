@@ -1,22 +1,15 @@
 "use client";
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Editor from "@monaco-editor/react";
 import { editor as monacoEditor } from "monaco-editor";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { LANGUAGES } from "@/lib/constants";
+import { LANG_ICONS, LANGUAGES } from "@/lib/constants";
 import { useTheme } from "next-themes";
 import { useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { TestResultsBlock } from "./test-results-block";
-import { PlayCircle, TestTube2, Clock, Loader2, ArrowRight } from "lucide-react";
+import { TestTube2, Clock, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
 import { EditorState, useEditorState } from "@/hooks/useEditorState";
@@ -24,7 +17,7 @@ import { toast } from "sonner";
 import { RunTestResult } from "@/lib/types";
 import { useResizePanel } from "@/hooks/use-resize-panel";
 
-const customEditorTheme: monacoEditor.IStandaloneThemeData = {
+const darkEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
   inherit: true,
   rules: [],
@@ -83,6 +76,11 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     onContentChange,
     onTerminalChange,
   } = useEditorState(sessionId, handleSnapshotChange);
+
+  const language = "python";
+  const Icon = useMemo(() => {
+    return LANG_ICONS[language as keyof typeof LANG_ICONS];
+  }, [language]);
 
   const handleRunCode = async () => {
     const { language, content } = editorState!.editor;
@@ -160,33 +158,17 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
         )}
         style={{ height: size }}
       >
-        <div className="flex justify-between items-center p-2 border-b">
-          <Select value={editorState.editor.language} onValueChange={onLanguageChange}>
-            <SelectTrigger className="w-36 h-8">
-              <SelectValue placeholder="Language" />
-            </SelectTrigger>
-            <SelectContent>
-              {LANGUAGES.map((lang) => (
-                <SelectItem key={lang.value} value={lang.value}>
-                  {lang.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="flex justify-between items-center px-3 py-2 border-b">
+          <div className="flex items-center space-x-2">
+            <Icon className="w-4 h-4" />
+            <span className="text-sm font-semibold mb-px">
+              {language.charAt(0).toUpperCase() + language.slice(1)}
+            </span>
+          </div>
           <div className="flex space-x-2">
-            <Button className="w-28 h-8 relative" onClick={handleRunCode} disabled={isRunning}>
-              {isRunning ? (
-                <Loader2 className="absolute inset-0 m-auto h-4 w-4 animate-spin" />
-              ) : (
-                <>
-                  <PlayCircle className="w-4 h-4 mr-1" />
-                  Run Code
-                </>
-              )}
-            </Button>
             <Button
               variant="outline"
-              className="w-28 h-8 relative"
+              className="w-28 h-7 relative"
               onClick={handleRunTests}
               disabled={isRunning}
             >
@@ -204,7 +186,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
         <div className="h-full relative rounded-md pb-2" ref={editorContainerRef}>
           <Editor
             className="absolute inset-0"
-            language={editorState.editor.language}
+            language={language}
             theme={theme === "dark" ? "customDarkTheme" : "vs-light"}
             value={editorState.editor.content}
             options={{
@@ -219,7 +201,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
             }}
             onChange={(value) => onContentChange(value || "")}
             beforeMount={(monaco) => {
-              monaco.editor.defineTheme("customDarkTheme", customEditorTheme);
+              monaco.editor.defineTheme("customDarkTheme", darkEditorTheme);
               monaco.editor.setTheme("customDarkTheme");
             }}
           />
