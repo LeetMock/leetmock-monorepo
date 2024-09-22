@@ -112,7 +112,7 @@ export const WorkspaceToolbar: React.FC<WorkspaceToolbarProps> = ({ session }) =
     }
 
     if (connectionState === ConnectionState.Connected) {
-      return <CircleStop className="w-4 h-4" />;
+      return <CircleStop className="w-4 h-4 -mt-[2px]" />;
     }
 
     return <Play className="w-[0.7rem] h-[0.7rem]" />;
@@ -168,7 +168,7 @@ export const WorkspaceToolbar: React.FC<WorkspaceToolbarProps> = ({ session }) =
           variant="ringHover"
           className={cn(
             !isDefined(session) && "hidden",
-            "h-7 rounded-sm text-sm text-[0.8rem] px-3 min-w-20",
+            "h-7 rounded-sm text-sm text-[0.8rem] px-3 min-w-20 flex items-center",
             connectionState === ConnectionState.Connected
               ? "bg-red-500 text-white hover:bg-red-600 hover:ring-red-500"
               : "bg-blue-500 text-white hover:bg-blue-600 hover:ring-blue-500"
@@ -178,7 +178,9 @@ export const WorkspaceToolbar: React.FC<WorkspaceToolbarProps> = ({ session }) =
         >
           {buttonIcon}
           {connectionState !== ConnectionState.Connecting && (
-            <span className="ml-1.5">
+            <span
+              className={cn("ml-1.5", connectionState === ConnectionState.Connected && "-mt-[2px]")}
+            >
               {connectionState === ConnectionState.Connected
                 ? "End"
                 : session?.sessionStatus === "not_started"

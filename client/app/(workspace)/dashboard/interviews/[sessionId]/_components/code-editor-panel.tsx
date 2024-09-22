@@ -4,17 +4,11 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Editor from "@monaco-editor/react";
 import { editor as monacoEditor } from "monaco-editor";
-// import { IoLogoPython } from "react-icons/io";
-// import { PiFileCppFill } from "react-icons/pi";
-// import { FaJava } from "react-icons/fa6";
-// import { IoLogoJavascript } from "react-icons/io5";
-// import { SiTypescript } from "react-icons/si";
-// import { FaGolang } from "react-icons/fa6";
 import { useTheme } from "next-themes";
 import { useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { TestResultsBlock } from "./test-results-block";
-import { TestTube2, Clock, Loader2 } from "lucide-react";
+import { TestTube2, Clock, Loader2, PlayIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
 import { EditorState, useEditorState } from "@/hooks/useEditorState";
@@ -30,15 +24,6 @@ const darkEditorTheme: monacoEditor.IStandaloneThemeData = {
     "editor.background": "#181a1f",
   },
 };
-
-// export const languageIcons = {
-//   python: <IoLogoPython className="w-3.5 h-3.5" />,
-//   cpp: <PiFileCppFill className="w-[0.85rem] h-[0.85rem]" />,
-//   java: <FaJava className="w-3.5 h-3.5" />,
-//   javascript: <IoLogoJavascript className="w-3.5 h-3.5" />,
-//   typescript: <SiTypescript className="w-[0.8rem] h-[0.8rem]" />,
-//   golang: <FaGolang className="w-5 h-5" />,
-// };
 
 export interface CodeEditorPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   sessionId: Id<"sessions">;
@@ -92,9 +77,6 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   } = useEditorState(sessionId, handleSnapshotChange);
 
   const language = "python";
-  // const icon = useMemo(() => {
-  //   return languageIcons[language as keyof typeof languageIcons];
-  // }, [language]);
 
   const handleRunCode = async () => {
     const { language, content } = editorState!.editor;
@@ -172,29 +154,11 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
         )}
         style={{ height: size }}
       >
-        <div className="flex justify-between items-center px-3 py-2 border-b">
+        <div className="flex justify-between items-center px-2.5 py-2 border-b">
           <div className="flex items-center space-x-2">
-            {/* {icon} */}
             <span className="text-sm font-semibold mb-px">
               {language.charAt(0).toUpperCase() + language.slice(1)}
             </span>
-          </div>
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              className="w-28 h-7 relative"
-              onClick={handleRunTests}
-              disabled={isRunning}
-            >
-              {isRunning ? (
-                <Loader2 className="absolute inset-0 m-auto h-4 w-4 animate-spin" />
-              ) : (
-                <>
-                  <TestTube2 className="w-4 h-4 mr-1" />
-                  Run Tests
-                </>
-              )}
-            </Button>
           </div>
         </div>
         <div className="h-full relative rounded-md pb-2" ref={editorContainerRef}>
@@ -230,7 +194,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
       />
       <div
         className={cn(
-          "flex p-3 flex-col space-y-2 h-full w-full border",
+          "flex px-3 py-2 flex-col space-y-2 h-full w-full border",
           "bg-background rounded-md shadow-md"
         )}
       >
@@ -279,6 +243,23 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
               <code>{editorState.terminal.output}</code>
             </pre>
           )}
+        </div>
+        <div className="flex justify-end">
+          <Button
+            variant="outline-blue"
+            className="h-7 min-w-20"
+            onClick={handleRunTests}
+            disabled={isRunning}
+          >
+            {isRunning ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <>
+                <PlayIcon className="h-3.5 w-3.5 mr-1" />
+                <span>Test</span>
+              </>
+            )}
+          </Button>
         </div>
       </div>
     </div>

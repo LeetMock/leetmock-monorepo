@@ -16,7 +16,7 @@ export const TimerCountdown = ({ timeLeft }: TimerCountdownProps) => {
       className={cn(
         "flex items-center justify-center space-x-2 font-semibold h-7",
         "px-2 py-1 pr-1 rounded-sm select-none cursor-pointer text-sm",
-        theme === "dark" ? "bg-transparent" : "bg-yellow-50",
+        theme === "dark" ? "bg-yellow-800/10" : "bg-yellow-50",
         theme === "dark" ? "text-yellow-200" : "text-yellow-600",
         theme === "dark" ? "border border-yellow-600" : "border border-yellow-300"
       )}
