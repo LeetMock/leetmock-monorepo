@@ -23,6 +23,7 @@ interface MembershipCardProps {
     description: string;
     price: string;
     advantages: string[];
+    // href: string;
   }
 
 const memberItems: MembershipCardProps[] = [
@@ -59,7 +60,7 @@ const MembershipCard = ({name, description, price, advantages}: MembershipCardPr
                     /per month
                 </p>
                 </div>
-                <Button className="mb-4">SELECT</Button>
+                <Button className="mb-4" href="/dashboard/pricing/payment">SELECT</Button>
                 <div className="mb-4">
                     What you will get
                 </div>
@@ -113,19 +114,9 @@ const MembershipCard = ({name, description, price, advantages}: MembershipCardPr
 };
 
 const PricingPage: React.FC = () => {
-    const { user } = useUser();
-    const sessions = useQuery(api.sessions.getByUserId, { userId: user!.id });
-    const activeSession = useQuery(api.sessions.getActiveSession, { userId: user!.id });
-    const question = useQuery(api.questions.getById, { questionId: activeSession?.questionId });
-  
-    const sessionList = useMemo(() => {
-      if (!sessions) return [];
-      return sessions as SessionDoc[];
-    }, [sessions]);
-  
     return (
       <div className="flex flex-col p-8 space-y-8">
-        <div className="">
+        <div>
           <MembershipCard name= "Basic Plan" description= "Our most popular plan." price= "$1" />
         </div>
       </div>
