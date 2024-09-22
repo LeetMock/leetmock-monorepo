@@ -14,8 +14,8 @@ interface NavProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const navItems: NavItem[] = [
   { href: "/dashboard/interviews", icon: LayoutDashboard, title: "Interviews" },
-  { href: "/dashboard/settings/account", icon: Settings, title: "Settings" },
-  { href: "/dashboard/pricing", icon: BadgeDollarSign, title: "Membership" }
+  { href: "/dashboard/pricing", icon: BadgeDollarSign, title: "Membership" },
+  { href: "/dashboard/settings/account", icon: Settings, title: "Settings" }
 ];
 
 export const NavList: React.FC<NavProps> = ({ className, ...props }) => {
