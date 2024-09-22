@@ -3,9 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-
-//comment
-// import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 interface MembershipCardProps {
@@ -18,7 +15,8 @@ interface MembershipCardProps {
 
 const memberItems: MembershipCardProps[] = [
     { name: "Basic Plan", description: "Our most popular plan.", price: "$1", advantages:["Advantage 1", "Advantage 2", "Advantage 3"] },
-    { name: "Advanced Plan", description: "Our most popular plan.", price: "$2", advantages:["Advantage 1", "Advantage 2", "Advantage 3"] }
+    { name: "Advanced Plan", description: "Our most popular plan.", price: "$2", advantages:["Advantage 1", "Advantage 2", "Advantage 3"] },
+    { name: "VIP Plan", description: "Our most popular plan.", price: "$3", advantages:["Advantage 1", "Advantage 2", "Advantage 3"] }
   ];
 
 const MembershipCard = ({name, description, price, advantages}: MembershipCardProps) => {
@@ -51,12 +49,12 @@ const MembershipCard = ({name, description, price, advantages}: MembershipCardPr
                 </p>
                 </div>
                 
-                <Button className="mb-4" >
-                    <Link href="/dashboard/pricing/payment">
-                        SELECT
-                    </Link>
-                </Button>
-                
+                <Link href="/dashboard/pricing/payment">
+                    <Button className="mb-4 w-full">                
+                        SELECT 
+                    </Button>
+                </Link>
+
                 <div className="mb-4">
                     What you will get
                 </div>
@@ -70,42 +68,6 @@ const MembershipCard = ({name, description, price, advantages}: MembershipCardPr
             </div>
         ))}
         </nav>
-        // <Card className="col-span-full relative overflow-hidden" x-chunk="dashboard-05-chunk-0">
-        // <Image
-        //     src="/coding.jpg"
-        //     alt="Coding background"
-        //     fill
-        //     sizes="100vw"
-        //     style={{ objectFit: "cover" }}
-        //     className="opacity-15"
-        //     priority
-        // />
-        // <div className="relative z-10">
-        //     <CardHeader className="pb-3">
-        //     <CardTitle className="text-xl font-semibold">
-        //         a
-        //     </CardTitle>
-        //     <CardDescription className="max-w-lg text-balance leading-relaxed">
-                
-        //         a
-        //     </CardDescription>
-        //     </CardHeader>
-        //     <CardFooter className="flex justify-end gap-4">
-        //     <Link
-        //         href='/dashboard/interviews/'
-        //         passHref
-        //     >
-        //         <Button
-        //         variant="expandIcon"
-        //         size="lg"
-        //         Icon={() => <HiArrowNarrowRight className="w-4 h-4 mt-px" />}
-        //         iconPlacement="right"
-        //         >play
-        //         </Button>
-        //     </Link>
-        //     </CardFooter>
-        // </div>
-        // </Card>
     );
 };
 
