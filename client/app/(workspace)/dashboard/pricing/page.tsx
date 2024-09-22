@@ -22,18 +22,19 @@ interface MembershipCardProps {
     name: string;
     description: string;
     price: string;
+    advantages: string[];
   }
 
 const memberItems: MembershipCardProps[] = [
-    { name: "Basic Plan", description: "Our most popular plan.", price: "$1" },
-    { name: "Advanced Plan", description: "Our most popular plan.", price: "$2" }
+    { name: "Basic Plan", description: "Our most popular plan.", price: "$1", advantages:["Advantage 1", "Advantage 2", "Advantage 3"] },
+    { name: "Advanced Plan", description: "Our most popular plan.", price: "$2", advantages:["Advantage 1", "Advantage 2", "Advantage 3"] }
   ];
 
-const MembershipCard = ({name, description, price}: MembershipCardProps) => {
+const MembershipCard = ({name, description, price, advantages}: MembershipCardProps) => {
     return (
         <nav className={cn("flex flex-row gap-4 mr-8 items-start space-x-4")}>
         {memberItems.map((item, index) => (
-            <div key={index}>
+            <div key={index} className="w-full">
                 <Card className="shadow-xl">
                 <CardHeader className="pb-3 mb-8">
                 <CardTitle>{item.name}</CardTitle>
@@ -62,15 +63,11 @@ const MembershipCard = ({name, description, price}: MembershipCardProps) => {
                 <div className="mb-4">
                     What you will get
                 </div>
-                <div>
-                    Advantage 1
-                </div>
-                <div>
-                    Advantage 2
-                </div>
-                <div>
-                    Advantage 3
-                </div>
+                {item.advantages.map((advantage) => (
+                    <div key={index}>
+                        {advantage}
+                    </div>
+                ))}
                 </CardContent>
                 </Card>
             </div>
