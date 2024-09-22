@@ -1,7 +1,7 @@
 "use client";
 
 import { cn, formatTime } from "@/lib/utils";
-import { MdTimer } from "react-icons/md";
+import { StopwatchIcon } from "@radix-ui/react-icons";
 import { useTheme } from "next-themes";
 
 export interface TimerCountdownProps {
@@ -21,7 +21,7 @@ export const TimerCountdown = ({ timeLeft }: TimerCountdownProps) => {
         theme === "dark" ? "border border-yellow-600" : "border border-yellow-300"
       )}
     >
-      <MdTimer className="w-[0.9rem] h-[0.9rem]" />
+      <StopwatchIcon className="w-[0.9rem] h-[0.9rem]" />
       <span className="w-12 shrink-0">{formatTime(timeLeft)}</span>
     </div>
   );

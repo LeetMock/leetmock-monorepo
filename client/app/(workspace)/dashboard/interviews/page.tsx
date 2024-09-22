@@ -13,7 +13,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useUser } from "@clerk/clerk-react";
 import { useMemo } from "react";
-import { HiArrowNarrowRight } from "react-icons/hi";
+import { MoveRight } from "lucide-react";
 
 interface InterviewCardProps {
   activeSessionId: Id<"sessions"> | undefined;
@@ -51,7 +51,7 @@ const InterviewCard = ({ activeSessionId, questionTitle }: InterviewCardProps) =
             <Button
               variant="expandIcon"
               size="lg"
-              Icon={() => <HiArrowNarrowRight className="w-4 h-4 mt-px" />}
+              Icon={() => <MoveRight className="w-4 h-4 mt-px" />}
               iconPlacement="right"
             >
               {activeSessionId ? "Resume Interview" : "Start Interview"}

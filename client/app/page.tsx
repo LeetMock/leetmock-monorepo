@@ -4,8 +4,8 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { FiCode, FiMic, FiBarChart2 } from "react-icons/fi";
-import { FaQuoteLeft } from "react-icons/fa";
+import { Quote, Code, Mic } from "lucide-react";
+import { ChartNoAxesColumn } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import Link from "next/link"; // Importing Link from Next.js
@@ -216,7 +216,7 @@ const HomePage = () => {
               whileHover={{ scale: 1.05 }}
             >
               <div className="mb-6 flex justify-center">
-                <FiMic className="text-6xl text-white" />
+                <Mic className="text-6xl text-white" />
               </div>
               <h3 className="text-2xl font-bold mb-4 text-center">Voice-Powered AI Interviews</h3>
               <p className="text-center text-white">
@@ -229,7 +229,7 @@ const HomePage = () => {
               whileHover={{ scale: 1.05 }}
             >
               <div className="mb-6 flex justify-center">
-                <FiCode className="text-6xl text-white" />
+                <Code className="text-6xl text-white" />
               </div>
               <h3 className="text-2xl font-bold mb-4 text-center">Diverse Practice Modes</h3>
               <p className="text-center text-white">
@@ -243,7 +243,7 @@ const HomePage = () => {
               whileHover={{ scale: 1.05 }}
             >
               <div className="mb-6 flex justify-center">
-                <FiBarChart2 className="text-6xl text-white" />
+                <ChartNoAxesColumn className="text-6xl text-white" />
               </div>
               <h3 className="text-2xl font-bold mb-4 text-center">Comprehensive Feedback</h3>
               <p className="text-center text-white">
@@ -277,7 +277,7 @@ const HomePage = () => {
                 transition={{ duration: 0.5 }}
               >
                 <div className="mb-6 flex justify-center">
-                  <FaQuoteLeft className="text-5xl text-red-500 opacity-70" />
+                  <Quote className="text-5xl text-red-500 opacity-70" />
                 </div>
                 <p className="mb-8 text-lg italic text-center">
                   &quot;LeetMock revolutionized my interview preparation. The AI feedback was
@@ -307,7 +307,7 @@ const HomePage = () => {
                 transition={{ duration: 0.5 }}
               >
                 <div className="mb-6 flex justify-center">
-                  <FaQuoteLeft className="text-5xl text-red-500 opacity-70" />
+                  <Quote className="text-5xl text-red-500 opacity-70" />
                 </div>
                 <p className="mb-8 text-lg italic text-center">
                   &quot;The interactive AI interviews were incredibly realistic. I felt fully
@@ -337,7 +337,7 @@ const HomePage = () => {
                 transition={{ duration: 0.5 }}
               >
                 <div className="mb-6 flex justify-center">
-                  <FaQuoteLeft className="text-5xl text-red-500 opacity-70" />
+                  <Quote className="text-5xl text-red-500 opacity-70" />
                 </div>
                 <p className="mb-8 text-lg italic text-center">
                   &quot;LeetMock&apos;s feedback helped me identify my weaknesses. I secured a job

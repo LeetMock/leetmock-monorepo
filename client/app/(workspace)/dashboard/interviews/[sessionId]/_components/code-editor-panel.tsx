@@ -4,12 +4,12 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Editor from "@monaco-editor/react";
 import { editor as monacoEditor } from "monaco-editor";
-import { IoLogoPython } from "react-icons/io5";
-import { PiFileCppFill } from "react-icons/pi";
-import { FaJava } from "react-icons/fa6";
-import { IoLogoJavascript } from "react-icons/io5";
-import { SiTypescript } from "react-icons/si";
-import { FaGolang } from "react-icons/fa6";
+// import { IoLogoPython } from "react-icons/io";
+// import { PiFileCppFill } from "react-icons/pi";
+// import { FaJava } from "react-icons/fa6";
+// import { IoLogoJavascript } from "react-icons/io5";
+// import { SiTypescript } from "react-icons/si";
+// import { FaGolang } from "react-icons/fa6";
 import { useTheme } from "next-themes";
 import { useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -31,14 +31,14 @@ const darkEditorTheme: monacoEditor.IStandaloneThemeData = {
   },
 };
 
-export const languageIcons = {
-  python: <IoLogoPython className="w-3.5 h-3.5" />,
-  cpp: <PiFileCppFill className="w-[0.85rem] h-[0.85rem]" />,
-  java: <FaJava className="w-3.5 h-3.5" />,
-  javascript: <IoLogoJavascript className="w-3.5 h-3.5" />,
-  typescript: <SiTypescript className="w-[0.8rem] h-[0.8rem]" />,
-  golang: <FaGolang className="w-5 h-5" />,
-};
+// export const languageIcons = {
+//   python: <IoLogoPython className="w-3.5 h-3.5" />,
+//   cpp: <PiFileCppFill className="w-[0.85rem] h-[0.85rem]" />,
+//   java: <FaJava className="w-3.5 h-3.5" />,
+//   javascript: <IoLogoJavascript className="w-3.5 h-3.5" />,
+//   typescript: <SiTypescript className="w-[0.8rem] h-[0.8rem]" />,
+//   golang: <FaGolang className="w-5 h-5" />,
+// };
 
 export interface CodeEditorPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   sessionId: Id<"sessions">;
@@ -92,9 +92,9 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   } = useEditorState(sessionId, handleSnapshotChange);
 
   const language = "python";
-  const icon = useMemo(() => {
-    return languageIcons[language as keyof typeof languageIcons];
-  }, [language]);
+  // const icon = useMemo(() => {
+  //   return languageIcons[language as keyof typeof languageIcons];
+  // }, [language]);
 
   const handleRunCode = async () => {
     const { language, content } = editorState!.editor;
@@ -174,7 +174,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
       >
         <div className="flex justify-between items-center px-3 py-2 border-b">
           <div className="flex items-center space-x-2">
-            {icon}
+            {/* {icon} */}
             <span className="text-sm font-semibold mb-px">
               {language.charAt(0).toUpperCase() + language.slice(1)}
             </span>

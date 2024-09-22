@@ -12,11 +12,10 @@ import {
   isDefined,
   minutesToMilliseconds,
 } from "@/lib/utils";
-import { useRouter } from "next/navigation";
 import { TimerCountdown } from "./timer-countdown";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Loader2, Play, Settings } from "lucide-react";
-import { MdOutlineStopCircle } from "react-icons/md";
+import { CircleStop } from "lucide-react";
 import { useConnectionState, useRoomContext } from "@livekit/components-react";
 import { useConnection } from "@/hooks/useConnection";
 import { ConnectionState } from "livekit-client";
@@ -113,7 +112,7 @@ export const WorkspaceToolbar: React.FC<WorkspaceToolbarProps> = ({ session }) =
     }
 
     if (connectionState === ConnectionState.Connected) {
-      return <MdOutlineStopCircle className="w-4 h-4" />;
+      return <CircleStop className="w-4 h-4" />;
     }
 
     return <Play className="w-[0.7rem] h-[0.7rem]" />;
