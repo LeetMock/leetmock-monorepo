@@ -187,7 +187,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
       </div>
       <div
         className={cn(
-          "h-px w-full cursor-ns-resize py-1 transition-all",
+          "h-px w-full cursor-ns-resize py-1 transition-all hover:bg-muted-foreground/10 rounded-full",
           isResizing ? "bg-muted-foreground/10" : "bg-transparent"
         )}
         {...resizeHandleProps}
@@ -230,13 +230,13 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
             </div>
           )}
         </div>
-        <div className="p-2 rounded-md bg-secondary h-full overflow-auto">
+        <div className="p-2 rounded-md bg-secondary h-full overflow-auto relative">
           {outputView === "testResults" && testResults ? (
             <TestResultsBlock key={testRunCounter} results={testResults} />
           ) : (
             <pre
               className={cn(
-                "text-sm p-1 rounded-md",
+                "text-sm rounded-md absolute inset-3",
                 editorState.terminal.isError ? "text-red-500" : "text-gray-800 dark:text-gray-200"
               )}
             >

@@ -18,6 +18,7 @@ import { useWindowSize } from "usehooks-ts";
 import { redirect } from "next/navigation";
 import { useConnection } from "@/hooks/useConnection";
 import { toast } from "sonner";
+import { DragHandleDots2Icon } from "@radix-ui/react-icons";
 
 export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { disconnect } = useConnection();
@@ -28,11 +29,11 @@ export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ session
   const session = useQuery(api.sessions.getById, { sessionId });
   const question = useQuery(api.questions.getById, { questionId: session?.questionId });
 
-  const { width = 300 } = useWindowSize();
+  const { width: windowWidth = 300 } = useWindowSize();
   const { size, isResizing, resizeHandleProps } = useResizePanel({
     defaultSize: 400,
     minSize: 200,
-    maxSize: width - 100,
+    maxSize: windowWidth - 300,
     direction: "horizontal",
     storageId: "leetmock.workspace.code-question",
   });
@@ -79,7 +80,7 @@ export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ session
         />
         <div
           className={cn(
-            "w-px h-full cursor-ew-resize px-1 transition-all",
+            "w-px h-full cursor-ew-resize px-1 transition-all hover:bg-muted-foreground/10 flex-0 rounded-full",
             isResizing ? "bg-muted-foreground/10" : "bg-transparent"
           )}
           {...resizeHandleProps}

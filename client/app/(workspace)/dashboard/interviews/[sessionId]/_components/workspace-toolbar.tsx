@@ -112,7 +112,7 @@ export const WorkspaceToolbar: React.FC<WorkspaceToolbarProps> = ({ session }) =
     }
 
     if (connectionState === ConnectionState.Connected) {
-      return <CircleStop className="w-4 h-4 -mt-[2px]" />;
+      return <CircleStop className="w-4 h-4 -mt-[1px]" />;
     }
 
     return <Play className="w-[0.7rem] h-[0.7rem]" />;
@@ -179,7 +179,7 @@ export const WorkspaceToolbar: React.FC<WorkspaceToolbarProps> = ({ session }) =
           {buttonIcon}
           {connectionState !== ConnectionState.Connecting && (
             <span
-              className={cn("ml-1.5", connectionState === ConnectionState.Connected && "-mt-[2px]")}
+              className={cn("ml-1.5", connectionState === ConnectionState.Connected && "-mt-[1px]")}
             >
               {connectionState === ConnectionState.Connected
                 ? "End"
