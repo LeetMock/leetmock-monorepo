@@ -1,10 +1,3 @@
-import { IoLogoPython } from "react-icons/io5";
-import { PiFileCppFill } from "react-icons/pi";
-import { FaJava } from "react-icons/fa6";
-import { IoLogoJavascript } from "react-icons/io5";
-import { SiTypescript } from "react-icons/si";
-import { FaGolang } from "react-icons/fa6";
-
 export interface Language {
   value: string;
   label: string;
@@ -37,15 +30,6 @@ export const BG_COLORS = [
   "bg-teal-500",
   "bg-orange-500",
 ];
-
-export const LANG_ICONS = {
-  python: <IoLogoPython className="w-3.5 h-3.5" />,
-  cpp: <PiFileCppFill className="w-[0.85rem] h-[0.85rem]" />,
-  java: <FaJava className="w-3.5 h-3.5" />,
-  javascript: <IoLogoJavascript className="w-3.5 h-3.5" />,
-  typescript: <SiTypescript className="w-[0.8rem] h-[0.8rem]" />,
-  golang: <FaGolang className="w-5 h-5" />,
-};
 
 interface CodeTemplate {
   (functionName: string, params: string[]): string;

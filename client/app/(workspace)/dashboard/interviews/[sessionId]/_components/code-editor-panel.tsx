@@ -4,7 +4,12 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Editor from "@monaco-editor/react";
 import { editor as monacoEditor } from "monaco-editor";
-import { LANG_ICONS, LANGUAGES } from "@/lib/constants";
+import { IoLogoPython } from "react-icons/io5";
+import { PiFileCppFill } from "react-icons/pi";
+import { FaJava } from "react-icons/fa6";
+import { IoLogoJavascript } from "react-icons/io5";
+import { SiTypescript } from "react-icons/si";
+import { FaGolang } from "react-icons/fa6";
 import { useTheme } from "next-themes";
 import { useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -24,6 +29,15 @@ const darkEditorTheme: monacoEditor.IStandaloneThemeData = {
   colors: {
     "editor.background": "#181a1f",
   },
+};
+
+export const languageIcons = {
+  python: <IoLogoPython className="w-3.5 h-3.5" />,
+  cpp: <PiFileCppFill className="w-[0.85rem] h-[0.85rem]" />,
+  java: <FaJava className="w-3.5 h-3.5" />,
+  javascript: <IoLogoJavascript className="w-3.5 h-3.5" />,
+  typescript: <SiTypescript className="w-[0.8rem] h-[0.8rem]" />,
+  golang: <FaGolang className="w-5 h-5" />,
 };
 
 export interface CodeEditorPanelProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -79,7 +93,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
 
   const language = "python";
   const icon = useMemo(() => {
-    return LANG_ICONS[language as keyof typeof LANG_ICONS];
+    return languageIcons[language as keyof typeof languageIcons];
   }, [language]);
 
   const handleRunCode = async () => {
