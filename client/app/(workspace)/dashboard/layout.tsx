@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { DashboardSidebar } from "./_components/dashboard-sidebar";
 import { UpgradeBanner } from "./_components/upgrade-banner";
 
-const dashboardPages = ["/dashboard/interviews", "/dashboard/settings"];
+const dashboardPages = ["/dashboard/interviews", "/dashboard/settings", "/dashboard/pricing"];
 
 const DashboardSkeleton: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (

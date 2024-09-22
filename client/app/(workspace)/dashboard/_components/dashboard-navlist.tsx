@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import { LayoutDashboard, Settings } from "lucide-react";
+import { LayoutDashboard, Settings, BadgeDollarSign} from "lucide-react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +15,7 @@ interface NavProps extends React.HTMLAttributes<HTMLDivElement> {}
 const navItems: NavItem[] = [
   { href: "/dashboard/interviews", icon: LayoutDashboard, title: "Interviews" },
   { href: "/dashboard/settings/account", icon: Settings, title: "Settings" },
+  { href: "/dashboard/pricing", icon: BadgeDollarSign, title: "Membership" }
 ];
 
 export const NavList: React.FC<NavProps> = ({ className, ...props }) => {
