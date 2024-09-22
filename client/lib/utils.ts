@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { AccessTokenOptions, VideoGrant } from "livekit-server-sdk";
 import { AccessToken } from "livekit-server-sdk";
+import { BG_COLORS } from "./constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -59,6 +60,10 @@ export function getInitials(
 export function getFirstLetter(name: string | null | undefined) {
   return name?.[0] ?? "U";
 }
+
+export const getRandomColor = () => {
+  return BG_COLORS[Math.floor(Math.random() * BG_COLORS.length)];
+};
 
 export const formatTime = (seconds: number) => {
   const m = Math.floor(seconds / 60)

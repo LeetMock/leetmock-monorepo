@@ -16,7 +16,7 @@ import { useTheme } from "next-themes";
 import { useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { TestResultsBlock } from "./test-results-block";
-import { PlayCircle, TestTube2, Clock, Loader2 } from "lucide-react";
+import { PlayCircle, TestTube2, Clock, Loader2, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
 import { EditorState, useEditorState } from "@/hooks/useEditorState";
@@ -184,7 +184,12 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
                 </>
               )}
             </Button>
-            <Button className="w-28 h-8 relative" onClick={handleRunTests} disabled={isRunning}>
+            <Button
+              variant="outline"
+              className="w-28 h-8 relative"
+              onClick={handleRunTests}
+              disabled={isRunning}
+            >
               {isRunning ? (
                 <Loader2 className="absolute inset-0 m-auto h-4 w-4 animate-spin" />
               ) : (

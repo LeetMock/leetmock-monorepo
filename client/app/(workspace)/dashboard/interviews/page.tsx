@@ -13,6 +13,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useUser } from "@clerk/clerk-react";
 import { useMemo } from "react";
+import { HiArrowNarrowRight } from "react-icons/hi";
 
 interface InterviewCardProps {
   activeSessionId: Id<"sessions"> | undefined;
@@ -43,15 +44,19 @@ const InterviewCard = ({ activeSessionId, questionTitle }: InterviewCardProps) =
           </CardDescription>
         </CardHeader>
         <CardFooter className="flex justify-end gap-4">
-          {activeSessionId ? (
-            <Link href={`/dashboard/interviews/${activeSessionId}`} passHref>
-              <Button size="lg">Resume Interview</Button>
-            </Link>
-          ) : (
-            <Link href={`/problems`} passHref>
-              <Button size="lg">Start Interview</Button>
-            </Link>
-          )}
+          <Link
+            href={activeSessionId ? `/dashboard/interviews/${activeSessionId}` : "/problems"}
+            passHref
+          >
+            <Button
+              variant="expandIcon"
+              size="lg"
+              Icon={() => <HiArrowNarrowRight className="w-4 h-4 mt-px" />}
+              iconPlacement="right"
+            >
+              {activeSessionId ? "Resume Interview" : "Start Interview"}
+            </Button>
+          </Link>
         </CardFooter>
       </div>
     </Card>
