@@ -78,7 +78,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   } = useEditorState(sessionId, handleSnapshotChange);
 
   const language = "python";
-  const Icon = useMemo(() => {
+  const icon = useMemo(() => {
     return LANG_ICONS[language as keyof typeof LANG_ICONS];
   }, [language]);
 
@@ -160,7 +160,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
       >
         <div className="flex justify-between items-center px-3 py-2 border-b">
           <div className="flex items-center space-x-2">
-            <Icon className="w-4 h-4" />
+            {icon}
             <span className="text-sm font-semibold mb-px">
               {language.charAt(0).toUpperCase() + language.slice(1)}
             </span>

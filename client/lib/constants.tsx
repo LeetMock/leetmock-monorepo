@@ -39,12 +39,12 @@ export const BG_COLORS = [
 ];
 
 export const LANG_ICONS = {
-  python: IoLogoPython,
-  cpp: PiFileCppFill,
-  java: FaJava,
-  javascript: IoLogoJavascript,
-  typescript: SiTypescript,
-  golang: FaGolang,
+  python: <IoLogoPython className="w-3.5 h-3.5" />,
+  cpp: <PiFileCppFill className="w-[0.85rem] h-[0.85rem]" />,
+  java: <FaJava className="w-3.5 h-3.5" />,
+  javascript: <IoLogoJavascript className="w-3.5 h-3.5" />,
+  typescript: <SiTypescript className="w-[0.8rem] h-[0.8rem]" />,
+  golang: <FaGolang className="w-5 h-5" />,
 };
 
 interface CodeTemplate {
