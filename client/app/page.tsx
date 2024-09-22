@@ -4,8 +4,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Quote, Code, Mic } from "lucide-react";
-import { ChartNoAxesColumn } from "lucide-react";
+import { Quote, Code, Mic, BarChart } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import Link from "next/link"; // Importing Link from Next.js
@@ -243,7 +242,7 @@ const HomePage = () => {
               whileHover={{ scale: 1.05 }}
             >
               <div className="mb-6 flex justify-center">
-                <ChartNoAxesColumn className="text-6xl text-white" />
+                <BarChart className="text-6xl text-white" />
               </div>
               <h3 className="text-2xl font-bold mb-4 text-center">Comprehensive Feedback</h3>
               <p className="text-center text-white">
