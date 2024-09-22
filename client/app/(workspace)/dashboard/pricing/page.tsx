@@ -2,21 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 
 //comment
-import Image from "next/image";
-import Link from "next/link";
 // import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { DataTable } from "./_components/data-table";
-import { columns, SessionDoc } from "./_components/columns";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-
-import { Id } from "@/convex/_generated/dataModel";
-import { useUser } from "@clerk/clerk-react";
-import { useMemo } from "react";
-import { HiArrowNarrowRight } from "react-icons/hi";
 
 interface MembershipCardProps {
     name: string;
@@ -60,7 +50,13 @@ const MembershipCard = ({name, description, price, advantages}: MembershipCardPr
                     /per month
                 </p>
                 </div>
-                <Button className="mb-4" href="/dashboard/pricing/payment">SELECT</Button>
+                
+                <Button className="mb-4" >
+                    <Link href="/dashboard/pricing/payment">
+                        SELECT
+                    </Link>
+                </Button>
+                
                 <div className="mb-4">
                     What you will get
                 </div>
