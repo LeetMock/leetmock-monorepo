@@ -193,48 +193,13 @@ const HomePage = () => {
           </h2>
           <div className="flex flex-wrap justify-center items-center space-x-8">
             {/* Company Logos */}
-            <Image
+            {/* <Image
               src="/logos/google.png"
               alt="Google"
               className="h-12 object-contain m-4"
               width={150}
               height={50}
-            />
-            <Image
-              src="/logos/amazon.png"
-              alt="Amazon"
-              className="h-12 object-contain m-4"
-              width={150}
-              height={50}
-            />
-            <Image
-              src="/logos/facebook.png"
-              alt="Facebook"
-              className="h-12 object-contain m-4"
-              width={150}
-              height={50}
-            />
-            <Image
-              src="/logos/microsoft.png"
-              alt="Microsoft"
-              className="h-12 object-contain m-4"
-              width={150}
-              height={50}
-            />
-            <Image
-              src="/logos/apple.png"
-              alt="Apple"
-              className="h-12 object-contain m-4"
-              width={150}
-              height={50}
-            />
-            <Image
-              src="/logos/tesla.png"
-              alt="Tesla"
-              className="h-12 object-contain m-4"
-              width={150}
-              height={50}
-            />
+            /> */}
           </div>
         </div>
       </section>
