@@ -8,7 +8,6 @@ import { FiCode, FiMic, FiBarChart2 } from "react-icons/fi";
 import { FaQuoteLeft } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import Image from "next/image";
 import Link from "next/link"; // Importing Link from Next.js
 import { useAuth, useUser } from "@clerk/clerk-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -285,13 +284,13 @@ const HomePage = () => {
                   spot-on!&quot;
                 </p>
                 <div className="flex items-center justify-center">
-                  <Image
+                  {/* <Image
                     src="/testimonials/user1.jpg"
                     alt="Alex Turner"
                     className="h-16 w-16 rounded-full mr-4"
                     width={64}
                     height={64}
-                  />
+                  /> */}
                   <div className="text-center">
                     <p className="font-bold text-xl">Alex Turner</p>
                     <p className="text-sm text-gray-400">Software Engineer at InnovateX</p>
@@ -315,13 +314,13 @@ const HomePage = () => {
                   prepared for my real interviews.&quot;
                 </p>
                 <div className="flex items-center justify-center">
-                  <Image
+                  {/* <Image
                     src="/testimonials/user2.jpg"
                     alt="Samantha Lee"
                     className="h-16 w-16 rounded-full mr-4"
                     width={64}
                     height={64}
-                  />
+                  /> */}
                   <div className="text-center">
                     <p className="font-bold text-xl">Samantha Lee</p>
                     <p className="text-sm text-gray-400">Data Scientist at DataCorp</p>
@@ -345,13 +344,13 @@ const HomePage = () => {
                   offer within weeks!&quot;
                 </p>
                 <div className="flex items-center justify-center">
-                  <Image
+                  {/* <Image
                     src="/testimonials/user3.jpg"
                     alt="Michael Chen"
                     className="h-16 w-16 rounded-full mr-4"
                     width={64}
                     height={64}
-                  />
+                  /> */}
                   <div className="text-center">
                     <p className="font-bold text-xl">Michael Chen</p>
                     <p className="text-sm text-gray-400">Full-Stack Developer at WebWorks</p>
