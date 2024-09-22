@@ -12,13 +12,13 @@ export const ProfileItem: React.FC<ProfileItemProps> = ({ className, ...props })
   return (
     <div
       className={cn(
-        "flex items-center justify-between hover:bg-muted rounded-sm pl-3 pr-2.5 py-4",
+        "flex items-center justify-between hover:bg-muted rounded-md p-2",
         "transition-all duration-200 cursor-pointer",
         className
       )}
       {...props}
     >
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-2">
         <Avatar>
           <AvatarImage src={user?.imageUrl} />
           <AvatarFallback>{initials}</AvatarFallback>
@@ -28,7 +28,7 @@ export const ProfileItem: React.FC<ProfileItemProps> = ({ className, ...props })
           <p className="text-sm text-muted-foreground">{user?.emailAddresses[0].emailAddress}</p>
         </div>
       </div>
-      <ChevronsUpDown className="w-[1.2rem] h-[1.2rem] text-muted-foreground" />
+      <ChevronsUpDown className="w-4 h-4 text-muted-foreground" />
     </div>
   );
 };
