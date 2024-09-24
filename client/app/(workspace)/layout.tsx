@@ -16,26 +16,37 @@ const Spinner = () => {
   );
 };
 
+const Workspace = ({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) => {
+  const { isLoaded, userProfile } = useUserProfile();
+
+  if (isLoaded && !isDefined(userProfile)) {
+    toast.info("Please wait for an invite code to join this workspace");
+    return redirect("/waitlist");
+  }
+
+  return isDefined(userProfile) ? children : <Spinner />;
+};
+
 export default function WorkspaceLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const { isSignedIn, isLoaded } = useAuth();
-  const { isLoaded: isUserProfileLoaded, userProfile } = useUserProfile();
 
   if (isLoaded && !isSignedIn) {
     return redirect("/auth?action=signin");
   }
 
-  if (isUserProfileLoaded && !isDefined(userProfile)) {
-    toast.info("Please wait for an invite code to join this workspace");
-    return redirect("/waitlist");
-  }
-
   return (
     <>
-      <Authenticated>{isDefined(userProfile) ? children : <Spinner />}</Authenticated>
+      <Authenticated>
+        <Workspace>{children}</Workspace>
+      </Authenticated>
       <AuthLoading>
         <Spinner />
       </AuthLoading>
