@@ -79,19 +79,21 @@ const InterviewPage: React.FC = () => {
   }, [sessions]);
 
   return (
-    <div className="flex flex-col space-y-6 p-4 px-6">
-      <DashboardBreadcrumb />
-      <div className="flex flex-col space-y-1">
-        <span className="text-xl font-bold tracking-tight">Interviews</span>
-        <span className="text-muted-foreground">
-          Manage your mock interviews and track your progress.
-        </span>
-      </div>
-      <div className="flex flex-col space-y-2">
-        <InterviewCard activeSessionId={activeSession?._id} questionTitle={question?.title} />
-      </div>
-      <div className="">
-        <DataTable data={sessionList} columns={columns} />
+    <div className="flex flex-col">
+      <DashboardBreadcrumb className="py-4 px-6 bg-background/80 backdrop-blur-sm" />
+      <div className="flex flex-col space-y-6 px-6 pb-4">
+        <div className="flex flex-col space-y-1">
+          <span className="text-xl font-bold tracking-tight">Interviews</span>
+          <span className="text-muted-foreground">
+            Manage your mock interviews and track your progress.
+          </span>
+        </div>
+        <div className="flex flex-col space-y-2">
+          <InterviewCard activeSessionId={activeSession?._id} questionTitle={question?.title} />
+        </div>
+        <div className="">
+          <DataTable data={sessionList} columns={columns} />
+        </div>
       </div>
     </div>
   );

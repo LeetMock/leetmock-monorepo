@@ -6,16 +6,20 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { toUpperCase } from "@/lib/utils";
+import { cn, toUpperCase } from "@/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-export const DashboardBreadcrumb: React.FC = () => {
+interface DashboardBreadcrumbProps {
+  className?: string;
+}
+
+export const DashboardBreadcrumb: React.FC<DashboardBreadcrumbProps> = ({ className }) => {
   const pathname = usePathname();
   const pathSegments = pathname.split("/").filter((segment) => segment !== "");
 
   return (
-    <Breadcrumb>
+    <Breadcrumb className={cn("sticky top-0 z-50", className)}>
       <BreadcrumbList>
         {pathSegments.map((segment, index) => (
           <>
