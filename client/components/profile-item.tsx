@@ -12,7 +12,7 @@ export const ProfileItem: React.FC<ProfileItemProps> = ({ className, ...props })
   return (
     <div
       className={cn(
-        "flex items-center justify-between hover:bg-muted rounded-md p-2",
+        "flex items-center justify-between bg-muted rounded-sm p-2",
         "transition-all duration-200 cursor-pointer",
         className
       )}

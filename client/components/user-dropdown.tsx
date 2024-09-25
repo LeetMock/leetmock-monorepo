@@ -33,7 +33,7 @@ export const UserDropdown: React.FC<{
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none">{children}</DropdownMenuTrigger>
-      <DropdownMenuContent className="w-60" forceMount align={align}>
+      <DropdownMenuContent className="w-60" forceMount align={align} sideOffset={6}>
         <div className="flex flex-col space-y-3 mt-3">
           <div className="flex flex-col items-center space-y-2">
             <Avatar>
