@@ -14,6 +14,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useUser } from "@clerk/clerk-react";
 import { useMemo } from "react";
 import { MoveRight } from "lucide-react";
+import { DashboardBreadcrumb } from "../_components/breadcrumb";
 
 interface InterviewCardProps {
   activeSessionId: Id<"sessions"> | undefined;
@@ -78,7 +79,14 @@ const InterviewPage: React.FC = () => {
   }, [sessions]);
 
   return (
-    <div className="flex flex-col space-y-8">
+    <div className="flex flex-col space-y-6 p-4 px-6">
+      <DashboardBreadcrumb />
+      <div className="flex flex-col space-y-1">
+        <span className="text-xl font-bold tracking-tight">Interviews</span>
+        <span className="text-muted-foreground">
+          Manage your mock interviews and track your progress.
+        </span>
+      </div>
       <div className="flex flex-col space-y-2">
         <InterviewCard activeSessionId={activeSession?._id} questionTitle={question?.title} />
       </div>

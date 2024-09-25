@@ -17,7 +17,7 @@ export function AccountForm() {
 
   return (
     <div className="flex flex-col gap-4">
-      <Card>
+      <Card className="rounded-md">
         <CardHeader className="pb-3 ">
           <CardTitle>Account</CardTitle>
           <CardDescription>Your current account information.</CardDescription>
@@ -34,7 +34,7 @@ export function AccountForm() {
           </div>
         </CardContent>
       </Card>
-      <Card>
+      <Card className="rounded-md">
         <CardHeader className="pb-3 ">
           <CardTitle>Subscription</CardTitle>
           <CardDescription>Your current subscription.</CardDescription>

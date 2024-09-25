@@ -73,6 +73,10 @@ export const formatTime = (seconds: number) => {
   return `${m}:${s}`;
 };
 
+export const toUpperCase = (text: string) => {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+};
+
 export const createToken = (
   apiKey: string,
   apiSecret: string,

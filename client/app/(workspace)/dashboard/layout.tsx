@@ -19,7 +19,7 @@ const DashboardSkeleton: React.FC<{ children: React.ReactNode }> = ({ children }
       <div className="flex flex-col flex-1 rounded-md m-3 ml-0 bg-background shadow-lg">
         {showPriceBanner && <UpgradeBanner className="rounded-t-md" />}
         <div className="relative w-full h-full">
-          <div className="absolute inset-6 overflow-y-auto">{children}</div>
+          <div className="absolute inset-0 overflow-y-auto">{children}</div>
         </div>
       </div>
     </div>
