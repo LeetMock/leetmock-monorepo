@@ -26,7 +26,7 @@ export const TierBadge: React.FC<{ tier: PriceTier }> = ({ tier }) => {
   return (
     <div
       className={cn(
-        "flex items-center px-2 py-1 rounded-full text-xs font-medium",
+        "flex items-center px-2 py-1 rounded-md text-xs font-medium",
         tierData?.className
       )}
     >

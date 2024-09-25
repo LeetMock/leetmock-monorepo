@@ -5,8 +5,11 @@ import { NavList } from "./dashboard-navlist";
 import { UpgradeCard } from "./upgrade-card";
 import { UserDropdown } from "../../../../components/user-dropdown";
 import { ProfileItem } from "../../../../components/profile-item";
+import { useConfig } from "@/hooks/use-config";
 
 export const DashboardSidebar = () => {
+  const { showUpgradeCard } = useConfig();
+
   return (
     <div className="flex h-full flex-col space-y-3 w-64 flex-shrink-0 pb-3 px-2">
       {/* Logo */}
@@ -17,7 +20,7 @@ export const DashboardSidebar = () => {
         </Link>
       </div>
       <NavList className="flex-1" />
-      <UpgradeCard />
+      {showUpgradeCard && <UpgradeCard />}
       <UserDropdown>
         <ProfileItem />
       </UserDropdown>

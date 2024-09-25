@@ -28,8 +28,8 @@ export const NavList: React.FC<NavProps> = ({ className, ...props }) => {
           href={item.href}
           className={cn(
             "flex items-center text-base px-2 py-2 space-x-3 font-medium w-full rounded-md",
-            "transition-all duration-200",
-            pathname === item.href ? "bg-muted hover:bg-muted" : "hover:bg-muted/60"
+            "transition-all duration-200 hover:bg-muted",
+            pathname === item.href && "bg-muted"
           )}
         >
           <item.icon className={cn("h-4 w-4")} />

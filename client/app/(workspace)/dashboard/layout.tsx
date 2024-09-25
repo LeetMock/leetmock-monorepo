@@ -4,19 +4,22 @@ import { useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { DashboardSidebar } from "./_components/dashboard-sidebar";
 import { UpgradeBanner } from "./_components/upgrade-banner";
+import { useConfig } from "@/hooks/use-config";
 
 const dashboardPages = ["/dashboard/interviews", "/dashboard/settings"];
 
 const DashboardSkeleton: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { showPriceBanner } = useConfig();
+
   return (
-    <div className="flex h-screen bg-muted/40">
+    <div className="flex h-screen bg-muted/50">
       {/* Left Sidebar */}
       <DashboardSidebar />
       {/* Right Content */}
       <div className="flex flex-col flex-1 rounded-md m-3 ml-0 bg-background shadow-lg">
-        <UpgradeBanner className="rounded-t-md" />
+        {showPriceBanner && <UpgradeBanner className="rounded-t-md" />}
         <div className="relative w-full h-full">
-          <div className="absolute inset-0 overflow-y-auto">{children}</div>
+          <div className="absolute inset-6 overflow-y-auto">{children}</div>
         </div>
       </div>
     </div>

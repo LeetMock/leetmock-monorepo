@@ -21,10 +21,6 @@ import { CreditCard } from "lucide-react";
 import { PriceTier, TierBadge } from "../app/(workspace)/dashboard/_components/tier-badge";
 import { useUserProfile } from "@/hooks/use-user-profile";
 
-interface ProfileItemProps extends ButtonProps {
-  user: ReturnType<typeof useUser>["user"];
-}
-
 export const UserDropdown: React.FC<{
   children: React.ReactNode;
   align?: "center" | "end" | "start";
@@ -37,8 +33,8 @@ export const UserDropdown: React.FC<{
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none">{children}</DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64" forceMount align={align}>
-        <div className="flex flex-col space-y-4 mt-3">
+      <DropdownMenuContent className="w-60" forceMount align={align}>
+        <div className="flex flex-col space-y-3 mt-3">
           <div className="flex flex-col items-center space-y-2">
             <Avatar>
               <AvatarImage src={user?.imageUrl} />
@@ -50,7 +46,7 @@ export const UserDropdown: React.FC<{
             </p>
           </div>
           {userProfile && (
-            <div className="bg-muted p-3 rounded-md">
+            <div className="bg-muted p-2.5 rounded-sm">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">Current Plan</span>
                 <TierBadge
@@ -62,13 +58,13 @@ export const UserDropdown: React.FC<{
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger className="rounded-none py-2">
+          <DropdownMenuSubTrigger>
             {theme === "dark" ? (
               <SunIcon className="w-4 h-4 mr-2" />
             ) : (
               <MoonIcon className="w-4 h-4 mr-2" />
             )}
-            <span className="-mt-0.5">Theme</span>
+            <span>Theme</span>
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
@@ -89,22 +85,21 @@ export const UserDropdown: React.FC<{
         </DropdownMenuSub>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem asChild className="rounded-none py-2">
+          <DropdownMenuItem asChild>
             <Link href="/dashboard/settings/account" className="w-full">
               <UserIcon className="mr-2 h-4 w-4" />
-              <span className="-mt-0.5">Account</span>
+              <span>Account</span>
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild className="rounded-none py-2">
+          <DropdownMenuItem asChild>
             <Link href="/dashboard/settings/billing" className="w-full flex items-center">
               <CreditCard className="mr-2 h-4 w-4" />
-              <span className="-mt-0.5">Billing</span>
+              <span>Billing</span>
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          className="rounded-t-none py-2"
           onClick={() =>
             signOut({
               redirectUrl: "/auth?action=signin",
@@ -112,7 +107,7 @@ export const UserDropdown: React.FC<{
           }
         >
           <LogOut className="w-4 h-4 mr-2" />
-          Logout
+          <span>Logout</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

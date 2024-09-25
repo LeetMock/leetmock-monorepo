@@ -22,7 +22,10 @@ interface InterviewCardProps {
 
 const InterviewCard = ({ activeSessionId, questionTitle }: InterviewCardProps) => {
   return (
-    <Card className="col-span-full relative overflow-hidden" x-chunk="dashboard-05-chunk-0">
+    <Card
+      className="col-span-full relative overflow-hidden rounded-lg"
+      x-chunk="dashboard-05-chunk-0"
+    >
       <Image
         src="/coding.jpg"
         alt="Coding background"
@@ -75,8 +78,8 @@ const InterviewPage: React.FC = () => {
   }, [sessions]);
 
   return (
-    <div className="flex flex-col p-8 space-y-8">
-      <div className="">
+    <div className="flex flex-col space-y-8">
+      <div className="flex flex-col space-y-2">
         <InterviewCard activeSessionId={activeSession?._id} questionTitle={question?.title} />
       </div>
       <div className="">
