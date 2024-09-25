@@ -187,11 +187,15 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
       </div>
       <div
         className={cn(
-          "h-px w-full cursor-ns-resize py-1 transition-all hover:bg-muted-foreground/10 rounded-full",
+          "h-px w-full cursor-ns-resize py-1 transition-all hover:bg-muted-foreground/10 rounded-full relative",
           isResizing ? "bg-muted-foreground/10" : "bg-transparent"
         )}
         {...resizeHandleProps}
-      />
+      >
+        <div className="absolute inset-0 flex justify-center items-center">
+          <div className="w-9 h-[3px] rounded-full bg-muted-foreground/50"></div>
+        </div>
+      </div>
       <div
         className={cn(
           "flex px-3 py-2 flex-col space-y-2 h-full w-full border",

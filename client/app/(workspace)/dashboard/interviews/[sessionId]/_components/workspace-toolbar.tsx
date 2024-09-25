@@ -119,7 +119,7 @@ export const WorkspaceToolbar: React.FC<WorkspaceToolbarProps> = ({ session }) =
   }, [connectionState]);
 
   return (
-    <div className="flex items-center w-full justify-between py-2 px-2.5 space-x-3 bg-background rounded-md shadow-md">
+    <div className="flex items-center w-full h-12 justify-between py-2 px-2.5 space-x-3 bg-background rounded-md shadow-md">
       <div className="flex items-center space-x-3">
         <Avatar
           className={cn(

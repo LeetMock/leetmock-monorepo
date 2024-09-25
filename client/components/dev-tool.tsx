@@ -36,9 +36,9 @@ const DevToolInner: React.FC<{}> = ({}) => {
       <DropdownMenuTrigger asChild>
         <div
           className={cn(
-            "absolute right-8 bottom-8 shadow-md p-2.5 rounded-md cursor-pointer",
-            "bg-background hover:bg-accent transition-all duration-200",
-            "dark:bg-accent dark:hover:bg-accent/50 border"
+            "absolute shadow-md p-2.5 rounded-md cursor-pointer bottom-1/2 right-8",
+            "bg-background transition-all duration-200",
+            "dark:bg-accent opacity-30 hover:opacity-100"
           )}
         >
           <Wrench className="w-5 h-5" />

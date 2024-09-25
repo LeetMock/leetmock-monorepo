@@ -80,11 +80,15 @@ export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ session
         />
         <div
           className={cn(
-            "w-px h-full cursor-ew-resize px-1 transition-all hover:bg-muted-foreground/10 flex-0 rounded-full",
+            "w-px h-full cursor-ew-resize px-1 transition-all hover:bg-muted-foreground/10 flex-0 rounded-full relative",
             isResizing ? "bg-muted-foreground/10" : "bg-transparent"
           )}
           {...resizeHandleProps}
-        />
+        >
+          <div className="absolute inset-0 flex justify-center items-center">
+            <div className="h-9 w-[3px] rounded-full bg-muted-foreground/50"></div>
+          </div>
+        </div>
         {!!session && !!question ? (
           <CodeEditorPanel sessionId={sessionId} questionId={question._id} />
         ) : (
