@@ -18,7 +18,6 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
   return (
     <div className="space-y-4 p-4 px-6">
       <DashboardBreadcrumb />
-
       <div className="flex flex-col space-y-1">
         <span className="text-xl font-bold tracking-tight">Account</span>
         <span className="text-muted-foreground">Manage your account settings.</span>
