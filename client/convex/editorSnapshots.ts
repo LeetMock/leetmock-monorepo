@@ -2,7 +2,7 @@ import { internalQuery, QueryCtx } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
 import { userMutation, userQuery } from "./functions";
 import { Id } from "./_generated/dataModel";
-import { isDefined } from "../lib/utils";
+import { isDefined } from "@/lib/utils";
 
 // Get editor snapshot by ID
 export const getById = userQuery({

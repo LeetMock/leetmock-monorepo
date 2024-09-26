@@ -37,7 +37,7 @@ export default defineSchema({
   }).index("by_session_id", ["sessionId"]),
   questions: defineTable({
     category: v.array(v.string()),
-    difficulty: v.float64(),
+    difficulty: v.number(),
     question: v.string(),
     solutions: v.any(),
     functionName: v.string(),

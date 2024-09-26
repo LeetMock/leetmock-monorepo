@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import Editor from "@monaco-editor/react";
 import { editor as monacoEditor } from "monaco-editor";
 import { useTheme } from "next-themes";
-import { useMutation, useAction } from "convex/react";
+import { useMutation, useAction, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { TestResultsBlock } from "./test-results-block";
 import { Clock, Loader2, PlayIcon } from "lucide-react";
@@ -43,6 +43,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   const createSnapshot = useMutation(api.editorSnapshots.create);
   const runTests = useAction(api.actions.runTests);
   const runCode = useAction(api.actions.runCode);
+  const question = useQuery(api.questions.getById, { questionId: questionId });
 
   const [testResults, setTestResults] = useState<RunTestResult | null>(null);
   const [outputView, setOutputView] = useState<"output" | "testResults">("output");
@@ -74,13 +75,14 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     onLanguageChange,
     onContentChange,
     onTerminalChange,
-  } = useEditorState(sessionId, handleSnapshotChange);
+  } = useEditorState(sessionId, question, handleSnapshotChange);
 
   const language = "python";
 
   const handleRunCode = async () => {
     const { language, content } = editorState!.editor;
     setIsRunning(true);
+    setOutputView("output");
     try {
       const result = await runCode({ language, code: content });
 
@@ -107,35 +109,19 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
 
     try {
       const result = await runTests({ language, code: content, questionId: questionId });
-
+      // const executionTime = result.executionTime;
       if (result.status === "success" && result.testResults) {
         const executionTime = result.executionTime;
         setTestResults(result.testResults);
-        const allPassed = result.testResults.every((testCase) => testCase.passed);
 
-        onTerminalChange({
-          output: allPassed
-            ? "All test cases passed!"
-            : "Some test cases failed. See details above.",
-          isError: !allPassed,
-          executionTime,
-        });
       } else {
         const errorMessage =
           result.stderr || result.exception || "Error running tests. Please try again.";
-        onTerminalChange({
-          output: errorMessage,
-          isError: true,
-          executionTime: result.executionTime,
-        });
+        alert(errorMessage);
       }
     } catch (error) {
       console.error("Error running tests:", error);
-      onTerminalChange({
-        output: "Error running tests. Please try again.",
-        isError: true,
-        executionTime: 0,
-      });
+      alert("Error running tests. Please try again.");
     }
 
     setIsRunning(false);

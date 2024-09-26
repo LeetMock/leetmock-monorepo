@@ -1,8 +1,8 @@
 from questions import Question, Test
 from typing import List, Dict, Union, Any
 import json
-from dataGeneration import generate_function_name, generate_input_parameters, generate_tests, generate_evalMode
-from endpointRequest import request_leetcode_data, map_endpoint_output_to_question
+from data_generation import generate_function_name, generate_input_parameters, generate_tests, generate_evalMode
+from endpoint_request import request_leetcode_data, map_endpoint_output_to_question
 import os
 
 def start_pipeline(title: str) -> Dict:

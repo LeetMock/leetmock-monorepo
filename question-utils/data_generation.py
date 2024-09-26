@@ -1,6 +1,6 @@
 from questions import Question, Test
 from typing import List, Dict, Union, Any
-from endpointRequest import *
+from endpoint_request import *
 import anthropic
 from utils import extract_function_name
 import json

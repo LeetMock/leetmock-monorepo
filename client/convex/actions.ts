@@ -11,34 +11,14 @@ import {
   getFileExtension,
   generateTestCode,
   isDefined,
-} from "../lib/utils";
-import { TokenResult, CodeRunResult, RunCodeResult, RunTestResult } from "../lib/types";
+} from "@/lib/utils";
+import { TokenResult, CodeRunResult, RunCodeResult, RunTestResult } from "@/lib/types";
 import { ConvexError, v } from "convex/values";
-import { DATA_STRUCTURES } from "../lib/constants";
+import { DATA_STRUCTURES } from "@/lib/constants";
+
+import { retry } from '@lifeomic/attempt';
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-function formatRuntimeError(stderr: string): string {
-  const lines = stderr.split("\n");
-  let formattedError = "";
-  let isRelevantError = false;
-
-  for (const line of lines) {
-    if (line.startsWith("Traceback") || line.startsWith('  File "/solution.py"')) {
-      isRelevantError = true;
-    }
-    if (isRelevantError) {
-      if (line.startsWith('  File "tests.py"')) {
-        isRelevantError = false;
-        formattedError += "\n";
-      } else {
-        formattedError += line + "\n";
-      }
-    }
-  }
-
-  return formattedError.trim();
-}
 
 async function executeCode(payload: any, maxRetries = 3): Promise<CodeRunResult> {
   const url = "https://onecompiler-apis.p.rapidapi.com/api/v1/run";
@@ -48,34 +28,40 @@ async function executeCode(payload: any, maxRetries = 3): Promise<CodeRunResult>
     "x-rapidapi-key": process.env.RAPIDAPI_KEY,
   };
 
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
+  try {
+    const result = await retry(async () => {
       const response = await axios.post(url, payload, { headers });
       const data = response.data;
       return {
         status: data.status,
         executionTime: data.executionTime,
-        stdout: data.stdout || null,
-        stderr: data.stderr || null,
+        stdout: data.stdout || undefined,
+        stderr: data.stderr || undefined,
         isError: data.status !== "success",
-        exception: data.exception || null,
+        exception: data.exception || undefined,
       };
-    } catch (error) {
-      if (attempt === maxRetries) {
-        console.error("Error running code after max retries:", error);
-        return {
-          status: "error",
-          executionTime: 0,
-          stdout: null,
-          stderr: null,
-          isError: true,
-          exception: "Failed to run code after multiple attempts",
-        };
+    }, {
+      maxAttempts: maxRetries,
+      delay: 1000,
+      factor: 2,
+      jitter: true,
+      handleError: (err, context) => {
+        console.error(`Attempt ${context.attemptNum + 1} failed:`, err);
       }
-      await sleep(1000 * attempt); // Exponential backoff
-    }
+    });
+
+    return result;
+  } catch (error) {
+    console.error("Error running code after max retries:", error);
+    return {
+      status: "error",
+      executionTime: 0,
+      stdout: undefined,
+      stderr: undefined,
+      isError: true,
+      exception: "Failed to run code after multiple attempts",
+    };
   }
-  throw new Error("This should never be reached");
 }
 
 export const createAgentThread = action({

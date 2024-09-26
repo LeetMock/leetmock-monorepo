@@ -22,3 +22,7 @@ gen-convex-client:
 @gen-convex-client-podman deploy_key:
     podman build -t convex-client-generator .
     podman run --rm -v ${PWD}:/app -e CONVEX_DEPLOY_KEY=$1 convex-client-generator
+
+# Import processed questions into Convex
+import-questions:
+    cd client && npx convex import --table questions '../question-utils/output/processed_questions.jsonl' && cd ..
