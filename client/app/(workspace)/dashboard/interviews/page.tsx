@@ -15,6 +15,7 @@ import { useUser } from "@clerk/clerk-react";
 import { useMemo } from "react";
 import { MoveRight } from "lucide-react";
 import { DashboardBreadcrumb } from "../_components/breadcrumb";
+import { StartInterviewDialog } from "./_components/start-interview-dialog";
 
 interface InterviewCardProps {
   activeSessionId: Id<"sessions"> | undefined;
@@ -48,8 +49,8 @@ const InterviewCard = ({ activeSessionId, questionTitle }: InterviewCardProps) =
           </CardDescription>
         </CardHeader>
         <CardFooter className="flex justify-end gap-4">
-          <Link
-            href={activeSessionId ? `/dashboard/interviews/${activeSessionId}` : "/problems"}
+          {activeSessionId ? <Link
+            href={`/dashboard/interviews/${activeSessionId}`}
             passHref
           >
             <Button
@@ -58,9 +59,9 @@ const InterviewCard = ({ activeSessionId, questionTitle }: InterviewCardProps) =
               Icon={() => <MoveRight className="w-4 h-4 mt-px" />}
               iconPlacement="right"
             >
-              {activeSessionId ? "Resume Interview" : "Start Interview"}
+              Resume Interview
             </Button>
-          </Link>
+          </Link> : <StartInterviewDialog />}
         </CardFooter>
       </div>
     </Card>
