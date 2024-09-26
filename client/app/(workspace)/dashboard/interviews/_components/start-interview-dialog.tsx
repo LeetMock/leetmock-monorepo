@@ -15,11 +15,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { MoveRight, Clock, Code, LayoutPanelLeft, Database, Users, Lock } from "lucide-react";
+import { MoveRight, Code, Database, Users, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import InterviewSelectionPage from "@/app/(workspace)/problems/page";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import React from "react";
+import { Stepper } from "@/components/stepper";
 
 // export function InterviewSelectionDialog({
 //   open,
@@ -103,8 +105,8 @@ export const InterviewTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & 
   return (
     <Card
       className={cn(
-        "flex flex-col relative overflow-hidden transition-all duration-300",
-        available && "hover:cursor-pointer hover:scale-[1.03] hover:shadow-xl",
+        "flex flex-col relative overflow-hidden transition-all duration-300 shadow-none",
+        available && "hover:cursor-pointer hover:scale-[1.03] hover:shadow-lg",
         className
       )}
       {...props}
@@ -166,6 +168,10 @@ export const StartInterviewDialog: React.FC = () => {
               Select the type of interview you&apos;d like to start.
             </DialogDescription>
           </DialogHeader>
+          <Stepper
+            steps={["Select Interview Type", "Select Problem", "Configure Interview"]}
+            currentStep={0}
+          />
           <div className="flex flex-col flex-grow gap-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow">
               {interviewTypes.map((interviewType) => (
@@ -177,7 +183,13 @@ export const StartInterviewDialog: React.FC = () => {
               ))}
             </div>
             <div className="flex justify-end">
-              <Button>Next</Button>
+              <Button
+                variant="expandIcon"
+                iconPlacement="right"
+                Icon={() => <MoveRight className="w-4 h-4 mt-px" />}
+              >
+                Next
+              </Button>
             </div>
           </div>
         </DialogContent>
