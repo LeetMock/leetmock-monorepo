@@ -1,16 +1,15 @@
 "use client"
-import React from 'react';
+import React, {useState} from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card } from '@/components/ui/card';
-
+import { validateBillingForm, BillingFormErrors } from './validation';
 
 
 export interface Customer {
-    firstName: string;
-    lastName: string;
+    fullName: string;
     email: string;
     subscription: {
       trialPeriod: number;
@@ -24,6 +23,37 @@ export interface Customer {
 const countries: string[] = ["United State", "United Kingdom", "Australia", "China"]
 
 const PaymentPage: React.FC = () => {
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [expiryDate, setExpiryDate] = useState('');
+  const [cvv, setCvv] = useState('');
+
+  const [errors, setErrors] = useState<BillingFormErrors>({
+    fullName: '',
+    email: '',
+    cardNumber: '',
+    expiryDate: '',
+    cvv: ''
+  });
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const validationErrors = validateBillingForm(fullName, email, cardNumber, expiryDate, cvv);
+
+    setErrors(validationErrors);
+
+    const isValid = Object.values(validationErrors).every((error) => error === '');
+
+    if (isValid) {
+      // Add your form submission logic here (e.g., send data to API)
+      alert('Form is valid. Processing payment...');
+    } else {
+      alert('Please correct the errors in the form.');
+    }
+  };
+
   return (
     <div >
         <h1>Billing Information</h1>
