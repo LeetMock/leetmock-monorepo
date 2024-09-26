@@ -170,7 +170,7 @@ export const StartInterviewDialog: React.FC = () => {
           </DialogHeader>
           <Stepper
             steps={["Select Interview Type", "Select Problem", "Configure Interview"]}
-            currentStep={0}
+            currentStep={1}
           />
           <div className="flex flex-col flex-grow gap-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow">
