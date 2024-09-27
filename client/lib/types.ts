@@ -41,3 +41,11 @@ export type CodeRunResult = {
   exception: string | null;
   testResults?: RunTestResult;
 };
+
+export type Defined<T> = T extends null | undefined ? never : T;
+
+// type that accept an object (value can be null or undefined or another stuffs),
+// return object with all properties defined
+export type DefinedObject<T> = {
+  [P in keyof T]: Defined<T[P]>;
+};

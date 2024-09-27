@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge";
 import type { AccessTokenOptions, VideoGrant } from "livekit-server-sdk";
 import { AccessToken } from "livekit-server-sdk";
 import { BG_COLORS } from "./constants";
-
+import { type DefinedObject, type Defined } from "./types";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -149,6 +149,10 @@ if __name__ == '__main__':
   return testCode;
 }
 
-export const isDefined = <T>(value: T): value is Exclude<T, undefined | null> => {
+export const isDefined = <T>(value: T): value is Defined<T> => {
   return value !== undefined && value !== null;
+};
+
+export const allDefined = <T extends object>(obj: T): obj is DefinedObject<T> => {
+  return Object.values(obj).every(isDefined);
 };

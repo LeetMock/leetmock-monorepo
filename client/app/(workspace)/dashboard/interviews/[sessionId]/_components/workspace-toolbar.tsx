@@ -17,7 +17,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Loader2, Play, Settings } from "lucide-react";
 import { CircleStop } from "lucide-react";
 import { useConnectionState, useRoomContext } from "@livekit/components-react";
-import { useConnection } from "@/hooks/useConnection";
+import { useConnection } from "@/hooks/use-connection";
 import { ConnectionState } from "livekit-client";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 interface WorkspaceToolbarProps {
-  session?: {
+  session: {
     sessionId: Id<"sessions">;
     sessionStatus: "not_started" | "in_progress" | "completed";
     questionId: Id<"questions">;
@@ -44,7 +44,7 @@ interface WorkspaceToolbarProps {
   };
 }
 
-export const WorkspaceToolbar: React.FC<WorkspaceToolbarProps> = ({ session }) => {
+export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
   const { user } = useUser();
   const { theme } = useTheme();
 
@@ -56,7 +56,6 @@ export const WorkspaceToolbar: React.FC<WorkspaceToolbarProps> = ({ session }) =
 
   const [timeLeft, setTimeLeft] = useState<number>(60 * 10);
   const [isEndInterviewDialogOpen, setIsEndInterviewDialogOpen] = useState<boolean>(false);
-
   const color = useMemo(() => getRandomColor(), []);
 
   useEffect(() => {

@@ -6,9 +6,8 @@ import { api } from "@/convex/_generated/api";
 import { WorkspaceToolbar } from "./workspace-toolbar";
 import { ConnectionState } from "livekit-client";
 import { useConnectionState, useLocalParticipant } from "@livekit/components-react";
-import { useAgent } from "@/hooks/useAgent";
 import { AgentTranscripts } from "./agent-transcripts";
-import { LucideFileText, LucideVolume2 } from "lucide-react";
+import { LucideFileText } from "lucide-react";
 import { cn, isDefined } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
 import { CodeQuestionPanel } from "./code-question-panel";
@@ -16,15 +15,14 @@ import { useResizePanel } from "@/hooks/use-resize-panel";
 import { CodeEditorPanel } from "./code-editor-panel";
 import { useWindowSize } from "usehooks-ts";
 import { redirect } from "next/navigation";
-import { useConnection } from "@/hooks/useConnection";
+import { useConnection } from "@/hooks/use-connection";
 import { toast } from "sonner";
-import { DragHandleDots2Icon } from "@radix-ui/react-icons";
+import { Wait } from "@/components/wait";
 
 export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { disconnect } = useConnection();
   const connectionState = useConnectionState();
   const { localParticipant } = useLocalParticipant();
-  const { isAgentConnected, isAgentSpeaking, agentAudioTrack } = useAgent(sessionId);
 
   const session = useQuery(api.sessions.getById, { sessionId });
   const question = useQuery(api.questions.getById, { questionId: session?.questionId });
@@ -71,13 +69,27 @@ export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ session
 
   return (
     <>
-      <WorkspaceToolbar session={sessionData} />
+      <Wait data={{ sessionData }}>
+        {({ sessionData }) => <WorkspaceToolbar session={sessionData} />}
+      </Wait>
       <div className="w-full h-full flex justify-center items-center">
-        <CodeQuestionPanel
-          className="border rounded-md shadow-md shrink-0"
-          style={{ width: size }}
-          question={questionData}
-        />
+        <Wait
+          data={{ questionData }}
+          fallback={
+            <div className="flex flex-col space-y-2 items-center justify-center h-full w-full border rounded-md shadow-md bg-background">
+              <LucideFileText className="w-10 h-10 text-muted-foreground" />
+              <span className="text-muted-foreground">Loading question...</span>
+            </div>
+          }
+        >
+          {({ questionData }) => (
+            <CodeQuestionPanel
+              className="border rounded-md shadow-md shrink-0"
+              style={{ width: size }}
+              question={questionData}
+            />
+          )}
+        </Wait>
         <div
           className={cn(
             "w-px h-full cursor-ew-resize px-1 transition-all hover:bg-muted-foreground/10 flex-0 rounded-full relative",
@@ -89,22 +101,25 @@ export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ session
             <div className="h-9 w-[3px] rounded-full bg-muted-foreground/50"></div>
           </div>
         </div>
-        {!!session && !!question ? (
-          <CodeEditorPanel sessionId={sessionId} questionId={question._id} />
-        ) : (
-          <div
-            className={cn(
-              "flex flex-col justify-center items-center h-full w-full border",
-              "bg-background rounded-md shadow-md"
-            )}
-          >
-            {/* Some nice icon + a short description, saying question is loading */}
-            <div className="flex flex-col items-center space-y-2">
-              <LucideFileText className="w-10 h-10 text-muted-foreground" />
-              <span className="text-muted-foreground">Loading question...</span>
+        <Wait
+          data={{ question }}
+          fallback={
+            <div
+              className={cn(
+                "flex flex-col justify-center items-center h-full w-full border",
+                "bg-background rounded-md shadow-md"
+              )}
+            >
+              {/* Some nice icon + a short description, saying question is loading */}
+              <div className="flex flex-col items-center space-y-2">
+                <LucideFileText className="w-10 h-10 text-muted-foreground" />
+                <span className="text-muted-foreground">Loading question...</span>
+              </div>
             </div>
-          </div>
-        )}
+          }
+        >
+          {({ question }) => <CodeEditorPanel sessionId={sessionId} questionId={question._id} />}
+        </Wait>
         {/* <div className="w-[24rem] h-full p-2 flex flex-col space-y-4">
             <div className="mt-4 p-3 border rounded-md">
               <div className="text-sm font-medium flex justify-between items-center space-x-2">

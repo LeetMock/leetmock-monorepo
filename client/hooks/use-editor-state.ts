@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDebounceCallback } from "usehooks-ts";
-import { useNonReactiveQuery } from "./useNonReactiveQuery";
+import { useNonReactiveQuery } from "./use-non-reactive-query";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { isDefined } from "@/lib/utils";

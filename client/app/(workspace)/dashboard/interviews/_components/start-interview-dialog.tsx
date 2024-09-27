@@ -7,53 +7,35 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MoveRight, Code, Database, Users, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import InterviewSelectionPage from "@/app/(workspace)/problems/page";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { cn } from "@/lib/utils";
 import React from "react";
 import { Stepper } from "@/components/stepper";
+import { SessionType, useSessionCreateModal } from "@/hooks/use-session-create-modal";
+import { useAction, useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { CodeQuestionViewer } from "./code-question-viewer";
+import { Wait } from "@/components/wait";
+import { Id } from "@/convex/_generated/dataModel";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-// export function InterviewSelectionDialog({
-//   open,
-//   setOpen,
-// }: {
-//   open: boolean;
-//   setOpen: (open: boolean) => void;
-// }) {
-//   return (
-//     <Dialog open={open} onOpenChange={setOpen}>
-//       <DialogContent className="sm:max-w-[900px] sm:w-[90vw]">
-//         <DialogHeader>
-//           <DialogTitle>Start Interview</DialogTitle>
-//           <DialogDescription>Choose from our available coding interviews.</DialogDescription>
-//         </DialogHeader>
-//         <InterviewSelectionPage />
-//       </DialogContent>
-//     </Dialog>
-//   );
-// }
-
-interface InterviewType {
+interface SessionMeta {
   title: string;
+  type: SessionType;
   description: string;
   icon: React.ReactNode;
   available: boolean;
   bullets: string[];
 }
 
-const interviewTypes: InterviewType[] = [
+const interviewTypes: SessionMeta[] = [
   {
     title: "Coding Interview",
+    type: SessionType.CodeInterview,
     description: "Practice algorithmic problem-solving",
     icon: <Code className="w-4 h-4" />,
     available: true,
@@ -67,6 +49,7 @@ const interviewTypes: InterviewType[] = [
   },
   {
     title: "System Design",
+    type: SessionType.SystemDesign,
     description: "Design scalable systems",
     icon: <Database className="w-4 h-4" />,
     available: false,
@@ -80,6 +63,7 @@ const interviewTypes: InterviewType[] = [
   },
   {
     title: "Behavioral",
+    type: SessionType.Behavioral,
     description: "Improve your soft skills",
     icon: <Users className="w-4 h-4" />,
     available: false,
@@ -93,22 +77,34 @@ const interviewTypes: InterviewType[] = [
   },
 ];
 
-export const InterviewTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & InterviewType> = ({
+export const InterviewTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & SessionMeta> = ({
   title,
+  type,
   description,
   icon,
   available,
   bullets,
   className,
+  onClick,
   ...props
 }) => {
+  const { type: currentType, setType } = useSessionCreateModal();
+
+  const handleSelect = (e: React.MouseEvent<HTMLDivElement>) => {
+    onClick?.(e);
+    if (!available) return;
+    setType(currentType === type ? undefined : type);
+  };
+
   return (
     <Card
       className={cn(
-        "flex flex-col relative overflow-hidden transition-all duration-300 shadow-none",
+        "flex flex-col relative overflow-hidden transition-all duration-300 shadow-none select-none",
         available && "hover:cursor-pointer hover:scale-[1.03] hover:shadow-lg",
+        currentType === type && "shadow-lg ring-2 ring-primary scale-[1.03]",
         className
       )}
+      onClick={handleSelect}
       {...props}
     >
       <CardHeader>
@@ -119,7 +115,7 @@ export const InterviewTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & 
         <CardDescription className="text-base">{description}</CardDescription>
       </CardHeader>
       <CardContent className="flex-grow">
-        <ul className="list-disc ml-[1.15rem] [&>li]:mt-2 text-muted-foreground">
+        <ul className="list-disc ml-[1.1rem] [&>li]:mt-2 text-muted-foreground">
           {bullets.map((bullet) => (
             <li key={bullet}>{bullet}</li>
           ))}
@@ -142,9 +138,58 @@ export const InterviewTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & 
   );
 };
 
+export const InterviewTypeSelection: React.FC = () => {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow">
+      {interviewTypes.map((interviewType) => (
+        <InterviewTypeCard key={interviewType.title} {...interviewType} className="h-full" />
+      ))}
+    </div>
+  );
+};
+
 export const StartInterviewDialog: React.FC = () => {
+  const { maxStep, codeInterview, hasConfiguredSession, updateCodeInterview, reset } =
+    useSessionCreateModal();
+  const router = useRouter();
+  const questions = useQuery(api.questions.getAll);
+  const createAgentThread = useAction(api.actions.createAgentThread);
+  const createSession = useMutation(api.sessions.create);
+
+  const [currentStep, setCurrentStep] = useState(0);
   const [startDialogOpen, setStartDialogOpen] = useState(false);
-  const [selectionDialogOpen, setSelectionDialogOpen] = useState(false);
+
+  const handleSessionCreate = useCallback(async () => {
+    if (!questions) return; // Check if questions is undefined
+    const question = questions.find((q) => q._id === codeInterview.questionId);
+    if (!question) return;
+
+    const { functionName, inputParameters } = question; // Assuming these fields exist in your question object
+
+    // TODO: wrap inside an action
+    const promise = createAgentThread({ graphId: "code-mock-v1" })
+      .then(({ threadId, assistantId }) => {
+        return createSession({
+          questionId: codeInterview.questionId!,
+          agentThreadId: threadId,
+          assistantId: assistantId,
+          functionName: functionName,
+          inputParameters: inputParameters,
+        });
+      })
+      .then((sessionId) => {
+        router.push(`/dashboard/interviews/${sessionId}`);
+      })
+      .finally(() => {
+        reset();
+      });
+
+    toast.promise(promise, {
+      loading: "Creating interview",
+      success: "Interview created",
+      error: "Error creating interview",
+    });
+  }, [questions, createAgentThread, codeInterview, createSession, router, reset]);
 
   return (
     <>
@@ -170,31 +215,57 @@ export const StartInterviewDialog: React.FC = () => {
           </DialogHeader>
           <Stepper
             steps={["Select Interview Type", "Select Problem", "Configure Interview"]}
-            currentStep={1}
+            currentStep={maxStep}
           />
-          <div className="flex flex-col flex-grow gap-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow">
-              {interviewTypes.map((interviewType) => (
-                <InterviewTypeCard
-                  key={interviewType.title}
-                  {...interviewType}
-                  className="h-full"
+          {currentStep === 0 && <InterviewTypeSelection />}
+          <Wait data={{ questions }}>
+            {({ questions }) =>
+              currentStep === 1 && (
+                <CodeQuestionViewer
+                  questions={questions}
+                  onQuestionSelected={(questionId) => {
+                    updateCodeInterview({ questionId });
+                  }}
                 />
-              ))}
+              )
+            }
+          </Wait>
+          {currentStep === 2 && (
+            <div className="flex justify-center items-center flex-1">
+              <div className="flex flex-col items-center gap-2">
+                <div className="text-lg">No Config Available</div>
+                <div className="text-sm text-muted-foreground">
+                  You can configure your interview later.
+                </div>
+              </div>
             </div>
-            <div className="flex justify-end">
+          )}
+          <div className="flex justify-between">
+            <Button
+              variant="ghost"
+              disabled={currentStep <= 0}
+              onClick={() => setCurrentStep(currentStep - 1)}
+            >
+              Back
+            </Button>
+            {currentStep >= 2 ? (
+              <Button variant="shine" onClick={() => handleSessionCreate()}>
+                Start
+              </Button>
+            ) : (
               <Button
                 variant="expandIcon"
                 iconPlacement="right"
                 Icon={() => <MoveRight className="w-4 h-4 mt-px" />}
+                disabled={currentStep >= maxStep}
+                onClick={() => setCurrentStep(currentStep + 1)}
               >
                 Next
               </Button>
-            </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
-      {/* <InterviewSelectionDialog open={selectionDialogOpen} setOpen={setSelectionDialogOpen} /> */}
     </>
   );
 };

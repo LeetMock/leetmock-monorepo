@@ -1,6 +1,6 @@
 "use client";
 
-import { useConnection } from "@/hooks/useConnection";
+import { useConnection } from "@/hooks/use-connection";
 import { useAuth } from "@clerk/clerk-react";
 import { LiveKitRoom, RoomAudioRenderer, StartAudio } from "@livekit/components-react";
 import { Authenticated, AuthLoading } from "convex/react";
