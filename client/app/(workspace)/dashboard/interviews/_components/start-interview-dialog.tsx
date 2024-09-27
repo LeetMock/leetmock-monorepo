@@ -172,9 +172,7 @@ export const StartInterviewDialog: React.FC = () => {
         return createSession({
           questionId: codeInterview.questionId!,
           agentThreadId: threadId,
-          assistantId: assistantId,
-          functionName: functionName,
-          inputParameters: inputParameters,
+          assistantId: assistantId
         });
       })
       .then((sessionId) => {
@@ -221,12 +219,14 @@ export const StartInterviewDialog: React.FC = () => {
           <Wait data={{ questions }}>
             {({ questions }) =>
               currentStep === 1 && (
-                <CodeQuestionViewer
-                  questions={questions}
-                  onQuestionSelected={(questionId) => {
-                    updateCodeInterview({ questionId });
-                  }}
-                />
+                <div className="flex-grow overflow-y-auto max-h-[calc(100vh-20rem)]">
+                  <CodeQuestionViewer
+                    questions={questions}
+                    onQuestionSelected={(questionId) => {
+                      updateCodeInterview({ questionId });
+                    }}
+                  />
+                </div>
               )
             }
           </Wait>

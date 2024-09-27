@@ -1,3 +1,5 @@
+/* prettier-ignore-start */
+
 /* eslint-disable */
 /**
  * Generated `api` utility.
@@ -15,7 +17,6 @@ import type {
 } from "convex/server";
 import type * as actions from "../actions.js";
 import type * as admins from "../admins.js";
-import type * as codeRunner from "../codeRunner.js";
 import type * as editorSnapshots from "../editorSnapshots.js";
 import type * as functions from "../functions.js";
 import type * as inviteCodes from "../inviteCodes.js";
@@ -34,7 +35,6 @@ import type * as userProfiles from "../userProfiles.js";
 declare const fullApi: ApiFromModules<{
   actions: typeof actions;
   admins: typeof admins;
-  codeRunner: typeof codeRunner;
   editorSnapshots: typeof editorSnapshots;
   functions: typeof functions;
   inviteCodes: typeof inviteCodes;
@@ -50,3 +50,5 @@ export declare const internal: FilterApi<
   typeof fullApi,
   FunctionReference<any, "internal">
 >;
+
+/* prettier-ignore-end */

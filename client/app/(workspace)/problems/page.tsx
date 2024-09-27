@@ -58,8 +58,6 @@ export default function InterviewSelectionPage() {
             questionId: questionId,
             agentThreadId: threadId,
             assistantId: assistantId,
-            functionName: functionName,
-            inputParameters: inputParameters,
           });
         })
         .then((sessionId) => {

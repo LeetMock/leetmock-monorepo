@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -22,8 +23,8 @@ export const DashboardBreadcrumb: React.FC<DashboardBreadcrumbProps> = ({ classN
     <Breadcrumb className={cn("sticky top-0 z-50", className)}>
       <BreadcrumbList>
         {pathSegments.map((segment, index) => (
-          <>
-            <BreadcrumbItem key={segment}>
+          <React.Fragment key={segment}>
+            <BreadcrumbItem>
               {index < pathSegments.length - 1 ? (
                 <BreadcrumbLink href={`/${pathSegments.slice(0, index + 1).join("/")}`}>
                   <span className="text-sm font-medium">{toUpperCase(segment)}</span>
@@ -39,7 +40,7 @@ export const DashboardBreadcrumb: React.FC<DashboardBreadcrumbProps> = ({ classN
                 <ChevronRightIcon className="h-3.5 w-3.5 mt-px" />
               </BreadcrumbSeparator>
             )}
-          </>
+          </React.Fragment>
         ))}
       </BreadcrumbList>
     </Breadcrumb>

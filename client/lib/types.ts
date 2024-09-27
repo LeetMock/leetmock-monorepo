@@ -35,10 +35,10 @@ export interface TestResultsProps {
 export type CodeRunResult = {
   status: string;
   executionTime: number;
-  stdout: string | null;
-  stderr: string | null;
+  stdout: string | undefined;
+  stderr: string | undefined;
   isError: boolean;
-  exception: string | null;
+  exception: string | undefined;
   testResults?: RunTestResult;
 };
 

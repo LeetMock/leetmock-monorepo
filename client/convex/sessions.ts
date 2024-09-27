@@ -3,7 +3,8 @@ import { internalMutation, internalQuery, MutationCtx, QueryCtx } from "./_gener
 import { ConvexError, v } from "convex/values";
 import { userMutation, userQuery } from "./functions";
 import { internal } from "./_generated/api";
-import { isDefined, minutesToMilliseconds } from "../lib/utils";
+import { isDefined, minutesToMilliseconds } from "@/lib/utils";
+import { CODE_TEMPLATES } from "@/lib/constants";
 
 export const exists = userQuery({
   args: {
@@ -142,12 +143,10 @@ export const create = userMutation({
     questionId: v.id("questions"),
     agentThreadId: v.string(),
     assistantId: v.string(),
-    functionName: v.string(),
-    inputParameters: v.array(v.string()),
   },
   handler: async (
     ctx,
-    { questionId, agentThreadId, assistantId, inputParameters, functionName }
+    { questionId, agentThreadId, assistantId}
   ) => {
     const activeSession = await getActiveSessionQuery(ctx, ctx.user.subject);
 
@@ -166,7 +165,7 @@ export const create = userMutation({
       sessionStatus: "not_started",
     });
 
-    // Fetch the question data to get the startingCode
+    // Fetch the question data to get the starting Code
     const question = await ctx.db.get(questionId);
     if (!isDefined(question)) {
       throw new Error("Question not found");
@@ -175,11 +174,9 @@ export const create = userMutation({
     await ctx.db.insert("editorSnapshots", {
       sessionId,
       editor: {
-        language: "python", // You might want to make this dynamic based on the question
-        content: question.startingCode || "", // Use startingCode from the question
+        language: "python",
+        content: CODE_TEMPLATES["python"](question.functionName, question.inputParameters["python"]),
         lastUpdated: Date.now(),
-        functionName: functionName,
-        inputParameters: inputParameters,
       },
       terminal: {
         output: "",

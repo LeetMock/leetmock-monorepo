@@ -28,8 +28,6 @@ export default defineSchema({
       language: v.string(),
       content: v.string(),
       lastUpdated: v.number(),
-      functionName: v.string(),
-      inputParameters: v.array(v.string()),
     }),
     terminal: v.object({
       output: v.string(),
@@ -39,12 +37,16 @@ export default defineSchema({
   }).index("by_session_id", ["sessionId"]),
   questions: defineTable({
     category: v.array(v.string()),
-    difficulty: v.float64(),
+    difficulty: v.number(),
     question: v.string(),
     solutions: v.any(),
     functionName: v.string(),
-    inputParameters: v.array(v.string()),
-    startingCode: v.string(),
+    inputParameters: v.record(v.string(), v.array(v.string())),
+    evalMode: v.union(
+      v.literal("exactMatch"),
+      v.literal("listNodeIter"),
+      v.literal("sortedMatch")
+    ),
     tests: v.array(
       v.object({
         input: v.any(),
@@ -52,6 +54,7 @@ export default defineSchema({
       })
     ),
     title: v.string(),
+    metaData: v.record(v.string(), v.any()),
   }),
   inviteCodes: defineTable({
     code: v.string(),

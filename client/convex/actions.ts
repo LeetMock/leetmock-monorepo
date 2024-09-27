@@ -11,33 +11,16 @@ import {
   getFileExtension,
   generateTestCode,
   isDefined,
-} from "../lib/utils";
-import { TokenResult, CodeRunResult, RunCodeResult, RunTestResult } from "../lib/types";
+} from "@/lib/utils";
+import { TokenResult, CodeRunResult, RunCodeResult, RunTestResult } from "@/lib/types";
 import { ConvexError, v } from "convex/values";
+import { DATA_STRUCTURES } from "@/lib/constants";
 
-function formatRuntimeError(stderr: string): string {
-  const lines = stderr.split("\n");
-  let formattedError = "";
-  let isRelevantError = false;
+import { retry } from '@lifeomic/attempt';
 
-  for (const line of lines) {
-    if (line.startsWith("Traceback") || line.startsWith('  File "/solution.py"')) {
-      isRelevantError = true;
-    }
-    if (isRelevantError) {
-      if (line.startsWith('  File "tests.py"')) {
-        isRelevantError = false;
-        formattedError += "\n";
-      } else {
-        formattedError += line + "\n";
-      }
-    }
-  }
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-  return formattedError.trim();
-}
-
-async function executeCode(payload: any): Promise<CodeRunResult> {
+async function executeCode(payload: any, maxRetries = 3): Promise<CodeRunResult> {
   const url = "https://onecompiler-apis.p.rapidapi.com/api/v1/run";
   const headers = {
     "Content-Type": "application/json",
@@ -46,25 +29,37 @@ async function executeCode(payload: any): Promise<CodeRunResult> {
   };
 
   try {
-    const response = await axios.post(url, payload, { headers });
-    const data = response.data;
-    return {
-      status: data.status,
-      executionTime: data.executionTime,
-      stdout: data.stdout || null,
-      stderr: data.stderr || null,
-      isError: data.status !== "success",
-      exception: data.exception || null,
-    };
+    const result = await retry(async () => {
+      const response = await axios.post(url, payload, { headers });
+      const data = response.data;
+      return {
+        status: data.status,
+        executionTime: data.executionTime,
+        stdout: data.stdout || undefined,
+        stderr: data.stderr || undefined,
+        isError: data.status !== "success",
+        exception: data.exception || undefined,
+      };
+    }, {
+      maxAttempts: maxRetries,
+      delay: 1000,
+      factor: 2,
+      jitter: true,
+      handleError: (err, context) => {
+        console.error(`Attempt ${context.attemptNum + 1} failed:`, err);
+      }
+    });
+
+    return result;
   } catch (error) {
-    console.error("Error running code:", error);
+    console.error("Error running code after max retries:", error);
     return {
       status: "error",
       executionTime: 0,
-      stdout: null,
-      stderr: null,
+      stdout: undefined,
+      stderr: undefined,
       isError: true,
-      exception: "Failed to run code",
+      exception: "Failed to run code after multiple attempts",
     };
   }
 }
@@ -137,7 +132,11 @@ export const runCode = action({
       files: [
         {
           name: `solution.${getFileExtension(language)}`,
-          content: code,
+          content: `from data_structure import *\n\n${code}`,
+        },
+        {
+          name: `data_structure.${getFileExtension(language)}`,
+          content: DATA_STRUCTURES[language],
         },
       ],
     };
@@ -167,20 +166,24 @@ export const runTests = action({
       throw new Error("Question not found");
     }
 
-    const testCode = generateTestCode(question);
+    const testCode = generateTestCode(question, language);
 
     const payload = {
       language,
       stdin: "",
       files: [
         {
-          name: "tests.py",
-          content: testCode,
+          name: `tests.${getFileExtension(language)}`,
+          content: `from data_structure import *\n\n${testCode}`,
+        },
+        {
+          name: `data_structure.${getFileExtension(language)}`,
+          content: DATA_STRUCTURES[language],
         },
         {
           name: `solution.${getFileExtension(language)}`,
-          content: code,
-        },
+          content: `from data_structure import *\n\n${code}`,
+        }
       ],
     };
 
@@ -200,7 +203,7 @@ export const runTests = action({
       }
     }
 
-    return result;
+    return result; 
   },
 });
 

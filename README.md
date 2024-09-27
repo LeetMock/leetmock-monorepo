@@ -57,6 +57,11 @@ cd client
 npx convex dev
 ```
 
+# [optional] to import data into convex, use following commend
+```
+npx convex import --table [table_name] [file path]
+```
+
 **Note**: The first time and everytime convex backend is updated, you need to manually run
 
 ```bash

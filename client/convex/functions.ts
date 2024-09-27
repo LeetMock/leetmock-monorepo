@@ -13,7 +13,7 @@ import { ConvexError } from "convex/values";
 import { GenericActionCtx, GenericMutationCtx, GenericQueryCtx, UserIdentity } from "convex/server";
 import { action, mutation, query } from "./_generated/server";
 import { DataModel } from "./_generated/dataModel";
-import { isDefined } from "../lib/utils";
+import { isDefined } from "@/lib/utils";
 import { internal } from "./_generated/api";
 
 type Ctx = {
