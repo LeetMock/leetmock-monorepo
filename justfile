@@ -2,6 +2,7 @@ set positional-arguments
 
 # Generate the convex client openapi client types
 gen-convex-client:
+    npm config set registry https://registry.npmjs.org
     rm -f convex-client.yaml
     cd client && npm run generate-schema && cd ..
     rm -rf convex-client

@@ -34,6 +34,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useAgent } from "@/hooks/use-agent";
 
 interface WorkspaceToolbarProps {
   session: {
@@ -57,6 +58,8 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
   const [timeLeft, setTimeLeft] = useState<number>(60 * 10);
   const [isEndInterviewDialogOpen, setIsEndInterviewDialogOpen] = useState<boolean>(false);
   const color = useMemo(() => getRandomColor(), []);
+
+  useAgent(session.sessionId);
 
   useEffect(() => {
     const interval = setInterval(() => {

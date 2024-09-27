@@ -25,8 +25,6 @@ convex_client/models/request_actions_run_tests.py
 convex_client/models/request_actions_run_tests_args.py
 convex_client/models/request_admins_create_user_profile.py
 convex_client/models/request_admins_create_user_profile_args.py
-convex_client/models/request_code_runner_run_code.py
-convex_client/models/request_code_runner_run_tests.py
 convex_client/models/request_editor_snapshots_create.py
 convex_client/models/request_editor_snapshots_create_args.py
 convex_client/models/request_editor_snapshots_create_args_editor.py
@@ -68,8 +66,6 @@ convex_client/models/response_actions_get_token.py
 convex_client/models/response_actions_run_code.py
 convex_client/models/response_actions_run_tests.py
 convex_client/models/response_admins_create_user_profile.py
-convex_client/models/response_code_runner_run_code.py
-convex_client/models/response_code_runner_run_tests.py
 convex_client/models/response_editor_snapshots_create.py
 convex_client/models/response_editor_snapshots_get_by_id.py
 convex_client/models/response_editor_snapshots_get_latest_snapshot_by_session_id.py
@@ -106,8 +102,6 @@ docs/RequestActionsRunTests.md
 docs/RequestActionsRunTestsArgs.md
 docs/RequestAdminsCreateUserProfile.md
 docs/RequestAdminsCreateUserProfileArgs.md
-docs/RequestCodeRunnerRunCode.md
-docs/RequestCodeRunnerRunTests.md
 docs/RequestEditorSnapshotsCreate.md
 docs/RequestEditorSnapshotsCreateArgs.md
 docs/RequestEditorSnapshotsCreateArgsEditor.md
@@ -149,8 +143,6 @@ docs/ResponseActionsGetToken.md
 docs/ResponseActionsRunCode.md
 docs/ResponseActionsRunTests.md
 docs/ResponseAdminsCreateUserProfile.md
-docs/ResponseCodeRunnerRunCode.md
-docs/ResponseCodeRunnerRunTests.md
 docs/ResponseEditorSnapshotsCreate.md
 docs/ResponseEditorSnapshotsGetById.md
 docs/ResponseEditorSnapshotsGetLatestSnapshotBySessionId.md
@@ -192,8 +184,6 @@ test/test_request_actions_run_tests.py
 test/test_request_actions_run_tests_args.py
 test/test_request_admins_create_user_profile.py
 test/test_request_admins_create_user_profile_args.py
-test/test_request_code_runner_run_code.py
-test/test_request_code_runner_run_tests.py
 test/test_request_editor_snapshots_create.py
 test/test_request_editor_snapshots_create_args.py
 test/test_request_editor_snapshots_create_args_editor.py
@@ -235,8 +225,6 @@ test/test_response_actions_get_token.py
 test/test_response_actions_run_code.py
 test/test_response_actions_run_tests.py
 test/test_response_admins_create_user_profile.py
-test/test_response_code_runner_run_code.py
-test/test_response_code_runner_run_tests.py
 test/test_response_editor_snapshots_create.py
 test/test_response_editor_snapshots_get_by_id.py
 test/test_response_editor_snapshots_get_latest_snapshot_by_session_id.py

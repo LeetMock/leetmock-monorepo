@@ -603,68 +603,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
-  /api/run/codeRunner/runTests:
-    post:
-      summary: Calls a action at the path codeRunner.js:runTests
-      tags:
-        - action
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Request_codeRunner.runTests"
-        required: true
-      responses:
-        "200":
-          description: Convex executed your request and returned a result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Response_codeRunner.runTests"
-        "400":
-          description: Failed operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-        "500":
-          description: Convex Internal Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-
-  /api/run/codeRunner/runCode:
-    post:
-      summary: Calls a action at the path codeRunner.js:runCode
-      tags:
-        - action
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Request_codeRunner.runCode"
-        required: true
-      responses:
-        "200":
-          description: Convex executed your request and returned a result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Response_codeRunner.runCode"
-        "400":
-          description: Failed operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-        "500":
-          description: Convex Internal Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-
   /api/run/userProfiles/getUserProfile:
     post:
       summary: Calls a query at the path userProfiles.js:getUserProfile
@@ -856,20 +794,12 @@ components:
           required:
             - agentThreadId
             - assistantId
-            - functionName
-            - inputParameters
             - questionId
           properties:
             agentThreadId:
               type: string
             assistantId:
               type: string
-            functionName:
-              type: string
-            inputParameters:
-              type: array
-              items:
-                type: string
             questionId:
               type: string
               description: ID from table "questions"
@@ -1143,19 +1073,11 @@ components:
               type: object
               required:
                 - content
-                - functionName
-                - inputParameters
                 - language
                 - lastUpdated
               properties:
                 content:
                   type: string
-                functionName:
-                  type: string
-                inputParameters:
-                  type: array
-                  items:
-                    type: string
                 language:
                   type: string
                 lastUpdated:
@@ -1469,19 +1391,11 @@ components:
               type: object
               required:
                 - content
-                - functionName
-                - inputParameters
                 - language
                 - lastUpdated
               properties:
                 content:
                   type: string
-                functionName:
-                  type: string
-                inputParameters:
-                  type: array
-                  items:
-                    type: string
                 language:
                   type: string
                 lastUpdated:
@@ -1557,74 +1471,6 @@ components:
               description: ID from table "sessions"
             session_status:
               type: string
-
-    Request_codeRunner.runTests:
-      type: object
-      required:
-        - args
-      properties:
-        args:
-          type: object
-          required:
-            - code
-            - language
-            - questionId
-          properties:
-            code:
-              type: string
-            language:
-              type: string
-            questionId:
-              type: string
-              description: ID from table "questions"
-
-    Response_codeRunner.runTests:
-      type: object
-      required:
-        - status
-      properties:
-        status:
-          type: string
-          enum:
-            - "success"
-            - "error"
-        errorMessage:
-          type: string
-        errorData:
-          type: object
-        value: {}
-
-    Request_codeRunner.runCode:
-      type: object
-      required:
-        - args
-      properties:
-        args:
-          type: object
-          required:
-            - code
-            - language
-          properties:
-            code:
-              type: string
-            language:
-              type: string
-
-    Response_codeRunner.runCode:
-      type: object
-      required:
-        - status
-      properties:
-        status:
-          type: string
-          enum:
-            - "success"
-            - "error"
-        errorMessage:
-          type: string
-        errorData:
-          type: object
-        value: {}
 
     Request_userProfiles.getUserProfile:
       type: object

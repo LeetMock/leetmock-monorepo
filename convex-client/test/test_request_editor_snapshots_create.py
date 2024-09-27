@@ -38,10 +38,6 @@ class TestRequestEditorSnapshotsCreate(unittest.TestCase):
                 args = convex_client.models.request_editor_snapshots_create_args.Request_editorSnapshots_create_args(
                     editor = convex_client.models.request_editor_snapshots_create_args_editor.Request_editorSnapshots_create_args_editor(
                         content = '', 
-                        function_name = '', 
-                        input_parameters = [
-                            ''
-                            ], 
                         language = '', 
                         last_updated = 1.337, ), 
                     session_id = '', 
@@ -55,10 +51,6 @@ class TestRequestEditorSnapshotsCreate(unittest.TestCase):
                 args = convex_client.models.request_editor_snapshots_create_args.Request_editorSnapshots_create_args(
                     editor = convex_client.models.request_editor_snapshots_create_args_editor.Request_editorSnapshots_create_args_editor(
                         content = '', 
-                        function_name = '', 
-                        input_parameters = [
-                            ''
-                            ], 
                         language = '', 
                         last_updated = 1.337, ), 
                     session_id = '', 

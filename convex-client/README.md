@@ -100,8 +100,6 @@ Class | Method | HTTP request | Description
 *ActionApi* | [**api_run_actions_get_token_post**](docs/ActionApi.md#api_run_actions_get_token_post) | **POST** /api/run/actions/getToken | Calls a action at the path actions.js:getToken
 *ActionApi* | [**api_run_actions_run_code_post**](docs/ActionApi.md#api_run_actions_run_code_post) | **POST** /api/run/actions/runCode | Calls a action at the path actions.js:runCode
 *ActionApi* | [**api_run_actions_run_tests_post**](docs/ActionApi.md#api_run_actions_run_tests_post) | **POST** /api/run/actions/runTests | Calls a action at the path actions.js:runTests
-*ActionApi* | [**api_run_code_runner_run_code_post**](docs/ActionApi.md#api_run_code_runner_run_code_post) | **POST** /api/run/codeRunner/runCode | Calls a action at the path codeRunner.js:runCode
-*ActionApi* | [**api_run_code_runner_run_tests_post**](docs/ActionApi.md#api_run_code_runner_run_tests_post) | **POST** /api/run/codeRunner/runTests | Calls a action at the path codeRunner.js:runTests
 *MutationApi* | [**api_run_admins_create_user_profile_post**](docs/MutationApi.md#api_run_admins_create_user_profile_post) | **POST** /api/run/admins/createUserProfile | Calls a mutation at the path admins.js:createUserProfile
 *MutationApi* | [**api_run_editor_snapshots_create_post**](docs/MutationApi.md#api_run_editor_snapshots_create_post) | **POST** /api/run/editorSnapshots/create | Calls a mutation at the path editorSnapshots.js:create
 *MutationApi* | [**api_run_invite_codes_apply_invite_code_post**](docs/MutationApi.md#api_run_invite_codes_apply_invite_code_post) | **POST** /api/run/inviteCodes/applyInviteCode | Calls a mutation at the path inviteCodes.js:applyInviteCode
@@ -133,8 +131,6 @@ Class | Method | HTTP request | Description
  - [RequestActionsRunTestsArgs](docs/RequestActionsRunTestsArgs.md)
  - [RequestAdminsCreateUserProfile](docs/RequestAdminsCreateUserProfile.md)
  - [RequestAdminsCreateUserProfileArgs](docs/RequestAdminsCreateUserProfileArgs.md)
- - [RequestCodeRunnerRunCode](docs/RequestCodeRunnerRunCode.md)
- - [RequestCodeRunnerRunTests](docs/RequestCodeRunnerRunTests.md)
  - [RequestEditorSnapshotsCreate](docs/RequestEditorSnapshotsCreate.md)
  - [RequestEditorSnapshotsCreateArgs](docs/RequestEditorSnapshotsCreateArgs.md)
  - [RequestEditorSnapshotsCreateArgsEditor](docs/RequestEditorSnapshotsCreateArgsEditor.md)
@@ -176,8 +172,6 @@ Class | Method | HTTP request | Description
  - [ResponseActionsRunCode](docs/ResponseActionsRunCode.md)
  - [ResponseActionsRunTests](docs/ResponseActionsRunTests.md)
  - [ResponseAdminsCreateUserProfile](docs/ResponseAdminsCreateUserProfile.md)
- - [ResponseCodeRunnerRunCode](docs/ResponseCodeRunnerRunCode.md)
- - [ResponseCodeRunnerRunTests](docs/ResponseCodeRunnerRunTests.md)
  - [ResponseEditorSnapshotsCreate](docs/ResponseEditorSnapshotsCreate.md)
  - [ResponseEditorSnapshotsGetById](docs/ResponseEditorSnapshotsGetById.md)
  - [ResponseEditorSnapshotsGetLatestSnapshotBySessionId](docs/ResponseEditorSnapshotsGetLatestSnapshotBySessionId.md)

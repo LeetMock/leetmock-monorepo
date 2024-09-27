@@ -16,9 +16,9 @@ import { TokenResult, CodeRunResult, RunCodeResult, RunTestResult } from "@/lib/
 import { ConvexError, v } from "convex/values";
 import { DATA_STRUCTURES } from "@/lib/constants";
 
-import { retry } from '@lifeomic/attempt';
+import { retry } from "@lifeomic/attempt";
 
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function executeCode(payload: any, maxRetries = 3): Promise<CodeRunResult> {
   const url = "https://onecompiler-apis.p.rapidapi.com/api/v1/run";
@@ -29,26 +29,29 @@ async function executeCode(payload: any, maxRetries = 3): Promise<CodeRunResult>
   };
 
   try {
-    const result = await retry(async () => {
-      const response = await axios.post(url, payload, { headers });
-      const data = response.data;
-      return {
-        status: data.status,
-        executionTime: data.executionTime,
-        stdout: data.stdout || undefined,
-        stderr: data.stderr || undefined,
-        isError: data.status !== "success",
-        exception: data.exception || undefined,
-      };
-    }, {
-      maxAttempts: maxRetries,
-      delay: 1000,
-      factor: 2,
-      jitter: true,
-      handleError: (err, context) => {
-        console.error(`Attempt ${context.attemptNum + 1} failed:`, err);
+    const result = await retry(
+      async () => {
+        const response = await axios.post(url, payload, { headers });
+        const data = response.data;
+        return {
+          status: data.status,
+          executionTime: data.executionTime,
+          stdout: data.stdout || undefined,
+          stderr: data.stderr || undefined,
+          isError: data.status !== "success",
+          exception: data.exception || undefined,
+        };
+      },
+      {
+        maxAttempts: maxRetries,
+        delay: 1000,
+        factor: 2,
+        jitter: true,
+        handleError: (err, context) => {
+          console.error(`Attempt ${context.attemptNum + 1} failed:`, err);
+        },
       }
-    });
+    );
 
     return result;
   } catch (error) {
@@ -183,7 +186,7 @@ export const runTests = action({
         {
           name: `solution.${getFileExtension(language)}`,
           content: `from data_structure import *\n\n${code}`,
-        }
+        },
       ],
     };
 
@@ -203,7 +206,7 @@ export const runTests = action({
       }
     }
 
-    return result; 
+    return result;
   },
 });
 
@@ -222,8 +225,6 @@ export const getEditorSnapshot = action({
       language: v.string(),
       content: v.string(),
       lastUpdated: v.number(),
-      functionName: v.string(),
-      inputParameters: v.array(v.string()),
     }),
     terminal: v.object({
       output: v.string(),

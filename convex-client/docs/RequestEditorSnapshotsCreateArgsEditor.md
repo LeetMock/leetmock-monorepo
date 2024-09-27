@@ -6,8 +6,6 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **content** | **str** |  | 
-**function_name** | **str** |  | 
-**input_parameters** | **List[str]** |  | 
 **language** | **str** |  | 
 **last_updated** | **float** |  | 
 

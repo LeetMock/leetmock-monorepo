@@ -36,20 +36,12 @@ class TestRequestEditorSnapshotsCreateArgsEditor(unittest.TestCase):
         if include_optional:
             return RequestEditorSnapshotsCreateArgsEditor(
                 content = '',
-                function_name = '',
-                input_parameters = [
-                    ''
-                    ],
                 language = '',
                 last_updated = 1.337
             )
         else:
             return RequestEditorSnapshotsCreateArgsEditor(
                 content = '',
-                function_name = '',
-                input_parameters = [
-                    ''
-                    ],
                 language = '',
                 last_updated = 1.337,
         )

@@ -27,11 +27,9 @@ class RequestEditorSnapshotsCreateArgsEditor(BaseModel):
     RequestEditorSnapshotsCreateArgsEditor
     """ # noqa: E501
     content: StrictStr
-    function_name: StrictStr = Field(alias="functionName")
-    input_parameters: List[StrictStr] = Field(alias="inputParameters")
     language: StrictStr
     last_updated: Union[StrictFloat, StrictInt] = Field(alias="lastUpdated")
-    __properties: ClassVar[List[str]] = ["content", "functionName", "inputParameters", "language", "lastUpdated"]
+    __properties: ClassVar[List[str]] = ["content", "language", "lastUpdated"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -85,8 +83,6 @@ class RequestEditorSnapshotsCreateArgsEditor(BaseModel):
 
         _obj = cls.model_validate({
             "content": obj.get("content"),
-            "functionName": obj.get("functionName"),
-            "inputParameters": obj.get("inputParameters"),
             "language": obj.get("language"),
             "lastUpdated": obj.get("lastUpdated")
         })
