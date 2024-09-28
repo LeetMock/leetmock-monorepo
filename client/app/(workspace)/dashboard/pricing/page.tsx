@@ -14,8 +14,8 @@ interface MembershipCardProps {
   }
 
 const memberItems: MembershipCardProps[] = [
-    { name: "Basic Plan", description: "Our most popular plan.", price: "$1", advantages:["Advantage 1", "Advantage 2", "Advantage 3"] },
-    { name: "Advanced Plan", description: "Our most popular plan.", price: "$2", advantages:["Advantage 1", "Advantage 2", "Advantage 3"] },
+    { name: "Basic Plan", description: "Includes limited interview minutes and essential features.", price: "$29.99", advantages:["Advantage 1", "Advantage 2", "Advantage 3"] },
+    { name: "Premium Plan", description: "Provides access to premium features such as advanced interview scenarios and in-depth feedback options.", price: "$2", advantages:["1200 minutes included", "",  "Advantage 3"] },
     { name: "VIP Plan", description: "Our most popular plan.", price: "$3", advantages:["Advantage 1", "Advantage 2", "Advantage 3"] }
   ];
 
