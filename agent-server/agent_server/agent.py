@@ -15,7 +15,7 @@ from agent_server.types import SessionMetadata, EditorSnapshot
 from matplotlib.pyplot import disconnect
 
 
-logger = logging.getLogger("minimal-assistant")
+logger = logging.getLogger("agent")
 logger.setLevel(logging.DEBUG)
 
 
@@ -116,6 +116,7 @@ class SimpleLLMStream(llm.LLMStream):
         logger.info("Agent stream started")
 
         async for chunk in stream:
+            logger.info(f"Received chunk event: {chunk.event}")
             tags = chunk.data.get("tags", [])
             if "chatbot" not in tags:
                 continue

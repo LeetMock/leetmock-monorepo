@@ -32,7 +32,7 @@ from agent_server.types import SessionMetadata
 log_directory = os.path.join(os.path.dirname(__file__), "logs")
 os.makedirs(log_directory, exist_ok=True)
 
-logger = logging.getLogger("minimal-assistant")
+logger = logging.getLogger("worker")
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter(
     "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
