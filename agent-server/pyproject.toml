@@ -19,13 +19,14 @@ langgraph-sdk = "^0.1.27"
 matplotlib = "^3.9.2"
 nest-asyncio = "^1.6.0"
 debugpy = "^1.8.5"
-livekit = "^0.12.1"
+livekit = ">=0.17.0"
 pydantic = "^2.8.2"
-livekit-agents = "^0.8.6"
+livekit-agents = "^0.9.1"
 convex = "^0.6.0"
 openapi-generator-cli = "^4.3.1"
 convex_client = { path = "../convex-client", develop = true }
 livekit-plugins-elevenlabs = "^0.7.5"
+elevenlabs = "^1.9.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.2"

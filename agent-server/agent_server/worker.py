@@ -1,7 +1,6 @@
 import os
 import asyncio
 import logging
-from typing import List, cast
 import psutil
 import convex_client
 
@@ -23,9 +22,8 @@ from livekit.agents import (
 from livekit.agents.worker import _DefaultLoadCalc
 from livekit.rtc import DataPacket
 from livekit.agents.voice_assistant import VoiceAssistant
-from livekit.plugins import deepgram, openai, silero
+from livekit.plugins import deepgram, silero, elevenlabs
 from agent_server.agent import LangGraphLLM
-from agent_server.types import SessionMetadata
 
 
 # Add this near the top of your file, before setting up logging
@@ -152,7 +150,7 @@ async def entrypoint(ctx: JobContext):
         agent.set_agent_context(response.value, interaction_type)
         return agent.chat(chat_ctx=chat_ctx)
 
-    def will_synthesize_assistant_reply(
+    def before_llm_callback(
         assistant: VoiceAssistant, chat_ctx: llm.ChatContext
     ) -> llm.LLMStream:
         return invoke_agent(chat_ctx, "response_required")
@@ -164,9 +162,23 @@ async def entrypoint(ctx: JobContext):
         vad=ctx.proc.userdata["vad"],
         stt=deepgram.STT(),
         llm=agent,
-        tts=openai.TTS(),
+        tts=elevenlabs.TTS(
+            model_id="eleven_multilingual_v2",
+            voice=elevenlabs.Voice(
+                id="DaWkexxdbjoJ99NpkRGF",
+                name="brian-optimized",
+                category="cloned",
+                settings=elevenlabs.VoiceSettings(
+                    stability=0.3,
+                    similarity_boost=0.5,
+                    style=0.5,
+                    use_speaker_boost=True,
+                ),
+            ),
+        ),
         chat_ctx=initial_ctx,
-        will_synthesize_assistant_reply=will_synthesize_assistant_reply,
+        interrupt_speech_duration=0.2,
+        before_llm_cb=before_llm_callback,
     )
     assistant.start(ctx.room)
 
@@ -268,7 +280,7 @@ async def entrypoint(ctx: JobContext):
     await prepare_session_and_acknowledge()
     await prepare_initial_agent_context()
     await assistant.say(
-        will_synthesize_assistant_reply(assistant, initial_ctx),
+        before_llm_callback(assistant, initial_ctx),
         allow_interruptions=True,
         add_to_chat_ctx=True,
     )
