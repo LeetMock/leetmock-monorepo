@@ -5,16 +5,6 @@ import CopyPlugin from "copy-webpack-plugin";
 // reload node_modules on change
 const watchNodeModules = false;
 
-const wasmPaths = [
-  "./node_modules/onnxruntime-web/dist/ort-wasm.wasm",
-  "./node_modules/onnxruntime-web/dist/ort-wasm-threaded.wasm",
-  "./node_modules/onnxruntime-web/dist/ort-wasm-simd.wasm",
-  "./node_modules/onnxruntime-web/dist/ort-wasm-simd.jsep.wasm",
-  "./node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.wasm",
-  "./node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.jsep.wasm",
-  "./node_modules/onnxruntime-web/dist/ort-training-wasm-simd.wasm",
-];
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -34,11 +24,11 @@ const nextConfig = {
     // };
 
     //Voice-Pipeline needed: local dev server - copy wasm into static/chunks/app
-    config.plugins.push(
-      new CopyPlugin({
-        patterns: wasmPaths.map((p) => ({ from: p, to: "static/chunks/" })),
-      })
-    );
+    // config.plugins.push(
+    //   new CopyPlugin({
+    //     patterns: wasmPaths.map((p) => ({ from: p, to: "static/chunks/" })),
+    //   })
+    // );
 
     if (watchNodeModules) {
       // It's recommended to opt-out of managedPaths if editing files in

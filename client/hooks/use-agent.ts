@@ -1,22 +1,39 @@
-import { ConnectionState, RoomEvent, Track } from "livekit-client";
+import { ConnectionState, ParticipantKind, Track } from "livekit-client";
 import {
   useTracks,
   useRemoteParticipants,
-  TrackReferenceOrPlaceholder,
   useDataChannel,
   useConnectionState,
+  useParticipantTracks,
+  useParticipantAttributes,
 } from "@livekit/components-react";
 import { useEffect, useMemo, useState } from "react";
 import { encode } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
 
+export type AgentState =
+  | "disconnected"
+  | "connecting"
+  | "initializing"
+  | "listening"
+  | "thinking"
+  | "speaking";
+
+const state_attribute = "lk.agent.state";
+
 export const useAgent = (sessionId: Id<"sessions">) => {
   const [agentReceivedSessionId, setAgentReceivedSessionId] = useState(false);
 
-  const tracks = useTracks();
   const connectionState = useConnectionState();
+  const agentParticipant = useRemoteParticipants().find((p) => p.kind === ParticipantKind.AGENT);
+  const { attributes } = useParticipantAttributes({ participant: agentParticipant });
+  const agentAudioTrack = useParticipantTracks(
+    [Track.Source.Microphone],
+    agentParticipant?.identity
+  )[0];
+
   const { send: sendSessionId } = useDataChannel("session-id");
-  console.log(connectionState);
+
   // Agent server send ack to client that it received the session id
   useDataChannel("session-id-received", (message) => {
     console.log("Received session id ack", message);
@@ -37,7 +54,6 @@ export const useAgent = (sessionId: Id<"sessions">) => {
     // Keep sending the session id to the agent server until it is received
     if (connectionState === ConnectionState.Connected) {
       const interval = setInterval(() => {
-        console.log("Sending session id to agent server", sessionId);
         sendSessionId(encode(sessionId), { reliable: true });
       }, 1000);
 
@@ -45,41 +61,31 @@ export const useAgent = (sessionId: Id<"sessions">) => {
     }
   }, [agentReceivedSessionId, connectionState, sendSessionId, sessionId]);
 
-  const participants = useRemoteParticipants({
-    updateOnlyOn: [RoomEvent.ParticipantMetadataChanged],
-  });
-
-  const agentParticipant = useMemo(() => {
-    return participants.find((p) => p.isAgent);
-  }, [participants]);
-
   const isAgentConnected = useMemo(() => {
     return agentParticipant !== undefined && agentReceivedSessionId;
   }, [agentParticipant, agentReceivedSessionId]);
 
-  const agentAudioTrack: TrackReferenceOrPlaceholder | undefined = useMemo(() => {
-    const track = tracks.find((trackRef) => {
-      return trackRef.publication.kind === Track.Kind.Audio && trackRef.participant.isAgent;
-    });
-
-    if (track) return track;
-
-    if (agentParticipant) {
-      return {
-        participant: agentParticipant,
-        source: Track.Source.Microphone,
-      };
-    }
-
-    return undefined;
-  }, [tracks, agentParticipant]);
-
   const isAgentSpeaking = agentParticipant ? agentParticipant.isSpeaking : false;
+
+  const state: AgentState = useMemo(() => {
+    if (connectionState === ConnectionState.Disconnected) {
+      return "disconnected";
+    } else if (
+      connectionState === ConnectionState.Connecting ||
+      !agentParticipant ||
+      !attributes?.[state_attribute]
+    ) {
+      return "connecting";
+    } else {
+      return attributes[state_attribute] as AgentState;
+    }
+  }, [attributes, agentParticipant, connectionState]);
 
   return {
     isAgentSpeaking,
     agentParticipant,
     isAgentConnected,
     agentAudioTrack,
+    state,
   };
 };

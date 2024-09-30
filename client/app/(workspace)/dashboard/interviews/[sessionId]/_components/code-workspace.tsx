@@ -5,7 +5,11 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { WorkspaceToolbar } from "./workspace-toolbar";
 import { ConnectionState } from "livekit-client";
-import { useConnectionState, useLocalParticipant } from "@livekit/components-react";
+import {
+  useConnectionState,
+  useLocalParticipant,
+  useVoiceAssistant,
+} from "@livekit/components-react";
 import { AgentTranscripts } from "./agent-transcripts";
 import { LucideFileText } from "lucide-react";
 import { cn, isDefined } from "@/lib/utils";

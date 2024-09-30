@@ -59,7 +59,7 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
   const [isEndInterviewDialogOpen, setIsEndInterviewDialogOpen] = useState<boolean>(false);
   const color = useMemo(() => getRandomColor(), []);
 
-  useAgent(session.sessionId);
+  const { state } = useAgent(session.sessionId);
 
   useEffect(() => {
     const interval = setInterval(() => {
