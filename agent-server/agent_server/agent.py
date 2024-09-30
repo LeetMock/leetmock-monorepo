@@ -91,6 +91,20 @@ class LangGraphLLM(llm.LLM):
         return SimpleLLMStream(stream=stream, chat_ctx=chat_ctx, fnc_ctx=fnc_ctx)
 
 
+class NoOpLLMStream(llm.LLMStream):
+
+    def __init__(
+        self,
+        *,
+        chat_ctx: llm.ChatContext,
+        fnc_ctx: llm.FunctionContext | None = None,
+    ):
+        super().__init__(chat_ctx=chat_ctx, fnc_ctx=fnc_ctx)
+
+    async def __anext__(self) -> llm.ChatChunk:
+        raise StopAsyncIteration
+
+
 class SimpleLLMStream(llm.LLMStream):
 
     def __init__(

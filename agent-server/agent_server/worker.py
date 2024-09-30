@@ -23,7 +23,7 @@ from livekit.agents.worker import _DefaultLoadCalc
 from livekit.rtc import DataPacket
 from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.plugins import deepgram, silero, elevenlabs
-from agent_server.agent import LangGraphLLM
+from agent_server.agent import LangGraphLLM, NoOpLLMStream
 
 
 # Add this near the top of your file, before setting up logging
@@ -178,6 +178,7 @@ async def entrypoint(ctx: JobContext):
         ),
         chat_ctx=initial_ctx,
         interrupt_speech_duration=0.7,
+        preemptive_synthesis=False,
         before_llm_cb=before_llm_callback,
     )
     assistant.start(ctx.room)
@@ -284,6 +285,16 @@ async def entrypoint(ctx: JobContext):
         allow_interruptions=True,
         add_to_chat_ctx=True,
     )
+
+    # while True:
+    #     await assistant.say(
+    #         invoke_agent(
+    #             chat_ctx=assistant.chat_ctx, interaction_type="response_required"
+    #         ),
+    #         allow_interruptions=True,
+    #         add_to_chat_ctx=True,
+    #     )
+    #     await asyncio.sleep(3)
 
 
 if __name__ == "__main__":

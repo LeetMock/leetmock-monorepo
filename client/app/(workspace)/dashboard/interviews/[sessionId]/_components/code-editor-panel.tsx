@@ -52,7 +52,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   const { size, isResizing, resizeHandleProps } = useResizePanel({
     defaultSize: 400,
     minSize: 200,
-    maxSize: 800,
+    maxSize: 900,
     direction: "vertical",
     storageId: "leetmock.workspace.code-editor",
   });
@@ -113,7 +113,6 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
       if (result.status === "success" && result.testResults) {
         const executionTime = result.executionTime;
         setTestResults(result.testResults);
-
       } else {
         const errorMessage =
           result.stderr || result.exception || "Error running tests. Please try again.";
