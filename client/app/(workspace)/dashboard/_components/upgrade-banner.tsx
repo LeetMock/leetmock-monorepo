@@ -11,9 +11,11 @@ export const UpgradeBanner: React.FC<{ className?: string }> = ({ className }) =
   return (
     <div
       className={cn(
-        "flex items-center justify-between p-4 border-b h-12",
-        theme === "dark" ? "bg-gray-50" : "bg-gray-800",
-        theme === "dark" ? "text-gray-900" : "text-gray-50",
+        "flex items-center justify-between p-4 border-b h-11 pr-2.5",
+        theme === "dark"
+          ? "bg-gradient-to-r from-blue-700 to-purple-700"
+          : "bg-gradient-to-r from-blue-100 to-purple-100",
+        theme === "dark" ? "text-gray-100" : "text-gray-900",
         className
       )}
     >
@@ -22,16 +24,18 @@ export const UpgradeBanner: React.FC<{ className?: string }> = ({ className }) =
         <AlertDescription>
           <span className="font-medium">
             Upgrade to Pro to get more interview time! Check out our{" "}
-            <Link href="/pricing" className="text-blue-500 hover:underline">
-              pricing
+            <Link href="/pricing" className="text-blue-500 hover:underline dark:text-blue-200">
+              Pricing
             </Link>
             .
           </span>
-          <span className="ml-3 text-xs">🎉</span>
         </AlertDescription>
       </div>
-
-      <Button size="icon" variant="ghost">
+      <Button
+        className="hover:bg-black/5 dark:hover:bg-white/10 h-7 w-7 transition-all duration-200"
+        size="icon"
+        variant="ghost"
+      >
         <X className="w-4 h-4" />
       </Button>
     </div>
