@@ -177,7 +177,7 @@ async def entrypoint(ctx: JobContext):
             ),
         ),
         chat_ctx=initial_ctx,
-        interrupt_speech_duration=0.2,
+        interrupt_speech_duration=0.7,
         before_llm_cb=before_llm_callback,
     )
     assistant.start(ctx.room)
