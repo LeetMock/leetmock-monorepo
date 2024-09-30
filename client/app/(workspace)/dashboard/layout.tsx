@@ -15,6 +15,7 @@ const DashboardSkeleton: React.FC<{ children: React.ReactNode }> = ({ children }
     <div className="flex h-screen bg-muted/50">
       {/* Left Sidebar */}
       <DashboardSidebar />
+      {/* Right Content */}
       <div className="flex flex-col flex-1 rounded-md m-3 ml-0 bg-background shadow-lg">
         {showPriceBanner && <UpgradeBanner className="rounded-t-md" />}
         <div className="relative w-full h-full">
