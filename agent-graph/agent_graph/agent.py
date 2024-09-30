@@ -220,7 +220,6 @@ graph_builder.add_conditional_edges(
     {
         "reminder": "reminder",
         "run_test": "run_test",
-        END: END,
     },
 )
 graph_builder.add_edge("run_test", "chatbot")
