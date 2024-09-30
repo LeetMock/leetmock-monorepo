@@ -199,12 +199,6 @@ def reminder(state: AgentState, config: RunnableConfig):
 def check_user_activity(state: AgentState):
     agent_state = get_default_state(AgentState, state, DEFAULT_STATE)
 
-    time_diff = int(int(time.time()) - agent_state["content_last_updated"] / 1000)
-
-    # if last user activity is less than 4 seconds, then user is still typing
-    if time_diff < 4:
-        return END
-
     if agent_state["interaction_type"] == "reminder_required":
         return "reminder"
 
