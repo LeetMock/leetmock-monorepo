@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Check, Linkedin } from "lucide-react";
 import { LightBulbIcon } from "@/components/Icons";
+import Link from "next/link";
 
 export const HeroCards = () => {
   return (
@@ -24,13 +25,13 @@ export const HeroCards = () => {
           </Avatar>
 
           <div className="flex flex-col">
-            <CardTitle className="text-lg">Allen Gao</CardTitle>
-            <CardDescription>@allen_gao</CardDescription>
+            <CardTitle className="text-lg">Jakub Gao</CardTitle>
+            <CardDescription>@jakub_gao</CardDescription>
           </div>
         </CardHeader>
 
         <CardContent>
-          LeetMock helps a lot 😃!! I am now confident for any coding interviews!
+          LeetMock is the only AI mock interview platform that works for me.
         </CardContent>
       </Card>
 
@@ -38,67 +39,24 @@ export const HeroCards = () => {
       <Card className="absolute right-[20px] top-4 w-80 flex flex-col justify-center items-center drop-shadow-xl shadow-black/10 dark:shadow-white/10">
         <CardHeader className="mt-8 flex justify-center items-center pb-2">
           <img
-            src="https://i.pravatar.cc/150?img=2"
+            src="https://i.pravatar.cc/150?img=31"
             alt="user avatar"
             className="absolute grayscale-[0%] -top-12 rounded-full w-24 h-24 aspect-square object-cover"
           />
-          <CardTitle className="text-center">Baby Boby</CardTitle>
-          <CardDescription className="font-normal text-primary">Backend Developer</CardDescription>
+          <CardTitle className="text-center">Jessica</CardTitle>
+          <CardDescription className="font-normal text-primary">Full Stack Developer</CardDescription>
         </CardHeader>
 
         <CardContent className="text-center pb-2">
           <p>
-            I really enjoy practicing coding interviews with LeetMock. It is a great platform to
-            improve my coding skills.
+            I love practicing coding interviews with LeetMock. Its personalized feedback helps me sharpen my skills in ways no other platform has before.
           </p>
         </CardContent>
 
         <CardFooter>
           <div>
-            <a
-              rel="noreferrer noopener"
-              href="https://github.com/"
-              target="_blank"
-              className={buttonVariants({
-                variant: "ghost",
-                size: "sm",
-              })}
-            >
-              <span className="sr-only">Github icon</span>
-            </a>
-            <a
-              rel="noreferrer noopener"
-              href="https://twitter.com/"
-              target="_blank"
-              className={buttonVariants({
-                variant: "ghost",
-                size: "sm",
-              })}
-            >
-              <span className="sr-only">X icon</span>
-              <svg
-                role="img"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                className="fill-foreground w-5 h-5"
-              >
-                <title>X</title>
-                <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
-              </svg>
-            </a>
 
-            <a
-              rel="noreferrer noopener"
-              href="https://www.linkedin.com/"
-              target="_blank"
-              className={buttonVariants({
-                variant: "ghost",
-                size: "sm",
-              })}
-            >
-              <span className="sr-only">Linkedin icon</span>
-              <Linkedin size="20" />
-            </a>
+
           </div>
         </CardFooter>
       </Card>
@@ -107,28 +65,30 @@ export const HeroCards = () => {
       <Card className="absolute top-[150px] left-[50px] w-72  drop-shadow-xl shadow-black/10 dark:shadow-white/10">
         <CardHeader>
           <CardTitle className="flex item-center justify-between">
-            Free
+            Basic
             <Badge variant="secondary" className="text-sm text-primary">
-              Most popular
+              All essential features
             </Badge>
           </CardTitle>
           <div>
-            <span className="text-3xl font-bold">$0</span>
+            <span className="text-3xl font-bold">$29.99</span>
             <span className="text-muted-foreground"> /month</span>
           </div>
 
-          <CardDescription>Not Free Yet</CardDescription>
+          <CardDescription>Experience your first AI interview, on us.</CardDescription>
         </CardHeader>
 
         <CardContent>
-          <Button className="w-full">Start Free Trial</Button>
+          <Link href="/pricing" className={buttonVariants({ className: "w-full" })}>
+            Start Today
+          </Link>
         </CardContent>
 
         <hr className="w-4/5 m-auto mb-4" />
 
         <CardFooter className="flex">
           <div className="space-y-4">
-            {["1 Phone Session", "1 Interview Feedback", "Interview Recap Available"].map(
+            {["600 interview minutes", "Various question options", "Personalized feedback / recap", "Email Support"].map(
               (benefit: string) => (
                 <span key={benefit} className="flex">
                   <Check className="text-green-500" /> <h3 className="ml-2">{benefit}</h3>
@@ -146,9 +106,9 @@ export const HeroCards = () => {
             <LightBulbIcon />
           </div>
           <div>
-            <CardTitle>Practice</CardTitle>
+            <CardTitle>Try It Out</CardTitle>
             <CardDescription className="text-md mt-2">
-              Practice, Practice, Practice. Practice makes perfect.
+              Give it a try! The very first mock interview platform that actually works with Gen-AI!
             </CardDescription>
           </div>
         </CardHeader>

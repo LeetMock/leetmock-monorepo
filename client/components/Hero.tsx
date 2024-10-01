@@ -53,7 +53,7 @@ export const Hero = () => {
           </h2>
         </main>
         <p className="text-xl text-muted-foreground md:w-10/12 mx-auto lg:mx-0">
-          Practice coding interviews with AI. Get instant feedback. Improve interview skills.
+          Practice coding interviews with AI. Get personalized feedback. Improve interview skills.
         </p>
         {isLoaded && (
           <div className="space-y-4 md:space-y-0 md:space-x-4">
