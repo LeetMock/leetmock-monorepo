@@ -17,15 +17,18 @@ interface MembershipCardProps {
 const memberItems: MembershipCardProps[] = [
     { name: "Basic Plan", description: "Includes limited interview minutes and essential features.", price: "$29.99", advantages:["Advantage 1", "Advantage 2", "Advantage 3"], period: "/per month" },
     { name: "Premium Plan", description: "Provides access to premium features such as advanced interview scenarios and in-depth feedback options.", price: "$2", advantages:["1200 minutes included", "",  "Advantage 3"], period: "/per month" },
+    { name: "VIP Plan", description: "Our most popular plan.", price: "$3", advantages:["Advantage 1", "Advantage 2", "Advantage 3"], period: "/per additional minute" },
+    { name: "VIP Plan", description: "Our most popular plan.", price: "$3", advantages:["Advantage 1", "Advantage 2", "Advantage 3"], period: "/per additional minute" },
+    { name: "VIP Plan", description: "Our most popular plan.", price: "$3", advantages:["Advantage 1", "Advantage 2", "Advantage 3"], period: "/per additional minute" },
     { name: "VIP Plan", description: "Our most popular plan.", price: "$3", advantages:["Advantage 1", "Advantage 2", "Advantage 3"], period: "/per additional minute" }
   ];
 
 const MembershipCard = ({name, description, price, advantages}: MembershipCardProps) => {
     return (
-        <nav className={cn("flex flex-row gap-4 mr-8 items-start space-x-4")}>
+        <nav className={cn("flex flex-row gap-4 mr-8 items-start space-x-4   ")}>
         {memberItems.map((item, index) => (
             <div key={index} className="w-full">
-                <Card className="shadow-xl">
+                <Card className="shadow-xl  w-64 h-128">
                 <CardHeader className="pb-3 mb-8">
                 <CardTitle>{item.name}</CardTitle>
                 <CardDescription> 
