@@ -11,9 +11,11 @@ import {
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from "@clerk/clerk-react";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 export function AccountForm() {
   const { user } = useUser();
+  const { userProfile } = useUserProfile();
 
   return (
     <div className="flex flex-col gap-4">
@@ -43,21 +45,23 @@ export function AccountForm() {
           <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
             <LayersIcon className="mt-px h-5 w-5" />
             <div className="space-y-1">
-              <p className="text-sm font-medium leading-none">Free Tier</p>
-              <p className="text-sm text-muted-foreground">Your account tier</p>
+              <p className="text-sm font-medium leading-none">
+                {userProfile!.subscription.charAt(0).toUpperCase() + userProfile!.subscription.slice(1)}
+              </p>
+              <p className="text-sm text-muted-foreground">Your current subscription</p>
             </div>
           </div>
           <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
             <TimerIcon className="mt-px h-5 w-5" />
             <div className="space-y-1">
-              <p className="text-sm font-medium leading-none">50 minutes</p>
+              <p className="text-sm font-medium leading-none">{userProfile!.minutesRemaining} minutes</p>
               <p className="text-sm text-muted-foreground">Interview Minutes remaining</p>
             </div>
           </div>
           <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
             <RocketIcon className="mt-px h-5 w-5" />
             <div className="space-y-1">
-              <p className="text-sm font-medium leading-none">$5.00 / minute</p>
+              <p className="text-sm font-medium leading-none">TBD / minute</p>
               <p className="text-sm text-muted-foreground">Charge beyond the tier minutes</p>
             </div>
           </div>

@@ -4,7 +4,7 @@ import { FullScreenSection } from "@/components/FullScreenSection";
 
 export default function Home() {
     return (
-        <div className="snap-y snap-mandatory h-screen overflow-y-scroll">
+        <div className="home-container h-screen overflow-y-auto snap-y snap-mandatory">
             <FullScreenSection>
                 <Hero />
             </FullScreenSection>

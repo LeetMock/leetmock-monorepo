@@ -6,7 +6,7 @@ interface FullScreenSectionProps {
 
 export const FullScreenSection: React.FC<FullScreenSectionProps> = ({ children }) => {
   return (
-    <section className="h-screen w-full flex items-center justify-center snap-start">
+    <section className="h-screen w-full flex items-center justify-center snap-start shrink-0">
       {children}
     </section>
   );
