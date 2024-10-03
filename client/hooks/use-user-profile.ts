@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 
 interface UserProfile {
   userId: string;
-  role: "admin" | "user" | "waitlist";
+  role: "admin" | "user";
   subscription: "basic" | "premium" | "enterprise";
 }
 

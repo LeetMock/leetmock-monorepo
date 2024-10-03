@@ -54,10 +54,10 @@ export const UserDropdown: React.FC<{
                     userProfile.subscription === "enterprise"
                       ? PriceTier.Enterprise
                       : userProfile.subscription === "premium"
-                      ? PriceTier.Premium
-                      : userProfile.subscription === "basic"
-                      ? PriceTier.Basic
-                      : PriceTier.Free
+                        ? PriceTier.Premium
+                        : userProfile.subscription === "basic"
+                          ? PriceTier.Basic
+                          : PriceTier.Free
                   }
                 />
               </div>
