@@ -1,4 +1,6 @@
 import React from "react";
+import Link from "next/link";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -26,9 +28,11 @@ export const DashboardBreadcrumb: React.FC<DashboardBreadcrumbProps> = ({ classN
           <React.Fragment key={segment}>
             <BreadcrumbItem>
               {index < pathSegments.length - 1 ? (
-                <BreadcrumbLink href={`/${pathSegments.slice(0, index + 1).join("/")}`}>
-                  <span className="text-sm font-medium">{toUpperCase(segment)}</span>
-                </BreadcrumbLink>
+                <Link href={`/${pathSegments.slice(0, index + 1).join("/")}`}>
+                  <BreadcrumbLink asChild>
+                    <span className="text-sm font-medium">{toUpperCase(segment)}</span>
+                  </BreadcrumbLink>
+                </Link>
               ) : (
                 <BreadcrumbPage>
                   <span className="text-sm font-medium">{toUpperCase(segment)}</span>
