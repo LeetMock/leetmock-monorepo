@@ -27,7 +27,7 @@ const SubscriptionPage: React.FC = () => {
 
   return (
     <div>
-      <div className="flex justify-center mb-8">
+      <div className="flex justify-center mb-8 gap-4">
         <Card className="w-full max-w-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -40,7 +40,7 @@ const SubscriptionPage: React.FC = () => {
                 {userProfile!.subscription.charAt(0).toUpperCase() + userProfile!.subscription.slice(1)}
               </div>
               <Button variant="default" size="sm"
-                onClick={() => window.open('https://billing.stripe.com/p/login/test_28oeYK5gk2N27nidQQ', '_blank')}
+                onClick={() => window.open(`https://billing.stripe.com/p/login/test_28oeYK5gk2N27nidQQ?prefilled_email=${user!.emailAddresses[0].emailAddress}`, '_blank')}
               >
                 Manage Subscription
               </Button>
@@ -50,12 +50,39 @@ const SubscriptionPage: React.FC = () => {
             </p>
           </CardContent>
         </Card>
+        <Card className="w-full max-w-md">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Buy Minutes Beyond Your Plan
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="text-2xl font-bold">
+                {`$${"TBD"} / 60 minutes`}
+              </div>
+              <Button variant="default" size="sm"
+                onClick={() => window.open(`https://billing.stripe.com/p/login/test_28oeYK5gk2N27nidQQ?prefilled_email=${user!.emailAddresses[0].emailAddress}`, '_blank')}
+              >
+                Buy Now
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              Basic: $TBD / 60 mins
+            </p>
+            <p className="text-xs text-muted-foreground mt-2">
+              Premium: $TBD / 60 mins
+            </p>
+          </CardContent>
+        </Card>
       </div>
+      {/* @ts-ignore */}
       <stripe-pricing-table
         pricing-table-id="prctbl_1Q5KMgB2uc8lODcNGav3acOC"
         publishable-key="pk_test_51Q5JueB2uc8lODcNMXsM6GYMeI2vhRf4d0XCvjk1sQp4SvBrJuLTyI0v8q1c0uB47qvqHV3cHMVvOyvB2kcaDB5t008enIiH1z"
-        customer-email={user!.emailAddresses[0].emailAddress}
-      ></stripe-pricing-table>
+        customer-email={user!.emailAddresses[0].emailAddress}>
+        {/* @ts-ignore */}
+      </stripe-pricing-table>
 
     </div>
   );

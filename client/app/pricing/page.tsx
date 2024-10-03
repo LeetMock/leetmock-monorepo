@@ -39,7 +39,7 @@ export const tiers: PricingTier[] = [
     {
         name: 'Basic',
         id: '0',
-        href: '/subscribe',
+        href: '/dashboard/settings/subscription',
         price: { '1': '$29.99', '2': '$305.99' },
         discountPrice: { '1': '', '2': '' },
         description: `Experience your first AI interview, on us.`,
@@ -57,7 +57,7 @@ export const tiers: PricingTier[] = [
     {
         name: 'Premium',
         id: '1',
-        href: '/subscribe',
+        href: '/dashboard/settings/subscription',
         price: { '1': '$49.99', '2': '$509.99' },
         discountPrice: { '1': '', '2': '' },
         description: `Essential interview practice for steady progress.`,
@@ -87,7 +87,7 @@ export const tiers: PricingTier[] = [
         featured: true,
         highlighted: false,
         soldOut: false,
-        cta: `Get started`,
+        cta: `Contact Us`,
     },
 ];
 

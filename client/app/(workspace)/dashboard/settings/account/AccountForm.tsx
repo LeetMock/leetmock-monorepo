@@ -34,14 +34,6 @@ export function AccountForm() {
               <p className="text-sm text-muted-foreground">Your account email</p>
             </div>
           </div>
-        </CardContent>
-      </Card>
-      <Card className="rounded-md">
-        <CardHeader className="pb-3 ">
-          <CardTitle>Subscription</CardTitle>
-          <CardDescription>Your current subscription.</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-1 pb-3">
           <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
             <LayersIcon className="mt-px h-5 w-5" />
             <div className="space-y-1">
@@ -63,6 +55,44 @@ export function AccountForm() {
             <div className="space-y-1">
               <p className="text-sm font-medium leading-none">TBD / minute</p>
               <p className="text-sm text-muted-foreground">Charge beyond the tier minutes</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      <Card className="rounded-md">
+        <CardHeader className="pb-3 ">
+          <CardTitle>Settings</CardTitle>
+          <CardDescription>Your current settings.</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-1 pb-3">
+          <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
+            <LayersIcon className="mt-px h-5 w-5" />
+            <div className="space-y-1">
+              <p className="text-sm font-medium leading-none">
+                Brian
+              </p>
+              <p className="text-sm text-muted-foreground">Preffered Voice Model</p>
+            </div>
+          </div>
+          <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
+            <TimerIcon className="mt-px h-5 w-5" />
+            <div className="space-y-1">
+              <p className="text-sm font-medium leading-none">GPT-4o</p>
+              <p className="text-sm text-muted-foreground">Preffered LLM</p>
+            </div>
+          </div>
+          <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
+            <RocketIcon className="mt-px h-5 w-5" />
+            <div className="space-y-1">
+              <p className="text-sm font-medium leading-none">30 minutes</p>
+              <p className="text-sm text-muted-foreground">Interview Length</p>
+            </div>
+          </div>
+          <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
+            <RocketIcon className="mt-px h-5 w-5" />
+            <div className="space-y-1">
+              <p className="text-sm font-medium leading-none">English</p>
+              <p className="text-sm text-muted-foreground">Interview Language</p>
             </div>
           </div>
         </CardContent>
