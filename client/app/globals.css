@@ -67,15 +67,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-.home-container {
-  height: 100vh;
-  overflow-y: auto;
-  scroll-snap-type: y mandatory;
-}
-
-.home-container > div {
-  height: 100vh;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-}
