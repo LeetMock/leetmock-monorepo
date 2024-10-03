@@ -71,14 +71,14 @@ export function AccountForm() {
               <p className="text-sm font-medium leading-none">
                 Brian
               </p>
-              <p className="text-sm text-muted-foreground">Preffered Voice Model</p>
+              <p className="text-sm text-muted-foreground">Preferred Voice Model</p>
             </div>
           </div>
           <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
             <TimerIcon className="mt-px h-5 w-5" />
             <div className="space-y-1">
               <p className="text-sm font-medium leading-none">GPT-4o</p>
-              <p className="text-sm text-muted-foreground">Preffered LLM</p>
+              <p className="text-sm text-muted-foreground">Preferred LLM</p>
             </div>
           </div>
           <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">

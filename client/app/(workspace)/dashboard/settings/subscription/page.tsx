@@ -40,7 +40,7 @@ const SubscriptionPage: React.FC = () => {
                 {userProfile!.subscription.charAt(0).toUpperCase() + userProfile!.subscription.slice(1)}
               </div>
               <Button variant="default" size="sm"
-                onClick={() => window.open(`https://billing.stripe.com/p/login/test_28oeYK5gk2N27nidQQ?prefilled_email=${user!.emailAddresses[0].emailAddress}`, '_blank')}
+                onClick={() => window.open(`https://billing.stripe.com/p/login/5kA9AA5zjaXp0qA144?prefilled_email=${user!.emailAddresses[0].emailAddress}`, '_blank')}
               >
                 Manage Subscription
               </Button>
@@ -62,7 +62,7 @@ const SubscriptionPage: React.FC = () => {
                 {`$${"TBD"} / 60 minutes`}
               </div>
               <Button variant="default" size="sm"
-                onClick={() => window.open(`https://billing.stripe.com/p/login/test_28oeYK5gk2N27nidQQ?prefilled_email=${user!.emailAddresses[0].emailAddress}`, '_blank')}
+                onClick={() => window.open(`https://billing.stripe.com/p/login/5kA9AA5zjaXp0qA144?prefilled_email=${user!.emailAddresses[0].emailAddress}`, '_blank')}
               >
                 Buy Now
               </Button>
@@ -77,13 +77,10 @@ const SubscriptionPage: React.FC = () => {
         </Card>
       </div>
       {/* @ts-ignore */}
-      <stripe-pricing-table
-        pricing-table-id="prctbl_1Q5KMgB2uc8lODcNGav3acOC"
-        publishable-key="pk_test_51Q5JueB2uc8lODcNMXsM6GYMeI2vhRf4d0XCvjk1sQp4SvBrJuLTyI0v8q1c0uB47qvqHV3cHMVvOyvB2kcaDB5t008enIiH1z"
-        customer-email={user!.emailAddresses[0].emailAddress}>
+      <stripe-pricing-table pricing-table-id="prctbl_1Q5gnEB2uc8lODcNnvUN1P9F"
+        publishable-key="pk_live_51Q5JueB2uc8lODcNGoZCZ6c8pgOaOFqAZWlpEP9ROSMxAP7JeRez4zTXoFEFo8QIgpqswn0DMJK9jURq7ueCfB2R00qyCecHBk">
         {/* @ts-ignore */}
       </stripe-pricing-table>
-
     </div>
   );
 };
