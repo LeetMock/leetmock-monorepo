@@ -6,6 +6,9 @@ export default defineSchema({
   userProfiles: defineTable({
     userId: v.string(),
     role: v.union(v.literal("admin"), v.literal("user")),
+    subscription: v.union(v.literal("free"), v.literal("basic"), v.literal("premium"), v.literal("enterprise")),
+    minutesRemaining: v.number(),
+    nextBillingDate: v.optional(v.number()),
   })
     .index("by_user_id", ["userId"])
     .index("by_role", ["role"]),

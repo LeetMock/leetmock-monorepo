@@ -50,7 +50,15 @@ export const UserDropdown: React.FC<{
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">Current Plan</span>
                 <TierBadge
-                  tier={userProfile.role === "admin" ? PriceTier.Premium : PriceTier.Free}
+                  tier={
+                    userProfile.subscription === "enterprise"
+                      ? PriceTier.Enterprise
+                      : userProfile.subscription === "premium"
+                      ? PriceTier.Premium
+                      : userProfile.subscription === "basic"
+                      ? PriceTier.Basic
+                      : PriceTier.Free
+                  }
                 />
               </div>
             </div>

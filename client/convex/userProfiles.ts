@@ -21,7 +21,10 @@ export const getUserProfile = userQuery({
 export async function getOrCreateUserProfile(
   ctx: MutationCtx,
   userId: string,
-  role: "admin" | "user"
+  role: "admin" | "user",
+  subscription: "free" | "basic" | "premium" | "enterprise",
+  minutesRemaining: number,
+  nextBillingDate: number | undefined
 ) {
   // check if profile already exists
   const profile = await ctx.db
@@ -38,6 +41,9 @@ export async function getOrCreateUserProfile(
   const newProfileId = await ctx.db.insert("userProfiles", {
     userId,
     role,
+    subscription,
+    minutesRemaining,
+    nextBillingDate,
   });
 
   // check if profile was created

@@ -67,3 +67,24 @@
     @apply bg-background text-foreground;
   }
 }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+.home-container {
+  height: 100vh;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+}
+
+.home-container > div {
+  height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+html {
+  scroll-behavior: smooth;
+}

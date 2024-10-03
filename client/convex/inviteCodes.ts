@@ -35,7 +35,7 @@ export const applyInviteCode = userMutation({
     }
 
     const assignedRole = inviteCode.assignedRole;
-    const profile = await getOrCreateUserProfile(ctx, ctx.user.subject, assignedRole);
+    const profile = await getOrCreateUserProfile(ctx, ctx.user.subject, assignedRole, "free", 20, undefined);
 
     console.log(
       `Applying invite code "${code}" to profile ${profile._id} with role ${assignedRole}`

@@ -19,7 +19,7 @@ export const UpgradeCard: React.FC<UpgradeCardProps> = ({ className, ...props })
           size="sm"
           className="w-full"
           onClick={() => {
-            router.push("/dashboard/settings/membership");
+            router.push("/dashboard/settings/subscription");
           }}
         >
           Upgrade

@@ -9,8 +9,8 @@ const sidebarNavItems = [
     href: "/dashboard/settings/account",
   },
   {
-    title: "Membership",
-    href: "/dashboard/settings/membership",
+    title: "Subscription",
+    href: "/dashboard/settings/subscription",
   }
 ];
 
