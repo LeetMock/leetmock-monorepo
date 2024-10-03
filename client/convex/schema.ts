@@ -6,7 +6,12 @@ export default defineSchema({
   userProfiles: defineTable({
     userId: v.string(),
     role: v.union(v.literal("admin"), v.literal("user")),
-    subscription: v.union(v.literal("free"), v.literal("basic"), v.literal("premium"), v.literal("enterprise")),
+    subscription: v.union(
+      v.literal("free"),
+      v.literal("basic"),
+      v.literal("premium"),
+      v.literal("enterprise")
+    ),
     minutesRemaining: v.number(),
     nextBillingDate: v.optional(v.number()),
   })
@@ -45,11 +50,7 @@ export default defineSchema({
     solutions: v.any(),
     functionName: v.string(),
     inputParameters: v.record(v.string(), v.array(v.string())),
-    evalMode: v.union(
-      v.literal("exactMatch"),
-      v.literal("listNodeIter"),
-      v.literal("sortedMatch")
-    ),
+    evalMode: v.union(v.literal("exactMatch"), v.literal("listNodeIter"), v.literal("sortedMatch")),
     tests: v.array(
       v.object({
         input: v.any(),

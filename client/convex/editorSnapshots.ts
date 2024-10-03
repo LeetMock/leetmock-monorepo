@@ -1,4 +1,4 @@
-import { internalQuery, QueryCtx } from "./_generated/server";
+import { internalQuery, query, QueryCtx } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
 import { userMutation, userQuery } from "./functions";
 import { Id } from "./_generated/dataModel";
@@ -32,7 +32,7 @@ export const getSnapshots = userQuery({
 });
 
 // Get latest snapshot by session ID
-export const getLatestSnapshotBySessionId = userQuery({
+export const getLatestSnapshotBySessionId = query({
   args: {
     sessionId: v.id("sessions"),
   },

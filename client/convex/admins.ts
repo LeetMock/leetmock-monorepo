@@ -7,21 +7,34 @@ import { mutation } from "./_generated/server";
 export const createUserProfile = adminMutation({
   args: {
     role: v.union(v.literal("admin"), v.literal("user")),
-    subscription: v.union(v.literal("free"), v.literal("basic"), v.literal("premium"), v.literal("enterprise")),
+    subscription: v.union(
+      v.literal("free"),
+      v.literal("basic"),
+      v.literal("premium"),
+      v.literal("enterprise")
+    ),
     minutesRemaining: v.number(),
     nextBillingDate: v.optional(v.number()),
   },
   handler: async (ctx, { role, subscription, minutesRemaining, nextBillingDate }) => {
-    const profile = await getOrCreateUserProfile(ctx, ctx.user.subject, role, subscription, minutesRemaining, nextBillingDate);
+    const profile = await getOrCreateUserProfile(
+      ctx,
+      ctx.user.subject,
+      role,
+      subscription,
+      minutesRemaining,
+      nextBillingDate
+    );
     return profile;
   },
 });
 
-
 export const patchUserSubscription = mutation({
   args: {
     userId: v.string(),
-    subscription: v.optional(v.union(v.literal("free"), v.literal("basic"), v.literal("premium"), v.literal("enterprise"))),
+    subscription: v.optional(
+      v.union(v.literal("free"), v.literal("basic"), v.literal("premium"), v.literal("enterprise"))
+    ),
     minutesRemaining: v.optional(v.number()),
     nextBillingDate: v.optional(v.number()),
   },
