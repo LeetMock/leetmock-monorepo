@@ -110,10 +110,12 @@ class NoOpLLMStream(llm.LLMStream):
         return llm.ChatChunk(choices=[choice])
 
     async def _create_fake_stream(self) -> AsyncGenerator[llm.ChatChunk, None]:
-        for i in range(10):
-            yield self._create_llm_chunk(
-                f"I love you! I love you so much! Man! What can I say! gee ni tai may, baby"
-            )
+        for content in (
+            "I love you! I love you so much! Man! What can I say! gee ni tai may, baby"
+            * 100
+        ):
+            logger.info(f"Sending fake chunk: {content}")
+            yield self._create_llm_chunk(content)
 
     async def __anext__(self) -> llm.ChatChunk:
         return await anext(self._stream)

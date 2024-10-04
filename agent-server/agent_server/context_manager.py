@@ -67,6 +67,8 @@ class AgentContextManager(BaseModel):
 
     _session_id_fut: asyncio.Future[str] = PrivateAttr()
 
+    _initialized_fut: asyncio.Future[bool] = PrivateAttr()
+
     class Config:
         arbitrary_types_allowed = True
 
@@ -74,6 +76,7 @@ class AgentContextManager(BaseModel):
         super().__init__(ctx=ctx, api=api)
 
         self._session_id_fut = asyncio.Future()
+        self._initialized_fut = asyncio.Future()
         self._chat_ctx = ChatContext()
         self._snapshots = []
 
@@ -149,8 +152,11 @@ class AgentContextManager(BaseModel):
 
     async def _subscribe_convex_state(self):
         logger.info("Subscribing to convex state")
+        self._initialized_fut.set_result(True)
+        logger.info("Initialized convex state")
         pass
 
-    def start(self):
+    async def start(self):
         asyncio.create_task(self._subscribe_convex_state())
         asyncio.create_task(self._update_convex_state())
+        await self._initialized_fut

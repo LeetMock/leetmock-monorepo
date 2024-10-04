@@ -213,8 +213,8 @@ async def entrypoint(ctx: JobContext):
         asyncio.create_task(debounced_send_reminder())
 
     await ctx_manager.setup(agent)
+    await ctx_manager.start()
 
-    ctx_manager.start()
     assistant.start(ctx.room)
 
     await assistant.say(
@@ -222,16 +222,6 @@ async def entrypoint(ctx: JobContext):
         allow_interruptions=True,
         add_to_chat_ctx=True,
     )
-
-    # while True:
-    #     await assistant.say(
-    #         invoke_agent(
-    #             chat_ctx=assistant.chat_ctx, interaction_type="response_required"
-    #         ),
-    #         allow_interruptions=True,
-    #         add_to_chat_ctx=True,
-    #     )
-    #     await asyncio.sleep(3)
 
 
 if __name__ == "__main__":
