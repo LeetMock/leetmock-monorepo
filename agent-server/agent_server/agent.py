@@ -9,7 +9,7 @@ from pprint import pprint
 from langgraph_sdk.client import get_client
 from livekit.agents import llm
 from typing import AsyncGenerator, AsyncIterator
-from langgraph_sdk.client import StreamPart
+from langgraph_sdk.schema import StreamPart
 from agent_server.utils.messages import convert_chat_ctx_to_langchain_messages
 from agent_server.types import SessionMetadata, EditorSnapshot
 from matplotlib.pyplot import disconnect
