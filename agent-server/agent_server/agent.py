@@ -100,9 +100,23 @@ class NoOpLLMStream(llm.LLMStream):
         fnc_ctx: llm.FunctionContext | None = None,
     ):
         super().__init__(chat_ctx=chat_ctx, fnc_ctx=fnc_ctx)
+        self._stream = self._create_fake_stream()
+
+    def _create_llm_chunk(self, content: str) -> llm.ChatChunk:
+        choice = llm.Choice(
+            delta=llm.ChoiceDelta(content=content, role="assistant"),
+            index=0,
+        )
+        return llm.ChatChunk(choices=[choice])
+
+    async def _create_fake_stream(self) -> AsyncGenerator[llm.ChatChunk, None]:
+        for i in range(10):
+            yield self._create_llm_chunk(
+                f"I love you! I love you so much! Man! What can I say! gee ni tai may, baby"
+            )
 
     async def __anext__(self) -> llm.ChatChunk:
-        raise StopAsyncIteration
+        return await anext(self._stream)
 
 
 class SimpleLLMStream(llm.LLMStream):
