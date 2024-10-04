@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.request_admins_create_user_profile_args import RequestAdminsCreateUserProfileArgs
+from convex_client.models.request_admins_patch_user_subscription_args import RequestAdminsPatchUserSubscriptionArgs
 
-class TestRequestAdminsCreateUserProfileArgs(unittest.TestCase):
-    """RequestAdminsCreateUserProfileArgs unit test stubs"""
+class TestRequestAdminsPatchUserSubscriptionArgs(unittest.TestCase):
+    """RequestAdminsPatchUserSubscriptionArgs unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,31 +25,29 @@ class TestRequestAdminsCreateUserProfileArgs(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> RequestAdminsCreateUserProfileArgs:
-        """Test RequestAdminsCreateUserProfileArgs
+    def make_instance(self, include_optional) -> RequestAdminsPatchUserSubscriptionArgs:
+        """Test RequestAdminsPatchUserSubscriptionArgs
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `RequestAdminsCreateUserProfileArgs`
+        # uncomment below to create an instance of `RequestAdminsPatchUserSubscriptionArgs`
         """
-        model = RequestAdminsCreateUserProfileArgs()
+        model = RequestAdminsPatchUserSubscriptionArgs()
         if include_optional:
-            return RequestAdminsCreateUserProfileArgs(
+            return RequestAdminsPatchUserSubscriptionArgs(
                 minutes_remaining = 1.337,
                 next_billing_date = 1.337,
-                role = None,
-                subscription = None
+                subscription = None,
+                user_id = ''
             )
         else:
-            return RequestAdminsCreateUserProfileArgs(
-                minutes_remaining = 1.337,
-                role = None,
-                subscription = None,
+            return RequestAdminsPatchUserSubscriptionArgs(
+                user_id = '',
         )
         """
 
-    def testRequestAdminsCreateUserProfileArgs(self):
-        """Test RequestAdminsCreateUserProfileArgs"""
+    def testRequestAdminsPatchUserSubscriptionArgs(self):
+        """Test RequestAdminsPatchUserSubscriptionArgs"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

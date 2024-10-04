@@ -33,6 +33,13 @@ class TestMutationApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_admins_patch_user_subscription_post(self) -> None:
+        """Test case for api_run_admins_patch_user_subscription_post
+
+        Calls a mutation at the path admins.js:patchUserSubscription
+        """
+        pass
+
     def test_api_run_editor_snapshots_create_post(self) -> None:
         """Test case for api_run_editor_snapshots_create_post
 
