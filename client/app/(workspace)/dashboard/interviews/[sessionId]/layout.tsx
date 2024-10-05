@@ -6,6 +6,7 @@ import { LiveKitRoom, RoomAudioRenderer, StartAudio } from "@livekit/components-
 import { Authenticated, AuthLoading } from "convex/react";
 import { MediaDeviceFailure } from "livekit-client";
 import { redirect } from "next/navigation";
+import { useEffect } from "react";
 import { toast } from "sonner";
 
 export default function InterviewLayout({
@@ -13,8 +14,18 @@ export default function InterviewLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { isSignedIn, isLoaded } = useAuth();
+  const { isSignedIn, isLoaded, getToken } = useAuth();
   const { accessToken, serverUrl, shouldConnect } = useConnection();
+
+  useEffect(() => {
+    if (isSignedIn && isLoaded) {
+      getToken({
+        template: "convex",
+      }).then((token) => {
+        console.log("token", token);
+      });
+    }
+  }, [isSignedIn, isLoaded, getToken]);
 
   if (!isSignedIn && isLoaded) {
     return redirect("/auth?action=signin");

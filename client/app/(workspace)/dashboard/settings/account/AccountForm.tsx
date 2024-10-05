@@ -38,7 +38,8 @@ export function AccountForm() {
             <LayersIcon className="mt-px h-5 w-5" />
             <div className="space-y-1">
               <p className="text-sm font-medium leading-none">
-                {userProfile!.subscription.charAt(0).toUpperCase() + userProfile!.subscription.slice(1)}
+                {userProfile!.subscription.charAt(0).toUpperCase() +
+                  userProfile!.subscription.slice(1)}
               </p>
               <p className="text-sm text-muted-foreground">Your current subscription</p>
             </div>
@@ -46,7 +47,9 @@ export function AccountForm() {
           <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
             <TimerIcon className="mt-px h-5 w-5" />
             <div className="space-y-1">
-              <p className="text-sm font-medium leading-none">{userProfile!.minutesRemaining} minutes</p>
+              <p className="text-sm font-medium leading-none">
+                {userProfile!.minutesRemaining} minutes
+              </p>
               <p className="text-sm text-muted-foreground">Interview Minutes remaining</p>
             </div>
           </div>
@@ -68,9 +71,7 @@ export function AccountForm() {
           <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
             <LayersIcon className="mt-px h-5 w-5" />
             <div className="space-y-1">
-              <p className="text-sm font-medium leading-none">
-                Brian
-              </p>
+              <p className="text-sm font-medium leading-none">Brian</p>
               <p className="text-sm text-muted-foreground">Preferred Voice Model</p>
             </div>
           </div>

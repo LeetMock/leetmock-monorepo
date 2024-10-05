@@ -6,12 +6,11 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { useUser } from "@clerk/clerk-react";
 import { useEffect } from "react";
 
-
 const SubscriptionPage: React.FC = () => {
   useEffect(() => {
     // Load Stripe Pricing Table script
-    const script = document.createElement('script');
-    script.src = 'https://js.stripe.com/v3/pricing-table.js';
+    const script = document.createElement("script");
+    script.src = "https://js.stripe.com/v3/pricing-table.js";
     script.async = true;
     document.body.appendChild(script);
 
@@ -30,17 +29,23 @@ const SubscriptionPage: React.FC = () => {
       <div className="flex justify-center mb-8 gap-4">
         <Card className="w-full max-w-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Current Plan
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Current Plan</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="text-2xl font-bold">
-                {userProfile!.subscription.charAt(0).toUpperCase() + userProfile!.subscription.slice(1)}
+                {userProfile!.subscription.charAt(0).toUpperCase() +
+                  userProfile!.subscription.slice(1)}
               </div>
-              <Button variant="default" size="sm"
-                onClick={() => window.open(`https://billing.stripe.com/p/login/5kA9AA5zjaXp0qA144?prefilled_email=${user!.emailAddresses[0].emailAddress}`, '_blank')}
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() =>
+                  window.open(
+                    `https://billing.stripe.com/p/login/5kA9AA5zjaXp0qA144?prefilled_email=${user!.emailAddresses[0].emailAddress}`,
+                    "_blank"
+                  )
+                }
               >
                 Manage Subscription
               </Button>
@@ -52,33 +57,34 @@ const SubscriptionPage: React.FC = () => {
         </Card>
         <Card className="w-full max-w-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Buy Minutes Beyond Your Plan
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Buy Minutes Beyond Your Plan</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold">
-                {`$${"TBD"} / 60 minutes`}
-              </div>
-              <Button variant="default" size="sm"
-                onClick={() => window.open(`https://billing.stripe.com/p/login/5kA9AA5zjaXp0qA144?prefilled_email=${user!.emailAddresses[0].emailAddress}`, '_blank')}
+              <div className="text-2xl font-bold">{`$${"TBD"} / 60 minutes`}</div>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() =>
+                  window.open(
+                    `https://billing.stripe.com/p/login/5kA9AA5zjaXp0qA144?prefilled_email=${user!.emailAddresses[0].emailAddress}`,
+                    "_blank"
+                  )
+                }
               >
                 Buy Now
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              Basic: $TBD / 60 mins
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Premium: $TBD / 60 mins
-            </p>
+            <p className="text-xs text-muted-foreground mt-2">Basic: $TBD / 60 mins</p>
+            <p className="text-xs text-muted-foreground mt-2">Premium: $TBD / 60 mins</p>
           </CardContent>
         </Card>
       </div>
       {/* @ts-ignore */}
-      <stripe-pricing-table pricing-table-id="prctbl_1Q5gnEB2uc8lODcNnvUN1P9F"
-        publishable-key="pk_live_51Q5JueB2uc8lODcNGoZCZ6c8pgOaOFqAZWlpEP9ROSMxAP7JeRez4zTXoFEFo8QIgpqswn0DMJK9jURq7ueCfB2R00qyCecHBk">
+      <stripe-pricing-table
+        pricing-table-id="prctbl_1Q5gnEB2uc8lODcNnvUN1P9F"
+        publishable-key="pk_live_51Q5JueB2uc8lODcNGoZCZ6c8pgOaOFqAZWlpEP9ROSMxAP7JeRez4zTXoFEFo8QIgpqswn0DMJK9jURq7ueCfB2R00qyCecHBk"
+      >
         {/* @ts-ignore */}
       </stripe-pricing-table>
     </div>
