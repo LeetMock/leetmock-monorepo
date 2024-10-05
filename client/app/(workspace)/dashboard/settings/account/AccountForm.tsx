@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  BellIcon,
-  EyeNoneIcon,
-  LayersIcon,
-  PersonIcon,
-  RocketIcon,
-  TimerIcon,
-} from "@radix-ui/react-icons";
+import { LayersIcon, PersonIcon, RocketIcon, TimerIcon } from "@radix-ui/react-icons";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from "@clerk/clerk-react";
