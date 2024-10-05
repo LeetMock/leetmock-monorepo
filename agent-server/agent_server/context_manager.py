@@ -3,12 +3,12 @@ import logging
 
 from typing import List
 from pydantic import BaseModel, Field, PrivateAttr
-from convex_client import ApiClient, ActionApi, QueryApi, MutationApi, Configuration
 
 from livekit.rtc import DataPacket
 from livekit.agents import JobContext, AutoSubscribe
 from livekit.agents.llm import ChatContext
 
+from agent_server.convex import ConvexHttpClient
 from agent_server.agent import LangGraphLLM
 from agent_server.types import EditorSnapshot, create_get_session_metadata_request
 
@@ -19,39 +19,6 @@ logger = logging.getLogger("context_manager")
 RECONNECT_MESSAGE = (
     "(User has disconnected and reconnected back to the interview, you would say:)"
 )
-
-
-class ConvexHttpClient(BaseModel):
-    """ConvexHttpClient is a client for the Convex API."""
-
-    convex_url: str = Field(..., description="The URL of the Convex instance")
-
-    _query_api: QueryApi = PrivateAttr()
-
-    _mutation_api: MutationApi = PrivateAttr()
-
-    _action_api: ActionApi = PrivateAttr()
-
-    @property
-    def query(self) -> QueryApi:
-        return self._query_api
-
-    @property
-    def mutation(self) -> MutationApi:
-        return self._mutation_api
-
-    @property
-    def action(self) -> ActionApi:
-        return self._action_api
-
-    def __init__(self, convex_url: str):
-        super().__init__(convex_url=convex_url)
-
-        configuration = Configuration(host=self.convex_url)
-        self._client = ApiClient(configuration)
-        self._query_api = QueryApi(self._client)
-        self._mutation_api = MutationApi(self._client)
-        self._action_api = ActionApi(self._client)
 
 
 class AgentContextManager(BaseModel):
