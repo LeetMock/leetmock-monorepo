@@ -32,7 +32,7 @@ export const getSnapshots = userQuery({
 });
 
 // Get latest snapshot by session ID
-export const getLatestSnapshotBySessionId = userQuery({
+export const getLatestSnapshotBySessionId = query({
   args: {
     sessionId: v.id("sessions"),
   },

@@ -5,13 +5,16 @@ from pydantic import BaseModel, Field, PrivateAttr
 from convex_client import ApiClient, ActionApi, QueryApi, MutationApi, Configuration
 
 
-logger = logging.getLogger("convex_http")
+logger = logging.getLogger("convex")
 
 
 class AsyncQueryIterator(BaseModel):
     sub: QuerySubscription
 
-    async def __aiter__(self):
+    class Config:
+        arbitrary_types_allowed = True
+
+    def __aiter__(self):
         return self
 
     async def __anext__(self):
@@ -24,7 +27,10 @@ class AsyncQueryIterator(BaseModel):
 class AsyncQuerySetIterator(BaseModel):
     sub: QuerySetSubscription
 
-    async def __aiter__(self):
+    class Config:
+        arbitrary_types_allowed = True
+
+    def __aiter__(self):
         return self
 
     async def __anext__(self):

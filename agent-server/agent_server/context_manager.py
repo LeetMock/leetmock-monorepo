@@ -1,51 +1,49 @@
 import asyncio
-import logging
 
-from typing import List
-from pydantic import BaseModel, Field, PrivateAttr
+from datetime import datetime
+from typing import List, Literal
 
+from convex import ConvexClient
 from livekit.rtc import DataPacket
 from livekit.agents import JobContext, AutoSubscribe
 from livekit.agents.llm import ChatContext
-
-from agent_server.convex import ConvexHttpClient
+from livekit.agents.utils import EventEmitter
+from agent_server.utils.query_iterators import AsyncQueryIterator, ConvexHttpClient
 from agent_server.agent import LangGraphLLM
 from agent_server.types import EditorSnapshot, create_get_session_metadata_request
+from agent_server.utils.logger import get_logger
 
-
-logger = logging.getLogger("context_manager")
-
+logger = get_logger(__name__)
 
 RECONNECT_MESSAGE = (
     "(User has disconnected and reconnected back to the interview, you would say:)"
 )
 
+LATEST_SNAPSHOT_QUERY = "editorSnapshots:getLatestSnapshotBySessionId"
 
-class AgentContextManager(BaseModel):
+EventTypes = Literal["snapshot_updated"]
+
+
+class AgentContextManager(EventEmitter[EventTypes]):
     """AgentContextManager is a context manager for the agent."""
 
-    ctx: JobContext = Field(..., description="The job context")
-
-    api: ConvexHttpClient = Field(..., description="The Convex API client")
-
-    _chat_ctx: ChatContext = PrivateAttr()
-
-    _snapshots: List[EditorSnapshot] = PrivateAttr()
-
-    _session_id_fut: asyncio.Future[str] = PrivateAttr()
-
-    _initialized_fut: asyncio.Future[bool] = PrivateAttr()
-
-    class Config:
-        arbitrary_types_allowed = True
-
     def __init__(self, ctx: JobContext, api: ConvexHttpClient):
-        super().__init__(ctx=ctx, api=api)
+        super().__init__()
 
-        self._session_id_fut = asyncio.Future()
-        self._initialized_fut = asyncio.Future()
+        self.ctx = ctx
+        self.api = api
+
+        self._session_id_fut = asyncio.Future[str]()
+        self._initialized_fut = asyncio.Future[bool]()
         self._chat_ctx = ChatContext()
-        self._snapshots = []
+        self._snapshots: List[EditorSnapshot] = []
+
+        self._convex = ConvexClient(self.api.convex_url)
+
+        self._has_started = False
+        self._start_lock = asyncio.Lock()
+        self._subscribe_task: asyncio.Task | None = None
+        self._update_task: asyncio.Task | None = None
 
     @property
     def chat_ctx(self) -> ChatContext:
@@ -117,13 +115,34 @@ class AgentContextManager(BaseModel):
         logger.info("Updating convex state")
         pass
 
-    async def _subscribe_convex_state(self):
-        logger.info("Subscribing to convex state")
-        self._initialized_fut.set_result(True)
-        logger.info("Initialized convex state")
-        pass
+    async def _subscribe_snapshot_state(self):
+        logger.info("Subscribing to snapshot state")
+
+        subscription = self._convex.subscribe(
+            LATEST_SNAPSHOT_QUERY,
+            {"sessionId": self.session_id},
+        )
+        query_iterator = AsyncQueryIterator(sub=subscription)
+
+        async for part in query_iterator:
+            if not self._initialized_fut.done():
+                self._initialized_fut.set_result(True)
+
+            snapshot = EditorSnapshot.model_validate(part)
+            self._snapshots.append(snapshot)
+            self.emit("snapshot_updated", self._snapshots)
+
+        logger.error("Reached unreachable code in _subscribe_snapshot_state")
 
     async def start(self):
-        asyncio.create_task(self._subscribe_convex_state())
-        asyncio.create_task(self._update_convex_state())
-        await self._initialized_fut
+        async with self._start_lock:
+            if self._has_started:
+                logger.warning(
+                    "start method called multiple times. Ignoring subsequent calls."
+                )
+                return
+
+            self._has_started = True
+            self._subscribe_task = asyncio.create_task(self._subscribe_snapshot_state())
+            self._update_task = asyncio.create_task(self._update_convex_state())
+            await self._initialized_fut

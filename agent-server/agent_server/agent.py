@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-import logging
 import os
 
 from datetime import datetime
@@ -12,11 +11,9 @@ from typing import AsyncGenerator, AsyncIterator
 from langgraph_sdk.schema import StreamPart
 from agent_server.utils.messages import convert_chat_ctx_to_langchain_messages
 from agent_server.types import SessionMetadata, EditorSnapshot
-from matplotlib.pyplot import disconnect
+from agent_server.utils.logger import get_logger
 
-
-logger = logging.getLogger("agent")
-logger.setLevel(logging.DEBUG)
+logger = get_logger(__name__)
 
 
 class LangGraphLLM(llm.LLM):

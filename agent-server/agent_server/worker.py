@@ -1,7 +1,9 @@
 import os
 import asyncio
-import logging
+from typing import List
+from agent_server.types import EditorSnapshot
 import psutil
+
 from dotenv import load_dotenv, find_dotenv
 from convex_client.models import (
     RequestActionsGetEditorSnapshot,
@@ -15,33 +17,13 @@ from livekit.agents import (
     utils,
 )
 from livekit.agents.worker import _DefaultLoadCalc
-from livekit.rtc import DataPacket
 from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.plugins import deepgram, silero, elevenlabs
 from agent_server.agent import LangGraphLLM, NoOpLLMStream
 from agent_server.context_manager import AgentContextManager, ConvexHttpClient
+from agent_server.utils.logger import get_logger
 
-# Add this near the top of your file, before setting up logging
-log_directory = os.path.join(os.path.dirname(__file__), "logs")
-os.makedirs(log_directory, exist_ok=True)
-
-logger = logging.getLogger("worker")
-logger.setLevel(logging.INFO)
-formatter = logging.Formatter(
-    "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-
-file_handler = logging.FileHandler(os.path.join(log_directory, "minimal_assistant.log"))
-file_handler.setLevel(logging.DEBUG)
-file_handler.setFormatter(formatter)
-
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)  # Change this line from DEBUG to INFO
-console_handler.setFormatter(formatter)
-
-logger.addHandler(file_handler)
-logger.addHandler(console_handler)
+logger = get_logger(__name__)
 
 load_dotenv(find_dotenv())
 
@@ -85,6 +67,7 @@ class CustomLoadCalc(_DefaultLoadCalc):
 
 
 async def entrypoint(ctx: JobContext):
+    print("created_entrypoint")
     agent = LangGraphLLM()
     convex_api = ConvexHttpClient(convex_url=os.getenv("CONVEX_URL") or "")
     ctx_manager = AgentContextManager(ctx=ctx, api=convex_api)
@@ -211,6 +194,10 @@ async def entrypoint(ctx: JobContext):
     def on_agent_stopped_speaking():
         logger.info("agent_stopped_speaking")
         asyncio.create_task(debounced_send_reminder())
+
+    @ctx_manager.on("snapshot_updated")
+    def on_snapshot_updated(snapshots: List[EditorSnapshot]):
+        logger.info(f"snapshot_updated: {len(snapshots)}")
 
     await ctx_manager.setup(agent)
     await ctx_manager.start()
