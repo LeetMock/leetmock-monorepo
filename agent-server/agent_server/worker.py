@@ -1,6 +1,7 @@
 import os
 import asyncio
 from typing import List
+from agent_server.contexts.convex import ConvexApi
 from agent_server.types import EditorSnapshot
 import psutil
 
@@ -18,9 +19,9 @@ from livekit.agents import (
 )
 from livekit.agents.worker import _DefaultLoadCalc
 from livekit.agents.voice_assistant import VoiceAssistant
-from livekit.plugins import deepgram, silero, elevenlabs
+from livekit.plugins import deepgram, silero, elevenlabs, openai
 from agent_server.agent import LangGraphLLM, NoOpLLMStream
-from agent_server.context_manager import AgentContextManager, ConvexHttpClient
+from agent_server.contexts.context_manager import AgentContextManager
 from agent_server.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -67,9 +68,8 @@ class CustomLoadCalc(_DefaultLoadCalc):
 
 
 async def entrypoint(ctx: JobContext):
-    print("created_entrypoint")
     agent = LangGraphLLM()
-    convex_api = ConvexHttpClient(convex_url=os.getenv("CONVEX_URL") or "")
+    convex_api = ConvexApi(convex_url=os.getenv("CONVEX_URL") or "")
     ctx_manager = AgentContextManager(ctx=ctx, api=convex_api)
 
     reminder_task: asyncio.Task | None = None
@@ -210,6 +210,28 @@ async def entrypoint(ctx: JobContext):
         add_to_chat_ctx=True,
     )
 
+
+"""
+langgraph: agent execution flow
+event-driven: when to call agent
+
+[
+    Event("snapshot_updated", [EditorSnapshot])
+    Event("conversation_updated", [ChatMessage])
+    Event("conversation_updated", [ChatMessage])
+    Event("conversation_updated", [ChatMessage])
+    Event("conversation_updated", [ChatMessage])
+    Event("reminder_required", [])
+    Event("snapshot_updated", [EditorSnapshot])
+    Event("snapshot_updated", [EditorSnapshot])
+    Event("snapshot_updated", [EditorSnapshot])
+    Event("snapshot_updated", [EditorSnapshot])
+    Event("snapshot_updated", [EditorSnapshot])
+]
+
+Invoker
+
+"""
 
 if __name__ == "__main__":
     cli.run_app(

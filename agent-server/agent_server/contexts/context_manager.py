@@ -2,12 +2,12 @@ import asyncio
 
 from typing import List, Literal
 
-from convex import ConvexClient
 from livekit.rtc import DataPacket
 from livekit.agents import JobContext, AutoSubscribe
 from livekit.agents.llm import ChatContext
 from livekit.agents.utils import EventEmitter
-from agent_server.utils.query_iterators import AsyncQueryIterator, ConvexHttpClient
+from agent_server.utils.query_iterators import AsyncQueryIterator
+from agent_server.contexts.convex import ConvexApi
 from agent_server.agent import LangGraphLLM
 from agent_server.types import EditorSnapshot, create_get_session_metadata_request
 from agent_server.utils.logger import get_logger
@@ -26,7 +26,7 @@ EventTypes = Literal["snapshot_updated"]
 class AgentContextManager(EventEmitter[EventTypes]):
     """AgentContextManager is a context manager for the agent."""
 
-    def __init__(self, ctx: JobContext, api: ConvexHttpClient):
+    def __init__(self, ctx: JobContext, api: ConvexApi):
         super().__init__()
 
         self.ctx = ctx
@@ -36,8 +36,6 @@ class AgentContextManager(EventEmitter[EventTypes]):
         self._initialized_fut = asyncio.Future[bool]()
         self._chat_ctx = ChatContext()
         self._snapshots: List[EditorSnapshot] = []
-
-        self._convex = ConvexClient(self.api.convex_url)
 
         self._has_started = False
         self._start_lock = asyncio.Lock()
@@ -117,7 +115,7 @@ class AgentContextManager(EventEmitter[EventTypes]):
     async def _subscribe_snapshot_state(self):
         logger.info("Subscribing to snapshot state")
 
-        subscription = self._convex.subscribe(
+        subscription = self.api.subscribe(
             LATEST_SNAPSHOT_QUERY,
             {"sessionId": self.session_id},
         )
