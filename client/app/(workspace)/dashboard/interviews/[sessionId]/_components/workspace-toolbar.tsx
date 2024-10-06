@@ -46,18 +46,14 @@ interface WorkspaceToolbarProps {
 }
 
 export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
-  const { user } = useUser();
-  const { theme } = useTheme();
-
   const room = useRoomContext();
   const connectionState = useConnectionState();
   const { connect, disconnect } = useConnection(room);
   const startSession = useMutation(api.sessions.startSession);
   const endSession = useMutation(api.sessions.endSession);
 
-  const [timeLeft, setTimeLeft] = useState<number>(60 * 10);
+  const [timeLeft, setTimeLeft] = useState<number>(60 * 45);
   const [isEndInterviewDialogOpen, setIsEndInterviewDialogOpen] = useState<boolean>(false);
-  const color = useMemo(() => getRandomColor(), []);
 
   const { state } = useAgent(session.sessionId);
 
@@ -66,7 +62,7 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
       if (!isDefined(session?.sessionStartTime)) return;
 
       const currentTime = Date.now();
-      const endTime = session.sessionStartTime + minutesToMilliseconds(10);
+      const endTime = session.sessionStartTime + minutesToMilliseconds(45);
       const timeLeft = getTimeDurationSeconds(currentTime, endTime);
       setTimeLeft(Math.max(timeLeft, 0));
     }, 500);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { WorkspaceToolbar } from "./workspace-toolbar";
@@ -8,6 +8,8 @@ import { ConnectionState } from "livekit-client";
 import {
   useConnectionState,
   useLocalParticipant,
+  useParticipantAttribute,
+  useRoomContext,
   useVoiceAssistant,
 } from "@livekit/components-react";
 import { AgentTranscripts } from "./agent-transcripts";
@@ -78,52 +80,37 @@ export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ session
       </Wait>
       <div className="w-full h-full flex justify-center items-center">
         <Wait
-          data={{ questionData }}
+          data={{ questionData, question }}
           fallback={
             <div className="flex flex-col space-y-2 items-center justify-center h-full w-full border rounded-md shadow-md bg-background">
               <LucideFileText className="w-10 h-10 text-muted-foreground" />
-              <span className="text-muted-foreground">Loading question...</span>
+              <span className="text-muted-foreground">Loading</span>
             </div>
           }
         >
-          {({ questionData }) => (
-            <CodeQuestionPanel
-              className="border rounded-md shadow-md shrink-0"
-              style={{ width: size }}
-              question={questionData}
-            />
-          )}
-        </Wait>
-        <div
-          className={cn(
-            "w-px h-full cursor-ew-resize px-1 transition-all hover:bg-muted-foreground/10 flex-0 rounded-full relative",
-            isResizing ? "bg-muted-foreground/10" : "bg-transparent"
-          )}
-          {...resizeHandleProps}
-        >
-          <div className="absolute inset-0 flex justify-center items-center">
-            <div className="h-9 w-[3px] rounded-full bg-muted-foreground/50"></div>
-          </div>
-        </div>
-        <Wait
-          data={{ question }}
-          fallback={
-            <div
-              className={cn(
-                "flex flex-col justify-center items-center h-full w-full border",
-                "bg-background rounded-md shadow-md"
-              )}
-            >
-              {/* Some nice icon + a short description, saying question is loading */}
-              <div className="flex flex-col items-center space-y-2">
-                <LucideFileText className="w-10 h-10 text-muted-foreground" />
-                <span className="text-muted-foreground">Loading question...</span>
+          {({ questionData, question }) => (
+            <>
+              <CodeQuestionPanel
+                className="border rounded-md shadow-md shrink-0"
+                style={{ width: size }}
+                question={questionData}
+              />
+              <div
+                className={cn(
+                  "w-px h-full cursor-ew-resize px-1 transition-all hover:bg-muted-foreground/10 flex-0 rounded-full relative",
+                  isResizing ? "bg-muted-foreground/10" : "bg-transparent"
+                )}
+                {...resizeHandleProps}
+              >
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <div className="h-9 w-[3px] rounded-full bg-muted-foreground/50"></div>
+                </div>
               </div>
-            </div>
-          }
-        >
-          {({ question }) => <CodeEditorPanel sessionId={sessionId} questionId={question._id} />}
+              <CodeEditorPanel sessionId={sessionId} questionId={question._id} />
+            </>
+          )}
         </Wait>
+
         {/* <div className="w-[24rem] h-full p-2 flex flex-col space-y-4">
             <div className="mt-4 p-3 border rounded-md">
               <div className="text-sm font-medium flex justify-between items-center space-x-2">

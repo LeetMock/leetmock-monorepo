@@ -95,7 +95,7 @@ export const startSession = userMutation({
 
     if (session.sessionStatus === "not_started") {
       await ctx.scheduler.runAfter(
-        minutesToMilliseconds(10),
+        minutesToMilliseconds(45),
         internal.sessions.endSessionInternal,
         {
           sessionId,
@@ -144,10 +144,7 @@ export const create = userMutation({
     agentThreadId: v.string(),
     assistantId: v.string(),
   },
-  handler: async (
-    ctx,
-    { questionId, agentThreadId, assistantId}
-  ) => {
+  handler: async (ctx, { questionId, agentThreadId, assistantId }) => {
     const activeSession = await getActiveSessionQuery(ctx, ctx.user.subject);
 
     if (activeSession) {
@@ -175,7 +172,10 @@ export const create = userMutation({
       sessionId,
       editor: {
         language: "python",
-        content: CODE_TEMPLATES["python"](question.functionName, question.inputParameters["python"]),
+        content: CODE_TEMPLATES["python"](
+          question.functionName,
+          question.inputParameters["python"]
+        ),
         lastUpdated: Date.now(),
       },
       terminal: {
