@@ -29,7 +29,9 @@ const schema = defineEntSchema({
     ),
     sessionStartTime: v.optional(v.number()),
     sessionEndTime: v.optional(v.number()),
-  }).index("by_user_id", ["userId"]),
+  })
+    .index("by_user_id", ["userId"])
+    .index("by_user_id_and_status", ["userId", "sessionStatus"]),
   editorSnapshots: defineEnt({
     sessionId: v.id("sessions"),
     editor: v.object({

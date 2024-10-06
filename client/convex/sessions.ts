@@ -1,7 +1,7 @@
 import { Id } from "./_generated/dataModel";
 import { internalMutation, internalQuery } from "./functions";
-import { QueryCtx, MutationCtx } from "./types";
-import { ConvexError, v } from "convex/values";
+import { MutationCtx } from "./types";
+import { v } from "convex/values";
 import { userMutation, userQuery } from "./functions";
 import { internal } from "./_generated/api";
 import { isDefined, minutesToMilliseconds } from "@/lib/utils";
@@ -13,8 +13,8 @@ export const exists = userQuery({
   },
   handler: async (ctx, { sessionId }) => {
     try {
-      const session = await ctx.db.get(sessionId as Id<"sessions">);
-      return isDefined(session);
+      await ctx.table("sessions").getX(sessionId as Id<"sessions">);
+      return true;
     } catch (e) {
       return false;
     }
@@ -26,7 +26,7 @@ export const getById = userQuery({
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-    const session = await ctx.db.get(sessionId);
+    const session = await ctx.table("sessions").get(sessionId);
 
     if (!isDefined(session)) {
       throw new Error("Session not found");
@@ -41,14 +41,11 @@ export const getByUserId = userQuery({
     userId: v.string(),
   },
   handler: async (ctx, { userId }) => {
-    const sessions = await ctx.db
-      .query("sessions")
-      .withIndex("by_user_id", (q) => q.eq("userId", userId))
-      .collect();
+    const sessions = await ctx.table("sessions", "by_user_id", (q) => q.eq("userId", userId));
 
     return Promise.all(
       sessions.map(async (session) => {
-        const question = await ctx.db.get(session.questionId);
+        const question = await ctx.table("questions").get(session.questionId);
 
         if (!isDefined(question)) {
           return { ...session, question: undefined };
@@ -66,13 +63,7 @@ export const getByIdInternal = internalQuery({
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-    const session = await ctx.db.get(sessionId);
-
-    if (!isDefined(session)) {
-      throw new Error("Session not found");
-    }
-
-    return session;
+    return ctx.table("sessions").getX(sessionId);
   },
 });
 
@@ -81,11 +72,7 @@ export const startSession = userMutation({
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-    const session = await ctx.db.get(sessionId);
-
-    if (!isDefined(session)) {
-      throw new Error("Session not found");
-    }
+    const session = await ctx.table("sessions").getX(sessionId);
 
     if (session.sessionStatus === "completed") {
       throw new Error("Session already completed");
@@ -95,16 +82,12 @@ export const startSession = userMutation({
     const startTime = session.sessionStartTime ? session.sessionStartTime : Date.now();
 
     if (session.sessionStatus === "not_started") {
-      await ctx.scheduler.runAfter(
-        minutesToMilliseconds(45),
-        internal.sessions.endSessionInternal,
-        {
-          sessionId,
-        }
-      );
+      await ctx.scheduler.runAfter(minutesToMilliseconds(5), internal.sessions.endSessionInternal, {
+        sessionId,
+      });
     }
 
-    await ctx.db.patch(sessionId, {
+    await session.patch({
       sessionStatus: "in_progress",
       sessionStartTime: startTime,
     });
@@ -134,7 +117,20 @@ export const getActiveSession = userQuery({
     userId: v.string(),
   },
   handler: async (ctx, { userId }) => {
-    const session = await getActiveSessionQuery(ctx, userId);
+    const session = await ctx
+      .table("sessions", "by_user_id", (q) => q.eq("userId", userId))
+      .filter((q) =>
+        q.or(
+          q.eq(q.field("sessionStatus"), "not_started"),
+          q.eq(q.field("sessionStatus"), "in_progress")
+        )
+      )
+      .first();
+
+    if (!isDefined(session)) {
+      return undefined;
+    }
+
     return session;
   },
 });
@@ -146,16 +142,21 @@ export const create = userMutation({
     assistantId: v.string(),
   },
   handler: async (ctx, { questionId, agentThreadId, assistantId }) => {
-    const activeSession = await getActiveSessionQuery(ctx, ctx.user.subject);
+    const activeSession = await ctx
+      .table("sessions", "by_user_id", (q) => q.eq("userId", ctx.user.subject))
+      .filter((q) =>
+        q.or(
+          q.eq(q.field("sessionStatus"), "not_started"),
+          q.eq(q.field("sessionStatus"), "in_progress")
+        )
+      )
+      .first();
 
-    if (activeSession) {
-      return new ConvexError({
-        name: "ActiveSessionAlreadyExists",
-        message: "You already have an active session",
-      });
+    if (isDefined(activeSession)) {
+      throw new Error("You already have an active session");
     }
 
-    const sessionId = await ctx.db.insert("sessions", {
+    const sessionId = await ctx.table("sessions").insert({
       userId: ctx.user.subject,
       questionId,
       agentThreadId,
@@ -164,12 +165,12 @@ export const create = userMutation({
     });
 
     // Fetch the question data to get the starting Code
-    const question = await ctx.db.get(questionId);
+    const question = await ctx.table("questions").get(questionId);
     if (!isDefined(question)) {
       throw new Error("Question not found");
     }
 
-    await ctx.db.insert("editorSnapshots", {
+    await ctx.table("editorSnapshots").insert({
       sessionId,
       editor: {
         language: "python",
@@ -189,30 +190,11 @@ export const create = userMutation({
   },
 });
 
-async function getActiveSessionQuery(ctx: QueryCtx, userId: string) {
-  const session = await ctx.db
-    .query("sessions")
-    .withIndex("by_user_id", (q) => q.eq("userId", userId))
-    .filter((q) =>
-      q.or(
-        q.eq(q.field("sessionStatus"), "not_started"),
-        q.eq(q.field("sessionStatus"), "in_progress")
-      )
-    )
-    .first();
-
-  return session;
-}
-
 async function endSessionAction(ctx: MutationCtx, sessionId: Id<"sessions">) {
-  const session = await ctx.db.get(sessionId);
-
-  if (!isDefined(session)) {
-    throw new Error("Session not found");
-  }
+  const session = await ctx.table("sessions").getX(sessionId);
 
   const endTime = session.sessionEndTime ? session.sessionEndTime : Date.now();
-  await ctx.db.patch(sessionId, {
+  await session.patch({
     sessionStatus: "completed",
     sessionEndTime: endTime,
   });
