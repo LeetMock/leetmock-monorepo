@@ -7,14 +7,7 @@ import {
 import { Rules } from "convex-helpers/server/rowLevelSecurity";
 import { ConvexError } from "convex/values";
 import { entsTableFactory } from "convex-ents";
-import {
-  GenericActionCtx,
-  GenericMutationCtx,
-  GenericQueryCtx,
-  GenericDatabaseReader,
-  GenericDatabaseWriter,
-  UserIdentity,
-} from "convex/server";
+import { GenericActionCtx, GenericMutationCtx, GenericQueryCtx, UserIdentity } from "convex/server";
 import {
   internalMutation as baseInternalMutation,
   internalQuery as baseInternalQuery,
