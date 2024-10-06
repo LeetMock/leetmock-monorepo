@@ -22,6 +22,7 @@ import type * as functions from "../functions.js";
 import type * as inviteCodes from "../inviteCodes.js";
 import type * as questions from "../questions.js";
 import type * as sessions from "../sessions.js";
+import type * as types from "../types.js";
 import type * as userProfiles from "../userProfiles.js";
 
 /**
@@ -40,6 +41,7 @@ declare const fullApi: ApiFromModules<{
   inviteCodes: typeof inviteCodes;
   questions: typeof questions;
   sessions: typeof sessions;
+  types: typeof types;
   userProfiles: typeof userProfiles;
 }>;
 export declare const api: FilterApi<

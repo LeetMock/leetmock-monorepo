@@ -1,5 +1,6 @@
 import { Id } from "./_generated/dataModel";
-import { internalMutation, internalQuery, MutationCtx, QueryCtx } from "./_generated/server";
+import { internalMutation, internalQuery } from "./functions";
+import { QueryCtx, MutationCtx } from "./types";
 import { ConvexError, v } from "convex/values";
 import { userMutation, userQuery } from "./functions";
 import { internal } from "./_generated/api";

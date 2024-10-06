@@ -1,6 +1,6 @@
-import { internalQuery, query, QueryCtx } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
-import { userMutation, userQuery } from "./functions";
+import { QueryCtx } from "./types";
+import { internalQuery, query, userMutation, userQuery } from "./functions";
 import { Id } from "./_generated/dataModel";
 import { isDefined } from "@/lib/utils";
 

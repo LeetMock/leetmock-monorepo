@@ -1,9 +1,9 @@
 import { v } from "convex/values";
-import { defineSchema, defineTable } from "convex/server";
+import { defineEnt, defineEntSchema, getEntDefinitions } from "convex-ents";
 
 // Schema definition
-export default defineSchema({
-  userProfiles: defineTable({
+const schema = defineEntSchema({
+  userProfiles: defineEnt({
     userId: v.string(),
     role: v.union(v.literal("admin"), v.literal("user")),
     subscription: v.union(
@@ -17,7 +17,7 @@ export default defineSchema({
   })
     .index("by_user_id", ["userId"])
     .index("by_role", ["role"]),
-  sessions: defineTable({
+  sessions: defineEnt({
     userId: v.string(),
     questionId: v.id("questions"),
     agentThreadId: v.string(),
@@ -30,7 +30,7 @@ export default defineSchema({
     sessionStartTime: v.optional(v.number()),
     sessionEndTime: v.optional(v.number()),
   }).index("by_user_id", ["userId"]),
-  editorSnapshots: defineTable({
+  editorSnapshots: defineEnt({
     sessionId: v.id("sessions"),
     editor: v.object({
       language: v.string(),
@@ -43,7 +43,7 @@ export default defineSchema({
       executionTime: v.optional(v.number()),
     }),
   }).index("by_session_id", ["sessionId"]),
-  questions: defineTable({
+  questions: defineEnt({
     category: v.array(v.string()),
     difficulty: v.number(),
     question: v.string(),
@@ -60,8 +60,12 @@ export default defineSchema({
     title: v.string(),
     metaData: v.record(v.string(), v.any()),
   }),
-  inviteCodes: defineTable({
+  inviteCodes: defineEnt({
     code: v.string(),
     assignedRole: v.union(v.literal("admin"), v.literal("user")),
   }).index("by_code", ["code"]),
 });
+
+export const entDefinitions = getEntDefinitions(schema);
+
+export default schema;
