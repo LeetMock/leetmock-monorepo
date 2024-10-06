@@ -1,9 +1,10 @@
-import { Id } from "./_generated/dataModel";
-import { internalMutation, internalQuery } from "./functions";
-import { MutationCtx } from "./types";
 import { v } from "convex/values";
-import { userMutation, userQuery } from "./functions";
+
+import { Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
+
+import { MutationCtx } from "./types";
+import { userMutation, userQuery, internalMutation, internalQuery } from "./functions";
 import { isDefined, minutesToMilliseconds } from "@/lib/utils";
 import { CODE_TEMPLATES } from "@/lib/constants";
 
@@ -26,7 +27,7 @@ export const getById = userQuery({
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-    return await ctx.table("sessions").getX(sessionId);
+    return await ctx.table("sessions").get(sessionId);
   },
 });
 
@@ -39,13 +40,10 @@ export const getByUserId = userQuery({
 
     return Promise.all(
       sessions.map(async (session) => {
-        const question = await ctx.table("questions").get(session.questionId);
+        const { title, difficulty, category } = await ctx
+          .table("questions")
+          .getX(session.questionId);
 
-        if (!isDefined(question)) {
-          return { ...session, question: undefined };
-        }
-
-        const { title, difficulty, category } = question;
         return { ...session, question: { title, difficulty, category } };
       })
     );

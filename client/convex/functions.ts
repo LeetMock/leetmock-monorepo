@@ -27,7 +27,7 @@ import { isDefined } from "@/lib/utils";
 import { internal } from "./_generated/api";
 import { entDefinitions } from "./schema";
 
-type LegacyTables = "userProfiles" | "sessions" | "editorSnapshots" | "questions" | "inviteCodes";
+type LegacyTables = "userProfiles" | "editorSnapshots" | "inviteCodes";
 
 type Ctx = {
   user: UserIdentity;

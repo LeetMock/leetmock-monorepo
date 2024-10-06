@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { internalQuery, mutation, query } from "./_generated/server";
+import { internalQuery, query } from "./functions";
 import { isDefined } from "@/lib/utils";
 
 export const getById = query({
@@ -7,19 +7,19 @@ export const getById = query({
   handler: async (ctx, { questionId }) => {
     if (!isDefined(questionId)) return null;
 
-    return await ctx.db.get(questionId);
+    return await ctx.table("questions").get(questionId);
   },
 });
 
 export const getByIdInternal = internalQuery({
   args: { questionId: v.id("questions") },
   handler: async (ctx, { questionId }) => {
-    return await ctx.db.get(questionId);
+    return await ctx.table("questions").get(questionId);
   },
 });
 
 export const getAll = query({
   handler: async (ctx) => {
-    return await ctx.db.query("questions").collect();
+    return await ctx.table("questions");
   },
 });
