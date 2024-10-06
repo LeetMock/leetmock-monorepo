@@ -27,8 +27,6 @@ import { isDefined } from "@/lib/utils";
 import { internal } from "./_generated/api";
 import { entDefinitions } from "./schema";
 
-type LegacyTables = "userProfiles" | "inviteCodes";
-
 type Ctx = {
   user: UserIdentity;
 };
@@ -63,7 +61,7 @@ export const query = customQuery(
   customCtx(async (ctx) => {
     return {
       table: entsTableFactory(ctx, entDefinitions),
-      db: ctx.db as unknown as GenericDatabaseReader<Pick<DataModel, LegacyTables>>,
+      db: undefined,
     };
   })
 );
@@ -73,7 +71,7 @@ export const internalQuery = customQuery(
   customCtx(async (ctx) => {
     return {
       table: entsTableFactory(ctx, entDefinitions),
-      db: ctx.db as unknown as GenericDatabaseReader<Pick<DataModel, LegacyTables>>,
+      db: undefined,
     };
   })
 );
@@ -83,7 +81,7 @@ export const mutation = customMutation(
   customCtx(async (ctx) => {
     return {
       table: entsTableFactory(ctx, entDefinitions),
-      db: ctx.db as GenericDatabaseWriter<Pick<DataModel, LegacyTables>>,
+      db: undefined,
     };
   })
 );
@@ -93,7 +91,7 @@ export const internalMutation = customMutation(
   customCtx(async (ctx) => {
     return {
       table: entsTableFactory(ctx, entDefinitions),
-      db: ctx.db as GenericDatabaseWriter<Pick<DataModel, LegacyTables>>,
+      db: undefined,
     };
   })
 );
@@ -102,9 +100,7 @@ export const userQuery = customQuery(
   baseQuery,
   customCtx(async (ctx) => {
     const user = await ensureIdentity(ctx);
-    const table = entsTableFactory(ctx, entDefinitions);
-
-    return { user, db: ctx.db, table };
+    return { user, table: entsTableFactory(ctx, entDefinitions), db: undefined };
   })
 );
 
@@ -112,9 +108,7 @@ export const userMutation = customMutation(
   baseMutation,
   customCtx(async (ctx) => {
     const user = await ensureIdentity(ctx);
-    const table = entsTableFactory(ctx, entDefinitions);
-
-    return { user, db: ctx.db, table };
+    return { user, table: entsTableFactory(ctx, entDefinitions), db: undefined };
   })
 );
 
@@ -131,9 +125,7 @@ export const adminQuery = customQuery(
   customCtx(async (ctx) => {
     const user = await ensureIdentity(ctx);
     await ensureProfileRole(ctx, user.subject, "admin");
-    const table = entsTableFactory(ctx, entDefinitions);
-
-    return { user, db: ctx.db, table };
+    return { user, table: entsTableFactory(ctx, entDefinitions), db: undefined };
   })
 );
 
@@ -142,9 +134,7 @@ export const adminMutation = customMutation(
   customCtx(async (ctx) => {
     const user = await ensureIdentity(ctx);
     await ensureProfileRole(ctx, user.subject, "admin");
-    const table = entsTableFactory(ctx, entDefinitions);
-
-    return { user, db: ctx.db, table };
+    return { user, table: entsTableFactory(ctx, entDefinitions), db: undefined };
   })
 );
 

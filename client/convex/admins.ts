@@ -1,8 +1,6 @@
 import { v } from "convex/values";
 import { adminMutation } from "./functions";
-import { getOrCreateUserProfile, getUserProfile } from "./userProfiles";
-import { isDefined } from "@/lib/utils";
-import { mutation } from "./_generated/server";
+import { getOrCreateUserProfile } from "./userProfiles";
 
 export const createUserProfile = adminMutation({
   args: {
@@ -29,7 +27,7 @@ export const createUserProfile = adminMutation({
   },
 });
 
-export const patchUserSubscription = mutation({
+export const patchUserSubscription = adminMutation({
   args: {
     userId: v.string(),
     subscription: v.optional(
@@ -39,23 +37,12 @@ export const patchUserSubscription = mutation({
     nextBillingDate: v.optional(v.number()),
   },
   handler: async (ctx, { userId, subscription, minutesRemaining, nextBillingDate }) => {
-    const profile = await ctx.db
-      .query("userProfiles")
-      .withIndex("by_user_id", (q) => q.eq("userId", userId))
-      .first();
+    const profile = await ctx.table("userProfiles").getX("by_user_id", userId);
 
-    if (!isDefined(profile)) {
-      throw new Error("User profile not found");
-    }
-
-    const patch = {
+    await profile.patch({
       subscription: subscription ?? profile.subscription,
       minutesRemaining: minutesRemaining ?? profile.minutesRemaining,
       nextBillingDate: nextBillingDate ?? profile.nextBillingDate,
-    };
-
-    await ctx.db.patch(profile._id, patch);
-
-    return { success: true };
+    });
   },
 });

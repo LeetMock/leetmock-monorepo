@@ -1,14 +1,10 @@
 import { isDefined } from "@/lib/utils";
 import { userQuery } from "./functions";
-import { MutationCtx } from "./_generated/server";
-import { ConvexError } from "convex/values";
+import { MutationCtx } from "./types";
 
 export const getUserProfile = userQuery({
   handler: async (ctx) => {
-    const profile = await ctx.db
-      .query("userProfiles")
-      .withIndex("by_user_id", (q) => q.eq("userId", ctx.user.subject))
-      .first();
+    const profile = await ctx.table("userProfiles").get("by_user_id", ctx.user.subject);
 
     if (!isDefined(profile)) {
       return { profile: undefined };
@@ -27,10 +23,7 @@ export async function getOrCreateUserProfile(
   nextBillingDate: number | undefined
 ) {
   // check if profile already exists
-  const profile = await ctx.db
-    .query("userProfiles")
-    .withIndex("by_user_id", (q) => q.eq("userId", userId))
-    .first();
+  const profile = await ctx.table("userProfiles").get("by_user_id", userId);
 
   // if profile exists, return it
   if (isDefined(profile)) {
@@ -38,25 +31,14 @@ export async function getOrCreateUserProfile(
   }
 
   // if profile does not exist, create it
-  const newProfileId = await ctx.db.insert("userProfiles", {
-    userId,
-    role,
-    subscription,
-    minutesRemaining,
-    nextBillingDate,
-  });
-
-  // check if profile was created
-  const newProfile = await ctx.db.get(newProfileId);
-
-  // if profile was not created, throw an error
-  if (!isDefined(newProfile)) {
-    throw new ConvexError({
-      code: "ProfileCreationFailed",
-      message: "Profile creation failed",
-    });
-  }
-
-  // if profile was created, return it
-  return newProfile;
+  return await ctx
+    .table("userProfiles")
+    .insert({
+      userId,
+      role,
+      subscription,
+      minutesRemaining,
+      nextBillingDate,
+    })
+    .get();
 }
