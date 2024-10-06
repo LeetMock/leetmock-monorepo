@@ -26,13 +26,7 @@ export const getById = userQuery({
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-    const session = await ctx.table("sessions").get(sessionId);
-
-    if (!isDefined(session)) {
-      throw new Error("Session not found");
-    }
-
-    return session;
+    return await ctx.table("sessions").getX(sessionId);
   },
 });
 
