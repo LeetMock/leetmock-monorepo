@@ -5,6 +5,7 @@ import { defineEnt, defineEntSchema, getEntDefinitions } from "convex-ents";
 const schema = defineEntSchema({
   userProfiles: defineEnt({
     userId: v.string(),
+    email: v.string(),
     role: v.union(v.literal("admin"), v.literal("user")),
     subscription: v.union(
       v.literal("free"),
@@ -12,8 +13,13 @@ const schema = defineEntSchema({
       v.literal("premium"),
       v.literal("enterprise")
     ),
-    minutesRemaining: v.number(),
-    nextBillingDate: v.optional(v.number()),
+    interval: v.optional(v.union(v.literal("month"), v.literal("year"), v.literal("day"), v.literal("week"))),
+    minutesRemaining: v.optional(v.number()),
+    currentPeriodEnd: v.optional(v.number()),
+    currentPeriodStart: v.optional(v.number()),
+    latestSubscriptionId: v.optional(v.string()),
+    subscriptionStatus: v.optional(v.string()),
+    refreshDate: v.optional(v.number()),
   })
     .index("by_user_id", ["userId"])
     .index("by_role", ["role"]),
@@ -66,6 +72,14 @@ const schema = defineEntSchema({
     code: v.string(),
     assignedRole: v.union(v.literal("admin"), v.literal("user")),
   }).index("by_code", ["code"]),
+  transactions: defineEnt({
+    email: v.string(),
+    stripeCustomerId: v.string(),
+    stripePaymentIntentId: v.string(),
+    amount: v.number(),
+    product: v.union(v.literal("extra_minutes"), v.literal("subscription")),
+    state: v.union(v.literal("unprocessed"), v.literal("processed"), v.literal("refunded_or_revoked")),
+  }).index("by_stripe_customer_id", ["stripeCustomerId"]).index("by_email", ["email"]),
 });
 
 export const entDefinitions = getEntDefinitions(schema);

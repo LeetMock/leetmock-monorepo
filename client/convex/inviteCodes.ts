@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { userMutation, internalMutation } from "./functions";
 import { getOrCreateUserProfile } from "./userProfiles";
+import { FREE_PLAN_MINUTES_ONLY_ONCE } from "@/lib/constants";
 
 export const createInviteCode = internalMutation({
   args: {
@@ -26,10 +27,10 @@ export const applyInviteCode = userMutation({
     const profile = await getOrCreateUserProfile(
       ctx,
       ctx.user.subject,
+      ctx.user.email!,
       assignedRole,
       "free",
-      20,
-      undefined
+      FREE_PLAN_MINUTES_ONLY_ONCE,
     );
 
     await profile.patch({ role: assignedRole });
