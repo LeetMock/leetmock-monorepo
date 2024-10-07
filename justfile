@@ -27,3 +27,11 @@ gen-convex-client:
 # Import processed questions into Convex
 import-questions:
     cd client && npx convex import --table questions '../question-utils/output/processed_questions.jsonl' && cd ..
+
+# Forward stripe event to local convex webhook handler
+# download stripe cli and run `stripe login` to login to stripe account
+set dotenv-path := "./client/.env.local"
+convex-deployment := env_var('CONVEX_DEPLOYMENT')
+forward-stripe-event:
+    echo "Forwarding stripe event to https://{{trim_start_match(convex-deployment, "dev:")}}.convex.site/stripe-webhook"
+    stripe listen --forward-to https://{{trim_start_match(convex-deployment, "dev:")}}.convex.site/stripe-webhook

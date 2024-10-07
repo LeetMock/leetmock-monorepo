@@ -5,7 +5,6 @@ import { defineEnt, defineEntSchema, getEntDefinitions } from "convex-ents";
 const schema = defineEntSchema({
   userProfiles: defineEnt({
     userId: v.string(),
-    email: v.string(),
     role: v.union(v.literal("admin"), v.literal("user")),
     subscription: v.union(
       v.literal("free"),
@@ -20,9 +19,9 @@ const schema = defineEntSchema({
     latestSubscriptionId: v.optional(v.string()),
     subscriptionStatus: v.optional(v.string()),
     refreshDate: v.optional(v.number()),
-  })
-    .index("by_user_id", ["userId"])
-    .index("by_role", ["role"]),
+  }).field("email", v.string(), { unique: true}) // index by email by default
+    .edges("transactions", { ref: true })
+    .index("by_user_id", ["userId"]).index("by_role", ["role"]).index("by_interval", ["interval"]),
   sessions: defineEnt({
     userId: v.string(),
     questionId: v.id("questions"),
@@ -79,7 +78,7 @@ const schema = defineEntSchema({
     amount: v.number(),
     product: v.union(v.literal("extra_minutes"), v.literal("subscription")),
     state: v.union(v.literal("unprocessed"), v.literal("processed"), v.literal("refunded_or_revoked")),
-  }).index("by_stripe_customer_id", ["stripeCustomerId"]).index("by_email", ["email"]),
+  }).edge("userProfile")
 });
 
 export const entDefinitions = getEntDefinitions(schema);

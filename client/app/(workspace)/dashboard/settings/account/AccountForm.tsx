@@ -66,6 +66,7 @@ export function AccountForm() {
                         : ""
                 }
               >
+                {!!userProfile.interval && userProfile.interval === "month" ? "Monthly " : "Yearly "}
                 {userProfile.subscription.charAt(0).toUpperCase() + userProfile.subscription.slice(1)}
               </Badge>
             }
@@ -84,7 +85,7 @@ export function AccountForm() {
                   {formatDate(userProfile.currentPeriodStart)} - {formatDate(userProfile.currentPeriodEnd)}
                 </Badge>
               }
-              description="Current Plan"
+              description="Current plan period"
             />
           )}
           {userProfile.refreshDate && (
@@ -97,7 +98,7 @@ export function AccountForm() {
                     : formatDate(userProfile.currentPeriodEnd!)}
                 </Badge>
               }
-              description="Minutes Refresh Interval"
+              description="Minutes refresh date"
             />
           )}
           <InfoItem

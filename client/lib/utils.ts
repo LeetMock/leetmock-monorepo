@@ -163,7 +163,7 @@ class TestSolution(unittest.TestCase):
         print("END_RESULTS_JSON")
 `;
 
-  tests.slice(0,5).forEach((test, index) => {
+  tests.slice(0, 5).forEach((test, index) => {
     const inputArgs = params
       .filter((_, i) => i % 2 === 0)
       .map((param, i) => {
@@ -404,3 +404,9 @@ export const isDefined = <T>(value: T): value is Exclude<T, undefined | null> =>
 export const allDefined = <T extends object>(obj: T): obj is DefinedObject<T> => {
   return Object.values(obj).every(isDefined);
 };
+
+
+export const get30DaysFromNowInSeconds = (current_time: number = Date.now()) => {
+  return current_time + 30 * 24 * 60 * 60;
+};
+

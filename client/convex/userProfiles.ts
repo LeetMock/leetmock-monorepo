@@ -1,9 +1,9 @@
-import { isDefined } from "@/lib/utils";
+import { get30DaysFromNowInSeconds, isDefined } from "@/lib/utils";
 import { MutationCtx } from "./types";
-import { userMutation, userQuery } from "./functions";
-import { internalMutation, internalQuery } from "./_generated/server";
+import { internalQuery } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
 import { PLANS } from "@/lib/constants";
+import { internalMutation, userQuery } from "./functions";
 
 
 export const getUserProfile = userQuery({
@@ -23,7 +23,7 @@ export const getByEmailInternal = internalQuery({
   handler: async (ctx, { email }) => {
     if (!isDefined(email)) return null;
 
-    const profile = await ctx.db.query("userProfiles").withIndex("by_email", (q) => q.eq("email", email)).first();
+    const profile = await ctx.db.query("userProfiles").withIndex("email", (q) => q.eq("email", email)).first();
     return profile;
   },
 });
@@ -50,6 +50,7 @@ export async function getOrCreateUserProfile(
     .insert({
       userId,
       role,
+      email,
       subscription,
       minutesRemaining,
     })
@@ -60,42 +61,33 @@ export async function getOrCreateUserProfile(
 export const updateSubscriptionByEmailInternal = internalMutation({
   args: {
     email: v.string(),
-    planName: v.union(
+    planName: v.optional(v.union(
       v.literal("free"),
       v.literal("basic"),
       v.literal("premium"),
       v.literal("enterprise")
-    ),
-    minutesRemaining: v.number(),
+    )),
+    minutesRemaining: v.optional(v.number()),
     interval: v.optional(v.union(v.literal("month"), v.literal("year"), v.literal("day"), v.literal("week"))),
     refreshDate: v.optional(v.number()),
-    currentPeriodEnd: v.number(),
-    currentPeriodStart: v.number(),
-    latestSubscriptionId: v.string(),
-    subscriptionStatus: v.string(),
+    currentPeriodEnd: v.optional(v.number()),
+    currentPeriodStart: v.optional(v.number()),
+    latestSubscriptionId: v.optional(v.string()),
+    subscriptionStatus: v.optional(v.string()),
   },
   handler: async (ctx, { email, planName, minutesRemaining, interval, refreshDate, currentPeriodEnd, currentPeriodStart, latestSubscriptionId, subscriptionStatus }) => {
 
-    const profile = await ctx.db
-      .query("userProfiles")
-      .withIndex("by_email", (q) => q.eq("email", email))
-      .first();
+    const profile = await ctx.table("userProfiles").getX("email", email);
 
-    if (!isDefined(profile)) {
-      throw new ConvexError({
-        code: "ProfileNotFound",
-        message: "Profile not found",
-      });
-    }
-    await ctx.db.patch(profile._id, {
-      subscription: planName,
-      minutesRemaining,
-      interval,
-      refreshDate,
-      currentPeriodEnd,
-      currentPeriodStart,
-      latestSubscriptionId,
-      subscriptionStatus,
+    await profile.patch({
+      subscription: planName ?? profile.subscription,
+      minutesRemaining: minutesRemaining ?? profile.minutesRemaining,
+      interval: interval ?? profile.interval,
+      refreshDate: refreshDate ?? profile.refreshDate,
+      currentPeriodEnd: currentPeriodEnd ?? profile.currentPeriodEnd,
+      currentPeriodStart: currentPeriodStart ?? profile.currentPeriodStart,
+      latestSubscriptionId: latestSubscriptionId ?? profile.latestSubscriptionId,
+      subscriptionStatus: subscriptionStatus ?? profile.subscriptionStatus,
     });
   },
 });
@@ -103,9 +95,9 @@ export const updateSubscriptionByEmailInternal = internalMutation({
 export const refreshMinutesForYearlyPlansInternal = internalMutation({
   args: {},
   handler: async (ctx) => {
-    const profiles = await ctx.db.query("userProfiles").withIndex("by_interval", (q) => q.eq("interval", "year")).collect();
+    const profiles = await ctx.table("userProfiles", "by_interval", (q) => q.eq("interval", "year"));
 
-    const currentTime = Date.now();
+    const currentTime = Math.floor(Date.now() / 1000);
     for (const profile of profiles) {
       const currentPeriodEnd = profile.currentPeriodEnd;
       const currentPeriodStart = profile.currentPeriodStart;
@@ -120,9 +112,9 @@ export const refreshMinutesForYearlyPlansInternal = internalMutation({
         continue;
       }
       if (refreshDate < currentTime) {
-        await ctx.db.patch(profile._id, {
+        await profile.patch({
           minutesRemaining: PLANS[profile.subscription as keyof typeof PLANS].minutes,
-          refreshDate: currentTime + 1000 * 60 * 60 * 24 * 30,
+          refreshDate: get30DaysFromNowInSeconds(currentTime),
         });
       }
     }

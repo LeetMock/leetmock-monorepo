@@ -11,17 +11,18 @@ export const createUserProfile = adminMutation({
       v.literal("premium"),
       v.literal("enterprise")
     ),
+    email: v.string(),
     minutesRemaining: v.number(),
     nextBillingDate: v.optional(v.number()),
   },
-  handler: async (ctx, { role, subscription, minutesRemaining, nextBillingDate }) => {
+  handler: async (ctx, { role, subscription, email, minutesRemaining }) => {
     const profile = await getOrCreateUserProfile(
       ctx,
       ctx.user.subject,
+      email,
       role,
       subscription,
       minutesRemaining,
-      nextBillingDate
     );
     return profile;
   },
@@ -34,15 +35,13 @@ export const patchUserSubscription = adminMutation({
       v.union(v.literal("free"), v.literal("basic"), v.literal("premium"), v.literal("enterprise"))
     ),
     minutesRemaining: v.optional(v.number()),
-    nextBillingDate: v.optional(v.number()),
   },
-  handler: async (ctx, { userId, subscription, minutesRemaining, nextBillingDate }) => {
+  handler: async (ctx, { userId, subscription, minutesRemaining }) => {
     const profile = await ctx.table("userProfiles").getX("by_user_id", userId);
 
     await profile.patch({
       subscription: subscription ?? profile.subscription,
       minutesRemaining: minutesRemaining ?? profile.minutesRemaining,
-      nextBillingDate: nextBillingDate ?? profile.nextBillingDate,
     });
   },
 });
