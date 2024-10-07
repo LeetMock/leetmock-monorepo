@@ -59,7 +59,7 @@ async function handleCheckoutSessionCompleted(ctx: ActionCtx, checkoutSession: S
     }
 }
 
-async function handleSubscriptionUpdatedDeleted(ctx: ActionCtx, subscription: Stripe.Subscription) {
+async function handleSubscriptionUpdate(ctx: ActionCtx, subscription: Stripe.Subscription) {
     // check if stripe key is set
     if (!process.env.STRIPE_KEY) {
         throw new ConvexError({
@@ -105,7 +105,11 @@ async function handleSubscriptionUpdatedDeleted(ctx: ActionCtx, subscription: St
             } else if (user.subscription === PLANS.premium.name && planName === PLANS.enterprise.name) {
                 minutesRemaining += PLANS.enterprise.minutes - PLANS.premium.minutes;
             } else if (user.subscription === PLANS.premium.name && planName === PLANS.basic.name) {
-                minutesRemaining = PLANS.basic.minutes;
+                minutesRemaining -= PLANS.premium.minutes - PLANS.basic.minutes;
+            } else if (user.subscription === PLANS.enterprise.name && planName === PLANS.basic.name) {
+                minutesRemaining -= PLANS.enterprise.minutes - PLANS.basic.minutes;
+            } else if (user.subscription === PLANS.enterprise.name && planName === PLANS.premium.name) {
+                minutesRemaining -= PLANS.enterprise.minutes - PLANS.premium.minutes;
             } else if (user.subscription === planName) {
                 // no change in plan
                 minutesRemaining = PLANS[user.subscription as keyof typeof PLANS].minutes;
@@ -139,6 +143,38 @@ async function handleSubscriptionUpdatedDeleted(ctx: ActionCtx, subscription: St
     }
 }
 
+async function handleSubscriptionDeleted(ctx: ActionCtx, subscription: Stripe.Subscription) {
+
+    // check if stripe key is set
+    if (!process.env.STRIPE_KEY) {
+        throw new ConvexError({
+            code: "StripeKeyNotSet",
+            message: "Stripe key is not set",
+        });
+    }
+    const stripe = new Stripe(process.env.STRIPE_KEY);
+
+    if (!subscription.customer) {
+        throw new ConvexError({
+            code: "SubscriptionCustomerNotSet",
+            message: "Subscription customer is not set",
+        });
+    }
+
+    const customer = await stripe.customers.retrieve(subscription.customer as string) as Stripe.Customer;
+
+    if (!customer.email) {
+        throw new ConvexError({
+            code: "SubscriptionCustomerEmailNotSet",
+            message: "Subscription customer email is not set",
+        });
+    }
+
+    await ctx.runMutation(internal.userProfiles.voidSubscriptionInternal, {
+        email: customer.email,
+    });
+}
+
 export const stripeWebhookHandler = httpAction(async (ctx, req) => {
     const body = await req.json();
     switch (body.type) {
@@ -150,11 +186,11 @@ export const stripeWebhookHandler = httpAction(async (ctx, req) => {
         case 'customer.subscription.updated':
             console.log("received customer.subscription.updated event", body);
             const subscription = body.data.object;
-            await handleSubscriptionUpdatedDeleted(ctx, subscription);
+            await handleSubscriptionUpdate(ctx, subscription);
             break;
         case 'customer.subscription.deleted':
             console.log("received customer.subscription.deleted event", body);
-            await handleSubscriptionUpdatedDeleted(ctx, body.data.object);
+            await handleSubscriptionDeleted(ctx, body.data.object);
             break;
         default:
             console.log(`Unhandled event type ${body.type}`);

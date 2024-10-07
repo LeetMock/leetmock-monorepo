@@ -66,7 +66,7 @@ export function AccountForm() {
                         : ""
                 }
               >
-                {!!userProfile.interval && userProfile.interval === "month" ? "Monthly " : "Yearly "}
+                {!!userProfile.interval && (userProfile.interval === "month" ? "Monthly " : "Yearly ")}
                 {userProfile.subscription.charAt(0).toUpperCase() + userProfile.subscription.slice(1)}
               </Badge>
             }
@@ -101,11 +101,11 @@ export function AccountForm() {
               description="Minutes refresh date"
             />
           )}
-          <InfoItem
+          {userProfile.subscriptionStatus === "active" && <InfoItem
             icon={FaceIcon}
             title={<Badge>${MINUTE_PRICE_DISCOUNTED} / minute</Badge>}
             description="Charge beyond the tier minutes"
-          />
+          />}
         </CardContent>
       </Card>
       <Card className="rounded-md">

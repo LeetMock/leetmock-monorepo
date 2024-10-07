@@ -58,6 +58,25 @@ export async function getOrCreateUserProfile(
 }
 
 
+export const voidSubscriptionInternal = internalMutation({
+  args: {
+    email: v.string(),
+  },
+  handler: async (ctx, { email }) => {
+    const profile = await ctx.table("userProfiles").getX("email", email);
+    await profile.patch({
+      subscription: "free",
+      minutesRemaining: 0,
+      interval: undefined,
+      refreshDate: undefined,
+      currentPeriodEnd: undefined,
+      currentPeriodStart: undefined,
+      latestSubscriptionId: undefined,
+      subscriptionStatus: undefined,
+    });
+  },
+});
+
 export const updateSubscriptionByEmailInternal = internalMutation({
   args: {
     email: v.string(),
