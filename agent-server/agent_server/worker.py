@@ -50,6 +50,10 @@ logger.addHandler(console_handler)
 
 load_dotenv(find_dotenv())
 
+logger.info(f"LIVEKIT_API_KEY: {os.getenv('LIVEKIT_API_KEY')}")
+logger.info(f"LIVEKIT_API_SECRET: {os.getenv('LIVEKIT_API_SECRET')}")
+logger.info(f"LIVEKIT_URL: {os.getenv('LIVEKIT_URL')}")
+
 
 class CustomLoadCalc(_DefaultLoadCalc):
     """CustomLoadCalc is a custom load calculator that extends the default load calculator.
@@ -169,7 +173,7 @@ async def entrypoint(ctx: JobContext):
                 name="brian-optimized",
                 category="cloned",
                 settings=elevenlabs.VoiceSettings(
-                    stability=0.3,
+                    stability=0.8,
                     similarity_boost=0.5,
                     style=0.5,
                     use_speaker_boost=True,
@@ -304,9 +308,9 @@ if __name__ == "__main__":
             prewarm_fnc=prewarm_fnc,
             host="0.0.0.0",
             port=8081,
-            load_fnc=CustomLoadCalc.get_load,
-            load_threshold=0.8,  # max(cpu_load, mem_load)
-            shutdown_process_timeout=30,  # seconds
-            num_idle_processes=3,  # number of idle agents to keep
+            # load_fnc=CustomLoadCalc.get_load,
+            # load_threshold=0.80,  # max(cpu_load, mem_load)
+            # shutdown_process_timeout=30,  # seconds
+            num_idle_processes=5,  # number of idle agents to keep
         )
     )

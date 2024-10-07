@@ -73,3 +73,19 @@ def format_test_context(testcases: List[Dict[str, Any]]) -> str:
             "testcases": testcases,
         }
     ).to_string()
+
+STAGE_TASKS: Dict[str, List[str]] = {
+    "background": [
+        "Introduce yourself to the interviewee and ask for their name.",
+        "Ask the interviewee about their background and experience.",
+        "Ask the interviewee about their career goals.",
+        "Ask the interviewee about their strengths and weaknesses.",
+        "Discuss the interviewee's past projects and their role in them.",
+    ],
+    "coding": [
+        "Write a function to solve the problem.",
+    ],
+    "eval": [
+        "Evaluate the user's code.",
+    ],
+}

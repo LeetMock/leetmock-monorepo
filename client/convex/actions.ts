@@ -96,7 +96,6 @@ export const getToken = action({
   handler: async (ctx) => {
     const apiKey = process.env.LIVEKIT_API_KEY;
     const apiSecret = process.env.LIVEKIT_API_SECRET;
-
     if (!apiKey || !apiSecret) {
       throw new Error("Environment variables aren't set up correctly");
     }

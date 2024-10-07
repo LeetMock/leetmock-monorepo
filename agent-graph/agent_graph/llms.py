@@ -7,6 +7,21 @@ from langchain_core.language_models.chat_models import BaseChatModel
 
 ModelName = Literal["gpt-4o", "claude-35"]
 
+ChatbotConfig = {
+    "eval": {
+        "model_name": "gpt-4o",
+        "temperature": 0.9,
+    },
+    "coding": {
+        "model_name": "gpt-4o",
+        "temperature": 0.9,
+    },
+    "background": {
+        "model_name": "gpt-4o",
+        "temperature": 0.9,
+    }
+}
+
 
 def get_model(
     model_name: str,
