@@ -12,16 +12,21 @@ const schema = defineEntSchema({
       v.literal("premium"),
       v.literal("enterprise")
     ),
-    interval: v.optional(v.union(v.literal("month"), v.literal("year"), v.literal("day"), v.literal("week"))),
+    interval: v.optional(
+      v.union(v.literal("month"), v.literal("year"), v.literal("day"), v.literal("week"))
+    ),
     minutesRemaining: v.optional(v.number()),
     currentPeriodEnd: v.optional(v.number()),
     currentPeriodStart: v.optional(v.number()),
     latestSubscriptionId: v.optional(v.string()),
     subscriptionStatus: v.optional(v.string()),
     refreshDate: v.optional(v.number()),
-  }).field("email", v.string(), { unique: true}) // index by email by default
+  })
+    .field("email", v.string(), { unique: true }) // index by email by default
     .edges("transactions", { ref: true })
-    .index("by_user_id", ["userId"]).index("by_role", ["role"]).index("by_interval", ["interval"]),
+    .index("by_user_id", ["userId"])
+    .index("by_role", ["role"])
+    .index("by_interval", ["interval"]),
   sessions: defineEnt({
     userId: v.string(),
     questionId: v.id("questions"),
@@ -77,8 +82,12 @@ const schema = defineEntSchema({
     stripePaymentIntentId: v.string(),
     amount: v.number(),
     product: v.union(v.literal("extra_minutes"), v.literal("subscription")),
-    state: v.union(v.literal("unprocessed"), v.literal("processed"), v.literal("refunded_or_revoked")),
-  }).edge("userProfile")
+    state: v.union(
+      v.literal("unprocessed"),
+      v.literal("processed"),
+      v.literal("refunded_or_revoked")
+    ),
+  }).edge("userProfile"),
 });
 
 export const entDefinitions = getEntDefinitions(schema);
