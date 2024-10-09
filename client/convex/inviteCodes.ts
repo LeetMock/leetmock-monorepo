@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { userMutation, internalMutation } from "./functions";
-import { getOrCreateUserProfile } from "./userProfiles";
 import { FREE_PLAN_MINUTES_ONLY_ONCE } from "@/lib/constants";
+import { isDefined } from "@/lib/utils";
 
 export const createInviteCode = internalMutation({
   args: {
@@ -22,17 +22,24 @@ export const applyInviteCode = userMutation({
   },
   handler: async (ctx, { code }) => {
     const inviteCode = await ctx.table("inviteCodes").getX("by_code", code);
+    const profile = await ctx.table("userProfiles").get("by_user_id", ctx.user.subject);
 
-    const assignedRole = inviteCode.assignedRole;
-    const profile = await getOrCreateUserProfile(
-      ctx,
-      ctx.user.subject,
-      ctx.user.email!,
-      assignedRole,
-      "free",
-      FREE_PLAN_MINUTES_ONLY_ONCE,
-    );
+    if (isDefined(profile)) {
+      throw new Error("User already exists");
+    }
 
-    await profile.patch({ role: assignedRole });
+    const role = inviteCode.assignedRole;
+    const userId = ctx.user.subject;
+    const email = ctx.user.email!;
+    const subscription = "free";
+    const minutesRemaining = FREE_PLAN_MINUTES_ONLY_ONCE;
+
+    await ctx.table("userProfiles").insert({
+      userId,
+      role,
+      email,
+      subscription,
+      minutesRemaining,
+    });
   },
 });

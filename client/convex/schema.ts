@@ -15,9 +15,9 @@ const schema = defineEntSchema({
     interval: v.optional(
       v.union(v.literal("month"), v.literal("year"), v.literal("day"), v.literal("week"))
     ),
-    minutesRemaining: v.optional(v.number()),
-    currentPeriodEnd: v.optional(v.number()),
+    minutesRemaining: v.number(),
     currentPeriodStart: v.optional(v.number()),
+    currentPeriodEnd: v.optional(v.number()),
     latestSubscriptionId: v.optional(v.string()),
     subscriptionStatus: v.optional(v.string()),
     refreshDate: v.optional(v.number()),
