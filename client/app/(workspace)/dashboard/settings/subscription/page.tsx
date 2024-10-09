@@ -38,14 +38,15 @@ const SubscriptionPage: React.FC = () => {
               <div>
                 <Badge
                   variant={userProfile!.subscription === "free" ? "outline" : "default"}
-                  className={`text-lg py-1 px-2 font-semibold ${userProfile!.subscription === "basic"
-                    ? "bg-gradient-to-r from-blue-400 to-cyan-300 text-white"
-                    : userProfile!.subscription === "premium"
-                      ? "bg-gradient-to-r from-purple-400 to-pink-500 text-white"
-                      : userProfile!.subscription === "enterprise"
-                        ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white animate-pulse"
-                        : ""
-                    }`}
+                  className={`text-lg py-1 px-2 font-semibold ${
+                    userProfile!.subscription === "basic"
+                      ? "bg-gradient-to-r from-blue-400 to-cyan-300 text-white"
+                      : userProfile!.subscription === "premium"
+                        ? "bg-gradient-to-r from-purple-400 to-pink-500 text-white"
+                        : userProfile!.subscription === "enterprise"
+                          ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white animate-pulse"
+                          : ""
+                  }`}
                 >
                   {userProfile!.subscription.charAt(0).toUpperCase() +
                     userProfile!.subscription.slice(1)}
@@ -69,9 +70,14 @@ const SubscriptionPage: React.FC = () => {
             <p className="text-xs text-muted-foreground mt-2">
               {userProfile!.minutesRemaining} minutes remaining
             </p>
-            {userProfile!.subscription !== "free" && (<p className="text-xs font-semibold text-yellow-600 mt-2 p-2 bg-yellow-100 rounded-md">
-              The minutes will be refreshed at {(!!userProfile!.refreshDate && new Date(userProfile!.refreshDate * 1000).toLocaleString()) || new Date(userProfile!.currentPeriodEnd! * 1000).toLocaleString()}
-            </p>)}
+            {userProfile!.subscription !== "free" && (
+              <p className="text-xs font-semibold text-yellow-600 mt-2 p-2 bg-yellow-100 rounded-md">
+                The minutes will be refreshed at{" "}
+                {(!!userProfile!.refreshDate &&
+                  new Date(userProfile!.refreshDate * 1000).toLocaleString()) ||
+                  new Date(userProfile!.currentPeriodEnd! * 1000).toLocaleString()}
+              </p>
+            )}
           </CardContent>
         </Card>
         <Card className="w-full max-w-md">
@@ -100,10 +106,17 @@ const SubscriptionPage: React.FC = () => {
                     Buy Now
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground mt-2"><s>Original: ${MINUTE_PRICE}/min</s></p>
-                <p className="text-xs text-muted-foreground mt-2">Now Discounted: ${MINUTE_PRICE_DISCOUNTED}/min</p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  <s>Original: ${MINUTE_PRICE}/min</s>
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Now Discounted: ${MINUTE_PRICE_DISCOUNTED}/min
+                </p>
                 <p className="text-xs font-semibold text-yellow-600 mt-2 p-2 bg-yellow-100 rounded-md">
-                  The extra minutes will be refreshed at {(!!userProfile!.refreshDate && new Date(userProfile!.refreshDate * 1000).toLocaleString()) || new Date(userProfile!.currentPeriodEnd! * 1000).toLocaleString()}
+                  The extra minutes will be refreshed at{" "}
+                  {(!!userProfile!.refreshDate &&
+                    new Date(userProfile!.refreshDate * 1000).toLocaleString()) ||
+                    new Date(userProfile!.currentPeriodEnd! * 1000).toLocaleString()}
                 </p>
               </>
             )}

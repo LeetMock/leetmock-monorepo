@@ -23,7 +23,6 @@ const schema = defineEntSchema({
     refreshDate: v.optional(v.number()),
   })
     .field("email", v.string(), { unique: true }) // index by email by default
-    .edges("transactions", { ref: true })
     .index("by_user_id", ["userId"])
     .index("by_role", ["role"])
     .index("by_interval", ["interval"]),
@@ -76,18 +75,6 @@ const schema = defineEntSchema({
     code: v.string(),
     assignedRole: v.union(v.literal("admin"), v.literal("user")),
   }).index("by_code", ["code"]),
-  transactions: defineEnt({
-    email: v.string(),
-    stripeCustomerId: v.string(),
-    stripePaymentIntentId: v.string(),
-    amount: v.number(),
-    product: v.union(v.literal("extra_minutes"), v.literal("subscription")),
-    state: v.union(
-      v.literal("unprocessed"),
-      v.literal("processed"),
-      v.literal("refunded_or_revoked")
-    ),
-  }).edge("userProfile"),
 });
 
 export const entDefinitions = getEntDefinitions(schema);
