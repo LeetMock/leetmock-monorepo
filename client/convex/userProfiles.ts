@@ -5,7 +5,6 @@ import { ConvexError, v } from "convex/values";
 import { PLANS } from "@/lib/constants";
 import { internalMutation, userQuery } from "./functions";
 
-
 export const getUserProfile = userQuery({
   handler: async (ctx) => {
     const profile = await ctx.table("userProfiles").get("by_user_id", ctx.user.subject);
@@ -23,7 +22,10 @@ export const getByEmailInternal = internalQuery({
   handler: async (ctx, { email }) => {
     if (!isDefined(email)) return null;
 
-    const profile = await ctx.db.query("userProfiles").withIndex("email", (q) => q.eq("email", email)).first();
+    const profile = await ctx.db
+      .query("userProfiles")
+      .withIndex("email", (q) => q.eq("email", email))
+      .first();
     return profile;
   },
 });
@@ -34,7 +36,7 @@ export async function getOrCreateUserProfile(
   email: string,
   role: "admin" | "user",
   subscription: "free" | "basic" | "premium" | "enterprise",
-  minutesRemaining: number,
+  minutesRemaining: number
 ) {
   // check if profile already exists
   const profile = await ctx.table("userProfiles").get("by_user_id", userId);
@@ -56,7 +58,6 @@ export async function getOrCreateUserProfile(
     })
     .get();
 }
-
 
 export const voidSubscriptionInternal = internalMutation({
   args: {
@@ -80,22 +81,33 @@ export const voidSubscriptionInternal = internalMutation({
 export const updateSubscriptionByEmailInternal = internalMutation({
   args: {
     email: v.string(),
-    planName: v.optional(v.union(
-      v.literal("free"),
-      v.literal("basic"),
-      v.literal("premium"),
-      v.literal("enterprise")
-    )),
+    planName: v.optional(
+      v.union(v.literal("free"), v.literal("basic"), v.literal("premium"), v.literal("enterprise"))
+    ),
     minutesRemaining: v.optional(v.number()),
-    interval: v.optional(v.union(v.literal("month"), v.literal("year"), v.literal("day"), v.literal("week"))),
+    interval: v.optional(
+      v.union(v.literal("month"), v.literal("year"), v.literal("day"), v.literal("week"))
+    ),
     refreshDate: v.optional(v.number()),
     currentPeriodEnd: v.optional(v.number()),
     currentPeriodStart: v.optional(v.number()),
     latestSubscriptionId: v.optional(v.string()),
     subscriptionStatus: v.optional(v.string()),
   },
-  handler: async (ctx, { email, planName, minutesRemaining, interval, refreshDate, currentPeriodEnd, currentPeriodStart, latestSubscriptionId, subscriptionStatus }) => {
-
+  handler: async (
+    ctx,
+    {
+      email,
+      planName,
+      minutesRemaining,
+      interval,
+      refreshDate,
+      currentPeriodEnd,
+      currentPeriodStart,
+      latestSubscriptionId,
+      subscriptionStatus,
+    }
+  ) => {
     const profile = await ctx.table("userProfiles").getX("email", email);
 
     await profile.patch({
@@ -114,14 +126,20 @@ export const updateSubscriptionByEmailInternal = internalMutation({
 export const refreshMinutesForYearlyPlansInternal = internalMutation({
   args: {},
   handler: async (ctx) => {
-    const profiles = await ctx.table("userProfiles", "by_interval", (q) => q.eq("interval", "year"));
+    const profiles = await ctx.table("userProfiles", "by_interval", (q) =>
+      q.eq("interval", "year")
+    );
 
     const currentTime = Math.floor(Date.now() / 1000);
     for (const profile of profiles) {
       const currentPeriodEnd = profile.currentPeriodEnd;
       const currentPeriodStart = profile.currentPeriodStart;
       const refreshDate = profile.refreshDate;
-      if (!isDefined(currentPeriodEnd) || !isDefined(currentPeriodStart) || !isDefined(refreshDate)) {
+      if (
+        !isDefined(currentPeriodEnd) ||
+        !isDefined(currentPeriodStart) ||
+        !isDefined(refreshDate)
+      ) {
         continue;
       }
       if (currentPeriodEnd > currentTime) {
