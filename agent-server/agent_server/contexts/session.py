@@ -27,13 +27,12 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def subscribe_state(self):
-        """Subscribe to the session state from convex."""
+    async def watch_state(self):
+        """Watch the changes of session state from convex."""
         raise NotImplementedError
 
 
 """
-
 v -> v1 -> v2
 
 log 1 | log 2 | log 3 | ... | log k
@@ -42,6 +41,4 @@ log 1 | log 2 | log 3 | ... | log k
 
 compressed_state
 version: int
-
-
 """
