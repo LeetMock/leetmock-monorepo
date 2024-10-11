@@ -2,10 +2,13 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import styles from './pricing.module.css';
+import { Urbanist } from "next/font/google";
 
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+
+const urbanist = Urbanist({ subsets: ['latin'] });
 
 //https://shipixen.com/shadcn-pricing-page
 
@@ -114,7 +117,7 @@ export default function PricingPage() {
     const bannerText = 'Prepare Smarter, Interview Stronger with LeetMock.ai';
 
     return (
-        <div className="relative">
+        <div className={`relative ${urbanist.className}`}>
             <div aria-hidden="true" className="absolute inset-0 grid grid-cols-2 -space-x-52 opacity-40 dark:opacity-20">
                 <div className="blur-[106px] h-56 bg-gradient-to-br from-primary to-purple-400 dark:from-blue-700"></div>
                 <div className="blur-[106px] h-32 bg-gradient-to-r from-cyan-400 to-sky-300 dark:to-indigo-600"></div>
