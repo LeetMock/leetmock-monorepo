@@ -1,10 +1,11 @@
 # convex_client.MutationApi
 
-All URIs are relative to *https://posh-chihuahua-941.convex.cloud*
+All URIs are relative to *https://neat-warbler-689.convex.cloud*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**api_run_admins_create_user_profile_post**](MutationApi.md#api_run_admins_create_user_profile_post) | **POST** /api/run/admins/createUserProfile | Calls a mutation at the path admins.js:createUserProfile
+[**api_run_admins_patch_user_subscription_post**](MutationApi.md#api_run_admins_patch_user_subscription_post) | **POST** /api/run/admins/patchUserSubscription | Calls a mutation at the path admins.js:patchUserSubscription
 [**api_run_editor_snapshots_create_post**](MutationApi.md#api_run_editor_snapshots_create_post) | **POST** /api/run/editorSnapshots/create | Calls a mutation at the path editorSnapshots.js:create
 [**api_run_invite_codes_apply_invite_code_post**](MutationApi.md#api_run_invite_codes_apply_invite_code_post) | **POST** /api/run/inviteCodes/applyInviteCode | Calls a mutation at the path inviteCodes.js:applyInviteCode
 [**api_run_sessions_create_post**](MutationApi.md#api_run_sessions_create_post) | **POST** /api/run/sessions/create | Calls a mutation at the path sessions.js:create
@@ -28,10 +29,10 @@ from convex_client.models.response_admins_create_user_profile import ResponseAdm
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -91,6 +92,85 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **api_run_admins_patch_user_subscription_post**
+> ResponseAdminsPatchUserSubscription api_run_admins_patch_user_subscription_post(request_admins_patch_user_subscription)
+
+Calls a mutation at the path admins.js:patchUserSubscription
+
+### Example
+
+* Bearer Authentication (bearerAuth):
+
+```python
+import convex_client
+from convex_client.models.request_admins_patch_user_subscription import RequestAdminsPatchUserSubscription
+from convex_client.models.response_admins_patch_user_subscription import ResponseAdminsPatchUserSubscription
+from convex_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
+# See configuration.py for a list of all supported configuration parameters.
+configuration = convex_client.Configuration(
+    host = "https://neat-warbler-689.convex.cloud"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization: bearerAuth
+configuration = convex_client.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with convex_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = convex_client.MutationApi(api_client)
+    request_admins_patch_user_subscription = convex_client.RequestAdminsPatchUserSubscription() # RequestAdminsPatchUserSubscription | 
+
+    try:
+        # Calls a mutation at the path admins.js:patchUserSubscription
+        api_response = api_instance.api_run_admins_patch_user_subscription_post(request_admins_patch_user_subscription)
+        print("The response of MutationApi->api_run_admins_patch_user_subscription_post:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling MutationApi->api_run_admins_patch_user_subscription_post: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_admins_patch_user_subscription** | [**RequestAdminsPatchUserSubscription**](RequestAdminsPatchUserSubscription.md)|  | 
+
+### Return type
+
+[**ResponseAdminsPatchUserSubscription**](ResponseAdminsPatchUserSubscription.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **api_run_editor_snapshots_create_post**
 > ResponseEditorSnapshotsCreate api_run_editor_snapshots_create_post(request_editor_snapshots_create)
 
@@ -107,10 +187,10 @@ from convex_client.models.response_editor_snapshots_create import ResponseEditor
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -186,10 +266,10 @@ from convex_client.models.response_invite_codes_apply_invite_code import Respons
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -265,10 +345,10 @@ from convex_client.models.response_sessions_create import ResponseSessionsCreate
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -344,10 +424,10 @@ from convex_client.models.response_sessions_end_session import ResponseSessionsE
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -423,10 +503,10 @@ from convex_client.models.response_sessions_start_session import ResponseSession
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters

@@ -5,7 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**role** | [**RequestInviteCodesCreateInviteCodeArgsAssignedRole**](RequestInviteCodesCreateInviteCodeArgsAssignedRole.md) |  | 
+**minutes_remaining** | **float** |  | 
+**next_billing_date** | **float** |  | [optional] 
+**role** | [**RequestAdminsCreateUserProfileArgsRole**](RequestAdminsCreateUserProfileArgsRole.md) |  | 
+**subscription** | [**RequestAdminsCreateUserProfileArgsSubscription**](RequestAdminsCreateUserProfileArgsSubscription.md) |  | 
 
 ## Example
 

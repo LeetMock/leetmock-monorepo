@@ -77,15 +77,23 @@ def format_test_context(testcases: List[Dict[str, Any]]) -> str:
 STAGE_TASKS: Dict[str, List[str]] = {
     "background": [
         "Introduce yourself to the interviewee and ask for their name.",
-        "Ask the interviewee about their background and experience.",
-        "Ask the interviewee about their career goals.",
-        "Ask the interviewee about their strengths and weaknesses.",
-        "Discuss the interviewee's past projects and their role in them.",
+        # "Ask the interviewee about their background and experience.",
+        # "Ask the interviewee about their career goals.",
+        # "Ask the interviewee about their strengths and weaknesses.",
+        # "Discuss the interviewee's past projects and their role in them.",
     ],
     "coding": [
-        "Write a function to solve the problem.",
+        "describe the problem to the user",
+        "answer any clarifying questions the user has",
+        "let user write the code to solve the problem",
+        "Ask the user to explain their code and the approach they took to solve the problem",
+        "if user's code can be optimized, ask them if they can think of a better solution",
+        "finish the question",
     ],
     "eval": [
-        "Evaluate the user's code.",
+        "Tell user how they did in the interview.",
+        "Tell user what they did well and what they could improve on.",
+        "Give user suggestions on how to improve their coding skills.",
+        "Ask user if they have any questions for you.",
     ],
 }

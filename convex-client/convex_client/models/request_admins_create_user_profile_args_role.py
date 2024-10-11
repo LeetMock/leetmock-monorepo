@@ -21,11 +21,11 @@ from pydantic import StrictStr, Field
 from typing import Union, List, Set, Optional, Dict
 from typing_extensions import Literal, Self
 
-REQUESTINVITECODESCREATEINVITECODEARGSASSIGNEDROLE_ONE_OF_SCHEMAS = ["str"]
+REQUESTADMINSCREATEUSERPROFILEARGSROLE_ONE_OF_SCHEMAS = ["str"]
 
-class RequestInviteCodesCreateInviteCodeArgsAssignedRole(BaseModel):
+class RequestAdminsCreateUserProfileArgsRole(BaseModel):
     """
-    RequestInviteCodesCreateInviteCodeArgsAssignedRole
+    RequestAdminsCreateUserProfileArgsRole
     """
     # data type: str
     oneof_schema_1_validator: Optional[StrictStr] = None
@@ -52,7 +52,7 @@ class RequestInviteCodesCreateInviteCodeArgsAssignedRole(BaseModel):
 
     @field_validator('actual_instance')
     def actual_instance_must_validate_oneof(cls, v):
-        instance = RequestInviteCodesCreateInviteCodeArgsAssignedRole.model_construct()
+        instance = RequestAdminsCreateUserProfileArgsRole.model_construct()
         error_messages = []
         match = 0
         # validate data type: str
@@ -69,10 +69,10 @@ class RequestInviteCodesCreateInviteCodeArgsAssignedRole(BaseModel):
             error_messages.append(str(e))
         if match > 1:
             # more than 1 match
-            raise ValueError("Multiple matches found when setting `actual_instance` in RequestInviteCodesCreateInviteCodeArgsAssignedRole with oneOf schemas: str. Details: " + ", ".join(error_messages))
+            raise ValueError("Multiple matches found when setting `actual_instance` in RequestAdminsCreateUserProfileArgsRole with oneOf schemas: str. Details: " + ", ".join(error_messages))
         elif match == 0:
             # no match
-            raise ValueError("No match found when setting `actual_instance` in RequestInviteCodesCreateInviteCodeArgsAssignedRole with oneOf schemas: str. Details: " + ", ".join(error_messages))
+            raise ValueError("No match found when setting `actual_instance` in RequestAdminsCreateUserProfileArgsRole with oneOf schemas: str. Details: " + ", ".join(error_messages))
         else:
             return v
 
@@ -108,10 +108,10 @@ class RequestInviteCodesCreateInviteCodeArgsAssignedRole(BaseModel):
 
         if match > 1:
             # more than 1 match
-            raise ValueError("Multiple matches found when deserializing the JSON string into RequestInviteCodesCreateInviteCodeArgsAssignedRole with oneOf schemas: str. Details: " + ", ".join(error_messages))
+            raise ValueError("Multiple matches found when deserializing the JSON string into RequestAdminsCreateUserProfileArgsRole with oneOf schemas: str. Details: " + ", ".join(error_messages))
         elif match == 0:
             # no match
-            raise ValueError("No match found when deserializing the JSON string into RequestInviteCodesCreateInviteCodeArgsAssignedRole with oneOf schemas: str. Details: " + ", ".join(error_messages))
+            raise ValueError("No match found when deserializing the JSON string into RequestAdminsCreateUserProfileArgsRole with oneOf schemas: str. Details: " + ", ".join(error_messages))
         else:
             return instance
 

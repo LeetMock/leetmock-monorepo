@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.request_editor_snapshots_create_args_terminal import RequestEditorSnapshotsCreateArgsTerminal
+from convex_client.models.response_actions_get_editor_snapshot_value_terminal import ResponseActionsGetEditorSnapshotValueTerminal
 
-class TestRequestEditorSnapshotsCreateArgsTerminal(unittest.TestCase):
-    """RequestEditorSnapshotsCreateArgsTerminal unit test stubs"""
+class TestResponseActionsGetEditorSnapshotValueTerminal(unittest.TestCase):
+    """ResponseActionsGetEditorSnapshotValueTerminal unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,29 +25,29 @@ class TestRequestEditorSnapshotsCreateArgsTerminal(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> RequestEditorSnapshotsCreateArgsTerminal:
-        """Test RequestEditorSnapshotsCreateArgsTerminal
+    def make_instance(self, include_optional) -> ResponseActionsGetEditorSnapshotValueTerminal:
+        """Test ResponseActionsGetEditorSnapshotValueTerminal
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `RequestEditorSnapshotsCreateArgsTerminal`
+        # uncomment below to create an instance of `ResponseActionsGetEditorSnapshotValueTerminal`
         """
-        model = RequestEditorSnapshotsCreateArgsTerminal()
+        model = ResponseActionsGetEditorSnapshotValueTerminal()
         if include_optional:
-            return RequestEditorSnapshotsCreateArgsTerminal(
+            return ResponseActionsGetEditorSnapshotValueTerminal(
                 execution_time = 1.337,
                 is_error = True,
                 output = ''
             )
         else:
-            return RequestEditorSnapshotsCreateArgsTerminal(
+            return ResponseActionsGetEditorSnapshotValueTerminal(
                 is_error = True,
                 output = '',
         )
         """
 
-    def testRequestEditorSnapshotsCreateArgsTerminal(self):
-        """Test RequestEditorSnapshotsCreateArgsTerminal"""
+    def testResponseActionsGetEditorSnapshotValueTerminal(self):
+        """Test ResponseActionsGetEditorSnapshotValueTerminal"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.response_code_runner_run_tests import ResponseCodeRunnerRunTests
+from convex_client.models.response_admins_patch_user_subscription import ResponseAdminsPatchUserSubscription
 
-class TestResponseCodeRunnerRunTests(unittest.TestCase):
-    """ResponseCodeRunnerRunTests unit test stubs"""
+class TestResponseAdminsPatchUserSubscription(unittest.TestCase):
+    """ResponseAdminsPatchUserSubscription unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,29 +25,29 @@ class TestResponseCodeRunnerRunTests(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> ResponseCodeRunnerRunTests:
-        """Test ResponseCodeRunnerRunTests
+    def make_instance(self, include_optional) -> ResponseAdminsPatchUserSubscription:
+        """Test ResponseAdminsPatchUserSubscription
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `ResponseCodeRunnerRunTests`
+        # uncomment below to create an instance of `ResponseAdminsPatchUserSubscription`
         """
-        model = ResponseCodeRunnerRunTests()
+        model = ResponseAdminsPatchUserSubscription()
         if include_optional:
-            return ResponseCodeRunnerRunTests(
+            return ResponseAdminsPatchUserSubscription(
                 status = 'success',
                 error_message = '',
                 error_data = None,
                 value = None
             )
         else:
-            return ResponseCodeRunnerRunTests(
+            return ResponseAdminsPatchUserSubscription(
                 status = 'success',
         )
         """
 
-    def testResponseCodeRunnerRunTests(self):
-        """Test ResponseCodeRunnerRunTests"""
+    def testResponseAdminsPatchUserSubscription(self):
+        """Test ResponseAdminsPatchUserSubscription"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

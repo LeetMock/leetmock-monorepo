@@ -55,10 +55,10 @@ import convex_client
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -90,7 +90,7 @@ with convex_client.ApiClient(configuration) as api_client:
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://posh-chihuahua-941.convex.cloud*
+All URIs are relative to *https://neat-warbler-689.convex.cloud*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
@@ -101,6 +101,7 @@ Class | Method | HTTP request | Description
 *ActionApi* | [**api_run_actions_run_code_post**](docs/ActionApi.md#api_run_actions_run_code_post) | **POST** /api/run/actions/runCode | Calls a action at the path actions.js:runCode
 *ActionApi* | [**api_run_actions_run_tests_post**](docs/ActionApi.md#api_run_actions_run_tests_post) | **POST** /api/run/actions/runTests | Calls a action at the path actions.js:runTests
 *MutationApi* | [**api_run_admins_create_user_profile_post**](docs/MutationApi.md#api_run_admins_create_user_profile_post) | **POST** /api/run/admins/createUserProfile | Calls a mutation at the path admins.js:createUserProfile
+*MutationApi* | [**api_run_admins_patch_user_subscription_post**](docs/MutationApi.md#api_run_admins_patch_user_subscription_post) | **POST** /api/run/admins/patchUserSubscription | Calls a mutation at the path admins.js:patchUserSubscription
 *MutationApi* | [**api_run_editor_snapshots_create_post**](docs/MutationApi.md#api_run_editor_snapshots_create_post) | **POST** /api/run/editorSnapshots/create | Calls a mutation at the path editorSnapshots.js:create
 *MutationApi* | [**api_run_invite_codes_apply_invite_code_post**](docs/MutationApi.md#api_run_invite_codes_apply_invite_code_post) | **POST** /api/run/inviteCodes/applyInviteCode | Calls a mutation at the path inviteCodes.js:applyInviteCode
 *MutationApi* | [**api_run_sessions_create_post**](docs/MutationApi.md#api_run_sessions_create_post) | **POST** /api/run/sessions/create | Calls a mutation at the path sessions.js:create
@@ -131,10 +132,11 @@ Class | Method | HTTP request | Description
  - [RequestActionsRunTestsArgs](docs/RequestActionsRunTestsArgs.md)
  - [RequestAdminsCreateUserProfile](docs/RequestAdminsCreateUserProfile.md)
  - [RequestAdminsCreateUserProfileArgs](docs/RequestAdminsCreateUserProfileArgs.md)
+ - [RequestAdminsCreateUserProfileArgsRole](docs/RequestAdminsCreateUserProfileArgsRole.md)
+ - [RequestAdminsCreateUserProfileArgsSubscription](docs/RequestAdminsCreateUserProfileArgsSubscription.md)
+ - [RequestAdminsPatchUserSubscription](docs/RequestAdminsPatchUserSubscription.md)
+ - [RequestAdminsPatchUserSubscriptionArgs](docs/RequestAdminsPatchUserSubscriptionArgs.md)
  - [RequestEditorSnapshotsCreate](docs/RequestEditorSnapshotsCreate.md)
- - [RequestEditorSnapshotsCreateArgs](docs/RequestEditorSnapshotsCreateArgs.md)
- - [RequestEditorSnapshotsCreateArgsEditor](docs/RequestEditorSnapshotsCreateArgsEditor.md)
- - [RequestEditorSnapshotsCreateArgsTerminal](docs/RequestEditorSnapshotsCreateArgsTerminal.md)
  - [RequestEditorSnapshotsGetById](docs/RequestEditorSnapshotsGetById.md)
  - [RequestEditorSnapshotsGetByIdArgs](docs/RequestEditorSnapshotsGetByIdArgs.md)
  - [RequestEditorSnapshotsGetLatestSnapshotBySessionId](docs/RequestEditorSnapshotsGetLatestSnapshotBySessionId.md)
@@ -144,7 +146,6 @@ Class | Method | HTTP request | Description
  - [RequestInviteCodesApplyInviteCodeArgs](docs/RequestInviteCodesApplyInviteCodeArgs.md)
  - [RequestInviteCodesCreateInviteCode](docs/RequestInviteCodesCreateInviteCode.md)
  - [RequestInviteCodesCreateInviteCodeArgs](docs/RequestInviteCodesCreateInviteCodeArgs.md)
- - [RequestInviteCodesCreateInviteCodeArgsAssignedRole](docs/RequestInviteCodesCreateInviteCodeArgsAssignedRole.md)
  - [RequestQuestionsGetAll](docs/RequestQuestionsGetAll.md)
  - [RequestQuestionsGetById](docs/RequestQuestionsGetById.md)
  - [RequestQuestionsGetByIdArgs](docs/RequestQuestionsGetByIdArgs.md)
@@ -166,12 +167,16 @@ Class | Method | HTTP request | Description
  - [RequestUserProfilesGetUserProfile](docs/RequestUserProfilesGetUserProfile.md)
  - [ResponseActionsCreateAgentThread](docs/ResponseActionsCreateAgentThread.md)
  - [ResponseActionsGetEditorSnapshot](docs/ResponseActionsGetEditorSnapshot.md)
+ - [ResponseActionsGetEditorSnapshotValue](docs/ResponseActionsGetEditorSnapshotValue.md)
+ - [ResponseActionsGetEditorSnapshotValueEditor](docs/ResponseActionsGetEditorSnapshotValueEditor.md)
+ - [ResponseActionsGetEditorSnapshotValueTerminal](docs/ResponseActionsGetEditorSnapshotValueTerminal.md)
  - [ResponseActionsGetSessionMetadata](docs/ResponseActionsGetSessionMetadata.md)
  - [ResponseActionsGetSessionMetadataValue](docs/ResponseActionsGetSessionMetadataValue.md)
  - [ResponseActionsGetToken](docs/ResponseActionsGetToken.md)
  - [ResponseActionsRunCode](docs/ResponseActionsRunCode.md)
  - [ResponseActionsRunTests](docs/ResponseActionsRunTests.md)
  - [ResponseAdminsCreateUserProfile](docs/ResponseAdminsCreateUserProfile.md)
+ - [ResponseAdminsPatchUserSubscription](docs/ResponseAdminsPatchUserSubscription.md)
  - [ResponseEditorSnapshotsCreate](docs/ResponseEditorSnapshotsCreate.md)
  - [ResponseEditorSnapshotsGetById](docs/ResponseEditorSnapshotsGetById.md)
  - [ResponseEditorSnapshotsGetLatestSnapshotBySessionId](docs/ResponseEditorSnapshotsGetLatestSnapshotBySessionId.md)

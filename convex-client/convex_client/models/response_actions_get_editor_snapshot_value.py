@@ -17,18 +17,21 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_admins_create_user_profile_args_role import RequestAdminsCreateUserProfileArgsRole
+from convex_client.models.response_actions_get_editor_snapshot_value_editor import ResponseActionsGetEditorSnapshotValueEditor
+from convex_client.models.response_actions_get_editor_snapshot_value_terminal import ResponseActionsGetEditorSnapshotValueTerminal
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
+class ResponseActionsGetEditorSnapshotValue(BaseModel):
     """
-    RequestInviteCodesCreateInviteCodeArgs
+    ResponseActionsGetEditorSnapshotValue
     """ # noqa: E501
-    assigned_role: RequestAdminsCreateUserProfileArgsRole = Field(alias="assignedRole")
-    __properties: ClassVar[List[str]] = ["assignedRole"]
+    editor: ResponseActionsGetEditorSnapshotValueEditor
+    session_id: StrictStr = Field(description="ID from table \"sessions\"", alias="sessionId")
+    terminal: ResponseActionsGetEditorSnapshotValueTerminal
+    __properties: ClassVar[List[str]] = ["editor", "sessionId", "terminal"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -48,7 +51,7 @@ class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestInviteCodesCreateInviteCodeArgs from a JSON string"""
+        """Create an instance of ResponseActionsGetEditorSnapshotValue from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -69,14 +72,17 @@ class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of assigned_role
-        if self.assigned_role:
-            _dict['assignedRole'] = self.assigned_role.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of editor
+        if self.editor:
+            _dict['editor'] = self.editor.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of terminal
+        if self.terminal:
+            _dict['terminal'] = self.terminal.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestInviteCodesCreateInviteCodeArgs from a dict"""
+        """Create an instance of ResponseActionsGetEditorSnapshotValue from a dict"""
         if obj is None:
             return None
 
@@ -84,7 +90,9 @@ class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "assignedRole": RequestAdminsCreateUserProfileArgsRole.from_dict(obj["assignedRole"]) if obj.get("assignedRole") is not None else None
+            "editor": ResponseActionsGetEditorSnapshotValueEditor.from_dict(obj["editor"]) if obj.get("editor") is not None else None,
+            "sessionId": obj.get("sessionId"),
+            "terminal": ResponseActionsGetEditorSnapshotValueTerminal.from_dict(obj["terminal"]) if obj.get("terminal") is not None else None
         })
         return _obj
 

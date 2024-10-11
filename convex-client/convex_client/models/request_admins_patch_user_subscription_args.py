@@ -17,18 +17,21 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field
-from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_admins_create_user_profile_args_role import RequestAdminsCreateUserProfileArgsRole
+from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
+from typing import Any, ClassVar, Dict, List, Optional, Union
+from convex_client.models.request_admins_create_user_profile_args_subscription import RequestAdminsCreateUserProfileArgsSubscription
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
+class RequestAdminsPatchUserSubscriptionArgs(BaseModel):
     """
-    RequestInviteCodesCreateInviteCodeArgs
+    RequestAdminsPatchUserSubscriptionArgs
     """ # noqa: E501
-    assigned_role: RequestAdminsCreateUserProfileArgsRole = Field(alias="assignedRole")
-    __properties: ClassVar[List[str]] = ["assignedRole"]
+    minutes_remaining: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="minutesRemaining")
+    next_billing_date: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="nextBillingDate")
+    subscription: Optional[RequestAdminsCreateUserProfileArgsSubscription] = None
+    user_id: StrictStr = Field(alias="userId")
+    __properties: ClassVar[List[str]] = ["minutesRemaining", "nextBillingDate", "subscription", "userId"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -48,7 +51,7 @@ class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestInviteCodesCreateInviteCodeArgs from a JSON string"""
+        """Create an instance of RequestAdminsPatchUserSubscriptionArgs from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -69,14 +72,14 @@ class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of assigned_role
-        if self.assigned_role:
-            _dict['assignedRole'] = self.assigned_role.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of subscription
+        if self.subscription:
+            _dict['subscription'] = self.subscription.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestInviteCodesCreateInviteCodeArgs from a dict"""
+        """Create an instance of RequestAdminsPatchUserSubscriptionArgs from a dict"""
         if obj is None:
             return None
 
@@ -84,7 +87,10 @@ class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "assignedRole": RequestAdminsCreateUserProfileArgsRole.from_dict(obj["assignedRole"]) if obj.get("assignedRole") is not None else None
+            "minutesRemaining": obj.get("minutesRemaining"),
+            "nextBillingDate": obj.get("nextBillingDate"),
+            "subscription": RequestAdminsCreateUserProfileArgsSubscription.from_dict(obj["subscription"]) if obj.get("subscription") is not None else None,
+            "userId": obj.get("userId")
         })
         return _obj
 

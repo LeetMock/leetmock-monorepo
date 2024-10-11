@@ -185,7 +185,6 @@ async def entrypoint(ctx: JobContext):
         preemptive_synthesis=False,
         before_llm_cb=before_llm_callback,
     )
-    assistant.start(ctx.room)
 
     @assistant.on("agent_speech_committed")
     def update_message_state_for_agent(msg: llm.ChatMessage):
@@ -284,6 +283,7 @@ async def entrypoint(ctx: JobContext):
     await session_id_fut
     await prepare_session_and_acknowledge()
     await prepare_initial_agent_context()
+    assistant.start(ctx.room)
     await assistant.say(
         before_llm_callback(assistant, initial_ctx),
         allow_interruptions=True,

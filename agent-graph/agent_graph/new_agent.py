@@ -181,7 +181,7 @@ def chatbot_coding(state: AgentState, config: RunnableConfig):
     llm = (
         get_model(model_name, temperature)
         .bind(stop=[stop_token])
-        .with_config({"tags": ["chatbot"]})
+        .with_config({"tags": ["chatbot_coding"]})
     )
     chain = system_prompt_tpl | llm
 
@@ -195,10 +195,14 @@ def chatbot_coding(state: AgentState, config: RunnableConfig):
         }
     )
 
+    
     # Keep track of SLIENT token in message history, but not send to voice engine
-    message = AIMessage(content=stop_token) if len(response.content) == 0 else None
+    if len(response.content) == 0:
+        message = AIMessage(content=stop_token)
+    else:
+        message = response
 
-    return {"messages": [message]} if message is not None else None
+    return {"messages": [message]}
 
 def chatbot_eval(state: AgentState, config: RunnableConfig):
     agent_config = get_default_config(AgentConfig, config, DEFAULT_CONFIG)
@@ -254,7 +258,7 @@ def record_node(state: AgentState, config: RunnableConfig):
     # [TODO] update eval metric and prompt
     agent_config = get_default_config(AgentConfig, config, DEFAULT_CONFIG)
 
-    return {}
+    return {"messages": [HumanMessage(content="")]}
 
 # --------------------- keep track of task completion, determine stage change --------------------- #
 def stage_tracker(state: AgentState, config: RunnableConfig):
@@ -397,24 +401,26 @@ def check_user_activity(state: AgentState):
             nodes.append("run_test")
         if time_diff < 5:
             nodes.append("interupter")
+
+    if not nodes:
+        nodes.append("chatbot_coding")
+
     return nodes
 
 def check_stage(state: AgentState):
-
+    
     if state["stage"] == "background":  # Added colon here
         return "background"
     elif state["stage"] == "coding":
-        return "chatbot_coding"
-    elif agent_state["stage"] == "eval":
-        return "chatbot_eval"
+        return "coding"
+    elif state["stage"] == "eval":
+        return "eval"
     return "END"
 
 # --------------------- Graph Construction --------------------- #
 
 graph_builder = StateGraph(state_schema=AgentState, config_schema=AgentConfig)
-
 #chatbot nodes
-# graph_builder.add_node("chatbot_coding", chatbot_coding)  # type: ignore
 graph_builder.add_node("chatbot_eval", chatbot_eval)  # type: ignore
 graph_builder.add_node("chatbot_bg", chatbot_bg)  # type: ignore
 graph_builder.add_node("chatbot_coding", chatbot_coding)  # type: ignore
@@ -428,16 +434,9 @@ graph_builder.add_node("reminder", reminder)  # type: ignore
 graph_builder.add_node("interupter", interupter)  # type: ignore
 graph_builder.add_node("record_node", record_node)  # type: ignore
 
-coding_intermidiate = [
-    "reminder",
-    "run_test",
-    "interupter"
-]
-
 graph_builder.add_edge(START, "prepare_state")
 graph_builder.add_edge("prepare_state", "record_node")
 graph_builder.add_edge("prepare_state", "stage_tracker")
-graph_builder.add_edge("stage_tracker", "chatbot_bg")
 graph_builder.add_conditional_edges(
     "stage_tracker",
     check_stage,
@@ -451,9 +450,14 @@ graph_builder.add_conditional_edges(
 graph_builder.add_conditional_edges(
     "code_action_classifier",
     check_user_activity,
-    coding_intermidiate,
+    {
+        "reminder": "reminder",
+        "run_test": "run_test",
+        "interupter": "interupter",
+        "chatbot_coding": "chatbot_coding",
+    },
 )
-for node in coding_intermidiate:
+for node in ["reminder", "run_test", "interupter"]:
     graph_builder.add_edge(node, "chatbot_coding")
 
 graph_builder.add_edge("chatbot_coding", END)
