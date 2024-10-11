@@ -2,7 +2,7 @@ import os
 import time
 import convex_client
 
-from typing import Annotated, List, Literal, TypedDict
+from typing import Annotated, List, Literal, TypedDict, Dict, Any
 
 from convex_client.models.request_actions_run_tests import RequestActionsRunTests
 from convex_client.models.request_actions_run_tests_args import (
@@ -20,7 +20,6 @@ from langgraph.checkpoint.memory import MemorySaver
 from agent_graph.prompts import (
     TESTCASE_INTERNAL_ERROR_PROMPT,
     format_test_context,
-    STAGE_TASKS,
 )
 from agent_graph.utils import (
     get_default_config,
@@ -36,13 +35,6 @@ InteractionType = Literal["response_required", "reminder_required"]
 InterviewStatus = Literal["not_started", "in_progress", "completed"]
 
 
-INTERVIEW_PIPELINE = [
-    "background",
-    "coding",
-    "eval",
-    "END"
-]
-
 class AgentState(TypedDict):
     """Agent state"""
 
@@ -55,7 +47,7 @@ class AgentState(TypedDict):
     stage: Literal["background", "coding", "eval"]
     """The stage of the interview"""
 
-    stage_tasks: List[str]
+    curr_tasks: List[List[Any]]
     """The tasks to be completed in the current stage"""
 
     interaction_type: InteractionType
@@ -79,6 +71,13 @@ class AgentState(TypedDict):
     run_test_case: bool
     """Whether to run the test case"""
 
+    interview_pipeline: List[str]
+    """The pipeline of the interview"""
+
+    stage_tasks: Dict[str, List[List[Any]]]
+    """The tasks to be completed in each stage"""
+
+
 
 class AgentConfig(TypedDict):
     """Agent configuration"""
@@ -101,13 +100,37 @@ DEFAULT_STATE: AgentState = {
     "incoming_messages": [],
     "interaction_type": "response_required",
     "stage": "background",
-    "stage_tasks": STAGE_TASKS["background"],
     "question_id": None,
     "test_context": None,
     "coding_question": "Write a function that takes in a string and returns the string reversed",
     "editor_content": "def reverse_string(s: str) -> str:\n    return s[::-1]",
     "content_last_updated": 0,
     "run_test_case": False,
+    "interview_pipeline": ["background", "coding", "eval", "END"],
+    "curr_tasks": [],
+    "stage_tasks": {
+        "background": [
+            ["Introduce yourself to the interviewee and ask for their name.", 1],
+            ["Ask the interviewee about their background and experience.", 1],
+            ["Ask the interviewee about their career goals.", 1],
+            ["Ask the interviewee about their strengths and weaknesses.", 1],
+            ["Discuss the interviewee's past projects and their role in them.", 1],
+        ],
+        "coding": [
+            ["describe the problem to the user", 1],
+            ["answer any clarifying questions the user has", 0],
+            ["let user write the code to solve the problem", 1],
+            ["Ask the user to explain their code and the approach they took to solve the problem", 1],
+            ["if user's code can be optimized, ask them if they can think of a better solution", 1],
+            ["finish the question", 1],
+        ],
+        "eval": [
+            ["Tell user how they did in the interview.", 1],
+            ["Tell user what they did well and what they could improve on.", 1],
+            ["Give user suggestions on how to improve their coding skills.", 1],
+            ["Ask user if they have any questions for you.", 1],
+        ],
+    }
 }
 
 DEFAULT_CONFIG: AgentConfig = {
@@ -126,13 +149,15 @@ action_api = convex_client.ActionApi(api_client)
 def prepare_state(state: AgentState, config: RunnableConfig) -> dict:
     # Use the input state, applying defaults where necessary
     agent_state = get_default_state(AgentState, state, DEFAULT_STATE)
-    
+    print(agent_state)
     # Create a new dictionary for the return value
     prepared_state = {
         "messages": agent_state["incoming_messages"],
         "incoming_messages": [],
         "interaction_type": agent_state["interaction_type"],
-        "stage": agent_state["stage"],
+        "stage": "background",
+        "curr_tasks": agent_state["stage_tasks"][agent_state["stage"]],
+        "interview_pipeline": agent_state["interview_pipeline"],
         "stage_tasks": agent_state["stage_tasks"],
         "question_id": agent_state["question_id"],
         "test_context": agent_state["test_context"],
@@ -191,7 +216,7 @@ def chatbot_coding(state: AgentState, config: RunnableConfig):
             "editor_content": agent_state["editor_content"],
             "test_context": agent_state["test_context"],
             "messages": agent_state["messages"],
-            "tasks": tasks_to_str(agent_state["stage_tasks"]),
+            "tasks": tasks_to_str(agent_state["curr_tasks"]),
         }
     )
 
@@ -222,7 +247,7 @@ def chatbot_eval(state: AgentState, config: RunnableConfig):
     response = chain.invoke(
         {
             "messages": state["messages"],
-            "tasks": tasks_to_str(state["stage_tasks"]),
+            "tasks": tasks_to_str(state["curr_tasks"]),
         }
     )
 
@@ -247,7 +272,7 @@ def chatbot_bg(state: AgentState, config: RunnableConfig):
     response = chain.invoke(
         {
             "messages": state["messages"],
-            "tasks": tasks_to_str(state["stage_tasks"]),
+            "tasks": tasks_to_str(state["curr_tasks"]),
         }
     )
 
@@ -275,28 +300,28 @@ def stage_tracker(state: AgentState, config: RunnableConfig):
     response = chain.invoke(
         {
             "messages": state["messages"],
-            "tasks": tasks_to_str(state["stage_tasks"]),
+            "tasks": tasks_to_str(state["curr_tasks"]),
         }
     )
 
     # check if response.content is a array
-    current_tasks = state["stage_tasks"]
+    current_tasks = state["curr_tasks"]
     tasks_finished = response['task_completed']
     if isinstance(tasks_finished, list):
         updated_tasks = remove_tasks(current_tasks, tasks_finished)
     else:
-        return {"stage_tasks": current_tasks}        
+        return {"curr_tasks": current_tasks}        
 
     # check if all tasks are completed
     if len(updated_tasks) == 0:
-        next_stage = INTERVIEW_PIPELINE[INTERVIEW_PIPELINE.index(state["stage"]) + 1]
+        next_stage = state['interview_pipeline'][state['interview_pipeline'].index(state["stage"]) + 1]
         return {
             "stage": next_stage,
-            "stage_tasks": STAGE_TASKS[next_stage],
+            "curr_tasks": state['stage_tasks'][next_stage],
             "messages": [HumanMessage(content=f"(Now user has completed {state['stage']} stage, and is ready to start {next_stage} stage. You should do a smooth transition.)")]
         }
 
-    return {"stage_tasks": updated_tasks}
+    return {"curr_tasks": updated_tasks}
 
 # --------------------- code action classifier --------------------- #
 def code_action_classifier(state: AgentState, config: RunnableConfig):
