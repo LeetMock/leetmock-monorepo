@@ -206,7 +206,7 @@ def chatbot_coding(state: AgentState, config: RunnableConfig):
     llm = (
         get_model(model_name, temperature)
         .bind(stop=[stop_token])
-        .with_config({"tags": ["chatbot_coding"]})
+        .with_config({"tags": ["chatbot"]})
     )
     chain = system_prompt_tpl | llm
 
@@ -264,7 +264,7 @@ def chatbot_bg(state: AgentState, config: RunnableConfig):
 
     llm = (
         get_model(model_name, temperature)
-        .with_config({"tags": ["chatbot_bg"]})
+        .with_config({"tags": ["chatbot"]})
     )
 
     chain = system_prompt_tpl | llm
