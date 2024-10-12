@@ -4,7 +4,6 @@ import { defineEnt, defineEntSchema, getEntDefinitions } from "convex-ents";
 // Schema definition
 const schema = defineEntSchema({
   userProfiles: defineEnt({
-    userId: v.string(),
     role: v.union(v.literal("admin"), v.literal("user")),
     subscription: v.union(
       v.literal("free"),
@@ -22,8 +21,8 @@ const schema = defineEntSchema({
     subscriptionStatus: v.optional(v.string()),
     refreshDate: v.optional(v.number()),
   })
+    .field("userId", v.string(), { unique: true }) // user id should be unique
     .field("email", v.string(), { unique: true }) // index by email by default
-    .index("by_user_id", ["userId"])
     .index("by_role", ["role"])
     .index("by_interval", ["interval"]),
   sessions: defineEnt({

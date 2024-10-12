@@ -22,7 +22,7 @@ export const applyInviteCode = userMutation({
   },
   handler: async (ctx, { code }) => {
     const inviteCode = await ctx.table("inviteCodes").getX("by_code", code);
-    const profile = await ctx.table("userProfiles").get("by_user_id", ctx.user.subject);
+    const profile = await ctx.table("userProfiles").get("userId", ctx.user.subject);
 
     if (isDefined(profile)) {
       throw new Error("User already exists");
