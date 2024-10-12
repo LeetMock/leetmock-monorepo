@@ -149,7 +149,6 @@ async def entrypoint(ctx: JobContext):
         tts=tts,
         chat_ctx=ctx_manager.chat_ctx,
         interrupt_speech_duration=0.7,
-        preemptive_synthesis=False,
         before_llm_cb=before_llm_callback,
     )
 
