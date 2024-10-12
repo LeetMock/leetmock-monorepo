@@ -22,7 +22,7 @@ from livekit.agents import (
 from livekit.agents.worker import _DefaultLoadCalc
 from livekit.rtc import DataPacket
 from livekit.agents.voice_assistant import VoiceAssistant
-from livekit.plugins import deepgram, silero, elevenlabs
+from livekit.plugins import deepgram, silero, elevenlabs, openai
 from agent_server.agent import LangGraphLLM, NoOpLLMStream
 
 
@@ -166,20 +166,7 @@ async def entrypoint(ctx: JobContext):
         vad=ctx.proc.userdata["vad"],
         stt=deepgram.STT(),
         llm=agent,
-        tts=elevenlabs.TTS(
-            model_id="eleven_multilingual_v2",
-            voice=elevenlabs.Voice(
-                id="DaWkexxdbjoJ99NpkRGF",
-                name="brian-optimized",
-                category="cloned",
-                settings=elevenlabs.VoiceSettings(
-                    stability=0.8,
-                    similarity_boost=0.5,
-                    style=0.5,
-                    use_speaker_boost=True,
-                ),
-            ),
-        ),
+        tts=openai.TTS(),
         chat_ctx=initial_ctx,
         interrupt_speech_duration=0.7,
         preemptive_synthesis=False,
