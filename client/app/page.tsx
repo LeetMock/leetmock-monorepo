@@ -9,7 +9,7 @@ import { CallForActions } from "./_components/CallForActions";
 import { Blog } from "./_components/Blog";
 import AppHeader from "./_components/AppHeader";
 
-const urbanist = Urbanist({ subsets: ['latin'] });
+const urbanist = Urbanist({ subsets: ["latin"] });
 
 export default function Page() {
   return (
