@@ -22,7 +22,7 @@ export const createUserProfile = adminMutation({
       email,
       role,
       subscription,
-      minutesRemaining,
+      minutesRemaining
     );
     return profile;
   },
@@ -37,7 +37,7 @@ export const patchUserSubscription = adminMutation({
     minutesRemaining: v.optional(v.number()),
   },
   handler: async (ctx, { userId, subscription, minutesRemaining }) => {
-    const profile = await ctx.table("userProfiles").getX("by_user_id", userId);
+    const profile = await ctx.table("userProfiles").getX("userId", userId);
 
     await profile.patch({
       subscription: subscription ?? profile.subscription,

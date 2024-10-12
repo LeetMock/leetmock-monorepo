@@ -7,7 +7,7 @@ import { internalMutation, userQuery } from "./functions";
 
 export const getUserProfile = userQuery({
   handler: async (ctx) => {
-    const profile = await ctx.table("userProfiles").get("by_user_id", ctx.user.subject);
+    const profile = await ctx.table("userProfiles").get("userId", ctx.user.subject);
 
     if (!isDefined(profile)) {
       return { profile: undefined };
@@ -39,7 +39,7 @@ export async function getOrCreateUserProfile(
   minutesRemaining: number
 ) {
   // check if profile already exists
-  const profile = await ctx.table("userProfiles").get("by_user_id", userId);
+  const profile = await ctx.table("userProfiles").get("userId", userId);
 
   // if profile exists, return it
   if (isDefined(profile)) {
