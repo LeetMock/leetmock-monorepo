@@ -28,10 +28,6 @@ logger = get_logger(__name__)
 
 load_dotenv(find_dotenv())
 
-logger.info(f"LIVEKIT_API_KEY: {os.getenv('LIVEKIT_API_KEY')}")
-logger.info(f"LIVEKIT_API_SECRET: {os.getenv('LIVEKIT_API_SECRET')}")
-logger.info(f"LIVEKIT_URL: {os.getenv('LIVEKIT_URL')}")
-
 
 class CustomLoadCalc(_DefaultLoadCalc):
     """CustomLoadCalc is a custom load calculator that extends the default load calculator.
@@ -205,11 +201,6 @@ async def entrypoint(ctx: JobContext):
     await ctx_manager.setup(agent)
     await ctx_manager.start()
 
-    assistant.start(ctx.room)
-
-    await session_id_fut
-    await prepare_session_and_acknowledge()
-    await prepare_initial_agent_context()
     assistant.start(ctx.room)
 
     await assistant.say(
