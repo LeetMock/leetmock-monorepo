@@ -135,15 +135,12 @@ export const adminAction = customAction(
   action,
   customCtx(async (ctx) => {
     const user = await ensureIdentity(ctx);
-    const profile = await ctx.runQuery(internal.userProfiles.getUserProfile, {
+    const profile = await ctx.runQuery(internal.userProfiles.getUserProfileInternal, {
       userId: user.subject,
     });
 
-    if (!isDefined(profile) || profile.role !== "admin") {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: `Sorry, you must be an admin to perform this operation.`,
-      });
+    if (profile.role !== "admin") {
+      throw new Error("Sorry, you must be an admin to perform this operation.");
     }
 
     return { user };
@@ -155,10 +152,7 @@ async function ensureIdentity(
 ) {
   const user = await ctx.auth.getUserIdentity();
   if (!user) {
-    throw new ConvexError({
-      code: "UNAUTHORIZED",
-      message: "Sorry, you must be logged in to perform this operation.",
-    });
+    throw new Error("Sorry, you must be logged in to perform this operation.");
   }
 
   return user;
@@ -171,14 +165,11 @@ async function ensureProfileRole(
 ) {
   const profile = await ctx.db
     .query("userProfiles")
-    .withIndex("by_user_id", (q) => q.eq("userId", userId))
+    .withIndex("userId", (q) => q.eq("userId", userId))
     .first();
 
   if (!isDefined(profile) || profile.role !== role) {
-    throw new ConvexError({
-      code: "UNAUTHORIZED",
-      message: `Sorry, you must be a ${role} perform this operation.`,
-    });
+    throw new Error(`Sorry, you must be a ${role} to perform this operation.`);
   }
 
   return profile;
