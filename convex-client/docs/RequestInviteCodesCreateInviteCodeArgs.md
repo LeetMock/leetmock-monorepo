@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**assigned_role** | [**RequestInviteCodesCreateInviteCodeArgsAssignedRole**](RequestInviteCodesCreateInviteCodeArgsAssignedRole.md) |  | 
+**assigned_role** | [**RequestAdminsCreateUserProfileArgsRole**](RequestAdminsCreateUserProfileArgsRole.md) |  | 
 
 ## Example
 

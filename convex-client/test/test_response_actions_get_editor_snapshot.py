@@ -38,13 +38,13 @@ class TestResponseActionsGetEditorSnapshot(unittest.TestCase):
                 status = 'success',
                 error_message = '',
                 error_data = None,
-                value = convex_client.models.request_editor_snapshots_create_args.Request_editorSnapshots_create_args(
-                    editor = convex_client.models.request_editor_snapshots_create_args_editor.Request_editorSnapshots_create_args_editor(
+                value = convex_client.models.response_actions_get_editor_snapshot_value.Response_actions_getEditorSnapshot_value(
+                    editor = convex_client.models.response_actions_get_editor_snapshot_value_editor.Response_actions_getEditorSnapshot_value_editor(
                         content = '', 
                         language = '', 
                         last_updated = 1.337, ), 
                     session_id = '', 
-                    terminal = convex_client.models.request_editor_snapshots_create_args_terminal.Request_editorSnapshots_create_args_terminal(
+                    terminal = convex_client.models.response_actions_get_editor_snapshot_value_terminal.Response_actions_getEditorSnapshot_value_terminal(
                         execution_time = 1.337, 
                         is_error = True, 
                         output = '', ), )

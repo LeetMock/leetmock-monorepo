@@ -17,21 +17,19 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_editor_snapshots_create_args_editor import RequestEditorSnapshotsCreateArgsEditor
-from convex_client.models.request_editor_snapshots_create_args_terminal import RequestEditorSnapshotsCreateArgsTerminal
+from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
+from typing import Any, ClassVar, Dict, List, Union
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestEditorSnapshotsCreateArgs(BaseModel):
+class ResponseActionsGetEditorSnapshotValueEditor(BaseModel):
     """
-    RequestEditorSnapshotsCreateArgs
+    ResponseActionsGetEditorSnapshotValueEditor
     """ # noqa: E501
-    editor: RequestEditorSnapshotsCreateArgsEditor
-    session_id: StrictStr = Field(description="ID from table \"sessions\"", alias="sessionId")
-    terminal: RequestEditorSnapshotsCreateArgsTerminal
-    __properties: ClassVar[List[str]] = ["editor", "sessionId", "terminal"]
+    content: StrictStr
+    language: StrictStr
+    last_updated: Union[StrictFloat, StrictInt] = Field(alias="lastUpdated")
+    __properties: ClassVar[List[str]] = ["content", "language", "lastUpdated"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -51,7 +49,7 @@ class RequestEditorSnapshotsCreateArgs(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestEditorSnapshotsCreateArgs from a JSON string"""
+        """Create an instance of ResponseActionsGetEditorSnapshotValueEditor from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -72,17 +70,11 @@ class RequestEditorSnapshotsCreateArgs(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of editor
-        if self.editor:
-            _dict['editor'] = self.editor.to_dict()
-        # override the default output from pydantic by calling `to_dict()` of terminal
-        if self.terminal:
-            _dict['terminal'] = self.terminal.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestEditorSnapshotsCreateArgs from a dict"""
+        """Create an instance of ResponseActionsGetEditorSnapshotValueEditor from a dict"""
         if obj is None:
             return None
 
@@ -90,9 +82,9 @@ class RequestEditorSnapshotsCreateArgs(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "editor": RequestEditorSnapshotsCreateArgsEditor.from_dict(obj["editor"]) if obj.get("editor") is not None else None,
-            "sessionId": obj.get("sessionId"),
-            "terminal": RequestEditorSnapshotsCreateArgsTerminal.from_dict(obj["terminal"]) if obj.get("terminal") is not None else None
+            "content": obj.get("content"),
+            "language": obj.get("language"),
+            "lastUpdated": obj.get("lastUpdated")
         })
         return _obj
 

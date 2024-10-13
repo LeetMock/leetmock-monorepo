@@ -5,7 +5,22 @@ from langchain_anthropic import ChatAnthropic
 from langchain_core.language_models.chat_models import BaseChatModel
 
 
-ModelName = Literal["gpt-4o", "claude-35"]
+ModelName = Literal["gpt-4o", "gpt-4o-mini", "claude-35"]
+
+ChatbotConfig = {
+    "eval": {
+        "model_name": "gpt-4o",
+        "temperature": 0.9,
+    },
+    "coding": {
+        "model_name": "gpt-4o",
+        "temperature": 0.9,
+    },
+    "background": {
+        "model_name": "gpt-4o",
+        "temperature": 0.9,
+    }
+}
 
 
 def get_model(
@@ -18,6 +33,8 @@ def get_model(
 
     if model_name == "gpt-4o":
         return ChatOpenAI(model="gpt-4o", temperature=temperature)
+    elif model_name == "gpt-4o-mini":
+        return ChatOpenAI(model="gpt-4o-mini", temperature=temperature)
     elif model_name == "claude-35":
         return ChatAnthropic(
             model="claude-3-5-sonnet-20240620", temperature=temperature  # type: ignore

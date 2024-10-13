@@ -28,6 +28,10 @@ logger = get_logger(__name__)
 
 load_dotenv(find_dotenv())
 
+logger.info(f"LIVEKIT_API_KEY: {os.getenv('LIVEKIT_API_KEY')}")
+logger.info(f"LIVEKIT_API_SECRET: {os.getenv('LIVEKIT_API_SECRET')}")
+logger.info(f"LIVEKIT_URL: {os.getenv('LIVEKIT_URL')}")
+
 
 class CustomLoadCalc(_DefaultLoadCalc):
     """CustomLoadCalc is a custom load calculator that extends the default load calculator.
@@ -203,6 +207,11 @@ async def entrypoint(ctx: JobContext):
 
     assistant.start(ctx.room)
 
+    await session_id_fut
+    await prepare_session_and_acknowledge()
+    await prepare_initial_agent_context()
+    assistant.start(ctx.room)
+
     await assistant.say(
         before_llm_callback(assistant, ctx_manager.chat_ctx),
         allow_interruptions=True,
@@ -238,8 +247,9 @@ if __name__ == "__main__":
             entrypoint_fnc=entrypoint,
             host="0.0.0.0",
             port=8081,
-            load_fnc=CustomLoadCalc.get_load,
-            load_threshold=0.8,  # max(cpu_load, mem_load)
-            # num_idle_processes=3,  # number of idle agents to keep
+            # load_fnc=CustomLoadCalc.get_load,
+            # load_threshold=0.80,  # max(cpu_load, mem_load)
+            # shutdown_process_timeout=30,  # seconds
+            num_idle_processes=5,  # number of idle agents to keep
         )
     )

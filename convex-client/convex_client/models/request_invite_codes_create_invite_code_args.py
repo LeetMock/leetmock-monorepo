@@ -19,7 +19,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_invite_codes_create_invite_code_args_assigned_role import RequestInviteCodesCreateInviteCodeArgsAssignedRole
+from convex_client.models.request_admins_create_user_profile_args_role import RequestAdminsCreateUserProfileArgsRole
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -27,7 +27,7 @@ class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
     """
     RequestInviteCodesCreateInviteCodeArgs
     """ # noqa: E501
-    assigned_role: RequestInviteCodesCreateInviteCodeArgsAssignedRole = Field(alias="assignedRole")
+    assigned_role: RequestAdminsCreateUserProfileArgsRole = Field(alias="assignedRole")
     __properties: ClassVar[List[str]] = ["assignedRole"]
 
     model_config = ConfigDict(
@@ -84,7 +84,7 @@ class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "assignedRole": RequestInviteCodesCreateInviteCodeArgsAssignedRole.from_dict(obj["assignedRole"]) if obj.get("assignedRole") is not None else None
+            "assignedRole": RequestAdminsCreateUserProfileArgsRole.from_dict(obj["assignedRole"]) if obj.get("assignedRole") is not None else None
         })
         return _obj
 
