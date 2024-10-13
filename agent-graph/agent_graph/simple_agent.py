@@ -11,16 +11,13 @@ from convex_client.models.request_actions_run_tests_args import (
 
 
 from langchain import hub  # type: ignore
-from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, SystemMessage
+from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
 from langchain_core.runnables.config import RunnableConfig
 from langchain_core.prompts import ChatPromptTemplate
 
 from langgraph.graph import END, StateGraph, add_messages, START
 from langgraph.checkpoint.memory import MemorySaver
-from agent_graph.prompts import (
-    TESTCASE_INTERNAL_ERROR_PROMPT,
-    format_test_context,
-)
+from agent_graph.prompts import format_test_context
 from agent_graph.utils import (
     get_default_config,
     get_default_state,
