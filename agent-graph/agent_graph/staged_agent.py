@@ -78,7 +78,6 @@ class AgentState(TypedDict):
     """The tasks to be completed in each stage"""
 
 
-
 class AgentConfig(TypedDict):
     """Agent configuration"""
 
@@ -120,8 +119,14 @@ DEFAULT_STATE: AgentState = {
             ["describe the problem to the user", 1],
             ["answer any clarifying questions the user has", 0],
             ["let user write the code to solve the problem", 1],
-            ["Ask the user to explain their code and the approach they took to solve the problem", 1],
-            ["if user's code can be optimized, ask them if they can think of a better solution", 1],
+            [
+                "Ask the user to explain their code and the approach they took to solve the problem",
+                1,
+            ],
+            [
+                "if user's code can be optimized, ask them if they can think of a better solution",
+                1,
+            ],
             ["finish the question", 1],
         ],
         "eval": [
@@ -130,7 +135,7 @@ DEFAULT_STATE: AgentState = {
             ["Give user suggestions on how to improve their coding skills.", 1],
             ["Ask user if they have any questions for you.", 1],
         ],
-    }
+    },
 }
 
 DEFAULT_CONFIG: AgentConfig = {
@@ -163,10 +168,11 @@ def prepare_state(state: AgentState, config: RunnableConfig) -> dict:
         "test_context": agent_state["test_context"],
         "coding_question": agent_state["coding_question"],
         "editor_content": agent_state["editor_content"],
-        "content_last_updated": agent_state["content_last_updated"] or int(time.time() * 1000),
+        "content_last_updated": agent_state["content_last_updated"]
+        or int(time.time() * 1000),
         "run_test_case": agent_state["run_test_case"],
     }
-    
+
     return prepared_state
 
 
@@ -191,6 +197,7 @@ def run_test(state: AgentState):
         return {"test_context": str(e)}
 
     return {"test_context": format_test_context(result)}
+
 
 # --------------------- main chatbot output nodes --------------------- #
 def chatbot_coding(state: AgentState, config: RunnableConfig):
@@ -220,7 +227,6 @@ def chatbot_coding(state: AgentState, config: RunnableConfig):
         }
     )
 
-    
     # Keep track of SLIENT token in message history, but not send to voice engine
     if len(response.content) == 0:
         message = AIMessage(content=stop_token)
@@ -228,6 +234,7 @@ def chatbot_coding(state: AgentState, config: RunnableConfig):
         message = response
 
     return {"messages": [message]}
+
 
 def chatbot_eval(state: AgentState, config: RunnableConfig):
     agent_config = get_default_config(AgentConfig, config, DEFAULT_CONFIG)
@@ -237,10 +244,7 @@ def chatbot_eval(state: AgentState, config: RunnableConfig):
     temperature = agent_config["chatbot_temperature"]
     stop_token = agent_config["chatbot_stop_token"]
 
-    llm = (
-        get_model(model_name, temperature)
-        .with_config({"tags": ["chatbot"]})
-    )
+    llm = get_model(model_name, temperature).with_config({"tags": ["chatbot"]})
 
     chain = prompt_tpl | llm
 
@@ -253,19 +257,17 @@ def chatbot_eval(state: AgentState, config: RunnableConfig):
 
     return {"messages": [response]}
 
+
 def chatbot_bg(state: AgentState, config: RunnableConfig):
     system_prompt_tpl: ChatPromptTemplate = hub.pull("leetmock_bg")
-    
+
     agent_config = get_default_config(AgentConfig, config, DEFAULT_CONFIG)
 
     model_name = agent_config["model_name"]
     temperature = agent_config["chatbot_temperature"]
     stop_token = agent_config["chatbot_stop_token"]
 
-    llm = (
-        get_model(model_name, temperature)
-        .with_config({"tags": ["chatbot"]})
-    )
+    llm = get_model(model_name, temperature).with_config({"tags": ["chatbot"]})
 
     chain = system_prompt_tpl | llm
 
@@ -278,6 +280,7 @@ def chatbot_bg(state: AgentState, config: RunnableConfig):
 
     return {"messages": [response]}
 
+
 # --------------------- record node, responsible for recording the conversation, update eval metric, determine stage change --------------------- #
 def record_node(state: AgentState, config: RunnableConfig):
     # [TODO] update eval metric and prompt
@@ -285,14 +288,14 @@ def record_node(state: AgentState, config: RunnableConfig):
 
     return {"messages": [HumanMessage(content="")]}
 
+
 # --------------------- keep track of task completion, determine stage change --------------------- #
 def stage_tracker(state: AgentState, config: RunnableConfig):
 
     prompt_tpl: ChatPromptTemplate = hub.pull("leetmock-stage-tracker")
 
-    llm = (
-        get_model("gpt-4o-mini", 0.1)
-        .with_config({"tags": ["leetmock-stage-tracker"]})
+    llm = get_model("gpt-4o-mini", 0.1).with_config(
+        {"tags": ["leetmock-stage-tracker"]}
     )
 
     chain = prompt_tpl | llm
@@ -306,22 +309,29 @@ def stage_tracker(state: AgentState, config: RunnableConfig):
 
     # check if response.content is a array
     current_tasks = state["curr_tasks"]
-    tasks_finished = response['task_completed']
+    tasks_finished = response["task_completed"]
     if isinstance(tasks_finished, list):
         updated_tasks = remove_tasks(current_tasks, tasks_finished)
     else:
-        return {"curr_tasks": current_tasks}        
+        return {"curr_tasks": current_tasks}
 
     # check if all tasks are completed
     if len(updated_tasks) == 0:
-        next_stage = state['interview_pipeline'][state['interview_pipeline'].index(state["stage"]) + 1]
+        next_stage = state["interview_pipeline"][
+            state["interview_pipeline"].index(state["stage"]) + 1
+        ]
         return {
             "stage": next_stage,
-            "curr_tasks": state['stage_tasks'][next_stage],
-            "messages": [HumanMessage(content=f"(Now user has completed {state['stage']} stage, and is ready to start {next_stage} stage. You should do a smooth transition.)")]
+            "curr_tasks": state["stage_tasks"][next_stage],
+            "messages": [
+                HumanMessage(
+                    content=f"(Now user has completed {state['stage']} stage, and is ready to start {next_stage} stage. You should do a smooth transition.)"
+                )
+            ],
         }
 
     return {"curr_tasks": updated_tasks}
+
 
 # --------------------- code action classifier --------------------- #
 def code_action_classifier(state: AgentState, config: RunnableConfig):
@@ -333,13 +343,12 @@ def code_action_classifier(state: AgentState, config: RunnableConfig):
 
     prompt_tpl: ChatPromptTemplate = hub.pull("leetmock-code-action-classifier")
 
-    llm = (
-        get_model("gpt-4o-mini", 0.1)
-        .with_config({"tags": ["leetmock-code-action-classifier"]})
+    llm = get_model("gpt-4o-mini", 0.1).with_config(
+        {"tags": ["leetmock-code-action-classifier"]}
     )
 
     chain = prompt_tpl | llm
-    
+
     # [TODO] run hurstic check to see if code editor content has no syntax error, if so, run test case, else, ask user to fix syntax error
     response = chain.invoke(
         {
@@ -347,11 +356,12 @@ def code_action_classifier(state: AgentState, config: RunnableConfig):
         }
     )
 
-    if response['to_test']:
+    if response["to_test"]:
         return {"run_test_case": True}
     else:
         return {"run_test_case": False}
-    
+
+
 # --------------------- codeing stage intermediate nodes --------------------- #
 def reminder(state: AgentState, config: RunnableConfig):
     agent_config = get_default_config(AgentConfig, config, DEFAULT_CONFIG)
@@ -401,14 +411,13 @@ def run_test(state: AgentState, config: RunnableConfig):
 
     return {"test_context": format_test_context(result)}
 
+
 def interupter(state: AgentState, config: RunnableConfig):
-    
+
     # check the total seconds since user last updated the code editor content
     time_diff = int(int(time.time()) - state["content_last_updated"] / 1000)
 
-    typing_aware_interupter_message = (
-        f"(Now the is speaking, but user is still typing on coding editor {time_diff} seconds ago. You only need to response if user is asking you a question or to do something explicitly.)"
-    )
+    typing_aware_interupter_message = f"(Now the is speaking, but user is still typing on coding editor {time_diff} seconds ago. You only need to response if user is asking you a question or to do something explicitly.)"
 
     return {"messages": [HumanMessage(content=typing_aware_interupter_message)]}
 
@@ -432,8 +441,9 @@ def check_user_activity(state: AgentState):
 
     return nodes
 
+
 def check_stage(state: AgentState):
-    
+
     if state["stage"] == "background":  # Added colon here
         return "background"
     elif state["stage"] == "coding":
@@ -442,10 +452,11 @@ def check_stage(state: AgentState):
         return "eval"
     return "END"
 
+
 # --------------------- Graph Construction --------------------- #
 
 graph_builder = StateGraph(state_schema=AgentState, config_schema=AgentConfig)
-#chatbot nodes
+# chatbot nodes
 graph_builder.add_node("chatbot_eval", chatbot_eval)  # type: ignore
 graph_builder.add_node("chatbot_bg", chatbot_bg)  # type: ignore
 graph_builder.add_node("chatbot_coding", chatbot_coding)  # type: ignore
@@ -489,7 +500,6 @@ graph_builder.add_edge("chatbot_coding", END)
 graph_builder.add_edge("chatbot_bg", END)
 graph_builder.add_edge("chatbot_eval", END)
 graph_builder.add_edge("record_node", END)
-
 
 
 graph = graph_builder.compile(checkpointer=MemorySaver())

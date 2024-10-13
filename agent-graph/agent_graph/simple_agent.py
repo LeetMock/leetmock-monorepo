@@ -195,6 +195,7 @@ def reminder(state: AgentState, config: RunnableConfig):
         "interaction_type": "response_required",  # reset interaction type to response required
     }
 
+
 # --------------------- conditional check functions --------------------- #
 def check_user_activity(state: AgentState):
     agent_state = get_default_state(AgentState, state, DEFAULT_STATE)
@@ -204,17 +205,6 @@ def check_user_activity(state: AgentState):
 
     return "run_test"
 
-def check_stage(state: AgentState):
-    agent_state = get_default_state(AgentState, state, DEFAULT_STATE)
-
-    if agent_state["stage"] == "background":  # Added colon here
-        return "chatbot_bg"
-    elif agent_state["stage"] == "coding":
-        return "chatbot_coding"
-    elif agent_state["stage"] == "eval":
-        return "chatbot_eval"
-    ## going to end if not in any of the above stages
-    return END
 
 graph_builder = StateGraph(state_schema=AgentState, config_schema=AgentConfig)
 graph_builder.add_node("prepare_state", prepare_state)  # type: ignore
