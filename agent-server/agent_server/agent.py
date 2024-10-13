@@ -55,8 +55,8 @@ class LangGraphLLM(llm.LLM):
         n: int | None = 1,
         parallel_tool_calls: bool | None = None,
     ) -> llm.LLMStream:
-
         langchain_messages = convert_chat_ctx_to_langchain_messages(chat_ctx)
+
         for i, message in enumerate(langchain_messages):
             key = f"{self._unix_timestamp}-{i}-{message.type}"
             message.id = hashlib.md5(key.encode()).hexdigest()
