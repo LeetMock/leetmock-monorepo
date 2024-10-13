@@ -15,6 +15,7 @@ import { EditorState, useEditorState } from "@/hooks/use-editor-state";
 import { toast } from "sonner";
 import { RunTestResult } from "@/lib/types";
 import { useResizePanel } from "@/hooks/use-resize-panel";
+import { useWindowSize } from "usehooks-ts";
 
 const darkEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -49,10 +50,11 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   const [outputView, setOutputView] = useState<"output" | "testResults">("output");
   const [testRunCounter, setTestRunCounter] = useState(0);
 
+  const { height = 300 } = useWindowSize();
   const { size, isResizing, resizeHandleProps } = useResizePanel({
     defaultSize: 400,
     minSize: 200,
-    maxSize: 900,
+    maxSize: Math.min(height - 250, 900),
     direction: "vertical",
     storageId: "leetmock.workspace.code-editor",
   });
@@ -236,7 +238,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
         <div className="flex justify-end">
           <Button
             variant="outline-blue"
-            className="h-7 min-w-20"
+            className="h-9 min-w-24"
             onClick={handleRunTests}
             disabled={isRunning}
           >

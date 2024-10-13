@@ -49,19 +49,20 @@ const InterviewCard = ({ activeSessionId, questionTitle }: InterviewCardProps) =
           </CardDescription>
         </CardHeader>
         <CardFooter className="flex justify-end gap-4">
-          {activeSessionId ? <Link
-            href={`/dashboard/interviews/${activeSessionId}`}
-            passHref
-          >
-            <Button
-              variant="expandIcon"
-              size="lg"
-              Icon={() => <MoveRight className="w-4 h-4 mt-px" />}
-              iconPlacement="right"
-            >
-              Resume Interview
-            </Button>
-          </Link> : <StartInterviewDialog />}
+          {activeSessionId ? (
+            <Link href={`/dashboard/interviews/${activeSessionId}`} passHref>
+              <Button
+                variant="expandIcon"
+                size="lg"
+                Icon={() => <MoveRight className="w-4 h-4 mt-px" />}
+                iconPlacement="right"
+              >
+                Resume Interview
+              </Button>
+            </Link>
+          ) : (
+            <StartInterviewDialog />
+          )}
         </CardFooter>
       </div>
     </Card>

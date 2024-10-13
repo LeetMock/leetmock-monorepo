@@ -1,8 +1,6 @@
 import { v } from "convex/values";
 import { adminMutation } from "./functions";
-import { getOrCreateUserProfile, getUserProfile } from "./userProfiles";
-import { isDefined } from "@/lib/utils";
-import { mutation } from "./_generated/server";
+import { getOrCreateUserProfile } from "./userProfiles";
 
 export const createUserProfile = adminMutation({
   args: {
@@ -13,49 +11,37 @@ export const createUserProfile = adminMutation({
       v.literal("premium"),
       v.literal("enterprise")
     ),
+    email: v.string(),
     minutesRemaining: v.number(),
     nextBillingDate: v.optional(v.number()),
   },
-  handler: async (ctx, { role, subscription, minutesRemaining, nextBillingDate }) => {
+  handler: async (ctx, { role, subscription, email, minutesRemaining }) => {
     const profile = await getOrCreateUserProfile(
       ctx,
       ctx.user.subject,
+      email,
       role,
       subscription,
-      minutesRemaining,
-      nextBillingDate
+      minutesRemaining
     );
     return profile;
   },
 });
 
-export const patchUserSubscription = mutation({
+export const patchUserSubscription = adminMutation({
   args: {
     userId: v.string(),
     subscription: v.optional(
       v.union(v.literal("free"), v.literal("basic"), v.literal("premium"), v.literal("enterprise"))
     ),
     minutesRemaining: v.optional(v.number()),
-    nextBillingDate: v.optional(v.number()),
   },
-  handler: async (ctx, { userId, subscription, minutesRemaining, nextBillingDate }) => {
-    const profile = await ctx.db
-      .query("userProfiles")
-      .withIndex("by_user_id", (q) => q.eq("userId", userId))
-      .first();
+  handler: async (ctx, { userId, subscription, minutesRemaining }) => {
+    const profile = await ctx.table("userProfiles").getX("userId", userId);
 
-    if (!isDefined(profile)) {
-      throw new Error("User profile not found");
-    }
-
-    const patch = {
+    await profile.patch({
       subscription: subscription ?? profile.subscription,
       minutesRemaining: minutesRemaining ?? profile.minutesRemaining,
-      nextBillingDate: nextBillingDate ?? profile.nextBillingDate,
-    };
-
-    await ctx.db.patch(profile._id, patch);
-
-    return { success: true };
+    });
   },
 });

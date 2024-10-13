@@ -1,52 +1,30 @@
 import os
 import asyncio
-import logging
+from typing import List
+from agent_server.contexts.convex import ConvexApi
+from agent_server.types import EditorSnapshot
 import psutil
-import convex_client
 
 from dotenv import load_dotenv, find_dotenv
 from convex_client.models import (
     RequestActionsGetEditorSnapshot,
-    RequestActionsGetSessionMetadata,
     RequestSessionsEndSessionArgs,
 )
 from livekit.agents import (
-    AutoSubscribe,
     JobContext,
-    JobProcess,
     WorkerOptions,
     cli,  # type: ignore
     llm,
     utils,
 )
 from livekit.agents.worker import _DefaultLoadCalc
-from livekit.rtc import DataPacket
 from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.plugins import deepgram, silero, elevenlabs, openai
 from agent_server.agent import LangGraphLLM, NoOpLLMStream
+from agent_server.contexts.context_manager import AgentContextManager
+from agent_server.utils.logger import get_logger
 
-
-# Add this near the top of your file, before setting up logging
-log_directory = os.path.join(os.path.dirname(__file__), "logs")
-os.makedirs(log_directory, exist_ok=True)
-
-logger = logging.getLogger("worker")
-logger.setLevel(logging.INFO)
-formatter = logging.Formatter(
-    "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-
-file_handler = logging.FileHandler(os.path.join(log_directory, "minimal_assistant.log"))
-file_handler.setLevel(logging.DEBUG)
-file_handler.setFormatter(formatter)
-
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)  # Change this line from DEBUG to INFO
-console_handler.setFormatter(formatter)
-
-logger.addHandler(file_handler)
-logger.addHandler(console_handler)
+logger = get_logger(__name__)
 
 load_dotenv(find_dotenv())
 
@@ -93,19 +71,11 @@ class CustomLoadCalc(_DefaultLoadCalc):
         return cls._instance._get_avg()
 
 
-def prewarm_fnc(proc: JobProcess):
-    # load silero weights and store to process userdata
-    proc.userdata["vad"] = silero.VAD.load()
-
-
 async def entrypoint(ctx: JobContext):
-    initial_ctx = llm.ChatContext()
+    agent = LangGraphLLM()
+    convex_api = ConvexApi(convex_url=os.getenv("CONVEX_URL") or "")
+    ctx_manager = AgentContextManager(ctx=ctx, api=convex_api)
 
-    configuration = convex_client.Configuration(host=os.getenv("CONVEX_URL") or "")
-    api_client = convex_client.ApiClient(configuration)
-    action_api = convex_client.ActionApi(api_client)
-
-    session_id_fut = asyncio.Future[str]()
     reminder_task: asyncio.Task | None = None
     reminder_delay = 24  # seconds
     last_message_was_reminder = False
@@ -141,9 +111,9 @@ async def entrypoint(ctx: JobContext):
 
     def invoke_agent(chat_ctx: llm.ChatContext, interaction_type: str) -> llm.LLMStream:
         request = RequestActionsGetEditorSnapshot(
-            args=RequestSessionsEndSessionArgs(sessionId=session_id_fut.result())
+            args=RequestSessionsEndSessionArgs(sessionId=ctx_manager.session_id)
         )
-        response = action_api.api_run_actions_get_editor_snapshot_post(request)
+        response = convex_api.action.api_run_actions_get_editor_snapshot_post(request)
 
         if response.status == "error" or response.value is None:
             logger.error(f"Error getting snapshot: {response.error_message}")
@@ -157,19 +127,32 @@ async def entrypoint(ctx: JobContext):
     def before_llm_callback(
         assistant: VoiceAssistant, chat_ctx: llm.ChatContext
     ) -> llm.LLMStream:
+        logger.info("before_llm_callback")
+        # return NoOpLLMStream(chat_ctx=chat_ctx)
         return invoke_agent(chat_ctx, "response_required")
 
-    await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
+    tts = elevenlabs.TTS(
+        model_id="eleven_multilingual_v2",
+        voice=elevenlabs.Voice(
+            id="DaWkexxdbjoJ99NpkRGF",
+            name="brian-optimized",
+            category="cloned",
+            settings=elevenlabs.VoiceSettings(
+                stability=0.3,
+                similarity_boost=0.5,
+                style=0.5,
+                use_speaker_boost=True,
+            ),
+        ),
+    )
 
-    agent = LangGraphLLM()
     assistant = VoiceAssistant(
-        vad=ctx.proc.userdata["vad"],
+        vad=silero.VAD.load(),
         stt=deepgram.STT(),
         llm=agent,
-        tts=openai.TTS(),
-        chat_ctx=initial_ctx,
+        tts=tts,
+        chat_ctx=ctx_manager.chat_ctx,
         interrupt_speech_duration=0.7,
-        preemptive_synthesis=False,
         before_llm_cb=before_llm_callback,
     )
 
@@ -215,84 +198,53 @@ async def entrypoint(ctx: JobContext):
         logger.info("agent_stopped_speaking")
         asyncio.create_task(debounced_send_reminder())
 
-    @ctx.room.on("data_received")
-    def on_data_received(data: DataPacket):
-        if data.topic != "session-id":
-            logger.warning("Unexpected data topic: %s", data.topic)
-            return
+    @ctx_manager.on("snapshot_updated")
+    def on_snapshot_updated(snapshots: List[EditorSnapshot]):
+        logger.info(f"snapshot_updated: {len(snapshots)}")
 
-        logger.info("Received data for topic: %s", data.topic)
-        logger.info("Received data: %s", data.data)
+    await ctx_manager.setup(agent)
+    await ctx_manager.start()
 
-        session_id = data.data.decode("utf-8")
-        if len(session_id) == 0:
-            logger.warning("Received empty session id")
-            return
-
-        if not session_id_fut.done():
-            session_id_fut.set_result(session_id)
-            return
-        else:
-            logger.warning("session_id_fut already set")
-
-        asyncio.create_task(
-            ctx.room.local_participant.publish_data(
-                payload="session-id-received",
-                topic="session-id-received",
-                reliable=True,
-            )
-        )
-
-    async def prepare_session_and_acknowledge():
-        request = RequestActionsGetSessionMetadata(
-            args=RequestSessionsEndSessionArgs(sessionId=session_id_fut.result())
-        )
-        response = action_api.api_run_actions_get_session_metadata_post(request)
-
-        if response.status == "error" or response.value is None:
-            logger.error(f"Error getting session metadata: {response.error_message}")
-            raise Exception(f"Error getting session metadata: {response.error_message}")
-
-        agent.set_agent_session(response.value)
-        logger.info("Acked session id")
-
-    async def prepare_initial_agent_context():
-        state = await agent.get_state()
-        messages = state.get("messages", [])  # type: ignore
-        logger.info(f"Got initial context: {messages}")
-
-        if len(messages) != 0:
-            initial_ctx.append(
-                text="(User has disconnected and reconnected back to the interview, you would say:)",
-                role="user",
-            )
+    assistant.start(ctx.room)
 
     await session_id_fut
     await prepare_session_and_acknowledge()
     await prepare_initial_agent_context()
     assistant.start(ctx.room)
+
     await assistant.say(
-        before_llm_callback(assistant, initial_ctx),
+        before_llm_callback(assistant, ctx_manager.chat_ctx),
         allow_interruptions=True,
         add_to_chat_ctx=True,
     )
 
-    # while True:
-    #     await assistant.say(
-    #         invoke_agent(
-    #             chat_ctx=assistant.chat_ctx, interaction_type="response_required"
-    #         ),
-    #         allow_interruptions=True,
-    #         add_to_chat_ctx=True,
-    #     )
-    #     await asyncio.sleep(3)
 
+"""
+langgraph: agent execution flow
+event-driven: when to call agent
+
+[
+    Event("snapshot_updated", [EditorSnapshot])
+    Event("conversation_updated", [ChatMessage])
+    Event("conversation_updated", [ChatMessage])
+    Event("conversation_updated", [ChatMessage])
+    Event("conversation_updated", [ChatMessage])
+    Event("reminder_required", [])
+    Event("snapshot_updated", [EditorSnapshot])
+    Event("snapshot_updated", [EditorSnapshot])
+    Event("snapshot_updated", [EditorSnapshot])
+    Event("snapshot_updated", [EditorSnapshot])
+    Event("snapshot_updated", [EditorSnapshot])
+]
+
+Invoker
+
+"""
 
 if __name__ == "__main__":
     cli.run_app(
         WorkerOptions(
             entrypoint_fnc=entrypoint,
-            prewarm_fnc=prewarm_fnc,
             host="0.0.0.0",
             port=8081,
             # load_fnc=CustomLoadCalc.get_load,

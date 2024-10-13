@@ -172,20 +172,18 @@ export const StartInterviewDialog: React.FC = () => {
         return createSession({
           questionId: codeInterview.questionId!,
           agentThreadId: threadId,
-          assistantId: assistantId
+          assistantId: assistantId,
         });
       })
       .then((sessionId) => {
-        router.push(`/dashboard/interviews/${sessionId}`);
-      })
-      .finally(() => {
         reset();
+        router.push(`/dashboard/interviews/${sessionId}`);
       });
 
     toast.promise(promise, {
       loading: "Creating interview",
       success: "Interview created",
-      error: "Error creating interview",
+      error: (error) => error.message,
     });
   }, [questions, createAgentThread, codeInterview, createSession, router, reset]);
 

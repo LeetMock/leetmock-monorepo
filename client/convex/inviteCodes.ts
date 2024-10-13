@@ -1,16 +1,15 @@
-import { ConvexError, v } from "convex/values";
-import { userMutation } from "./functions";
-import { getOrCreateUserProfile } from "./userProfiles";
+import { v } from "convex/values";
+import { userMutation, internalMutation } from "./functions";
+import { FREE_PLAN_MINUTES_ONLY_ONCE } from "@/lib/constants";
 import { isDefined } from "@/lib/utils";
-import { internalMutation } from "./_generated/server";
 
 export const createInviteCode = internalMutation({
   args: {
     assignedRole: v.union(v.literal("admin"), v.literal("user")),
   },
-  handler: async ({ db }, { assignedRole }) => {
+  handler: async (ctx, { assignedRole }) => {
     const inviteCode = crypto.randomUUID();
-    await db.insert("inviteCodes", {
+    await ctx.table("inviteCodes").insert({
       code: inviteCode,
       assignedRole,
     });
@@ -22,26 +21,25 @@ export const applyInviteCode = userMutation({
     code: v.string(),
   },
   handler: async (ctx, { code }) => {
-    const inviteCode = await ctx.db
-      .query("inviteCodes")
-      .withIndex("by_code", (q) => q.eq("code", code))
-      .first();
+    const inviteCode = await ctx.table("inviteCodes").getX("by_code", code);
+    const profile = await ctx.table("userProfiles").get("userId", ctx.user.subject);
 
-    if (!isDefined(inviteCode)) {
-      throw new ConvexError({
-        code: "InviteCodeNotFound",
-        message: "Invite code not found",
-      });
+    if (isDefined(profile)) {
+      throw new Error("User already exists");
     }
 
-    const assignedRole = inviteCode.assignedRole;
-    const profile = await getOrCreateUserProfile(ctx, ctx.user.subject, assignedRole, "free", 20, undefined);
+    const role = inviteCode.assignedRole;
+    const userId = ctx.user.subject;
+    const email = ctx.user.email!;
+    const subscription = "free";
+    const minutesRemaining = FREE_PLAN_MINUTES_ONLY_ONCE;
 
-    console.log(
-      `Applying invite code "${code}" to profile ${profile._id} with role ${assignedRole}`
-    );
-    await ctx.db.patch(profile._id, {
-      role: assignedRole,
+    await ctx.table("userProfiles").insert({
+      userId,
+      role,
+      email,
+      subscription,
+      minutesRemaining,
     });
   },
 });

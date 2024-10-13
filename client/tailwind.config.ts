@@ -68,6 +68,22 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        info: "#0C63E7",
+        gray: {
+          50: "#FAFAFC",
+          100: "#E9E9EC",
+          200: "#C6C8CD",
+          300: "#ACAEB6",
+          400: "#92959F",
+          500: "#777C87",
+          600: "#5D6370",
+          700: "#434959",
+          800: "#293041",
+          900: "#0f172a",
+        },
+        orange: {
+          500: '#FF8C00', // You can adjust this hex code to your preferred shade of orange
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -121,8 +137,18 @@ const config = {
         "marquee-vertical": "marquee-y var(--duration) linear infinite",
       },
     },
+    screens: {
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1536px',
+    },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/aspect-ratio")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/aspect-ratio"),
+  ],
 } satisfies Config;
 
 export default config;

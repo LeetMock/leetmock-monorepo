@@ -19,8 +19,8 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt
 from typing import Any, ClassVar, Dict, List, Optional, Union
-from convex_client.models.request_admins_create_user_profile_args_role import RequestAdminsCreateUserProfileArgsRole
 from convex_client.models.request_admins_create_user_profile_args_subscription import RequestAdminsCreateUserProfileArgsSubscription
+from convex_client.models.request_invite_codes_create_invite_code_args_assigned_role import RequestInviteCodesCreateInviteCodeArgsAssignedRole
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -30,7 +30,7 @@ class RequestAdminsCreateUserProfileArgs(BaseModel):
     """ # noqa: E501
     minutes_remaining: Union[StrictFloat, StrictInt] = Field(alias="minutesRemaining")
     next_billing_date: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="nextBillingDate")
-    role: RequestAdminsCreateUserProfileArgsRole
+    role: RequestInviteCodesCreateInviteCodeArgsAssignedRole
     subscription: RequestAdminsCreateUserProfileArgsSubscription
     __properties: ClassVar[List[str]] = ["minutesRemaining", "nextBillingDate", "role", "subscription"]
 
@@ -93,7 +93,7 @@ class RequestAdminsCreateUserProfileArgs(BaseModel):
         _obj = cls.model_validate({
             "minutesRemaining": obj.get("minutesRemaining"),
             "nextBillingDate": obj.get("nextBillingDate"),
-            "role": RequestAdminsCreateUserProfileArgsRole.from_dict(obj["role"]) if obj.get("role") is not None else None,
+            "role": RequestInviteCodesCreateInviteCodeArgsAssignedRole.from_dict(obj["role"]) if obj.get("role") is not None else None,
             "subscription": RequestAdminsCreateUserProfileArgsSubscription.from_dict(obj["subscription"]) if obj.get("subscription") is not None else None
         })
         return _obj

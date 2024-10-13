@@ -25,7 +25,6 @@ convex_client/models/request_actions_run_tests.py
 convex_client/models/request_actions_run_tests_args.py
 convex_client/models/request_admins_create_user_profile.py
 convex_client/models/request_admins_create_user_profile_args.py
-convex_client/models/request_admins_create_user_profile_args_role.py
 convex_client/models/request_admins_create_user_profile_args_subscription.py
 convex_client/models/request_admins_patch_user_subscription.py
 convex_client/models/request_admins_patch_user_subscription_args.py
@@ -106,7 +105,6 @@ docs/RequestActionsRunTests.md
 docs/RequestActionsRunTestsArgs.md
 docs/RequestAdminsCreateUserProfile.md
 docs/RequestAdminsCreateUserProfileArgs.md
-docs/RequestAdminsCreateUserProfileArgsRole.md
 docs/RequestAdminsCreateUserProfileArgsSubscription.md
 docs/RequestAdminsPatchUserSubscription.md
 docs/RequestAdminsPatchUserSubscriptionArgs.md
@@ -192,7 +190,6 @@ test/test_request_actions_run_tests.py
 test/test_request_actions_run_tests_args.py
 test/test_request_admins_create_user_profile.py
 test/test_request_admins_create_user_profile_args.py
-test/test_request_admins_create_user_profile_args_role.py
 test/test_request_admins_create_user_profile_args_subscription.py
 test/test_request_admins_patch_user_subscription.py
 test/test_request_admins_patch_user_subscription_args.py

@@ -108,10 +108,11 @@ from convex_client.models.response_admins_patch_user_subscription import Respons
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
+
+# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://neat-warbler-689.convex.cloud"
+    host = "https://posh-chihuahua-941.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters

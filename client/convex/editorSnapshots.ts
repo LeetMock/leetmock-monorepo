@@ -1,7 +1,8 @@
-import { internalQuery, query, QueryCtx } from "./_generated/server";
-import { ConvexError, v } from "convex/values";
-import { userMutation, userQuery } from "./functions";
+import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
+
+import { internalQuery, query, userMutation, userQuery } from "./functions";
+import { QueryCtx } from "./types";
 import { isDefined } from "@/lib/utils";
 
 // Get editor snapshot by ID
@@ -10,10 +11,11 @@ export const getById = userQuery({
     snapshotId: v.optional(v.id("editorSnapshots")),
   },
   handler: async (ctx, { snapshotId }) => {
-    if (!snapshotId) {
+    if (!isDefined(snapshotId)) {
       return undefined;
     }
-    return await ctx.db.get(snapshotId);
+
+    return await ctx.table("editorSnapshots").get(snapshotId);
   },
 });
 
@@ -23,11 +25,9 @@ export const getSnapshots = userQuery({
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-    return await ctx.db
-      .query("editorSnapshots")
-      .withIndex("by_session_id", (q) => q.eq("sessionId", sessionId))
-      .order("asc")
-      .collect();
+    return await ctx
+      .table("editorSnapshots", "by_session_id", (q) => q.eq("sessionId", sessionId))
+      .order("asc");
   },
 });
 
@@ -37,13 +37,7 @@ export const getLatestSnapshotBySessionId = query({
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-    const snapshot = await queryLatestSnapshot(ctx, sessionId);
-
-    if (!isDefined(snapshot)) {
-      throw new ConvexError({ name: "NoSnapshotFound", message: "No snapshot found" });
-    }
-
-    return snapshot;
+    return await queryLatestSnapshot(ctx, sessionId);
   },
 });
 
@@ -53,13 +47,7 @@ export const getLatestSnapshotBySessionIdInternal = internalQuery({
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-    const snapshot = await queryLatestSnapshot(ctx, sessionId);
-
-    if (!isDefined(snapshot)) {
-      throw new ConvexError({ name: "NoSnapshotFound", message: "No snapshot found" });
-    }
-
-    return snapshot;
+    return await queryLatestSnapshot(ctx, sessionId);
   },
 });
 
@@ -78,7 +66,7 @@ export const create = userMutation({
     }),
   },
   handler: async (ctx, { sessionId, editor, terminal }) => {
-    return await ctx.db.insert("editorSnapshots", {
+    return await ctx.table("editorSnapshots").insert({
       sessionId,
       editor,
       terminal,
@@ -86,12 +74,11 @@ export const create = userMutation({
   },
 });
 
-const queryLatestSnapshot = (ctx: QueryCtx, sessionId: Id<"sessions">) => {
-  const snapshot = ctx.db
-    .query("editorSnapshots")
-    .withIndex("by_session_id", (q) => q.eq("sessionId", sessionId))
+async function queryLatestSnapshot(ctx: QueryCtx, sessionId: Id<"sessions">) {
+  const snapshot = await ctx
+    .table("editorSnapshots", "by_session_id", (q) => q.eq("sessionId", sessionId))
     .order("desc")
-    .first();
+    .firstX();
 
   return snapshot;
-};
+}

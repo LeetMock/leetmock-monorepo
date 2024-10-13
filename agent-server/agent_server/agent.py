@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-import logging
 import os
 
 from datetime import datetime
@@ -9,14 +8,12 @@ from pprint import pprint
 from langgraph_sdk.client import get_client
 from livekit.agents import llm
 from typing import AsyncGenerator, AsyncIterator
-from langgraph_sdk.client import StreamPart
+from langgraph_sdk.schema import StreamPart
 from agent_server.utils.messages import convert_chat_ctx_to_langchain_messages
 from agent_server.types import SessionMetadata, EditorSnapshot
-from matplotlib.pyplot import disconnect
+from agent_server.utils.logger import get_logger
 
-
-logger = logging.getLogger("agent")
-logger.setLevel(logging.DEBUG)
+logger = get_logger(__name__)
 
 
 class LangGraphLLM(llm.LLM):
@@ -100,9 +97,25 @@ class NoOpLLMStream(llm.LLMStream):
         fnc_ctx: llm.FunctionContext | None = None,
     ):
         super().__init__(chat_ctx=chat_ctx, fnc_ctx=fnc_ctx)
+        self._stream = self._create_fake_stream()
+
+    def _create_llm_chunk(self, content: str) -> llm.ChatChunk:
+        choice = llm.Choice(
+            delta=llm.ChoiceDelta(content=content, role="assistant"),
+            index=0,
+        )
+        return llm.ChatChunk(choices=[choice])
+
+    async def _create_fake_stream(self) -> AsyncGenerator[llm.ChatChunk, None]:
+        for content in (
+            "I love you! I love you so much! Man! What can I say! gee ni tai may, baby"
+            * 100
+        ):
+            logger.info(f"Sending fake chunk: {content}")
+            yield self._create_llm_chunk(content)
 
     async def __anext__(self) -> llm.ChatChunk:
-        raise StopAsyncIteration
+        return await anext(self._stream)
 
 
 class SimpleLLMStream(llm.LLMStream):

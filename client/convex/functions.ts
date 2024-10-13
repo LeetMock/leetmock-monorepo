@@ -4,17 +4,21 @@ import {
   customMutation,
   customAction,
 } from "convex-helpers/server/customFunctions";
-import {
-  Rules,
-  wrapDatabaseReader,
-  wrapDatabaseWriter,
-} from "convex-helpers/server/rowLevelSecurity";
+import { Rules } from "convex-helpers/server/rowLevelSecurity";
 import { ConvexError } from "convex/values";
+import { entsTableFactory } from "convex-ents";
 import { GenericActionCtx, GenericMutationCtx, GenericQueryCtx, UserIdentity } from "convex/server";
-import { action, mutation, query } from "./_generated/server";
+import {
+  internalMutation as baseInternalMutation,
+  internalQuery as baseInternalQuery,
+  mutation as baseMutation,
+  query as baseQuery,
+  action,
+} from "./_generated/server";
 import { DataModel } from "./_generated/dataModel";
 import { isDefined } from "@/lib/utils";
 import { internal } from "./_generated/api";
+import { entDefinitions } from "./schema";
 
 type Ctx = {
   user: UserIdentity;
@@ -45,23 +49,59 @@ const rules: Rules<Ctx, DataModel> = {
   },
 };
 
+export const query = customQuery(
+  baseQuery,
+  customCtx(async (ctx) => {
+    return {
+      table: entsTableFactory(ctx, entDefinitions),
+      db: undefined,
+    };
+  })
+);
+
+export const internalQuery = customQuery(
+  baseInternalQuery,
+  customCtx(async (ctx) => {
+    return {
+      table: entsTableFactory(ctx, entDefinitions),
+      db: undefined,
+    };
+  })
+);
+
+export const mutation = customMutation(
+  baseMutation,
+  customCtx(async (ctx) => {
+    return {
+      table: entsTableFactory(ctx, entDefinitions),
+      db: undefined,
+    };
+  })
+);
+
+export const internalMutation = customMutation(
+  baseInternalMutation,
+  customCtx(async (ctx) => {
+    return {
+      table: entsTableFactory(ctx, entDefinitions),
+      db: undefined,
+    };
+  })
+);
+
 export const userQuery = customQuery(
-  query,
+  baseQuery,
   customCtx(async (ctx) => {
     const user = await ensureIdentity(ctx);
-    const db = wrapDatabaseReader({ user }, ctx.db, rules);
-
-    return { user, db };
+    return { user, table: entsTableFactory(ctx, entDefinitions), db: undefined };
   })
 );
 
 export const userMutation = customMutation(
-  mutation,
+  baseMutation,
   customCtx(async (ctx) => {
     const user = await ensureIdentity(ctx);
-    const db = wrapDatabaseWriter({ user }, ctx.db, rules);
-
-    return { user, db };
+    return { user, table: entsTableFactory(ctx, entDefinitions), db: undefined };
   })
 );
 
@@ -74,22 +114,20 @@ export const userAction = customAction(
 );
 
 export const adminQuery = customQuery(
-  query,
+  baseQuery,
   customCtx(async (ctx) => {
     const user = await ensureIdentity(ctx);
     await ensureProfileRole(ctx, user.subject, "admin");
-
-    return { user, db: ctx.db };
+    return { user, table: entsTableFactory(ctx, entDefinitions), db: undefined };
   })
 );
 
 export const adminMutation = customMutation(
-  mutation,
+  baseMutation,
   customCtx(async (ctx) => {
     const user = await ensureIdentity(ctx);
     await ensureProfileRole(ctx, user.subject, "admin");
-
-    return { user, db: ctx.db };
+    return { user, table: entsTableFactory(ctx, entDefinitions), db: undefined };
   })
 );
 

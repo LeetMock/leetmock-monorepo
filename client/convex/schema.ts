@@ -1,10 +1,9 @@
 import { v } from "convex/values";
-import { defineSchema, defineTable } from "convex/server";
+import { defineEnt, defineEntSchema, getEntDefinitions } from "convex-ents";
 
 // Schema definition
-export default defineSchema({
-  userProfiles: defineTable({
-    userId: v.string(),
+const schema = defineEntSchema({
+  userProfiles: defineEnt({
     role: v.union(v.literal("admin"), v.literal("user")),
     subscription: v.union(
       v.literal("free"),
@@ -12,12 +11,21 @@ export default defineSchema({
       v.literal("premium"),
       v.literal("enterprise")
     ),
+    interval: v.optional(
+      v.union(v.literal("month"), v.literal("year"), v.literal("day"), v.literal("week"))
+    ),
     minutesRemaining: v.number(),
-    nextBillingDate: v.optional(v.number()),
+    currentPeriodStart: v.optional(v.number()),
+    currentPeriodEnd: v.optional(v.number()),
+    latestSubscriptionId: v.optional(v.string()),
+    subscriptionStatus: v.optional(v.string()),
+    refreshDate: v.optional(v.number()),
   })
-    .index("by_user_id", ["userId"])
-    .index("by_role", ["role"]),
-  sessions: defineTable({
+    .field("userId", v.string(), { unique: true }) // user id should be unique
+    .field("email", v.string(), { unique: true }) // index by email by default
+    .index("by_role", ["role"])
+    .index("by_interval", ["interval"]),
+  sessions: defineEnt({
     userId: v.string(),
     questionId: v.id("questions"),
     agentThreadId: v.string(),
@@ -29,8 +37,10 @@ export default defineSchema({
     ),
     sessionStartTime: v.optional(v.number()),
     sessionEndTime: v.optional(v.number()),
-  }).index("by_user_id", ["userId"]),
-  editorSnapshots: defineTable({
+  })
+    .index("by_user_id", ["userId"])
+    .index("by_user_id_and_status", ["userId", "sessionStatus"]),
+  editorSnapshots: defineEnt({
     sessionId: v.id("sessions"),
     editor: v.object({
       language: v.string(),
@@ -43,7 +53,7 @@ export default defineSchema({
       executionTime: v.optional(v.number()),
     }),
   }).index("by_session_id", ["sessionId"]),
-  questions: defineTable({
+  questions: defineEnt({
     category: v.array(v.string()),
     difficulty: v.number(),
     question: v.string(),
@@ -60,8 +70,12 @@ export default defineSchema({
     title: v.string(),
     metaData: v.record(v.string(), v.any()),
   }),
-  inviteCodes: defineTable({
+  inviteCodes: defineEnt({
     code: v.string(),
     assignedRole: v.union(v.literal("admin"), v.literal("user")),
   }).index("by_code", ["code"]),
 });
+
+export const entDefinitions = getEntDefinitions(schema);
+
+export default schema;

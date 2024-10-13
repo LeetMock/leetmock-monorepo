@@ -46,18 +46,14 @@ interface WorkspaceToolbarProps {
 }
 
 export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
-  const { user } = useUser();
-  const { theme } = useTheme();
-
   const room = useRoomContext();
   const connectionState = useConnectionState();
   const { connect, disconnect } = useConnection(room);
   const startSession = useMutation(api.sessions.startSession);
   const endSession = useMutation(api.sessions.endSession);
 
-  const [timeLeft, setTimeLeft] = useState<number>(60 * 10);
+  const [timeLeft, setTimeLeft] = useState<number>(60 * 5);
   const [isEndInterviewDialogOpen, setIsEndInterviewDialogOpen] = useState<boolean>(false);
-  const color = useMemo(() => getRandomColor(), []);
 
   const { state } = useAgent(session.sessionId);
 
@@ -66,7 +62,7 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
       if (!isDefined(session?.sessionStartTime)) return;
 
       const currentTime = Date.now();
-      const endTime = session.sessionStartTime + minutesToMilliseconds(10);
+      const endTime = session.sessionStartTime + minutesToMilliseconds(5);
       const timeLeft = getTimeDurationSeconds(currentTime, endTime);
       setTimeLeft(Math.max(timeLeft, 0));
     }, 500);
@@ -121,11 +117,11 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
   }, [connectionState]);
 
   return (
-    <div className="flex items-center w-full h-12 justify-between py-2 px-2.5 space-x-3 bg-background rounded-md shadow-md">
-      <div className="flex items-center space-x-3">
-        <Avatar
+    <div className="flex items-center w-full h-14 justify-between py-2 px-2.5 space-x-3 bg-background rounded-md shadow-md">
+      <div className="flex items-center space-x-3 h-full">
+        {/* <Avatar
           className={cn(
-            "w-[1.6rem] h-[1.6rem] mt-px shadow-sm relative text-xs font-semibold ",
+            "w-8 h-8 mt-px shadow-sm relative text-xs font-semibold ",
             theme === "dark" ? "text-gray-700" : "text-white"
           )}
         >
@@ -136,14 +132,16 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
             )}
           />
           <AvatarImage />
-          <AvatarFallback className={color}>{getFirstLetter(user?.fullName)}</AvatarFallback>
-        </Avatar>
-        <TimerCountdown timeLeft={timeLeft} />
+          <AvatarFallback className={cn(color, "text-base")}>
+            {getFirstLetter(user?.fullName)}
+          </AvatarFallback>
+        </Avatar> */}
+        <TimerCountdown timeLeft={timeLeft} className="h-9 min-w-24 rounded-md" />
       </div>
-      <div className="flex items-center space-x-2.5">
+      <div className="flex items-center space-x-2.5 h-full">
         <UserDropdown align="end">
-          <Button variant="ghost" size="icon" className="w-7 h-7 rounded-sm">
-            <Settings className="w-3.5 h-3.5" />
+          <Button variant="ghost" size="icon" className="w-9 h-9 rounded-md">
+            <Settings className="w-[1.2rem] h-[1.2rem]" />
           </Button>
         </UserDropdown>
         <AlertDialog open={isEndInterviewDialogOpen} onOpenChange={setIsEndInterviewDialogOpen}>
@@ -170,7 +168,7 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
           variant="ringHover"
           className={cn(
             !isDefined(session) && "hidden",
-            "h-7 rounded-sm text-sm text-[0.8rem] px-3 min-w-20 flex items-center",
+            "h-9 rounded-md text-sm text-[0.8rem] px-3 min-w-24 flex items-center",
             connectionState === ConnectionState.Connected
               ? "bg-red-500 text-white hover:bg-red-600 hover:ring-red-500"
               : "bg-blue-500 text-white hover:bg-blue-600 hover:ring-blue-500"

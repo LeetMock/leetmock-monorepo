@@ -70,7 +70,7 @@ const TestCaseDetail: React.FC<{ title: string; data: any }> = ({ title, data })
   };
 
   const renderErrorMessage = (error: string) => {
-    return error.split('\n').map((line, index) => (
+    return error.split("\n").map((line, index) => (
       <React.Fragment key={index}>
         {line}
         <br />
@@ -81,10 +81,12 @@ const TestCaseDetail: React.FC<{ title: string; data: any }> = ({ title, data })
   return (
     <div>
       <h3 className="font-bold text-xs">{title}:</h3>
-      <pre className={cn(
-        "text-xs overflow-x-auto bg-background p-1 rounded",
-        title === "Error" ? "text-red-500" : ""
-      )}>
+      <pre
+        className={cn(
+          "text-xs overflow-x-auto bg-background p-1 rounded",
+          title === "Error" ? "text-red-500" : ""
+        )}
+      >
         {title === "Error" ? renderErrorMessage(data) : formatData(data)}
       </pre>
     </div>
