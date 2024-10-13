@@ -1,9 +1,15 @@
 import { get30DaysFromNowInSeconds, isDefined } from "@/lib/utils";
 import { MutationCtx } from "./types";
-import { internalQuery } from "./_generated/server";
-import { ConvexError, v } from "convex/values";
 import { PLANS } from "@/lib/constants";
-import { internalMutation, userQuery } from "./functions";
+import { internalMutation, internalQuery, userQuery } from "./functions";
+import { v } from "convex/values";
+
+export const getUserProfileInternal = internalQuery({
+  args: { userId: v.string() },
+  handler: async (ctx, { userId }) => {
+    return await ctx.table("userProfiles").getX("userId", userId);
+  },
+});
 
 export const getUserProfile = userQuery({
   handler: async (ctx) => {
@@ -22,11 +28,7 @@ export const getByEmailInternal = internalQuery({
   handler: async (ctx, { email }) => {
     if (!isDefined(email)) return null;
 
-    const profile = await ctx.db
-      .query("userProfiles")
-      .withIndex("email", (q) => q.eq("email", email))
-      .first();
-    return profile;
+    return await ctx.table("userProfiles").get("email", email);
   },
 });
 
