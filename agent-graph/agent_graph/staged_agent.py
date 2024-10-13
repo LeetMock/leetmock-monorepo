@@ -176,29 +176,6 @@ def prepare_state(state: AgentState, config: RunnableConfig) -> dict:
     return prepared_state
 
 
-def run_test(state: AgentState):
-
-    if state["question_id"] is None or len(state["question_id"]) == 0:
-        return {"test_context": f"question id is not set: {state['question_id']}"}
-
-    request = RequestActionsRunTests(
-        args=RequestActionsRunTestsArgs(
-            language="python",
-            code=state["editor_content"],
-            questionId=state["question_id"],
-        )
-    )
-
-    try:
-        response = action_api.api_run_actions_run_tests_post(request)
-        assert response.value is not None
-        result = response.value["testResults"]
-    except Exception as e:
-        return {"test_context": str(e)}
-
-    return {"test_context": format_test_context(result)}
-
-
 # --------------------- main chatbot output nodes --------------------- #
 def chatbot_coding(state: AgentState, config: RunnableConfig):
     system_prompt_tpl: ChatPromptTemplate = hub.pull("leetmock-v2")
@@ -456,6 +433,7 @@ def check_stage(state: AgentState):
 # --------------------- Graph Construction --------------------- #
 
 graph_builder = StateGraph(state_schema=AgentState, config_schema=AgentConfig)
+
 # chatbot nodes
 graph_builder.add_node("chatbot_eval", chatbot_eval)  # type: ignore
 graph_builder.add_node("chatbot_bg", chatbot_bg)  # type: ignore
@@ -473,6 +451,7 @@ graph_builder.add_node("record_node", record_node)  # type: ignore
 graph_builder.add_edge(START, "prepare_state")
 graph_builder.add_edge("prepare_state", "record_node")
 graph_builder.add_edge("prepare_state", "stage_tracker")
+
 graph_builder.add_conditional_edges(
     "stage_tracker",
     check_stage,
@@ -493,9 +472,8 @@ graph_builder.add_conditional_edges(
         "chatbot_coding": "chatbot_coding",
     },
 )
-for node in ["reminder", "run_test", "interupter"]:
-    graph_builder.add_edge(node, "chatbot_coding")
 
+graph_builder.add_edge(["reminder", "run_test", "interupter"], "chatbot_coding")
 graph_builder.add_edge("chatbot_coding", END)
 graph_builder.add_edge("chatbot_bg", END)
 graph_builder.add_edge("chatbot_eval", END)
