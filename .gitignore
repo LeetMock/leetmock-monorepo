@@ -138,3 +138,6 @@ poetry.lock
 leetmock-001-private.json
 
 test.py
+
+# macOS system files
+.DS_Store
