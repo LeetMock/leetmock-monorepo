@@ -5,10 +5,11 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**email** | **str** |  | 
 **minutes_remaining** | **float** |  | 
 **next_billing_date** | **float** |  | [optional] 
 **role** | [**RequestInviteCodesCreateInviteCodeArgsAssignedRole**](RequestInviteCodesCreateInviteCodeArgsAssignedRole.md) |  | 
-**subscription** | [**RequestAdminsCreateUserProfileArgsSubscription**](RequestAdminsCreateUserProfileArgsSubscription.md) |  | 
+**subscription** | [**RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName**](RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.md) |  | 
 
 ## Example
 

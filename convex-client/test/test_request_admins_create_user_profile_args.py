@@ -35,6 +35,7 @@ class TestRequestAdminsCreateUserProfileArgs(unittest.TestCase):
         model = RequestAdminsCreateUserProfileArgs()
         if include_optional:
             return RequestAdminsCreateUserProfileArgs(
+                email = '',
                 minutes_remaining = 1.337,
                 next_billing_date = 1.337,
                 role = None,
@@ -42,6 +43,7 @@ class TestRequestAdminsCreateUserProfileArgs(unittest.TestCase):
             )
         else:
             return RequestAdminsCreateUserProfileArgs(
+                email = '',
                 minutes_remaining = 1.337,
                 role = None,
                 subscription = None,

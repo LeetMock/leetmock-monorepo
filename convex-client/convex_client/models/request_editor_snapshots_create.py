@@ -19,7 +19,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict
 from typing import Any, ClassVar, Dict, List
-from convex_client.models.response_actions_get_editor_snapshot_value import ResponseActionsGetEditorSnapshotValue
+from convex_client.models.request_editor_snapshots_create_args import RequestEditorSnapshotsCreateArgs
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -27,7 +27,7 @@ class RequestEditorSnapshotsCreate(BaseModel):
     """
     RequestEditorSnapshotsCreate
     """ # noqa: E501
-    args: ResponseActionsGetEditorSnapshotValue
+    args: RequestEditorSnapshotsCreateArgs
     __properties: ClassVar[List[str]] = ["args"]
 
     model_config = ConfigDict(
@@ -84,7 +84,7 @@ class RequestEditorSnapshotsCreate(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "args": ResponseActionsGetEditorSnapshotValue.from_dict(obj["args"]) if obj.get("args") is not None else None
+            "args": RequestEditorSnapshotsCreateArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
         })
         return _obj
 

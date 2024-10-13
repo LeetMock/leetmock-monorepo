@@ -3,7 +3,7 @@ info:
   title: Convex App - OpenAPI 3.0
   version: 0.0.0
 servers:
-  - url: https://neat-warbler-689.convex.cloud
+  - url: https://posh-chihuahua-941.convex.cloud
 security:
   - bearerAuth: []
 tags:
@@ -293,6 +293,130 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/editorSnapshots/create:
+    post:
+      summary: Calls a mutation at the path editorSnapshots.js:create
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_editorSnapshots.create"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_editorSnapshots.create"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/editorSnapshots/getById:
+    post:
+      summary: Calls a query at the path editorSnapshots.js:getById
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_editorSnapshots.getById"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_editorSnapshots.getById"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/editorSnapshots/getLatestSnapshotBySessionId:
+    post:
+      summary: Calls a query at the path editorSnapshots.js:getLatestSnapshotBySessionId
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_editorSnapshots.getLatestSnapshotBySessionId"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_editorSnapshots.getLatestSnapshotBySessionId"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/editorSnapshots/getSnapshots:
+    post:
+      summary: Calls a query at the path editorSnapshots.js:getSnapshots
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_editorSnapshots.getSnapshots"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_editorSnapshots.getSnapshots"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
   /api/run/actions/createAgentThread:
     post:
       summary: Calls a action at the path actions.js:createAgentThread
@@ -479,47 +603,16 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
-  /api/run/editorSnapshots/create:
+  /api/run/userProfiles/getUserProfile:
     post:
-      summary: Calls a mutation at the path editorSnapshots.js:create
-      tags:
-        - mutation
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Request_editorSnapshots.create"
-        required: true
-      responses:
-        "200":
-          description: Convex executed your request and returned a result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Response_editorSnapshots.create"
-        "400":
-          description: Failed operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-        "500":
-          description: Convex Internal Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-
-  /api/run/editorSnapshots/getById:
-    post:
-      summary: Calls a query at the path editorSnapshots.js:getById
+      summary: Calls a query at the path userProfiles.js:getUserProfile
       tags:
         - query
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Request_editorSnapshots.getById"
+              $ref: "#/components/schemas/Request_userProfiles.getUserProfile"
         required: true
       responses:
         "200":
@@ -527,131 +620,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Response_editorSnapshots.getById"
-        "400":
-          description: Failed operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-        "500":
-          description: Convex Internal Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-
-  /api/run/editorSnapshots/getSnapshots:
-    post:
-      summary: Calls a query at the path editorSnapshots.js:getSnapshots
-      tags:
-        - query
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Request_editorSnapshots.getSnapshots"
-        required: true
-      responses:
-        "200":
-          description: Convex executed your request and returned a result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Response_editorSnapshots.getSnapshots"
-        "400":
-          description: Failed operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-        "500":
-          description: Convex Internal Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-
-  /api/run/editorSnapshots/getLatestSnapshotBySessionId:
-    post:
-      summary: Calls a query at the path editorSnapshots.js:getLatestSnapshotBySessionId
-      tags:
-        - query
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Request_editorSnapshots.getLatestSnapshotBySessionId"
-        required: true
-      responses:
-        "200":
-          description: Convex executed your request and returned a result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Response_editorSnapshots.getLatestSnapshotBySessionId"
-        "400":
-          description: Failed operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-        "500":
-          description: Convex Internal Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-
-  /api/run/admins/createUserProfile:
-    post:
-      summary: Calls a mutation at the path admins.js:createUserProfile
-      tags:
-        - mutation
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Request_admins.createUserProfile"
-        required: true
-      responses:
-        "200":
-          description: Convex executed your request and returned a result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Response_admins.createUserProfile"
-        "400":
-          description: Failed operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-        "500":
-          description: Convex Internal Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-
-  /api/run/admins/patchUserSubscription:
-    post:
-      summary: Calls a mutation at the path admins.js:patchUserSubscription
-      tags:
-        - mutation
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Request_admins.patchUserSubscription"
-        required: true
-      responses:
-        "200":
-          description: Convex executed your request and returned a result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Response_admins.patchUserSubscription"
+                $ref: "#/components/schemas/Response_userProfiles.getUserProfile"
         "400":
           description: Failed operation
           content:
@@ -696,16 +665,16 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
-  /api/run/userProfiles/getUserProfile:
+  /api/run/admins/createUserProfile:
     post:
-      summary: Calls a query at the path userProfiles.js:getUserProfile
+      summary: Calls a mutation at the path admins.js:createUserProfile
       tags:
-        - query
+        - mutation
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Request_userProfiles.getUserProfile"
+              $ref: "#/components/schemas/Request_admins.createUserProfile"
         required: true
       responses:
         "200":
@@ -713,7 +682,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Response_userProfiles.getUserProfile"
+                $ref: "#/components/schemas/Response_admins.createUserProfile"
         "400":
           description: Failed operation
           content:
@@ -1119,6 +1088,181 @@ components:
           type: object
         value: {}
 
+    Request_editorSnapshots.create:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - editor
+            - sessionId
+            - terminal
+          properties:
+            editor:
+              type: object
+              required:
+                - content
+                - language
+                - lastUpdated
+              properties:
+                content:
+                  type: string
+                language:
+                  type: string
+                lastUpdated:
+                  type: number
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+            terminal:
+              type: object
+              required:
+                - isError
+                - output
+              properties:
+                executionTime:
+                  type: number
+                isError:
+                  type: boolean
+                output:
+                  type: string
+
+    Response_editorSnapshots.create:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_editorSnapshots.getById:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          properties:
+            snapshotId:
+              type: string
+              description: ID from table "editorSnapshots"
+
+    Response_editorSnapshots.getById:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_editorSnapshots.getLatestSnapshotBySessionId:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_editorSnapshots.getLatestSnapshotBySessionId:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_editorSnapshots.getLatestSnapshotBySessionIdInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_editorSnapshots.getLatestSnapshotBySessionIdInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_editorSnapshots.getSnapshots:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_editorSnapshots.getSnapshots:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
     Request_actions.createAgentThread:
       type: object
       required:
@@ -1239,7 +1383,7 @@ components:
           type: object
         value: {}
 
-    Request_editorSnapshots.getLatestSnapshotBySessionIdInternal:
+    Request_actions.getEditorSnapshot:
       type: object
       required:
         - args
@@ -1253,8 +1397,7 @@ components:
               type: string
               description: ID from table "sessions"
 
-
-    Response_editorSnapshots.getLatestSnapshotBySessionIdInternal:
+    Response_actions.getEditorSnapshot:
       type: object
       required:
         - status
@@ -1304,7 +1447,7 @@ components:
                 output:
                   type: string
 
-    Request_editorSnapshots.getSnapshots:
+    Request_actions.getSessionMetadata:
       type: object
       required:
         - args
@@ -1318,8 +1461,7 @@ components:
               type: string
               description: ID from table "sessions"
 
-
-    Response_editorSnapshots.getSnapshots:
+    Response_actions.getSessionMetadata:
       type: object
       required:
         - status
@@ -1361,48 +1503,18 @@ components:
             session_status:
               type: string
 
-    Request_editorSnapshots.create:
+    Request_userProfiles.getByEmailInternal:
       type: object
       required:
         - args
       properties:
         args:
           type: object
-          required:
-            - editor
-            - sessionId
-            - terminal
           properties:
-            editor:
-              type: object
-              required:
-                - content
-                - language
-                - lastUpdated
-              properties:
-                content:
-                  type: string
-                language:
-                  type: string
-                lastUpdated:
-                  type: number
-            sessionId:
+            email:
               type: string
-              description: ID from table "sessions"
-            terminal:
-              type: object
-              required:
-                - isError
-                - output
-              properties:
-                executionTime:
-                  type: number
-                isError:
-                  type: boolean
-                output:
-                  type: string
 
-    Response_editorSnapshots.create:
+    Response_userProfiles.getByEmailInternal:
       type: object
       required:
         - status
@@ -1418,19 +1530,14 @@ components:
           type: object
         value: {}
 
-    Request_editorSnapshots.getById:
+    Request_userProfiles.getUserProfile:
       type: object
       required:
         - args
       properties:
-        args:
-          type: object
-          properties:
-            snapshotId:
-              type: string
-              description: ID from table "editorSnapshots"
+        args: {}
 
-    Response_editorSnapshots.getById:
+    Response_userProfiles.getUserProfile:
       type: object
       required:
         - status
@@ -1446,21 +1553,15 @@ components:
           type: object
         value: {}
 
-    Request_editorSnapshots.getSnapshots:
+    Request_userProfiles.refreshMinutesForYearlyPlansInternal:
       type: object
       required:
         - args
       properties:
         args:
           type: object
-          required:
-            - sessionId
-          properties:
-            sessionId:
-              type: string
-              description: ID from table "sessions"
 
-    Response_editorSnapshots.getSnapshots:
+    Response_userProfiles.refreshMinutesForYearlyPlansInternal:
       type: object
       required:
         - status
@@ -1476,7 +1577,7 @@ components:
           type: object
         value: {}
 
-    Request_editorSnapshots.getLatestSnapshotBySessionId:
+    Request_userProfiles.updateSubscriptionByEmailInternal:
       type: object
       required:
         - args
@@ -1484,83 +1585,33 @@ components:
         args:
           type: object
           required:
-            - sessionId
+            - email
           properties:
-            sessionId:
-              type: string
-              description: ID from table "sessions"
-
-    Response_editorSnapshots.getLatestSnapshotBySessionId:
-      type: object
-      required:
-        - status
-      properties:
-        status:
-          type: string
-          enum:
-            - "success"
-            - "error"
-        errorMessage:
-          type: string
-        errorData:
-          type: object
-        value: {}
-
-    Request_editorSnapshots.getLatestSnapshotBySessionIdInternal:
-      type: object
-      required:
-        - args
-      properties:
-        args:
-          type: object
-          required:
-            - sessionId
-          properties:
-            sessionId:
-              type: string
-              description: ID from table "sessions"
-
-    Response_editorSnapshots.getLatestSnapshotBySessionIdInternal:
-      type: object
-      required:
-        - status
-      properties:
-        status:
-          type: string
-          enum:
-            - "success"
-            - "error"
-        errorMessage:
-          type: string
-        errorData:
-          type: object
-        value: {}
-
-    Request_admins.createUserProfile:
-      type: object
-      required:
-        - args
-      properties:
-        args:
-          type: object
-          required:
-            - minutesRemaining
-            - role
-            - subscription
-          properties:
-            minutesRemaining:
+            currentPeriodEnd:
               type: number
-            nextBillingDate:
+            currentPeriodStart:
               type: number
-            role:
+            email:
+              type: string
+            interval:
               oneOf:
                 - type: string
                   enum:
-                    - "admin"
+                    - "month"
                 - type: string
                   enum:
-                    - "user"
-            subscription:
+                    - "year"
+                - type: string
+                  enum:
+                    - "day"
+                - type: string
+                  enum:
+                    - "week"
+            latestSubscriptionId:
+              type: string
+            minutesRemaining:
+              type: number
+            planName:
               oneOf:
                 - type: string
                   enum:
@@ -1574,8 +1625,12 @@ components:
                 - type: string
                   enum:
                     - "enterprise"
+            refreshDate:
+              type: number
+            subscriptionStatus:
+              type: string
 
-    Response_admins.createUserProfile:
+    Response_userProfiles.updateSubscriptionByEmailInternal:
       type: object
       required:
         - status
@@ -1591,7 +1646,7 @@ components:
           type: object
         value: {}
 
-    Request_admins.patchUserSubscription:
+    Request_userProfiles.voidSubscriptionInternal:
       type: object
       required:
         - args
@@ -1599,30 +1654,12 @@ components:
         args:
           type: object
           required:
-            - userId
+            - email
           properties:
-            minutesRemaining:
-              type: number
-            nextBillingDate:
-              type: number
-            subscription:
-              oneOf:
-                - type: string
-                  enum:
-                    - "free"
-                - type: string
-                  enum:
-                    - "basic"
-                - type: string
-                  enum:
-                    - "premium"
-                - type: string
-                  enum:
-                    - "enterprise"
-            userId:
+            email:
               type: string
 
-    Response_admins.patchUserSubscription:
+    Response_userProfiles.voidSubscriptionInternal:
       type: object
       required:
         - status
@@ -1702,7 +1739,7 @@ components:
           type: object
         value: {}
 
-    Request_userProfiles.getUserProfile:
+    Request_admins.createUserProfile:
       type: object
       required:
         - args
@@ -1710,10 +1747,13 @@ components:
         args:
           type: object
           required:
+            - email
             - minutesRemaining
             - role
             - subscription
           properties:
+            email:
+              type: string
             minutesRemaining:
               type: number
             nextBillingDate:
@@ -1740,7 +1780,8 @@ components:
                 - type: string
                   enum:
                     - "enterprise"
-    Response_userProfiles.getUserProfile:
+
+    Response_admins.createUserProfile:
       type: object
       required:
         - status
@@ -1767,8 +1808,6 @@ components:
             - userId
           properties:
             minutesRemaining:
-              type: number
-            nextBillingDate:
               type: number
             subscription:
               oneOf:

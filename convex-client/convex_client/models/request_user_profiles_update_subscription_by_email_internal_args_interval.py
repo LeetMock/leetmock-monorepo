@@ -21,11 +21,11 @@ from pydantic import StrictStr, Field
 from typing import Union, List, Set, Optional, Dict
 from typing_extensions import Literal, Self
 
-REQUESTADMINSCREATEUSERPROFILEARGSSUBSCRIPTION_ONE_OF_SCHEMAS = ["str"]
+REQUESTUSERPROFILESUPDATESUBSCRIPTIONBYEMAILINTERNALARGSINTERVAL_ONE_OF_SCHEMAS = ["str"]
 
-class RequestAdminsCreateUserProfileArgsSubscription(BaseModel):
+class RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval(BaseModel):
     """
-    RequestAdminsCreateUserProfileArgsSubscription
+    RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval
     """
     # data type: str
     oneof_schema_1_validator: Optional[StrictStr] = None
@@ -56,7 +56,7 @@ class RequestAdminsCreateUserProfileArgsSubscription(BaseModel):
 
     @field_validator('actual_instance')
     def actual_instance_must_validate_oneof(cls, v):
-        instance = RequestAdminsCreateUserProfileArgsSubscription.model_construct()
+        instance = RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval.model_construct()
         error_messages = []
         match = 0
         # validate data type: str
@@ -85,10 +85,10 @@ class RequestAdminsCreateUserProfileArgsSubscription(BaseModel):
             error_messages.append(str(e))
         if match > 1:
             # more than 1 match
-            raise ValueError("Multiple matches found when setting `actual_instance` in RequestAdminsCreateUserProfileArgsSubscription with oneOf schemas: str. Details: " + ", ".join(error_messages))
+            raise ValueError("Multiple matches found when setting `actual_instance` in RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval with oneOf schemas: str. Details: " + ", ".join(error_messages))
         elif match == 0:
             # no match
-            raise ValueError("No match found when setting `actual_instance` in RequestAdminsCreateUserProfileArgsSubscription with oneOf schemas: str. Details: " + ", ".join(error_messages))
+            raise ValueError("No match found when setting `actual_instance` in RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval with oneOf schemas: str. Details: " + ", ".join(error_messages))
         else:
             return v
 
@@ -142,10 +142,10 @@ class RequestAdminsCreateUserProfileArgsSubscription(BaseModel):
 
         if match > 1:
             # more than 1 match
-            raise ValueError("Multiple matches found when deserializing the JSON string into RequestAdminsCreateUserProfileArgsSubscription with oneOf schemas: str. Details: " + ", ".join(error_messages))
+            raise ValueError("Multiple matches found when deserializing the JSON string into RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval with oneOf schemas: str. Details: " + ", ".join(error_messages))
         elif match == 0:
             # no match
-            raise ValueError("No match found when deserializing the JSON string into RequestAdminsCreateUserProfileArgsSubscription with oneOf schemas: str. Details: " + ", ".join(error_messages))
+            raise ValueError("No match found when deserializing the JSON string into RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval with oneOf schemas: str. Details: " + ", ".join(error_messages))
         else:
             return instance
 

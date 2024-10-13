@@ -55,10 +55,10 @@ import convex_client
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
+# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://neat-warbler-689.convex.cloud"
+    host = "https://posh-chihuahua-941.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -90,7 +90,7 @@ with convex_client.ApiClient(configuration) as api_client:
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://neat-warbler-689.convex.cloud*
+All URIs are relative to *https://posh-chihuahua-941.convex.cloud*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
@@ -132,10 +132,12 @@ Class | Method | HTTP request | Description
  - [RequestActionsRunTestsArgs](docs/RequestActionsRunTestsArgs.md)
  - [RequestAdminsCreateUserProfile](docs/RequestAdminsCreateUserProfile.md)
  - [RequestAdminsCreateUserProfileArgs](docs/RequestAdminsCreateUserProfileArgs.md)
- - [RequestAdminsCreateUserProfileArgsSubscription](docs/RequestAdminsCreateUserProfileArgsSubscription.md)
  - [RequestAdminsPatchUserSubscription](docs/RequestAdminsPatchUserSubscription.md)
  - [RequestAdminsPatchUserSubscriptionArgs](docs/RequestAdminsPatchUserSubscriptionArgs.md)
  - [RequestEditorSnapshotsCreate](docs/RequestEditorSnapshotsCreate.md)
+ - [RequestEditorSnapshotsCreateArgs](docs/RequestEditorSnapshotsCreateArgs.md)
+ - [RequestEditorSnapshotsCreateArgsEditor](docs/RequestEditorSnapshotsCreateArgsEditor.md)
+ - [RequestEditorSnapshotsCreateArgsTerminal](docs/RequestEditorSnapshotsCreateArgsTerminal.md)
  - [RequestEditorSnapshotsGetById](docs/RequestEditorSnapshotsGetById.md)
  - [RequestEditorSnapshotsGetByIdArgs](docs/RequestEditorSnapshotsGetByIdArgs.md)
  - [RequestEditorSnapshotsGetLatestSnapshotBySessionId](docs/RequestEditorSnapshotsGetLatestSnapshotBySessionId.md)
@@ -145,6 +147,7 @@ Class | Method | HTTP request | Description
  - [RequestInviteCodesApplyInviteCodeArgs](docs/RequestInviteCodesApplyInviteCodeArgs.md)
  - [RequestInviteCodesCreateInviteCode](docs/RequestInviteCodesCreateInviteCode.md)
  - [RequestInviteCodesCreateInviteCodeArgs](docs/RequestInviteCodesCreateInviteCodeArgs.md)
+ - [RequestInviteCodesCreateInviteCodeArgsAssignedRole](docs/RequestInviteCodesCreateInviteCodeArgsAssignedRole.md)
  - [RequestQuestionsGetAll](docs/RequestQuestionsGetAll.md)
  - [RequestQuestionsGetById](docs/RequestQuestionsGetById.md)
  - [RequestQuestionsGetByIdArgs](docs/RequestQuestionsGetByIdArgs.md)
@@ -163,12 +166,18 @@ Class | Method | HTTP request | Description
  - [RequestSessionsGetByIdInternal](docs/RequestSessionsGetByIdInternal.md)
  - [RequestSessionsGetByUserId](docs/RequestSessionsGetByUserId.md)
  - [RequestSessionsStartSession](docs/RequestSessionsStartSession.md)
+ - [RequestUserProfilesGetByEmailInternal](docs/RequestUserProfilesGetByEmailInternal.md)
+ - [RequestUserProfilesGetByEmailInternalArgs](docs/RequestUserProfilesGetByEmailInternalArgs.md)
  - [RequestUserProfilesGetUserProfile](docs/RequestUserProfilesGetUserProfile.md)
+ - [RequestUserProfilesRefreshMinutesForYearlyPlansInternal](docs/RequestUserProfilesRefreshMinutesForYearlyPlansInternal.md)
+ - [RequestUserProfilesUpdateSubscriptionByEmailInternal](docs/RequestUserProfilesUpdateSubscriptionByEmailInternal.md)
+ - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgs](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgs.md)
+ - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval.md)
+ - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.md)
+ - [RequestUserProfilesVoidSubscriptionInternal](docs/RequestUserProfilesVoidSubscriptionInternal.md)
+ - [RequestUserProfilesVoidSubscriptionInternalArgs](docs/RequestUserProfilesVoidSubscriptionInternalArgs.md)
  - [ResponseActionsCreateAgentThread](docs/ResponseActionsCreateAgentThread.md)
  - [ResponseActionsGetEditorSnapshot](docs/ResponseActionsGetEditorSnapshot.md)
- - [ResponseActionsGetEditorSnapshotValue](docs/ResponseActionsGetEditorSnapshotValue.md)
- - [ResponseActionsGetEditorSnapshotValueEditor](docs/ResponseActionsGetEditorSnapshotValueEditor.md)
- - [ResponseActionsGetEditorSnapshotValueTerminal](docs/ResponseActionsGetEditorSnapshotValueTerminal.md)
  - [ResponseActionsGetSessionMetadata](docs/ResponseActionsGetSessionMetadata.md)
  - [ResponseActionsGetSessionMetadataValue](docs/ResponseActionsGetSessionMetadataValue.md)
  - [ResponseActionsGetToken](docs/ResponseActionsGetToken.md)
@@ -195,7 +204,11 @@ Class | Method | HTTP request | Description
  - [ResponseSessionsGetByIdInternal](docs/ResponseSessionsGetByIdInternal.md)
  - [ResponseSessionsGetByUserId](docs/ResponseSessionsGetByUserId.md)
  - [ResponseSessionsStartSession](docs/ResponseSessionsStartSession.md)
+ - [ResponseUserProfilesGetByEmailInternal](docs/ResponseUserProfilesGetByEmailInternal.md)
  - [ResponseUserProfilesGetUserProfile](docs/ResponseUserProfilesGetUserProfile.md)
+ - [ResponseUserProfilesRefreshMinutesForYearlyPlansInternal](docs/ResponseUserProfilesRefreshMinutesForYearlyPlansInternal.md)
+ - [ResponseUserProfilesUpdateSubscriptionByEmailInternal](docs/ResponseUserProfilesUpdateSubscriptionByEmailInternal.md)
+ - [ResponseUserProfilesVoidSubscriptionInternal](docs/ResponseUserProfilesVoidSubscriptionInternal.md)
 
 
 <a id="documentation-for-authorization"></a>

@@ -36,6 +36,7 @@ class TestRequestAdminsCreateUserProfile(unittest.TestCase):
         if include_optional:
             return RequestAdminsCreateUserProfile(
                 args = convex_client.models.request_admins_create_user_profile_args.Request_admins_createUserProfile_args(
+                    email = '', 
                     minutes_remaining = 1.337, 
                     next_billing_date = 1.337, 
                     role = null, 
@@ -44,6 +45,7 @@ class TestRequestAdminsCreateUserProfile(unittest.TestCase):
         else:
             return RequestAdminsCreateUserProfile(
                 args = convex_client.models.request_admins_create_user_profile_args.Request_admins_createUserProfile_args(
+                    email = '', 
                     minutes_remaining = 1.337, 
                     next_billing_date = 1.337, 
                     role = null, 

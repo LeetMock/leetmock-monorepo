@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.response_actions_get_editor_snapshot_value_editor import ResponseActionsGetEditorSnapshotValueEditor
+from convex_client.models.request_editor_snapshots_create_args_editor import RequestEditorSnapshotsCreateArgsEditor
 
-class TestResponseActionsGetEditorSnapshotValueEditor(unittest.TestCase):
-    """ResponseActionsGetEditorSnapshotValueEditor unit test stubs"""
+class TestRequestEditorSnapshotsCreateArgsEditor(unittest.TestCase):
+    """RequestEditorSnapshotsCreateArgsEditor unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,30 +25,30 @@ class TestResponseActionsGetEditorSnapshotValueEditor(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> ResponseActionsGetEditorSnapshotValueEditor:
-        """Test ResponseActionsGetEditorSnapshotValueEditor
+    def make_instance(self, include_optional) -> RequestEditorSnapshotsCreateArgsEditor:
+        """Test RequestEditorSnapshotsCreateArgsEditor
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `ResponseActionsGetEditorSnapshotValueEditor`
+        # uncomment below to create an instance of `RequestEditorSnapshotsCreateArgsEditor`
         """
-        model = ResponseActionsGetEditorSnapshotValueEditor()
+        model = RequestEditorSnapshotsCreateArgsEditor()
         if include_optional:
-            return ResponseActionsGetEditorSnapshotValueEditor(
+            return RequestEditorSnapshotsCreateArgsEditor(
                 content = '',
                 language = '',
                 last_updated = 1.337
             )
         else:
-            return ResponseActionsGetEditorSnapshotValueEditor(
+            return RequestEditorSnapshotsCreateArgsEditor(
                 content = '',
                 language = '',
                 last_updated = 1.337,
         )
         """
 
-    def testResponseActionsGetEditorSnapshotValueEditor(self):
-        """Test ResponseActionsGetEditorSnapshotValueEditor"""
+    def testRequestEditorSnapshotsCreateArgsEditor(self):
+        """Test RequestEditorSnapshotsCreateArgsEditor"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

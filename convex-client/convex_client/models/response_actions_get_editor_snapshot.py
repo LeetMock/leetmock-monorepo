@@ -19,7 +19,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
-from convex_client.models.response_actions_get_editor_snapshot_value import ResponseActionsGetEditorSnapshotValue
+from convex_client.models.request_editor_snapshots_create_args import RequestEditorSnapshotsCreateArgs
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -30,7 +30,7 @@ class ResponseActionsGetEditorSnapshot(BaseModel):
     status: StrictStr
     error_message: Optional[StrictStr] = Field(default=None, alias="errorMessage")
     error_data: Optional[Dict[str, Any]] = Field(default=None, alias="errorData")
-    value: Optional[ResponseActionsGetEditorSnapshotValue] = None
+    value: Optional[RequestEditorSnapshotsCreateArgs] = None
     __properties: ClassVar[List[str]] = ["status", "errorMessage", "errorData", "value"]
 
     @field_validator('status')
@@ -97,7 +97,7 @@ class ResponseActionsGetEditorSnapshot(BaseModel):
             "status": obj.get("status"),
             "errorMessage": obj.get("errorMessage"),
             "errorData": obj.get("errorData"),
-            "value": ResponseActionsGetEditorSnapshotValue.from_dict(obj["value"]) if obj.get("value") is not None else None
+            "value": RequestEditorSnapshotsCreateArgs.from_dict(obj["value"]) if obj.get("value") is not None else None
         })
         return _obj
 

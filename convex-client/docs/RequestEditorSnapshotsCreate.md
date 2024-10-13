@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**args** | [**ResponseActionsGetEditorSnapshotValue**](ResponseActionsGetEditorSnapshotValue.md) |  | 
+**args** | [**RequestEditorSnapshotsCreateArgs**](RequestEditorSnapshotsCreateArgs.md) |  | 
 
 ## Example
 

@@ -37,7 +37,6 @@ class TestRequestAdminsPatchUserSubscription(unittest.TestCase):
             return RequestAdminsPatchUserSubscription(
                 args = convex_client.models.request_admins_patch_user_subscription_args.Request_admins_patchUserSubscription_args(
                     minutes_remaining = 1.337, 
-                    next_billing_date = 1.337, 
                     subscription = null, 
                     user_id = '', )
             )
@@ -45,7 +44,6 @@ class TestRequestAdminsPatchUserSubscription(unittest.TestCase):
             return RequestAdminsPatchUserSubscription(
                 args = convex_client.models.request_admins_patch_user_subscription_args.Request_admins_patchUserSubscription_args(
                     minutes_remaining = 1.337, 
-                    next_billing_date = 1.337, 
                     subscription = null, 
                     user_id = '', ),
         )

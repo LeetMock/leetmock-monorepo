@@ -19,7 +19,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional, Union
-from convex_client.models.request_admins_create_user_profile_args_subscription import RequestAdminsCreateUserProfileArgsSubscription
+from convex_client.models.request_user_profiles_update_subscription_by_email_internal_args_plan_name import RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -28,10 +28,9 @@ class RequestAdminsPatchUserSubscriptionArgs(BaseModel):
     RequestAdminsPatchUserSubscriptionArgs
     """ # noqa: E501
     minutes_remaining: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="minutesRemaining")
-    next_billing_date: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="nextBillingDate")
-    subscription: Optional[RequestAdminsCreateUserProfileArgsSubscription] = None
+    subscription: Optional[RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName] = None
     user_id: StrictStr = Field(alias="userId")
-    __properties: ClassVar[List[str]] = ["minutesRemaining", "nextBillingDate", "subscription", "userId"]
+    __properties: ClassVar[List[str]] = ["minutesRemaining", "subscription", "userId"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -88,8 +87,7 @@ class RequestAdminsPatchUserSubscriptionArgs(BaseModel):
 
         _obj = cls.model_validate({
             "minutesRemaining": obj.get("minutesRemaining"),
-            "nextBillingDate": obj.get("nextBillingDate"),
-            "subscription": RequestAdminsCreateUserProfileArgsSubscription.from_dict(obj["subscription"]) if obj.get("subscription") is not None else None,
+            "subscription": RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.from_dict(obj["subscription"]) if obj.get("subscription") is not None else None,
             "userId": obj.get("userId")
         })
         return _obj

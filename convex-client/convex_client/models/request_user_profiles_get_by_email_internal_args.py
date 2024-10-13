@@ -17,19 +17,17 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional, Union
+from pydantic import BaseModel, ConfigDict, StrictStr
+from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
-class ResponseActionsGetEditorSnapshotValueTerminal(BaseModel):
+class RequestUserProfilesGetByEmailInternalArgs(BaseModel):
     """
-    ResponseActionsGetEditorSnapshotValueTerminal
+    RequestUserProfilesGetByEmailInternalArgs
     """ # noqa: E501
-    execution_time: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="executionTime")
-    is_error: StrictBool = Field(alias="isError")
-    output: StrictStr
-    __properties: ClassVar[List[str]] = ["executionTime", "isError", "output"]
+    email: Optional[StrictStr] = None
+    __properties: ClassVar[List[str]] = ["email"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -49,7 +47,7 @@ class ResponseActionsGetEditorSnapshotValueTerminal(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of ResponseActionsGetEditorSnapshotValueTerminal from a JSON string"""
+        """Create an instance of RequestUserProfilesGetByEmailInternalArgs from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -74,7 +72,7 @@ class ResponseActionsGetEditorSnapshotValueTerminal(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of ResponseActionsGetEditorSnapshotValueTerminal from a dict"""
+        """Create an instance of RequestUserProfilesGetByEmailInternalArgs from a dict"""
         if obj is None:
             return None
 
@@ -82,9 +80,7 @@ class ResponseActionsGetEditorSnapshotValueTerminal(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "executionTime": obj.get("executionTime"),
-            "isError": obj.get("isError"),
-            "output": obj.get("output")
+            "email": obj.get("email")
         })
         return _obj
 

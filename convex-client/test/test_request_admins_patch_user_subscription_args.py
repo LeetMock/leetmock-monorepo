@@ -36,7 +36,6 @@ class TestRequestAdminsPatchUserSubscriptionArgs(unittest.TestCase):
         if include_optional:
             return RequestAdminsPatchUserSubscriptionArgs(
                 minutes_remaining = 1.337,
-                next_billing_date = 1.337,
                 subscription = None,
                 user_id = ''
             )

@@ -17,21 +17,17 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic import BaseModel, ConfigDict, StrictStr
 from typing import Any, ClassVar, Dict, List
-from convex_client.models.response_actions_get_editor_snapshot_value_editor import ResponseActionsGetEditorSnapshotValueEditor
-from convex_client.models.response_actions_get_editor_snapshot_value_terminal import ResponseActionsGetEditorSnapshotValueTerminal
 from typing import Optional, Set
 from typing_extensions import Self
 
-class ResponseActionsGetEditorSnapshotValue(BaseModel):
+class RequestUserProfilesVoidSubscriptionInternalArgs(BaseModel):
     """
-    ResponseActionsGetEditorSnapshotValue
+    RequestUserProfilesVoidSubscriptionInternalArgs
     """ # noqa: E501
-    editor: ResponseActionsGetEditorSnapshotValueEditor
-    session_id: StrictStr = Field(description="ID from table \"sessions\"", alias="sessionId")
-    terminal: ResponseActionsGetEditorSnapshotValueTerminal
-    __properties: ClassVar[List[str]] = ["editor", "sessionId", "terminal"]
+    email: StrictStr
+    __properties: ClassVar[List[str]] = ["email"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -51,7 +47,7 @@ class ResponseActionsGetEditorSnapshotValue(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of ResponseActionsGetEditorSnapshotValue from a JSON string"""
+        """Create an instance of RequestUserProfilesVoidSubscriptionInternalArgs from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -72,17 +68,11 @@ class ResponseActionsGetEditorSnapshotValue(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of editor
-        if self.editor:
-            _dict['editor'] = self.editor.to_dict()
-        # override the default output from pydantic by calling `to_dict()` of terminal
-        if self.terminal:
-            _dict['terminal'] = self.terminal.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of ResponseActionsGetEditorSnapshotValue from a dict"""
+        """Create an instance of RequestUserProfilesVoidSubscriptionInternalArgs from a dict"""
         if obj is None:
             return None
 
@@ -90,9 +80,7 @@ class ResponseActionsGetEditorSnapshotValue(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "editor": ResponseActionsGetEditorSnapshotValueEditor.from_dict(obj["editor"]) if obj.get("editor") is not None else None,
-            "sessionId": obj.get("sessionId"),
-            "terminal": ResponseActionsGetEditorSnapshotValueTerminal.from_dict(obj["terminal"]) if obj.get("terminal") is not None else None
+            "email": obj.get("email")
         })
         return _obj
 
