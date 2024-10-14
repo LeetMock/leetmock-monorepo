@@ -212,40 +212,6 @@ export const runTests = action({
 // ============================================================================
 // Below are actions used for agent server
 // ============================================================================
-
-// TODO: should check user identity, but this api is used by the agent server so we skip that for now
-export const getEditorSnapshot = action({
-  args: {
-    sessionId: v.id("sessions"),
-  },
-  returns: v.object({
-    sessionId: v.id("sessions"),
-    editor: v.object({
-      language: v.string(),
-      content: v.string(),
-      lastUpdated: v.number(),
-    }),
-    terminal: v.object({
-      output: v.string(),
-      isError: v.boolean(),
-      executionTime: v.optional(v.number()),
-    }),
-  }),
-  handler: async (ctx, { sessionId }) => {
-    const snapshot = await ctx.runQuery(
-      internal.codeSessionStates.getLatestSessionStateBySessionIdInternal,
-      { sessionId }
-    );
-
-    if (!isDefined(snapshot)) {
-      throw new ConvexError({ name: "NoSnapshotFound", message: "No snapshot found" });
-    }
-
-    const { _id, _creationTime, ...rest } = snapshot;
-    return rest;
-  },
-});
-
 // TODO: should check user identity, but this api is used by the agent server so we skip that for now
 export const getSessionMetadata = action({
   args: {

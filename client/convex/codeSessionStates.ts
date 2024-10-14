@@ -1,23 +1,8 @@
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
 
-import { isDefined } from "@/lib/utils";
-import { internalQuery, query, userQuery } from "./functions";
+import { query, userQuery } from "./functions";
 import { QueryCtx } from "./types";
-
-// Get code session state by ID
-export const getById = userQuery({
-  args: {
-    sessionStateId: v.optional(v.id("codeSessionStates")),
-  },
-  handler: async (ctx, { sessionStateId }) => {
-    if (!isDefined(sessionStateId)) {
-      return undefined;
-    }
-
-    return await ctx.table("codeSessionStates").get(sessionStateId);
-  },
-});
 
 export const getEditorState = userQuery({
   args: {
@@ -40,17 +25,7 @@ export const getTerminalState = userQuery({
 });
 
 // Get latest code session state by session ID
-export const getLatestSessionStateBySessionId = query({
-  args: {
-    sessionId: v.id("sessions"),
-  },
-  handler: async (ctx, { sessionId }) => {
-    return await querySessionStateBySessionId(ctx, sessionId);
-  },
-});
-
-// Same as getLatestSessionStateBySessionId, but for internal use
-export const getLatestSessionStateBySessionIdInternal = internalQuery({
+export const getSessionStateBySessionId = query({
   args: {
     sessionId: v.id("sessions"),
   },
