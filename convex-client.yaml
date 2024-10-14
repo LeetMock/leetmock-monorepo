@@ -1,0 +1,2012 @@
+openapi: 3.0.3
+info:
+  title: Convex App - OpenAPI 3.0
+  version: 0.0.0
+servers:
+  - url: https://posh-chihuahua-941.convex.cloud
+security:
+  - bearerAuth: []
+tags:
+  - name: query
+    description: Functions that read data
+  - name: mutation
+    description: Functions that write/update/delete data
+  - name: action
+    description: Functions that can make calls to external APIs
+paths:
+  /api/run/questions/getAll:
+    post:
+      summary: Calls a query at the path questions.js:getAll
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_questions.getAll"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_questions.getAll"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/questions/getById:
+    post:
+      summary: Calls a query at the path questions.js:getById
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_questions.getById"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_questions.getById"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/sessions/createCodeSession:
+    post:
+      summary: Calls a mutation at the path sessions.js:createCodeSession
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_sessions.createCodeSession"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_sessions.createCodeSession"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/sessions/endSession:
+    post:
+      summary: Calls a mutation at the path sessions.js:endSession
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_sessions.endSession"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_sessions.endSession"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/sessions/exists:
+    post:
+      summary: Calls a query at the path sessions.js:exists
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_sessions.exists"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_sessions.exists"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/sessions/getActiveSession:
+    post:
+      summary: Calls a query at the path sessions.js:getActiveSession
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_sessions.getActiveSession"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_sessions.getActiveSession"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/sessions/getById:
+    post:
+      summary: Calls a query at the path sessions.js:getById
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_sessions.getById"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_sessions.getById"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/sessions/getByUserId:
+    post:
+      summary: Calls a query at the path sessions.js:getByUserId
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_sessions.getByUserId"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_sessions.getByUserId"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/sessions/startSession:
+    post:
+      summary: Calls a mutation at the path sessions.js:startSession
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_sessions.startSession"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_sessions.startSession"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/actions/createAgentThread:
+    post:
+      summary: Calls a action at the path actions.js:createAgentThread
+      tags:
+        - action
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_actions.createAgentThread"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_actions.createAgentThread"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/actions/getToken:
+    post:
+      summary: Calls a action at the path actions.js:getToken
+      tags:
+        - action
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_actions.getToken"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_actions.getToken"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/actions/runCode:
+    post:
+      summary: Calls a action at the path actions.js:runCode
+      tags:
+        - action
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_actions.runCode"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_actions.runCode"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/actions/runTests:
+    post:
+      summary: Calls a action at the path actions.js:runTests
+      tags:
+        - action
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_actions.runTests"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_actions.runTests"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/actions/getSessionMetadata:
+    post:
+      summary: Calls a action at the path actions.js:getSessionMetadata
+      tags:
+        - action
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_actions.getSessionMetadata"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_actions.getSessionMetadata"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/userProfiles/getUserProfile:
+    post:
+      summary: Calls a query at the path userProfiles.js:getUserProfile
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_userProfiles.getUserProfile"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_userProfiles.getUserProfile"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/inviteCodes/applyInviteCode:
+    post:
+      summary: Calls a mutation at the path inviteCodes.js:applyInviteCode
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_inviteCodes.applyInviteCode"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_inviteCodes.applyInviteCode"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/admins/createUserProfile:
+    post:
+      summary: Calls a mutation at the path admins.js:createUserProfile
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_admins.createUserProfile"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_admins.createUserProfile"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/admins/patchUserSubscription:
+    post:
+      summary: Calls a mutation at the path admins.js:patchUserSubscription
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_admins.patchUserSubscription"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_admins.patchUserSubscription"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/codeSessionStates/get:
+    post:
+      summary: Calls a query at the path codeSessionStates.js:get
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codeSessionStates.get"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codeSessionStates.get"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/codeSessionStates/getEditorState:
+    post:
+      summary: Calls a query at the path codeSessionStates.js:getEditorState
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codeSessionStates.getEditorState"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codeSessionStates.getEditorState"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/codeSessionStates/getSessionStateBySessionId:
+    post:
+      summary: Calls a query at the path codeSessionStates.js:getSessionStateBySessionId
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codeSessionStates.getSessionStateBySessionId"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codeSessionStates.getSessionStateBySessionId"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/codeSessionStates/getTerminalState:
+    post:
+      summary: Calls a query at the path codeSessionStates.js:getTerminalState
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codeSessionStates.getTerminalState"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codeSessionStates.getTerminalState"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/codeSessionEvents/commitCodeSessionEvent:
+    post:
+      summary: Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codeSessionEvents.commitCodeSessionEvent"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codeSessionEvents.commitCodeSessionEvent"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/codeSessionEvents/getNextEventBatch:
+    post:
+      summary: Calls a query at the path codeSessionEvents.js:getNextEventBatch
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codeSessionEvents.getNextEventBatch"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codeSessionEvents.getNextEventBatch"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Token of the format "Bearer {token}" for normal authentication and "Convex {token}" for admin tokens.
+  schemas:
+    Request_questions.getAll:
+      type: object
+      required:
+        - args
+      properties:
+        args: {}
+
+    Response_questions.getAll:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_questions.getById:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          properties:
+            questionId:
+              type: string
+              description: ID from table "questions"
+
+    Response_questions.getById:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_questions.getByIdInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - questionId
+          properties:
+            questionId:
+              type: string
+              description: ID from table "questions"
+
+    Response_questions.getByIdInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_sessions.createCodeSession:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - agentThreadId
+            - assistantId
+            - questionId
+          properties:
+            agentThreadId:
+              type: string
+            assistantId:
+              type: string
+            questionId:
+              type: string
+              description: ID from table "questions"
+
+    Response_sessions.createCodeSession:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_sessions.endSession:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_sessions.endSession:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_sessions.endSessionInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_sessions.endSessionInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_sessions.exists:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+
+    Response_sessions.exists:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_sessions.getActiveSession:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - userId
+          properties:
+            userId:
+              type: string
+
+    Response_sessions.getActiveSession:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_sessions.getById:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_sessions.getById:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_sessions.getByIdInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_sessions.getByIdInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_sessions.getByUserId:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - userId
+          properties:
+            userId:
+              type: string
+
+    Response_sessions.getByUserId:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_sessions.startSession:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_sessions.startSession:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_actions.createAgentThread:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - graphId
+          properties:
+            graphId:
+              type: string
+
+    Response_actions.createAgentThread:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_actions.getToken:
+      type: object
+      required:
+        - args
+      properties:
+        args: {}
+
+    Response_actions.getToken:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_actions.runCode:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - code
+            - language
+          properties:
+            code:
+              type: string
+            language:
+              type: string
+
+    Response_actions.runCode:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_actions.runTests:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - code
+            - language
+            - questionId
+          properties:
+            code:
+              type: string
+            language:
+              type: string
+            questionId:
+              type: string
+              description: ID from table "questions"
+
+    Response_actions.runTests:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_actions.getSessionMetadata:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_actions.getSessionMetadata:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value:
+          type: object
+          required:
+            - agent_thread_id
+            - assistant_id
+            - question_content
+            - question_id
+            - question_title
+            - session_id
+            - session_status
+          properties:
+            agent_thread_id:
+              type: string
+            assistant_id:
+              type: string
+            question_content:
+              type: string
+            question_id:
+              type: string
+              description: ID from table "questions"
+            question_title:
+              type: string
+            session_id:
+              type: string
+              description: ID from table "sessions"
+            session_status:
+              type: string
+
+    Request_userProfiles.getByEmailInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          properties:
+            email:
+              type: string
+
+    Response_userProfiles.getByEmailInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.getUserProfile:
+      type: object
+      required:
+        - args
+      properties:
+        args: {}
+
+    Response_userProfiles.getUserProfile:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.getUserProfileInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - userId
+          properties:
+            userId:
+              type: string
+
+    Response_userProfiles.getUserProfileInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.refreshMinutesForYearlyPlansInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+
+    Response_userProfiles.refreshMinutesForYearlyPlansInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.updateSubscriptionByEmailInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - email
+          properties:
+            currentPeriodEnd:
+              type: number
+            currentPeriodStart:
+              type: number
+            email:
+              type: string
+            interval:
+              oneOf:
+                - type: string
+                  enum:
+                    - "month"
+                - type: string
+                  enum:
+                    - "year"
+                - type: string
+                  enum:
+                    - "day"
+                - type: string
+                  enum:
+                    - "week"
+            latestSubscriptionId:
+              type: string
+            minutesRemaining:
+              type: number
+            planName:
+              oneOf:
+                - type: string
+                  enum:
+                    - "free"
+                - type: string
+                  enum:
+                    - "basic"
+                - type: string
+                  enum:
+                    - "premium"
+                - type: string
+                  enum:
+                    - "enterprise"
+            refreshDate:
+              type: number
+            subscriptionStatus:
+              type: string
+
+    Response_userProfiles.updateSubscriptionByEmailInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.voidSubscriptionInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - email
+          properties:
+            email:
+              type: string
+
+    Response_userProfiles.voidSubscriptionInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_inviteCodes.applyInviteCode:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - code
+          properties:
+            code:
+              type: string
+
+    Response_inviteCodes.applyInviteCode:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_inviteCodes.createInviteCode:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - assignedRole
+          properties:
+            assignedRole:
+              oneOf:
+                - type: string
+                  enum:
+                    - "admin"
+                - type: string
+                  enum:
+                    - "user"
+
+    Response_inviteCodes.createInviteCode:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_admins.createUserProfile:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - email
+            - minutesRemaining
+            - role
+            - subscription
+          properties:
+            email:
+              type: string
+            minutesRemaining:
+              type: number
+            nextBillingDate:
+              type: number
+            role:
+              oneOf:
+                - type: string
+                  enum:
+                    - "admin"
+                - type: string
+                  enum:
+                    - "user"
+            subscription:
+              oneOf:
+                - type: string
+                  enum:
+                    - "free"
+                - type: string
+                  enum:
+                    - "basic"
+                - type: string
+                  enum:
+                    - "premium"
+                - type: string
+                  enum:
+                    - "enterprise"
+
+    Response_admins.createUserProfile:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_admins.patchUserSubscription:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - userId
+          properties:
+            minutesRemaining:
+              type: number
+            subscription:
+              oneOf:
+                - type: string
+                  enum:
+                    - "free"
+                - type: string
+                  enum:
+                    - "basic"
+                - type: string
+                  enum:
+                    - "premium"
+                - type: string
+                  enum:
+                    - "enterprise"
+            userId:
+              type: string
+
+    Response_admins.patchUserSubscription:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_codeSessionStates.get:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_codeSessionStates.get:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value:
+          type: object
+          required:
+            - displayQuestion
+            - editor
+            - terminal
+          properties:
+            displayQuestion:
+              type: boolean
+            editor:
+              type: object
+              required:
+                - content
+                - language
+                - lastUpdated
+              properties:
+                content:
+                  type: string
+                language:
+                  type: string
+                lastUpdated:
+                  type: number
+            terminal:
+              type: object
+              required:
+                - isError
+                - output
+              properties:
+                executionTime:
+                  type: number
+                isError:
+                  type: boolean
+                output:
+                  type: string
+
+    Request_codeSessionStates.getEditorState:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_codeSessionStates.getEditorState:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_codeSessionStates.getSessionStateBySessionId:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_codeSessionStates.getSessionStateBySessionId:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_codeSessionStates.getTerminalState:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_codeSessionStates.getTerminalState:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_codeSessionEvents.commitCodeSessionEvent:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - event
+            - sessionId
+          properties:
+            event:
+              oneOf:
+                - type: object
+                  required:
+                    - data
+                    - type
+                  properties:
+                    data:
+                      type: object
+                      required:
+                        - content
+                      properties:
+                        content:
+                          type: string
+                    type:
+                      type: string
+                      enum:
+                        - "content_changed"
+                - type: object
+                  required:
+                    - data
+                    - type
+                  properties:
+                    data: {}
+                    type:
+                      type: string
+                      enum:
+                        - "user_test_executed"
+                - type: object
+                  required:
+                    - data
+                    - type
+                  properties:
+                    data: {}
+                    type:
+                      type: string
+                      enum:
+                        - "testcase_added"
+                - type: object
+                  required:
+                    - data
+                    - type
+                  properties:
+                    data: {}
+                    type:
+                      type: string
+                      enum:
+                        - "testcase_removed"
+                - type: object
+                  required:
+                    - data
+                    - type
+                  properties:
+                    data:
+                      type: boolean
+                    type:
+                      type: string
+                      enum:
+                        - "question_displayed"
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_codeSessionEvents.commitCodeSessionEvent:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_codeSessionEvents.getNextEventBatch:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - codeSessionStateId
+            - limit
+          properties:
+            codeSessionStateId:
+              type: string
+              description: ID from table "codeSessionStates"
+            limit:
+              type: number
+
+    Response_codeSessionEvents.getNextEventBatch:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value:
+          type: array
+          items:
+            type: object
+            required:
+              - event
+              - ts
+            properties:
+              event:
+                oneOf:
+                  - type: object
+                    required:
+                      - data
+                      - type
+                    properties:
+                      data:
+                        type: object
+                        required:
+                          - content
+                        properties:
+                          content:
+                            type: string
+                      type:
+                        type: string
+                        enum:
+                          - "content_changed"
+                  - type: object
+                    required:
+                      - data
+                      - type
+                    properties:
+                      data: {}
+                      type:
+                        type: string
+                        enum:
+                          - "user_test_executed"
+                  - type: object
+                    required:
+                      - data
+                      - type
+                    properties:
+                      data: {}
+                      type:
+                        type: string
+                        enum:
+                          - "testcase_added"
+                  - type: object
+                    required:
+                      - data
+                      - type
+                    properties:
+                      data: {}
+                      type:
+                        type: string
+                        enum:
+                          - "testcase_removed"
+                  - type: object
+                    required:
+                      - data
+                      - type
+                    properties:
+                      data:
+                        type: boolean
+                      type:
+                        type: string
+                        enum:
+                          - "question_displayed"
+              ts:
+                type: number
+
+    FailedResponse:
+      type: object
+      properties: {}

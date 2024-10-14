@@ -1,0 +1,31 @@
+# ResponseCodeSessionStatesGetValue
+
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**display_question** | **bool** |  | 
+**editor** | [**ResponseCodeSessionStatesGetValueEditor**](ResponseCodeSessionStatesGetValueEditor.md) |  | 
+**terminal** | [**ResponseCodeSessionStatesGetValueTerminal**](ResponseCodeSessionStatesGetValueTerminal.md) |  | 
+
+## Example
+
+```python
+from convex_client.models.response_code_session_states_get_value import ResponseCodeSessionStatesGetValue
+
+# TODO update the JSON string below
+json = "{}"
+# create an instance of ResponseCodeSessionStatesGetValue from a JSON string
+response_code_session_states_get_value_instance = ResponseCodeSessionStatesGetValue.from_json(json)
+# print the JSON string representation of the object
+print(ResponseCodeSessionStatesGetValue.to_json())
+
+# convert the object into a dict
+response_code_session_states_get_value_dict = response_code_session_states_get_value_instance.to_dict()
+# create an instance of ResponseCodeSessionStatesGetValue from a dict
+response_code_session_states_get_value_from_dict = ResponseCodeSessionStatesGetValue.from_dict(response_code_session_states_get_value_dict)
+```
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+

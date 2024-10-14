@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { userMutation } from "./functions";
+import { query, userMutation } from "./functions";
 import { codeSessionEventType } from "./schema";
 import { CodeSessionEventType, EntWriter } from "./types";
 
@@ -41,3 +41,29 @@ async function handleContentChangeEvent(
     },
   });
 }
+
+export const getNextEventBatch = query({
+  args: {
+    codeSessionStateId: v.id("codeSessionStates"),
+    limit: v.number(),
+  },
+  returns: v.array(
+    v.object({
+      ts: v.number(),
+      event: codeSessionEventType,
+    })
+  ),
+  handler: async (ctx, { codeSessionStateId, limit }) => {
+    const events = await ctx
+      .table("codeSessionEvents", "by_session_id_and_acked", (q) =>
+        q.eq("codeSessionStateId", codeSessionStateId).eq("acked", false)
+      )
+      .order("asc")
+      .take(limit)
+      .map(({ _creationTime, event }) => {
+        return { ts: _creationTime, event };
+      });
+
+    return events;
+  },
+});
