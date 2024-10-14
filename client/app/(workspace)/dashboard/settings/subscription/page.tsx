@@ -1,12 +1,12 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { MINUTE_PRICE, MINUTE_PRICE_DISCOUNTED } from "@/lib/constants";
 import { useUser } from "@clerk/clerk-react";
 import { useEffect } from "react";
-import { Badge } from "@/components/ui/badge";
 
 const SubscriptionPage: React.FC = () => {
   useEffect(() => {

@@ -1,21 +1,25 @@
 "use client";
 
+import { useAction, useMutation, useQuery } from "convex/react";
+import { Clock, Loader2, PlayIcon } from "lucide-react";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
-import Editor from "@monaco-editor/react";
+
 import { editor as monacoEditor } from "monaco-editor";
 import { useTheme } from "next-themes";
-import { useMutation, useAction, useQuery } from "convex/react";
+import { useDebounceCallback } from "usehooks-ts";
+
+import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
-import { TestResultsBlock } from "./test-results-block";
-import { Clock, Loader2, PlayIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
-import { CodeSessionState, useCodeSessionState } from "@/hooks/use-editor-state";
-import { toast } from "sonner";
-import { RunTestResult } from "@/lib/types";
+import { CodeSessionEventType } from "@/convex/types";
+import { useNonReactiveQuery } from "@/hooks/use-non-reactive-query";
 import { useResizePanel } from "@/hooks/use-resize-panel";
+import { RunTestResult } from "@/lib/types";
+import { cn, isDefined } from "@/lib/utils";
+import Editor from "@monaco-editor/react";
+import { toast } from "sonner";
 import { useWindowSize } from "usehooks-ts";
+import { TestResultsBlock } from "./test-results-block";
 
 const darkEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -25,6 +29,8 @@ const darkEditorTheme: monacoEditor.IStandaloneThemeData = {
     "editor.background": "#181a1f",
   },
 };
+
+const language = "python";
 
 export interface CodeEditorPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   sessionId: Id<"sessions">;
@@ -41,7 +47,6 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   const editorContainerRef = useRef<HTMLDivElement>(null);
 
   // Convex
-  const createSessionState = useMutation(api.codeSessionStates.create);
   const runTests = useAction(api.actions.runTests);
   const runCode = useAction(api.actions.runCode);
   const question = useQuery(api.questions.getById, { questionId: questionId });
@@ -49,6 +54,11 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   const [testResults, setTestResults] = useState<RunTestResult | null>(null);
   const [outputView, setOutputView] = useState<"output" | "testResults">("output");
   const [testRunCounter, setTestRunCounter] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+
+  const editorState = useNonReactiveQuery(api.codeSessionStates.getEditorState, { sessionId });
+  const terminalState = useQuery(api.codeSessionStates.getTerminalState, { sessionId });
+  const commitCodeSessionEvent = useMutation(api.codeSessionEvents.commitCodeSessionEvent);
 
   const { height = 300 } = useWindowSize();
   const { size, isResizing, resizeHandleProps } = useResizePanel({
@@ -59,51 +69,29 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     storageId: "leetmock.workspace.code-editor",
   });
 
-  const handleSessionStateChange = useCallback(
-    (sessionState: CodeSessionState) => {
-      const promise = createSessionState({ sessionId, ...sessionState });
-      toast.promise(promise, {
-        success: "Session state saved",
-        error: "Error saving session state",
-      });
-    },
-    [sessionId, createSessionState]
+  const stateLoaded = useMemo(
+    () => isDefined(editorState) && isDefined(terminalState),
+    [editorState, terminalState]
   );
 
-  const {
-    sessionState,
-    isRunning,
-    setIsRunning,
-    onLanguageChange,
-    onContentChange,
-    onTerminalChange,
-  } = useCodeSessionState(sessionId, question, handleSessionStateChange);
+  const handleCommitEvent = useCallback(
+    (event: CodeSessionEventType) => {
+      const promise = commitCodeSessionEvent({ sessionId, event });
+      toast.promise(promise, {
+        success: `Event ${event.type} committed`,
+        error: "Error committing event",
+      });
+    },
+    [sessionId, commitCodeSessionEvent]
+  );
 
-  const language = "python";
-
-  const handleRunCode = async () => {
-    const { language, content } = sessionState!.editor;
-    setIsRunning(true);
-    setOutputView("output");
-    try {
-      const result = await runCode({ language, code: content });
-
-      if (result && result.status) {
-        const { executionTime, isError, output } = result;
-        onTerminalChange({ output, isError, executionTime });
-      } else {
-        toast.error("Error running code. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error running code:", error);
-      toast.error("Error running code. Please try again.");
-    }
-
-    setIsRunning(false);
-  };
+  const debouncedCommitEvent = useDebounceCallback(handleCommitEvent, 500);
 
   const handleRunTests = async () => {
-    const { language, content } = sessionState!.editor;
+    if (!isDefined(editorState)) return;
+
+    const { language, content } = editorState;
+
     setIsRunning(true);
     setTestResults(null);
     setOutputView("testResults");
@@ -128,7 +116,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     setIsRunning(false);
   };
 
-  if (!sessionState) {
+  if (!stateLoaded) {
     return <div>Loading...</div>;
   }
 
@@ -153,7 +141,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
             className="absolute inset-0"
             language={language}
             theme={theme === "dark" ? "customDarkTheme" : "vs-light"}
-            value={sessionState.editor.content}
+            value={editorState!.content}
             options={{
               fontSize: 14,
               lineNumbers: "on",
@@ -164,7 +152,12 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
                 enabled: false,
               },
             }}
-            onChange={(value) => onContentChange(value || "")}
+            onChange={(value) =>
+              debouncedCommitEvent({
+                type: "content_changed",
+                data: { content: value || "" },
+              })
+            }
             beforeMount={(monaco) => {
               monaco.editor.defineTheme("customDarkTheme", darkEditorTheme);
               monaco.editor.setTheme("customDarkTheme");
@@ -217,7 +210,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
           {!isRunning && outputView === "output" && (
             <div className="flex items-center text-sm text-gray-500">
               <Clock className="w-4 h-4 mr-1" />
-              <span>{sessionState.terminal.executionTime} ms</span>
+              <span>{terminalState!.executionTime} ms</span>
             </div>
           )}
         </div>
@@ -228,10 +221,10 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
             <pre
               className={cn(
                 "text-sm rounded-md absolute inset-3",
-                sessionState.terminal.isError ? "text-red-500" : "text-gray-800 dark:text-gray-200"
+                terminalState!.isError ? "text-red-500" : "text-gray-800 dark:text-gray-200"
               )}
             >
-              <code>{sessionState.terminal.output}</code>
+              <code>{terminalState!.output}</code>
             </pre>
           )}
         </div>

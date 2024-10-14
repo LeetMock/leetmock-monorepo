@@ -1,7 +1,6 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
+import { TestCase, TestResultsProps } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { TestResultsProps, TestCase } from "@/lib/types";
 
 export const TestResultsBlock: React.FC<TestResultsProps> = ({ results }) => {
   const [selectedCase, setSelectedCase] = React.useState<TestCase | null>(null);

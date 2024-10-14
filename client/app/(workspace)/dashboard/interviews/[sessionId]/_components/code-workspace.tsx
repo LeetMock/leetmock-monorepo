@@ -1,29 +1,22 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { WorkspaceToolbar } from "./workspace-toolbar";
-import { ConnectionState } from "livekit-client";
-import {
-  useConnectionState,
-  useLocalParticipant,
-  useParticipantAttribute,
-  useRoomContext,
-  useVoiceAssistant,
-} from "@livekit/components-react";
-import { AgentTranscripts } from "./agent-transcripts";
-import { LucideFileText } from "lucide-react";
-import { cn, isDefined } from "@/lib/utils";
-import { Id } from "@/convex/_generated/dataModel";
-import { CodeQuestionPanel } from "./code-question-panel";
-import { useResizePanel } from "@/hooks/use-resize-panel";
-import { CodeEditorPanel } from "./code-editor-panel";
-import { useWindowSize } from "usehooks-ts";
-import { redirect } from "next/navigation";
-import { useConnection } from "@/hooks/use-connection";
-import { toast } from "sonner";
 import { Wait } from "@/components/wait";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useConnection } from "@/hooks/use-connection";
+import { useResizePanel } from "@/hooks/use-resize-panel";
+import { cn, isDefined } from "@/lib/utils";
+import { useConnectionState, useLocalParticipant } from "@livekit/components-react";
+import { useQuery } from "convex/react";
+import { ConnectionState } from "livekit-client";
+import { LucideFileText } from "lucide-react";
+import { redirect } from "next/navigation";
+import { useEffect, useMemo } from "react";
+import { toast } from "sonner";
+import { useWindowSize } from "usehooks-ts";
+import { CodeEditorPanel } from "./code-editor-panel";
+import { CodeQuestionPanel } from "./code-question-panel";
+import { WorkspaceToolbar } from "./workspace-toolbar";
 
 export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { disconnect } = useConnection();

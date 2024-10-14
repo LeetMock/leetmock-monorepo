@@ -1,9 +1,9 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Id } from "@/convex/_generated/dataModel";
+import { cn } from "@/lib/utils";
 
 const getDifficultyColor = (difficulty: number) => {
   switch (difficulty) {

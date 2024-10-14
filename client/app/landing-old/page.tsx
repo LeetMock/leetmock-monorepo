@@ -1,6 +1,6 @@
+import { FullScreenSection } from "@/components/FullScreenSection";
 import { Hero } from "@/components/Hero";
 import PricingPage from "../pricing/page";
-import { FullScreenSection } from "@/components/FullScreenSection";
 
 export default function Home() {
   return (

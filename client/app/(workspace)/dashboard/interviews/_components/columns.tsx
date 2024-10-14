@@ -2,12 +2,12 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { difficulties, statuses } from "./data";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Doc } from "@/convex/_generated/dataModel";
 import { ColumnHeader } from "./column-header";
+import { difficulties, statuses } from "./data";
 import { RowActions } from "./row-actions";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
 
 /*
 {

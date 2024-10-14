@@ -1,4 +1,7 @@
+import { Stepper } from "@/components/stepper";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -7,21 +10,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MoveRight, Code, Database, Users, Lock } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { useCallback, useState } from "react";
-import { cn } from "@/lib/utils";
-import React from "react";
-import { Stepper } from "@/components/stepper";
-import { SessionType, useSessionCreateModal } from "@/hooks/use-session-create-modal";
-import { useAction, useMutation, useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { CodeQuestionViewer } from "./code-question-viewer";
 import { Wait } from "@/components/wait";
-import { Id } from "@/convex/_generated/dataModel";
-import { toast } from "sonner";
+import { api } from "@/convex/_generated/api";
+import { SessionType, useSessionCreateModal } from "@/hooks/use-session-create-modal";
+import { cn } from "@/lib/utils";
+import { useAction, useMutation, useQuery } from "convex/react";
+import { Code, Database, Lock, MoveRight, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
+import React, { useCallback, useState } from "react";
+import { toast } from "sonner";
+import { CodeQuestionViewer } from "./code-question-viewer";
 
 interface SessionMeta {
   title: string;

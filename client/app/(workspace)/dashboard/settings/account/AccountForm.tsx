@@ -2,20 +2,18 @@
 
 import {
   BellIcon,
-  EyeNoneIcon,
+  FaceIcon,
   LayersIcon,
   PersonIcon,
   RocketIcon,
   TimerIcon,
-  CounterClockwiseClockIcon,
-  FaceIcon,
 } from "@radix-ui/react-icons";
 
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useUser } from "@clerk/clerk-react";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { MINUTE_PRICE_DISCOUNTED } from "@/lib/constants";
-import { Badge } from "@/components/ui/badge";
+import { useUser } from "@clerk/clerk-react";
 
 const InfoItem = ({ icon: Icon, title, description }) => (
   <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
@@ -66,8 +64,10 @@ export function AccountForm() {
                         : ""
                 }
               >
-                {!!userProfile.interval && (userProfile.interval === "month" ? "Monthly " : "Yearly ")}
-                {userProfile.subscription.charAt(0).toUpperCase() + userProfile.subscription.slice(1)}
+                {!!userProfile.interval &&
+                  (userProfile.interval === "month" ? "Monthly " : "Yearly ")}
+                {userProfile.subscription.charAt(0).toUpperCase() +
+                  userProfile.subscription.slice(1)}
               </Badge>
             }
             description="Your current subscription"
@@ -82,7 +82,8 @@ export function AccountForm() {
               icon={RocketIcon}
               title={
                 <Badge>
-                  {formatDate(userProfile.currentPeriodStart)} - {formatDate(userProfile.currentPeriodEnd)}
+                  {formatDate(userProfile.currentPeriodStart)} -{" "}
+                  {formatDate(userProfile.currentPeriodEnd)}
                 </Badge>
               }
               description="Current plan period"
@@ -101,11 +102,13 @@ export function AccountForm() {
               description="Minutes refresh date"
             />
           )}
-          {userProfile.subscriptionStatus === "active" && <InfoItem
-            icon={FaceIcon}
-            title={<Badge>${MINUTE_PRICE_DISCOUNTED} / minute</Badge>}
-            description="Charge beyond the tier minutes"
-          />}
+          {userProfile.subscriptionStatus === "active" && (
+            <InfoItem
+              icon={FaceIcon}
+              title={<Badge>${MINUTE_PRICE_DISCOUNTED} / minute</Badge>}
+              description="Charge beyond the tier minutes"
+            />
+          )}
         </CardContent>
       </Card>
       <Card className="rounded-md">
@@ -114,26 +117,10 @@ export function AccountForm() {
           <CardDescription>Your current settings.</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-1 pb-3">
-          <InfoItem
-            icon={LayersIcon}
-            title="Brian"
-            description="Preferred Voice Model"
-          />
-          <InfoItem
-            icon={TimerIcon}
-            title="GPT-4o"
-            description="Preferred LLM"
-          />
-          <InfoItem
-            icon={RocketIcon}
-            title="30 minutes"
-            description="Interview Length"
-          />
-          <InfoItem
-            icon={RocketIcon}
-            title="English"
-            description="Interview Language"
-          />
+          <InfoItem icon={LayersIcon} title="Brian" description="Preferred Voice Model" />
+          <InfoItem icon={TimerIcon} title="GPT-4o" description="Preferred LLM" />
+          <InfoItem icon={RocketIcon} title="30 minutes" description="Interview Length" />
+          <InfoItem icon={RocketIcon} title="English" description="Interview Language" />
         </CardContent>
       </Card>
     </div>

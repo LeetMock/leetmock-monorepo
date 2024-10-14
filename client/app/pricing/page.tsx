@@ -1,12 +1,12 @@
 "use client";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
-import styles from "./pricing.module.css";
 import { Urbanist } from "next/font/google";
+import { useState } from "react";
+import styles from "./pricing.module.css";
 
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const urbanist = Urbanist({ subsets: ["latin"] });
 

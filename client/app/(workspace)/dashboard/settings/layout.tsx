@@ -11,7 +11,7 @@ const sidebarNavItems = [
   {
     title: "Subscription",
     href: "/dashboard/settings/subscription",
-  }
+  },
 ];
 
 interface SettingsLayoutProps {

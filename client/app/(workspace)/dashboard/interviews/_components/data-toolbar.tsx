@@ -5,12 +5,12 @@ import { Table } from "@tanstack/react-table";
 
 import { ViewOptions } from "./view-options";
 
-import { FacetedFilter } from "./faceted-filter";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { FacetedFilter } from "./faceted-filter";
 
-import { difficulties, statuses } from "./data";
 import { cn } from "@/lib/utils";
+import { difficulties, statuses } from "./data";
 
 interface DataToolbarProps<TData> {
   table: Table<TData>;

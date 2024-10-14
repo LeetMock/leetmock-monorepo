@@ -1,9 +1,9 @@
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
 
-import { internalQuery, query, userMutation, userQuery } from "./functions";
-import { QueryCtx } from "./types";
 import { isDefined } from "@/lib/utils";
+import { internalQuery, query, userQuery } from "./functions";
+import { QueryCtx } from "./types";
 
 // Get code session state by ID
 export const getById = userQuery({
@@ -19,15 +19,23 @@ export const getById = userQuery({
   },
 });
 
-// Get all code session states by session ID
-export const getSessionStates = userQuery({
+export const getEditorState = userQuery({
   args: {
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-    return await ctx
-      .table("codeSessionStates", "sessionId", (q) => q.eq("sessionId", sessionId))
-      .order("asc");
+    const sessionState = await querySessionStateBySessionId(ctx, sessionId);
+    return sessionState?.editor;
+  },
+});
+
+export const getTerminalState = userQuery({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  handler: async (ctx, { sessionId }) => {
+    const sessionState = await querySessionStateBySessionId(ctx, sessionId);
+    return sessionState?.terminal;
   },
 });
 
@@ -37,7 +45,7 @@ export const getLatestSessionStateBySessionId = query({
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-    return await queryLatestSessionState(ctx, sessionId);
+    return await querySessionStateBySessionId(ctx, sessionId);
   },
 });
 
@@ -47,38 +55,10 @@ export const getLatestSessionStateBySessionIdInternal = internalQuery({
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-    return await queryLatestSessionState(ctx, sessionId);
+    return await querySessionStateBySessionId(ctx, sessionId);
   },
 });
 
-export const create = userMutation({
-  args: {
-    sessionId: v.id("sessions"),
-    editor: v.object({
-      language: v.string(),
-      content: v.string(),
-      lastUpdated: v.number(),
-    }),
-    terminal: v.object({
-      output: v.string(),
-      isError: v.boolean(),
-      executionTime: v.optional(v.number()),
-    }),
-  },
-  handler: async (ctx, { sessionId, editor, terminal }) => {
-    return await ctx.table("codeSessionStates").insert({
-      sessionId,
-      editor,
-      terminal,
-    });
-  },
-});
-
-async function queryLatestSessionState(ctx: QueryCtx, sessionId: Id<"sessions">) {
-  const sessionState = await ctx
-    .table("codeSessionStates", "sessionId", (q) => q.eq("sessionId", sessionId))
-    .order("desc")
-    .firstX();
-
-  return sessionState;
+async function querySessionStateBySessionId(ctx: QueryCtx, sessionId: Id<"sessions">) {
+  return await ctx.table("sessions").getX(sessionId).edgeX("codeSessionState");
 }
