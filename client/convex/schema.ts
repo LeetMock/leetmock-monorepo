@@ -79,12 +79,14 @@ const schema = defineEntSchema({
       executionTime: v.optional(v.number()),
     }),
   })
+    .deletion("soft")
     .edge("session")
     .edges("codeSessionEvents", { ref: true }),
   codeSessionEvents: defineEnt({
     event: codeSessionEventType,
     acked: v.boolean(),
   })
+    .deletion("soft")
     .edge("codeSessionState")
     .index("by_session_id_and_acked", ["codeSessionStateId", "acked"]),
   questions: defineEnt({
