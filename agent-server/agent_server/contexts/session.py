@@ -1,9 +1,20 @@
 import asyncio
 from abc import ABC, abstractmethod
-from typing import TypeVar
+from re import S
+from typing import Any, AsyncGenerator, AsyncIterator, Literal, Optional, TypeVar
 
 from agent_server.contexts.convex import ConvexApi
+from agent_server.types import (
+    CodeSessionState,
+    SessionMetadata,
+    create_get_session_metadata_request,
+)
+from agent_server.utils.logger import get_logger
+from agent_server.utils.query_iterators import AsyncQueryIterator
 from livekit.agents.utils import EventEmitter
+
+logger = get_logger(__name__)
+
 
 TEventTypes = TypeVar("TEventTypes", bound=str)
 
@@ -15,25 +26,106 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
         super().__init__()
 
         self._api = api
+        self._session_id: str | None = None
+        self._session_metadata: SessionMetadata | None = None
         self._synced: asyncio.Future[bool] = asyncio.Future()
+
+    @property
+    def session_id(self) -> str:
+        assert self._session_id is not None
+        return self._session_id
+
+    @property
+    def session_metadata(self) -> SessionMetadata:
+        assert self._session_metadata is not None
+        return self._session_metadata
+
+    @property
+    def session_state(self) -> Any:
+        raise NotImplementedError
 
     async def synced(self):
         """Wait for the session to be synced with convex."""
         return await self._synced
 
+    async def sync(self, session_id: str):
+        """Sync the session with convex."""
+        await self.setup(session_id)
+        self._synced.set_result(True)
+
     @abstractmethod
-    async def watch_state(self):
-        """Watch the changes of session state from convex."""
+    async def setup(self, session_id: str):
+        """Initialize the session from convex."""
+        raise NotImplementedError
+
+    async def stream_events(self):
+        """Stream the events from convex."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def start(self):
+        """Start the session."""
         raise NotImplementedError
 
 
-"""
-v -> v1 -> v2
+CodeSessionEventTypes = Literal["content_changed"]
 
-log 1 | log 2 | log 3 | ... | log k
-                 |
-                 v
 
-compressed_state
-version: int
-"""
+CODE_SESSION_STATE_QUERY = "codeSessionStates:get"
+CODE_SESSION_EVENT_QUERY = "codeSessionEvents:getNextEventBatch"
+
+
+class CodeSession(BaseSession[CodeSessionEventTypes]):
+
+    def __init__(self, api: ConvexApi):
+        super().__init__(api)
+
+        self._code_session_state: CodeSessionState | None = None
+        self._watch_code_session_state_task: asyncio.Task | None = None
+
+    @property
+    def session_state(self) -> CodeSessionState:
+        assert self._code_session_state is not None
+        return self._code_session_state
+
+    async def _watch_code_session_state(self):
+        """Watch the changes of code session state from convex."""
+
+        subscription = self._api.subscribe(
+            CODE_SESSION_STATE_QUERY, {"sessionId": self._session_id}
+        )
+        query_stream = AsyncQueryIterator.from_subscription(subscription)
+
+        async for raw_state in query_stream:
+            state = CodeSessionState.model_validate(raw_state)
+            logger.info(f"Code session state changed: {state}")
+
+    async def setup(self, session_id: str):
+        self._session_id = session_id
+
+        # Get session metadata
+        request = create_get_session_metadata_request(self._session_id)
+        response = self._api.action.api_run_actions_get_session_metadata_post(request)
+
+        if response.status == "error" or response.value is None:
+            logger.error(f"Error getting session metadata: {response.error_message}")
+            raise Exception(f"Error getting session metadata: {response.error_message}")
+
+        self._session_metadata = response.value
+
+    async def stream_events(self):
+        """Stream the events from convex."""
+
+        subscription = self._api.subscribe(
+            CODE_SESSION_EVENT_QUERY, {"sessionId": self._session_id}
+        )
+        query_stream = AsyncQueryIterator.from_subscription(subscription)
+
+        async for events in query_stream:
+            logger.info(f"Code session events: {events}")
+
+    def start(self):
+        if self._watch_code_session_state_task is None:
+            self._watch_code_session_state_task = asyncio.create_task(
+                self._watch_code_session_state()
+            )
