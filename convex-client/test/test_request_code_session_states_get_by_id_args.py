@@ -35,7 +35,7 @@ class TestRequestCodeSessionStatesGetByIdArgs(unittest.TestCase):
         model = RequestCodeSessionStatesGetByIdArgs()
         if include_optional:
             return RequestCodeSessionStatesGetByIdArgs(
-                snapshot_id = ''
+                session_state_id = ''
             )
         else:
             return RequestCodeSessionStatesGetByIdArgs(

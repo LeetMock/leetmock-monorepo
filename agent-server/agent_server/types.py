@@ -7,7 +7,7 @@ from convex_client.models import (
 
 
 SessionMetadata = ResponseActionsGetSessionMetadataValue
-EditorSnapshot = ResponseActionsGetEditorSnapshotValue
+CodeSessionState = ResponseActionsGetEditorSnapshotValue
 
 RequestGetSessionMetadata = RequestActionsGetSessionMetadata
 RequestGetSessionMetadataArgs = RequestSessionsEndSessionArgs

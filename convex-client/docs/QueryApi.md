@@ -5,8 +5,8 @@ All URIs are relative to *https://posh-chihuahua-941.convex.cloud*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**api_run_code_session_states_get_by_id_post**](QueryApi.md#api_run_code_session_states_get_by_id_post) | **POST** /api/run/codeSessionStates/getById | Calls a query at the path codeSessionStates.js:getById
-[**api_run_code_session_states_get_latest_snapshot_by_session_id_post**](QueryApi.md#api_run_code_session_states_get_latest_snapshot_by_session_id_post) | **POST** /api/run/codeSessionStates/getLatestSnapshotBySessionId | Calls a query at the path codeSessionStates.js:getLatestSnapshotBySessionId
-[**api_run_code_session_states_get_snapshots_post**](QueryApi.md#api_run_code_session_states_get_snapshots_post) | **POST** /api/run/codeSessionStates/getSnapshots | Calls a query at the path codeSessionStates.js:getSnapshots
+[**api_run_code_session_states_get_latest_session_state_by_session_id_post**](QueryApi.md#api_run_code_session_states_get_latest_session_state_by_session_id_post) | **POST** /api/run/codeSessionStates/getLatestSessionStateBySessionId | Calls a query at the path codeSessionStates.js:getLatestSessionStateBySessionId
+[**api_run_code_session_states_get_session_states_post**](QueryApi.md#api_run_code_session_states_get_session_states_post) | **POST** /api/run/codeSessionStates/getSessionStates | Calls a query at the path codeSessionStates.js:getSessionStates
 [**api_run_questions_get_all_post**](QueryApi.md#api_run_questions_get_all_post) | **POST** /api/run/questions/getAll | Calls a query at the path questions.js:getAll
 [**api_run_questions_get_by_id_post**](QueryApi.md#api_run_questions_get_by_id_post) | **POST** /api/run/questions/getById | Calls a query at the path questions.js:getById
 [**api_run_sessions_exists_post**](QueryApi.md#api_run_sessions_exists_post) | **POST** /api/run/sessions/exists | Calls a query at the path sessions.js:exists
@@ -95,10 +95,10 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **api_run_code_session_states_get_latest_snapshot_by_session_id_post**
-> ResponseCodeSessionStatesGetLatestSnapshotBySessionId api_run_code_session_states_get_latest_snapshot_by_session_id_post(request_code_session_states_get_latest_snapshot_by_session_id)
+# **api_run_code_session_states_get_latest_session_state_by_session_id_post**
+> ResponseCodeSessionStatesGetLatestSessionStateBySessionId api_run_code_session_states_get_latest_session_state_by_session_id_post(request_code_session_states_get_latest_session_state_by_session_id)
 
-Calls a query at the path codeSessionStates.js:getLatestSnapshotBySessionId
+Calls a query at the path codeSessionStates.js:getLatestSessionStateBySessionId
 
 ### Example
 
@@ -106,8 +106,8 @@ Calls a query at the path codeSessionStates.js:getLatestSnapshotBySessionId
 
 ```python
 import convex_client
-from convex_client.models.request_code_session_states_get_latest_snapshot_by_session_id import RequestCodeSessionStatesGetLatestSnapshotBySessionId
-from convex_client.models.response_code_session_states_get_latest_snapshot_by_session_id import ResponseCodeSessionStatesGetLatestSnapshotBySessionId
+from convex_client.models.request_code_session_states_get_latest_session_state_by_session_id import RequestCodeSessionStatesGetLatestSessionStateBySessionId
+from convex_client.models.response_code_session_states_get_latest_session_state_by_session_id import ResponseCodeSessionStatesGetLatestSessionStateBySessionId
 from convex_client.rest import ApiException
 from pprint import pprint
 
@@ -131,15 +131,15 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.QueryApi(api_client)
-    request_code_session_states_get_latest_snapshot_by_session_id = convex_client.RequestCodeSessionStatesGetLatestSnapshotBySessionId() # RequestCodeSessionStatesGetLatestSnapshotBySessionId | 
+    request_code_session_states_get_latest_session_state_by_session_id = convex_client.RequestCodeSessionStatesGetLatestSessionStateBySessionId() # RequestCodeSessionStatesGetLatestSessionStateBySessionId | 
 
     try:
-        # Calls a query at the path codeSessionStates.js:getLatestSnapshotBySessionId
-        api_response = api_instance.api_run_code_session_states_get_latest_snapshot_by_session_id_post(request_code_session_states_get_latest_snapshot_by_session_id)
-        print("The response of QueryApi->api_run_code_session_states_get_latest_snapshot_by_session_id_post:\n")
+        # Calls a query at the path codeSessionStates.js:getLatestSessionStateBySessionId
+        api_response = api_instance.api_run_code_session_states_get_latest_session_state_by_session_id_post(request_code_session_states_get_latest_session_state_by_session_id)
+        print("The response of QueryApi->api_run_code_session_states_get_latest_session_state_by_session_id_post:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling QueryApi->api_run_code_session_states_get_latest_snapshot_by_session_id_post: %s\n" % e)
+        print("Exception when calling QueryApi->api_run_code_session_states_get_latest_session_state_by_session_id_post: %s\n" % e)
 ```
 
 
@@ -149,11 +149,11 @@ with convex_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **request_code_session_states_get_latest_snapshot_by_session_id** | [**RequestCodeSessionStatesGetLatestSnapshotBySessionId**](RequestCodeSessionStatesGetLatestSnapshotBySessionId.md)|  | 
+ **request_code_session_states_get_latest_session_state_by_session_id** | [**RequestCodeSessionStatesGetLatestSessionStateBySessionId**](RequestCodeSessionStatesGetLatestSessionStateBySessionId.md)|  | 
 
 ### Return type
 
-[**ResponseCodeSessionStatesGetLatestSnapshotBySessionId**](ResponseCodeSessionStatesGetLatestSnapshotBySessionId.md)
+[**ResponseCodeSessionStatesGetLatestSessionStateBySessionId**](ResponseCodeSessionStatesGetLatestSessionStateBySessionId.md)
 
 ### Authorization
 
@@ -174,10 +174,10 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **api_run_code_session_states_get_snapshots_post**
-> ResponseCodeSessionStatesGetSnapshots api_run_code_session_states_get_snapshots_post(request_code_session_states_get_snapshots)
+# **api_run_code_session_states_get_session_states_post**
+> ResponseCodeSessionStatesGetSessionStates api_run_code_session_states_get_session_states_post(request_code_session_states_get_session_states)
 
-Calls a query at the path codeSessionStates.js:getSnapshots
+Calls a query at the path codeSessionStates.js:getSessionStates
 
 ### Example
 
@@ -185,8 +185,8 @@ Calls a query at the path codeSessionStates.js:getSnapshots
 
 ```python
 import convex_client
-from convex_client.models.request_code_session_states_get_snapshots import RequestCodeSessionStatesGetSnapshots
-from convex_client.models.response_code_session_states_get_snapshots import ResponseCodeSessionStatesGetSnapshots
+from convex_client.models.request_code_session_states_get_session_states import RequestCodeSessionStatesGetSessionStates
+from convex_client.models.response_code_session_states_get_session_states import ResponseCodeSessionStatesGetSessionStates
 from convex_client.rest import ApiException
 from pprint import pprint
 
@@ -210,15 +210,15 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.QueryApi(api_client)
-    request_code_session_states_get_snapshots = convex_client.RequestCodeSessionStatesGetSnapshots() # RequestCodeSessionStatesGetSnapshots | 
+    request_code_session_states_get_session_states = convex_client.RequestCodeSessionStatesGetSessionStates() # RequestCodeSessionStatesGetSessionStates | 
 
     try:
-        # Calls a query at the path codeSessionStates.js:getSnapshots
-        api_response = api_instance.api_run_code_session_states_get_snapshots_post(request_code_session_states_get_snapshots)
-        print("The response of QueryApi->api_run_code_session_states_get_snapshots_post:\n")
+        # Calls a query at the path codeSessionStates.js:getSessionStates
+        api_response = api_instance.api_run_code_session_states_get_session_states_post(request_code_session_states_get_session_states)
+        print("The response of QueryApi->api_run_code_session_states_get_session_states_post:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling QueryApi->api_run_code_session_states_get_snapshots_post: %s\n" % e)
+        print("Exception when calling QueryApi->api_run_code_session_states_get_session_states_post: %s\n" % e)
 ```
 
 
@@ -228,11 +228,11 @@ with convex_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **request_code_session_states_get_snapshots** | [**RequestCodeSessionStatesGetSnapshots**](RequestCodeSessionStatesGetSnapshots.md)|  | 
+ **request_code_session_states_get_session_states** | [**RequestCodeSessionStatesGetSessionStates**](RequestCodeSessionStatesGetSessionStates.md)|  | 
 
 ### Return type
 
-[**ResponseCodeSessionStatesGetSnapshots**](ResponseCodeSessionStatesGetSnapshots.md)
+[**ResponseCodeSessionStatesGetSessionStates**](ResponseCodeSessionStatesGetSessionStates.md)
 
 ### Authorization
 

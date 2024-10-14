@@ -9,7 +9,7 @@ from livekit.agents.utils import EventEmitter
 from agent_server.utils.query_iterators import AsyncQueryIterator
 from agent_server.contexts.convex import ConvexApi
 from agent_server.agent import LangGraphLLM
-from agent_server.types import EditorSnapshot, create_get_session_metadata_request
+from agent_server.types import CodeSessionState, create_get_session_metadata_request
 from agent_server.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -35,7 +35,7 @@ class AgentContextManager(EventEmitter[EventTypes]):
         self._session_id_fut = asyncio.Future[str]()
         self._initialized_fut = asyncio.Future[bool]()
         self._chat_ctx = ChatContext()
-        self._snapshots: List[EditorSnapshot] = []
+        self._snapshots: List[CodeSessionState] = []
 
         self._has_started = False
         self._start_lock = asyncio.Lock()
@@ -47,7 +47,7 @@ class AgentContextManager(EventEmitter[EventTypes]):
         return self._chat_ctx
 
     @property
-    def snapshots(self) -> List[EditorSnapshot]:
+    def snapshots(self) -> List[CodeSessionState]:
         return self._snapshots
 
     @property
@@ -125,7 +125,7 @@ class AgentContextManager(EventEmitter[EventTypes]):
             if not self._initialized_fut.done():
                 self._initialized_fut.set_result(True)
 
-            snapshot = EditorSnapshot.model_validate(part)
+            snapshot = CodeSessionState.model_validate(part)
             self._snapshots.append(snapshot)
             self.emit("snapshot_updated", self._snapshots)
 

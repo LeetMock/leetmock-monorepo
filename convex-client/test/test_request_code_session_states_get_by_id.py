@@ -36,12 +36,12 @@ class TestRequestCodeSessionStatesGetById(unittest.TestCase):
         if include_optional:
             return RequestCodeSessionStatesGetById(
                 args = convex_client.models.request_code_session_states_get_by_id_args.Request_codeSessionStates_getById_args(
-                    snapshot_id = '', )
+                    session_state_id = '', )
             )
         else:
             return RequestCodeSessionStatesGetById(
                 args = convex_client.models.request_code_session_states_get_by_id_args.Request_codeSessionStates_getById_args(
-                    snapshot_id = '', ),
+                    session_state_id = '', ),
         )
         """
 

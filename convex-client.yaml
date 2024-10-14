@@ -665,16 +665,16 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
-  /api/run/codeSessionStates/getLatestSnapshotBySessionId:
+  /api/run/codeSessionStates/getLatestSessionStateBySessionId:
     post:
-      summary: Calls a query at the path codeSessionStates.js:getLatestSnapshotBySessionId
+      summary: Calls a query at the path codeSessionStates.js:getLatestSessionStateBySessionId
       tags:
         - query
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Request_codeSessionStates.getLatestSnapshotBySessionId"
+              $ref: "#/components/schemas/Request_codeSessionStates.getLatestSessionStateBySessionId"
         required: true
       responses:
         "200":
@@ -682,7 +682,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Response_codeSessionStates.getLatestSnapshotBySessionId"
+                $ref: "#/components/schemas/Response_codeSessionStates.getLatestSessionStateBySessionId"
         "400":
           description: Failed operation
           content:
@@ -696,16 +696,16 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
-  /api/run/codeSessionStates/getSnapshots:
+  /api/run/codeSessionStates/getSessionStates:
     post:
-      summary: Calls a query at the path codeSessionStates.js:getSnapshots
+      summary: Calls a query at the path codeSessionStates.js:getSessionStates
       tags:
         - query
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Request_codeSessionStates.getSnapshots"
+              $ref: "#/components/schemas/Request_codeSessionStates.getSessionStates"
         required: true
       responses:
         "200":
@@ -713,7 +713,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Response_codeSessionStates.getSnapshots"
+                $ref: "#/components/schemas/Response_codeSessionStates.getSessionStates"
         "400":
           description: Failed operation
           content:
@@ -1761,7 +1761,7 @@ components:
         args:
           type: object
           properties:
-            snapshotId:
+            sessionStateId:
               type: string
               description: ID from table "codeSessionStates"
 
@@ -1781,7 +1781,7 @@ components:
           type: object
         value: {}
 
-    Request_codeSessionStates.getLatestSnapshotBySessionId:
+    Request_codeSessionStates.getLatestSessionStateBySessionId:
       type: object
       required:
         - args
@@ -1795,7 +1795,7 @@ components:
               type: string
               description: ID from table "sessions"
 
-    Response_codeSessionStates.getLatestSnapshotBySessionId:
+    Response_codeSessionStates.getLatestSessionStateBySessionId:
       type: object
       required:
         - status
@@ -1811,7 +1811,7 @@ components:
           type: object
         value: {}
 
-    Request_codeSessionStates.getLatestSnapshotBySessionIdInternal:
+    Request_codeSessionStates.getLatestSessionStateBySessionIdInternal:
       type: object
       required:
         - args
@@ -1825,7 +1825,7 @@ components:
               type: string
               description: ID from table "sessions"
 
-    Response_codeSessionStates.getLatestSnapshotBySessionIdInternal:
+    Response_codeSessionStates.getLatestSessionStateBySessionIdInternal:
       type: object
       required:
         - status
@@ -1841,7 +1841,7 @@ components:
           type: object
         value: {}
 
-    Request_codeSessionStates.getSnapshots:
+    Request_codeSessionStates.getSessionStates:
       type: object
       required:
         - args
@@ -1855,7 +1855,7 @@ components:
               type: string
               description: ID from table "sessions"
 
-    Response_codeSessionStates.getSnapshots:
+    Response_codeSessionStates.getSessionStates:
       type: object
       required:
         - status

@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.response_code_session_states_get_snapshots import ResponseCodeSessionStatesGetSnapshots
+from convex_client.models.response_code_session_states_get_latest_session_state_by_session_id import ResponseCodeSessionStatesGetLatestSessionStateBySessionId
 
-class TestResponseCodeSessionStatesGetSnapshots(unittest.TestCase):
-    """ResponseCodeSessionStatesGetSnapshots unit test stubs"""
+class TestResponseCodeSessionStatesGetLatestSessionStateBySessionId(unittest.TestCase):
+    """ResponseCodeSessionStatesGetLatestSessionStateBySessionId unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,29 +25,29 @@ class TestResponseCodeSessionStatesGetSnapshots(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> ResponseCodeSessionStatesGetSnapshots:
-        """Test ResponseCodeSessionStatesGetSnapshots
+    def make_instance(self, include_optional) -> ResponseCodeSessionStatesGetLatestSessionStateBySessionId:
+        """Test ResponseCodeSessionStatesGetLatestSessionStateBySessionId
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `ResponseCodeSessionStatesGetSnapshots`
+        # uncomment below to create an instance of `ResponseCodeSessionStatesGetLatestSessionStateBySessionId`
         """
-        model = ResponseCodeSessionStatesGetSnapshots()
+        model = ResponseCodeSessionStatesGetLatestSessionStateBySessionId()
         if include_optional:
-            return ResponseCodeSessionStatesGetSnapshots(
+            return ResponseCodeSessionStatesGetLatestSessionStateBySessionId(
                 status = 'success',
                 error_message = '',
                 error_data = None,
                 value = None
             )
         else:
-            return ResponseCodeSessionStatesGetSnapshots(
+            return ResponseCodeSessionStatesGetLatestSessionStateBySessionId(
                 status = 'success',
         )
         """
 
-    def testResponseCodeSessionStatesGetSnapshots(self):
-        """Test ResponseCodeSessionStatesGetSnapshots"""
+    def testResponseCodeSessionStatesGetLatestSessionStateBySessionId(self):
+        """Test ResponseCodeSessionStatesGetLatestSessionStateBySessionId"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

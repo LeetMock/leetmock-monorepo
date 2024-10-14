@@ -6,7 +6,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { isDefined } from "@/lib/utils";
 import { CODE_TEMPLATES, LANGUAGES } from "@/lib/constants";
 
-export interface EditorState {
+export interface CodeSessionState {
   editor: {
     language: string;
     content: string;
@@ -23,7 +23,7 @@ const getInitialContent = (language: string, functionName: string, params: strin
   return CODE_TEMPLATES[language](functionName, params);
 };
 
-const defaultState: EditorState = {
+const defaultState: CodeSessionState = {
   editor: {
     language: "python",
     content: "",
@@ -35,30 +35,30 @@ const defaultState: EditorState = {
   },
 };
 
-const defaultOnChange = (state: EditorState) => {};
+const defaultOnChange = (state: CodeSessionState) => {};
 
-export const useEditorState = (
+export const useCodeSessionState = (
   sessionId: Id<"sessions">,
   question: any | undefined,
-  onChange: (state: EditorState) => void = defaultOnChange,
+  onChange: (state: CodeSessionState) => void = defaultOnChange,
   delay: number = 1000
 ) => {
-  const initialEditorSnapshot = useNonReactiveQuery(
-    api.codeSessionStates.getLatestSnapshotBySessionId,
+  const initialSessionState = useNonReactiveQuery(
+    api.codeSessionStates.getLatestSessionStateBySessionId,
     { sessionId }
   );
 
   const [initialized, setInitialized] = useState(false);
-  const [localEditorState, setLocalEditorState] = useState<EditorState>(defaultState);
+  const [localSessionState, setLocalSessionState] = useState<CodeSessionState>(defaultState);
   const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
     if (initialized) return;
-    if (!isDefined(initialEditorSnapshot)) return;
+    if (!isDefined(initialSessionState)) return;
 
-    const { terminal, editor } = initialEditorSnapshot;
+    const { terminal, editor } = initialSessionState;
     const initialContent = editor.content;
-    setLocalEditorState({
+    setLocalSessionState({
       terminal,
       editor: {
         ...editor,
@@ -66,12 +66,12 @@ export const useEditorState = (
       },
     });
     setInitialized(true);
-  }, [initialEditorSnapshot, initialized, question]);
+  }, [initialSessionState, initialized, question]);
 
   const handleStateChange = useCallback(
-    (state: EditorState) => {
+    (state: CodeSessionState) => {
       state.editor.lastUpdated = Date.now();
-      setLocalEditorState(state);
+      setLocalSessionState(state);
       onChange(state);
     },
     [onChange]
@@ -80,9 +80,9 @@ export const useEditorState = (
   const onLanguageChange = useCallback(
     (language: string) => {
       handleStateChange({
-        ...localEditorState,
+        ...localSessionState,
         editor: {
-          ...localEditorState.editor,
+          ...localSessionState.editor,
           language,
           content: question
             ? getInitialContent(
@@ -90,39 +90,39 @@ export const useEditorState = (
                 question.functionName || "",
                 question.inputParameters?.[language] || []
               )
-            : localEditorState.editor.content,
+            : localSessionState.editor.content,
         },
       });
     },
-    [handleStateChange, localEditorState, question]
+    [handleStateChange, localSessionState, question]
   );
 
-  const editorState = useMemo(() => {
-    return initialized ? localEditorState : undefined;
-  }, [initialized, localEditorState]);
+  const sessionState = useMemo(() => {
+    return initialized ? localSessionState : undefined;
+  }, [initialized, localSessionState]);
 
   const handleStateChangeDebounced = useDebounceCallback(handleStateChange, delay);
 
   const onContentChange = useCallback(
     (content: string) => {
       handleStateChangeDebounced({
-        ...localEditorState,
-        editor: { ...localEditorState.editor, content },
+        ...localSessionState,
+        editor: { ...localSessionState.editor, content },
       });
     },
-    [handleStateChangeDebounced, localEditorState]
+    [handleStateChangeDebounced, localSessionState]
   );
 
   const onTerminalChange = useCallback(
-    (terminal: EditorState["terminal"]) => {
-      handleStateChange({ ...localEditorState, terminal });
+    (terminal: CodeSessionState["terminal"]) => {
+      handleStateChange({ ...localSessionState, terminal });
     },
-    [handleStateChange, localEditorState]
+    [handleStateChange, localSessionState]
   );
 
   return {
-    editorState,
-    setEditorState: setLocalEditorState,
+    sessionState,
+    setSessionState: setLocalSessionState,
     isRunning,
     setIsRunning,
     onLanguageChange,

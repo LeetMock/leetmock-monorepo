@@ -33,17 +33,17 @@ class TestQueryApi(unittest.TestCase):
         """
         pass
 
-    def test_api_run_code_session_states_get_latest_snapshot_by_session_id_post(self) -> None:
-        """Test case for api_run_code_session_states_get_latest_snapshot_by_session_id_post
+    def test_api_run_code_session_states_get_latest_session_state_by_session_id_post(self) -> None:
+        """Test case for api_run_code_session_states_get_latest_session_state_by_session_id_post
 
-        Calls a query at the path codeSessionStates.js:getLatestSnapshotBySessionId
+        Calls a query at the path codeSessionStates.js:getLatestSessionStateBySessionId
         """
         pass
 
-    def test_api_run_code_session_states_get_snapshots_post(self) -> None:
-        """Test case for api_run_code_session_states_get_snapshots_post
+    def test_api_run_code_session_states_get_session_states_post(self) -> None:
+        """Test case for api_run_code_session_states_get_session_states_post
 
-        Calls a query at the path codeSessionStates.js:getSnapshots
+        Calls a query at the path codeSessionStates.js:getSessionStates
         """
         pass
 
