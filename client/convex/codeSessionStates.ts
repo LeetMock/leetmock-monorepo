@@ -2,14 +2,28 @@ import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
 
 import { query, userQuery } from "./functions";
-import schema from "./schema";
 import { QueryCtx } from "./types";
 
 export const get = query({
   args: {
     sessionId: v.id("sessions"),
   },
-  returns: schema.tables.codeSessionStates.validator,
+  returns: v.object({
+    _id: v.id("codeSessionStates"),
+    _creationTime: v.number(),
+    sessionId: v.id("sessions"),
+    displayQuestion: v.boolean(),
+    editor: v.object({
+      language: v.string(),
+      content: v.string(),
+      lastUpdated: v.number(),
+    }),
+    terminal: v.object({
+      output: v.string(),
+      isError: v.boolean(),
+      executionTime: v.optional(v.number()),
+    }),
+  }),
   handler: async (ctx, { sessionId }) => {
     return await querySessionStateBySessionId(ctx, sessionId);
   },

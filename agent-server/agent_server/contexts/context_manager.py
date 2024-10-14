@@ -40,6 +40,7 @@ class AgentContextManager(Generic[TEventTypes]):
         self._snapshots: List[CodeSessionState] = []
 
         self._has_started = False
+        self._start_lock = asyncio.Lock()
 
     @property
     def session(self) -> BaseSession[TEventTypes]:
@@ -100,11 +101,12 @@ class AgentContextManager(Generic[TEventTypes]):
     #         self.chat_ctx.append(text=RECONNECT_MESSAGE, role="user")
 
     async def start(self):
-        if self._has_started:
-            logger.warning(
-                "start method called multiple times. Ignoring subsequent calls."
-            )
-            return
+        async with self._start_lock:
+            if self._has_started:
+                logger.warning(
+                    "start method called multiple times. Ignoring subsequent calls."
+                )
+                return
 
-        self._has_started = True
-        self._session.start()
+            self._has_started = True
+            await self._session.start()

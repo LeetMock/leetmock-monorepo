@@ -28,7 +28,6 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
         self._api = api
         self._session_id: str | None = None
         self._session_metadata: SessionMetadata | None = None
-        self._synced: asyncio.Future[bool] = asyncio.Future()
 
     @property
     def session_id(self) -> str:
@@ -44,15 +43,6 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
     def session_state(self) -> Any:
         raise NotImplementedError
 
-    async def synced(self):
-        """Wait for the session to be synced with convex."""
-        return await self._synced
-
-    async def sync(self, session_id: str):
-        """Sync the session with convex."""
-        await self.setup(session_id)
-        self._synced.set_result(True)
-
     @abstractmethod
     async def setup(self, session_id: str):
         """Initialize the session from convex."""
@@ -63,7 +53,7 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def start(self):
+    async def start(self):
         """Start the session."""
         raise NotImplementedError
 
@@ -82,6 +72,7 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
 
         self._code_session_state: CodeSessionState | None = None
         self._watch_code_session_state_task: asyncio.Task | None = None
+        self._synced_future: asyncio.Future[bool] = asyncio.Future()
 
     @property
     def session_state(self) -> CodeSessionState:
@@ -96,9 +87,13 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
         )
         query_stream = AsyncQueryIterator.from_subscription(subscription)
 
+        logger.info(f"Watching code session state for {self._session_id}")
         async for raw_state in query_stream:
-            state = CodeSessionState.model_validate(raw_state)
-            logger.info(f"Code session state changed: {state}")
+            self._code_session_state = CodeSessionState.model_validate(raw_state)
+            logger.info(f"Code session state: {self._code_session_state}")
+
+            if not self._synced_future.done():
+                self._synced_future.set_result(True)
 
     async def setup(self, session_id: str):
         self._session_id = session_id
@@ -124,8 +119,10 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
         async for events in query_stream:
             logger.info(f"Code session events: {events}")
 
-    def start(self):
+    async def start(self):
         if self._watch_code_session_state_task is None:
             self._watch_code_session_state_task = asyncio.create_task(
                 self._watch_code_session_state()
             )
+
+        await self._synced_future
