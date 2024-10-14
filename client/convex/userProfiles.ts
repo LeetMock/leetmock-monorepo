@@ -1,8 +1,8 @@
-import { get30DaysFromNowInSeconds, isDefined } from "@/lib/utils";
-import { MutationCtx } from "./types";
 import { PLANS } from "@/lib/constants";
-import { internalMutation, internalQuery, userQuery } from "./functions";
+import { get30DaysFromNowInSeconds, isDefined } from "@/lib/utils";
 import { v } from "convex/values";
+import { internalMutation, internalQuery, userQuery } from "./functions";
+import { MutationCtx } from "./types";
 
 export const getUserProfileInternal = internalQuery({
   args: { userId: v.string() },

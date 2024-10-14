@@ -1,7 +1,7 @@
-import { v } from "convex/values";
-import { userMutation, internalMutation } from "./functions";
 import { FREE_PLAN_MINUTES_ONLY_ONCE } from "@/lib/constants";
 import { isDefined } from "@/lib/utils";
+import { v } from "convex/values";
+import { internalMutation, userMutation } from "./functions";
 
 export const createInviteCode = internalMutation({
   args: {
