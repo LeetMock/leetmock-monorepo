@@ -40,7 +40,7 @@ const rules: Rules<Ctx, DataModel> = {
       return user.subject === userId;
     },
   },
-  editorSnapshots: {
+  codeSessionStates: {
     modify: async () => false,
   },
   userProfiles: {

@@ -6,7 +6,7 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**api_run_admins_create_user_profile_post**](MutationApi.md#api_run_admins_create_user_profile_post) | **POST** /api/run/admins/createUserProfile | Calls a mutation at the path admins.js:createUserProfile
 [**api_run_admins_patch_user_subscription_post**](MutationApi.md#api_run_admins_patch_user_subscription_post) | **POST** /api/run/admins/patchUserSubscription | Calls a mutation at the path admins.js:patchUserSubscription
-[**api_run_editor_snapshots_create_post**](MutationApi.md#api_run_editor_snapshots_create_post) | **POST** /api/run/editorSnapshots/create | Calls a mutation at the path editorSnapshots.js:create
+[**api_run_code_session_states_create_post**](MutationApi.md#api_run_code_session_states_create_post) | **POST** /api/run/codeSessionStates/create | Calls a mutation at the path codeSessionStates.js:create
 [**api_run_invite_codes_apply_invite_code_post**](MutationApi.md#api_run_invite_codes_apply_invite_code_post) | **POST** /api/run/inviteCodes/applyInviteCode | Calls a mutation at the path inviteCodes.js:applyInviteCode
 [**api_run_sessions_create_post**](MutationApi.md#api_run_sessions_create_post) | **POST** /api/run/sessions/create | Calls a mutation at the path sessions.js:create
 [**api_run_sessions_end_session_post**](MutationApi.md#api_run_sessions_end_session_post) | **POST** /api/run/sessions/endSession | Calls a mutation at the path sessions.js:endSession
@@ -171,10 +171,10 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **api_run_editor_snapshots_create_post**
-> ResponseEditorSnapshotsCreate api_run_editor_snapshots_create_post(request_editor_snapshots_create)
+# **api_run_code_session_states_create_post**
+> ResponseCodeSessionStatesCreate api_run_code_session_states_create_post(request_code_session_states_create)
 
-Calls a mutation at the path editorSnapshots.js:create
+Calls a mutation at the path codeSessionStates.js:create
 
 ### Example
 
@@ -182,8 +182,8 @@ Calls a mutation at the path editorSnapshots.js:create
 
 ```python
 import convex_client
-from convex_client.models.request_editor_snapshots_create import RequestEditorSnapshotsCreate
-from convex_client.models.response_editor_snapshots_create import ResponseEditorSnapshotsCreate
+from convex_client.models.request_code_session_states_create import RequestCodeSessionStatesCreate
+from convex_client.models.response_code_session_states_create import ResponseCodeSessionStatesCreate
 from convex_client.rest import ApiException
 from pprint import pprint
 
@@ -207,15 +207,15 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.MutationApi(api_client)
-    request_editor_snapshots_create = convex_client.RequestEditorSnapshotsCreate() # RequestEditorSnapshotsCreate | 
+    request_code_session_states_create = convex_client.RequestCodeSessionStatesCreate() # RequestCodeSessionStatesCreate | 
 
     try:
-        # Calls a mutation at the path editorSnapshots.js:create
-        api_response = api_instance.api_run_editor_snapshots_create_post(request_editor_snapshots_create)
-        print("The response of MutationApi->api_run_editor_snapshots_create_post:\n")
+        # Calls a mutation at the path codeSessionStates.js:create
+        api_response = api_instance.api_run_code_session_states_create_post(request_code_session_states_create)
+        print("The response of MutationApi->api_run_code_session_states_create_post:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling MutationApi->api_run_editor_snapshots_create_post: %s\n" % e)
+        print("Exception when calling MutationApi->api_run_code_session_states_create_post: %s\n" % e)
 ```
 
 
@@ -225,11 +225,11 @@ with convex_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **request_editor_snapshots_create** | [**RequestEditorSnapshotsCreate**](RequestEditorSnapshotsCreate.md)|  | 
+ **request_code_session_states_create** | [**RequestCodeSessionStatesCreate**](RequestCodeSessionStatesCreate.md)|  | 
 
 ### Return type
 
-[**ResponseEditorSnapshotsCreate**](ResponseEditorSnapshotsCreate.md)
+[**ResponseCodeSessionStatesCreate**](ResponseCodeSessionStatesCreate.md)
 
 ### Authorization
 

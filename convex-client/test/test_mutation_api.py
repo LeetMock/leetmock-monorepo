@@ -40,10 +40,10 @@ class TestMutationApi(unittest.TestCase):
         """
         pass
 
-    def test_api_run_editor_snapshots_create_post(self) -> None:
-        """Test case for api_run_editor_snapshots_create_post
+    def test_api_run_code_session_states_create_post(self) -> None:
+        """Test case for api_run_code_session_states_create_post
 
-        Calls a mutation at the path editorSnapshots.js:create
+        Calls a mutation at the path codeSessionStates.js:create
         """
         pass
 

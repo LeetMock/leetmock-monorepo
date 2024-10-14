@@ -26,24 +26,24 @@ class TestQueryApi(unittest.TestCase):
     def tearDown(self) -> None:
         pass
 
-    def test_api_run_editor_snapshots_get_by_id_post(self) -> None:
-        """Test case for api_run_editor_snapshots_get_by_id_post
+    def test_api_run_code_session_states_get_by_id_post(self) -> None:
+        """Test case for api_run_code_session_states_get_by_id_post
 
-        Calls a query at the path editorSnapshots.js:getById
+        Calls a query at the path codeSessionStates.js:getById
         """
         pass
 
-    def test_api_run_editor_snapshots_get_latest_snapshot_by_session_id_post(self) -> None:
-        """Test case for api_run_editor_snapshots_get_latest_snapshot_by_session_id_post
+    def test_api_run_code_session_states_get_latest_snapshot_by_session_id_post(self) -> None:
+        """Test case for api_run_code_session_states_get_latest_snapshot_by_session_id_post
 
-        Calls a query at the path editorSnapshots.js:getLatestSnapshotBySessionId
+        Calls a query at the path codeSessionStates.js:getLatestSnapshotBySessionId
         """
         pass
 
-    def test_api_run_editor_snapshots_get_snapshots_post(self) -> None:
-        """Test case for api_run_editor_snapshots_get_snapshots_post
+    def test_api_run_code_session_states_get_snapshots_post(self) -> None:
+        """Test case for api_run_code_session_states_get_snapshots_post
 
-        Calls a query at the path editorSnapshots.js:getSnapshots
+        Calls a query at the path codeSessionStates.js:getSnapshots
         """
         pass
 

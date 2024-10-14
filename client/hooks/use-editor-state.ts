@@ -44,7 +44,7 @@ export const useEditorState = (
   delay: number = 1000
 ) => {
   const initialEditorSnapshot = useNonReactiveQuery(
-    api.editorSnapshots.getLatestSnapshotBySessionId,
+    api.codeSessionStates.getLatestSnapshotBySessionId,
     { sessionId }
   );
 
@@ -87,7 +87,7 @@ export const useEditorState = (
           content: question
             ? getInitialContent(
                 language,
-                question.functionName || '',
+                question.functionName || "",
                 question.inputParameters?.[language] || []
               )
             : localEditorState.editor.content,
