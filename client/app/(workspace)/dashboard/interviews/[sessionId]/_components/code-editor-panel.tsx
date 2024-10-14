@@ -41,7 +41,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   const editorContainerRef = useRef<HTMLDivElement>(null);
 
   // Convex
-  const createSnapshot = useMutation(api.editorSnapshots.create);
+  const createSnapshot = useMutation(api.codeSessionStates.create);
   const runTests = useAction(api.actions.runTests);
   const runCode = useAction(api.actions.runCode);
   const question = useQuery(api.questions.getById, { questionId: questionId });

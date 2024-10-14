@@ -40,7 +40,7 @@ const schema = defineEntSchema({
   })
     .index("by_user_id", ["userId"])
     .index("by_user_id_and_status", ["userId", "sessionStatus"]),
-  editorSnapshots: defineEnt({
+  codeSessionStates: defineEnt({
     sessionId: v.id("sessions"),
     editor: v.object({
       language: v.string(),

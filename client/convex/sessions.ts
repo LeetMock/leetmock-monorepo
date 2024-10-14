@@ -162,7 +162,7 @@ export const create = userMutation({
       throw new Error("Question not found");
     }
 
-    await ctx.table("editorSnapshots").insert({
+    await ctx.table("codeSessionStates").insert({
       sessionId,
       editor: {
         language: "python",

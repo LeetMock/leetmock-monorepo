@@ -102,14 +102,14 @@ Class | Method | HTTP request | Description
 *ActionApi* | [**api_run_actions_run_tests_post**](docs/ActionApi.md#api_run_actions_run_tests_post) | **POST** /api/run/actions/runTests | Calls a action at the path actions.js:runTests
 *MutationApi* | [**api_run_admins_create_user_profile_post**](docs/MutationApi.md#api_run_admins_create_user_profile_post) | **POST** /api/run/admins/createUserProfile | Calls a mutation at the path admins.js:createUserProfile
 *MutationApi* | [**api_run_admins_patch_user_subscription_post**](docs/MutationApi.md#api_run_admins_patch_user_subscription_post) | **POST** /api/run/admins/patchUserSubscription | Calls a mutation at the path admins.js:patchUserSubscription
-*MutationApi* | [**api_run_editor_snapshots_create_post**](docs/MutationApi.md#api_run_editor_snapshots_create_post) | **POST** /api/run/editorSnapshots/create | Calls a mutation at the path editorSnapshots.js:create
+*MutationApi* | [**api_run_code_session_states_create_post**](docs/MutationApi.md#api_run_code_session_states_create_post) | **POST** /api/run/codeSessionStates/create | Calls a mutation at the path codeSessionStates.js:create
 *MutationApi* | [**api_run_invite_codes_apply_invite_code_post**](docs/MutationApi.md#api_run_invite_codes_apply_invite_code_post) | **POST** /api/run/inviteCodes/applyInviteCode | Calls a mutation at the path inviteCodes.js:applyInviteCode
 *MutationApi* | [**api_run_sessions_create_post**](docs/MutationApi.md#api_run_sessions_create_post) | **POST** /api/run/sessions/create | Calls a mutation at the path sessions.js:create
 *MutationApi* | [**api_run_sessions_end_session_post**](docs/MutationApi.md#api_run_sessions_end_session_post) | **POST** /api/run/sessions/endSession | Calls a mutation at the path sessions.js:endSession
 *MutationApi* | [**api_run_sessions_start_session_post**](docs/MutationApi.md#api_run_sessions_start_session_post) | **POST** /api/run/sessions/startSession | Calls a mutation at the path sessions.js:startSession
-*QueryApi* | [**api_run_editor_snapshots_get_by_id_post**](docs/QueryApi.md#api_run_editor_snapshots_get_by_id_post) | **POST** /api/run/editorSnapshots/getById | Calls a query at the path editorSnapshots.js:getById
-*QueryApi* | [**api_run_editor_snapshots_get_latest_snapshot_by_session_id_post**](docs/QueryApi.md#api_run_editor_snapshots_get_latest_snapshot_by_session_id_post) | **POST** /api/run/editorSnapshots/getLatestSnapshotBySessionId | Calls a query at the path editorSnapshots.js:getLatestSnapshotBySessionId
-*QueryApi* | [**api_run_editor_snapshots_get_snapshots_post**](docs/QueryApi.md#api_run_editor_snapshots_get_snapshots_post) | **POST** /api/run/editorSnapshots/getSnapshots | Calls a query at the path editorSnapshots.js:getSnapshots
+*QueryApi* | [**api_run_code_session_states_get_by_id_post**](docs/QueryApi.md#api_run_code_session_states_get_by_id_post) | **POST** /api/run/codeSessionStates/getById | Calls a query at the path codeSessionStates.js:getById
+*QueryApi* | [**api_run_code_session_states_get_latest_snapshot_by_session_id_post**](docs/QueryApi.md#api_run_code_session_states_get_latest_snapshot_by_session_id_post) | **POST** /api/run/codeSessionStates/getLatestSnapshotBySessionId | Calls a query at the path codeSessionStates.js:getLatestSnapshotBySessionId
+*QueryApi* | [**api_run_code_session_states_get_snapshots_post**](docs/QueryApi.md#api_run_code_session_states_get_snapshots_post) | **POST** /api/run/codeSessionStates/getSnapshots | Calls a query at the path codeSessionStates.js:getSnapshots
 *QueryApi* | [**api_run_questions_get_all_post**](docs/QueryApi.md#api_run_questions_get_all_post) | **POST** /api/run/questions/getAll | Calls a query at the path questions.js:getAll
 *QueryApi* | [**api_run_questions_get_by_id_post**](docs/QueryApi.md#api_run_questions_get_by_id_post) | **POST** /api/run/questions/getById | Calls a query at the path questions.js:getById
 *QueryApi* | [**api_run_sessions_exists_post**](docs/QueryApi.md#api_run_sessions_exists_post) | **POST** /api/run/sessions/exists | Calls a query at the path sessions.js:exists
@@ -134,15 +134,12 @@ Class | Method | HTTP request | Description
  - [RequestAdminsCreateUserProfileArgs](docs/RequestAdminsCreateUserProfileArgs.md)
  - [RequestAdminsPatchUserSubscription](docs/RequestAdminsPatchUserSubscription.md)
  - [RequestAdminsPatchUserSubscriptionArgs](docs/RequestAdminsPatchUserSubscriptionArgs.md)
- - [RequestEditorSnapshotsCreate](docs/RequestEditorSnapshotsCreate.md)
- - [RequestEditorSnapshotsCreateArgs](docs/RequestEditorSnapshotsCreateArgs.md)
- - [RequestEditorSnapshotsCreateArgsEditor](docs/RequestEditorSnapshotsCreateArgsEditor.md)
- - [RequestEditorSnapshotsCreateArgsTerminal](docs/RequestEditorSnapshotsCreateArgsTerminal.md)
- - [RequestEditorSnapshotsGetById](docs/RequestEditorSnapshotsGetById.md)
- - [RequestEditorSnapshotsGetByIdArgs](docs/RequestEditorSnapshotsGetByIdArgs.md)
- - [RequestEditorSnapshotsGetLatestSnapshotBySessionId](docs/RequestEditorSnapshotsGetLatestSnapshotBySessionId.md)
- - [RequestEditorSnapshotsGetLatestSnapshotBySessionIdInternal](docs/RequestEditorSnapshotsGetLatestSnapshotBySessionIdInternal.md)
- - [RequestEditorSnapshotsGetSnapshots](docs/RequestEditorSnapshotsGetSnapshots.md)
+ - [RequestCodeSessionStatesCreate](docs/RequestCodeSessionStatesCreate.md)
+ - [RequestCodeSessionStatesGetById](docs/RequestCodeSessionStatesGetById.md)
+ - [RequestCodeSessionStatesGetByIdArgs](docs/RequestCodeSessionStatesGetByIdArgs.md)
+ - [RequestCodeSessionStatesGetLatestSnapshotBySessionId](docs/RequestCodeSessionStatesGetLatestSnapshotBySessionId.md)
+ - [RequestCodeSessionStatesGetLatestSnapshotBySessionIdInternal](docs/RequestCodeSessionStatesGetLatestSnapshotBySessionIdInternal.md)
+ - [RequestCodeSessionStatesGetSnapshots](docs/RequestCodeSessionStatesGetSnapshots.md)
  - [RequestInviteCodesApplyInviteCode](docs/RequestInviteCodesApplyInviteCode.md)
  - [RequestInviteCodesApplyInviteCodeArgs](docs/RequestInviteCodesApplyInviteCodeArgs.md)
  - [RequestInviteCodesCreateInviteCode](docs/RequestInviteCodesCreateInviteCode.md)
@@ -169,6 +166,7 @@ Class | Method | HTTP request | Description
  - [RequestUserProfilesGetByEmailInternal](docs/RequestUserProfilesGetByEmailInternal.md)
  - [RequestUserProfilesGetByEmailInternalArgs](docs/RequestUserProfilesGetByEmailInternalArgs.md)
  - [RequestUserProfilesGetUserProfile](docs/RequestUserProfilesGetUserProfile.md)
+ - [RequestUserProfilesGetUserProfileInternal](docs/RequestUserProfilesGetUserProfileInternal.md)
  - [RequestUserProfilesRefreshMinutesForYearlyPlansInternal](docs/RequestUserProfilesRefreshMinutesForYearlyPlansInternal.md)
  - [RequestUserProfilesUpdateSubscriptionByEmailInternal](docs/RequestUserProfilesUpdateSubscriptionByEmailInternal.md)
  - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgs](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgs.md)
@@ -178,6 +176,9 @@ Class | Method | HTTP request | Description
  - [RequestUserProfilesVoidSubscriptionInternalArgs](docs/RequestUserProfilesVoidSubscriptionInternalArgs.md)
  - [ResponseActionsCreateAgentThread](docs/ResponseActionsCreateAgentThread.md)
  - [ResponseActionsGetEditorSnapshot](docs/ResponseActionsGetEditorSnapshot.md)
+ - [ResponseActionsGetEditorSnapshotValue](docs/ResponseActionsGetEditorSnapshotValue.md)
+ - [ResponseActionsGetEditorSnapshotValueEditor](docs/ResponseActionsGetEditorSnapshotValueEditor.md)
+ - [ResponseActionsGetEditorSnapshotValueTerminal](docs/ResponseActionsGetEditorSnapshotValueTerminal.md)
  - [ResponseActionsGetSessionMetadata](docs/ResponseActionsGetSessionMetadata.md)
  - [ResponseActionsGetSessionMetadataValue](docs/ResponseActionsGetSessionMetadataValue.md)
  - [ResponseActionsGetToken](docs/ResponseActionsGetToken.md)
@@ -185,11 +186,11 @@ Class | Method | HTTP request | Description
  - [ResponseActionsRunTests](docs/ResponseActionsRunTests.md)
  - [ResponseAdminsCreateUserProfile](docs/ResponseAdminsCreateUserProfile.md)
  - [ResponseAdminsPatchUserSubscription](docs/ResponseAdminsPatchUserSubscription.md)
- - [ResponseEditorSnapshotsCreate](docs/ResponseEditorSnapshotsCreate.md)
- - [ResponseEditorSnapshotsGetById](docs/ResponseEditorSnapshotsGetById.md)
- - [ResponseEditorSnapshotsGetLatestSnapshotBySessionId](docs/ResponseEditorSnapshotsGetLatestSnapshotBySessionId.md)
- - [ResponseEditorSnapshotsGetLatestSnapshotBySessionIdInternal](docs/ResponseEditorSnapshotsGetLatestSnapshotBySessionIdInternal.md)
- - [ResponseEditorSnapshotsGetSnapshots](docs/ResponseEditorSnapshotsGetSnapshots.md)
+ - [ResponseCodeSessionStatesCreate](docs/ResponseCodeSessionStatesCreate.md)
+ - [ResponseCodeSessionStatesGetById](docs/ResponseCodeSessionStatesGetById.md)
+ - [ResponseCodeSessionStatesGetLatestSnapshotBySessionId](docs/ResponseCodeSessionStatesGetLatestSnapshotBySessionId.md)
+ - [ResponseCodeSessionStatesGetLatestSnapshotBySessionIdInternal](docs/ResponseCodeSessionStatesGetLatestSnapshotBySessionIdInternal.md)
+ - [ResponseCodeSessionStatesGetSnapshots](docs/ResponseCodeSessionStatesGetSnapshots.md)
  - [ResponseInviteCodesApplyInviteCode](docs/ResponseInviteCodesApplyInviteCode.md)
  - [ResponseInviteCodesCreateInviteCode](docs/ResponseInviteCodesCreateInviteCode.md)
  - [ResponseQuestionsGetAll](docs/ResponseQuestionsGetAll.md)
@@ -206,6 +207,7 @@ Class | Method | HTTP request | Description
  - [ResponseSessionsStartSession](docs/ResponseSessionsStartSession.md)
  - [ResponseUserProfilesGetByEmailInternal](docs/ResponseUserProfilesGetByEmailInternal.md)
  - [ResponseUserProfilesGetUserProfile](docs/ResponseUserProfilesGetUserProfile.md)
+ - [ResponseUserProfilesGetUserProfileInternal](docs/ResponseUserProfilesGetUserProfileInternal.md)
  - [ResponseUserProfilesRefreshMinutesForYearlyPlansInternal](docs/ResponseUserProfilesRefreshMinutesForYearlyPlansInternal.md)
  - [ResponseUserProfilesUpdateSubscriptionByEmailInternal](docs/ResponseUserProfilesUpdateSubscriptionByEmailInternal.md)
  - [ResponseUserProfilesVoidSubscriptionInternal](docs/ResponseUserProfilesVoidSubscriptionInternal.md)

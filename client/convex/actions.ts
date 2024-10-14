@@ -233,7 +233,7 @@ export const getEditorSnapshot = action({
   }),
   handler: async (ctx, { sessionId }) => {
     const snapshot = await ctx.runQuery(
-      internal.editorSnapshots.getLatestSnapshotBySessionIdInternal,
+      internal.codeSessionStates.getLatestSnapshotBySessionIdInternal,
       { sessionId }
     );
 
