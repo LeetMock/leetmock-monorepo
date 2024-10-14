@@ -1,12 +1,12 @@
 import { v } from "convex/values";
 
-import { Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
 
-import { MutationCtx } from "./types";
-import { userMutation, userQuery, internalMutation, internalQuery } from "./functions";
-import { isDefined, minutesToMilliseconds } from "@/lib/utils";
 import { CODE_TEMPLATES } from "@/lib/constants";
+import { isDefined, minutesToMilliseconds } from "@/lib/utils";
+import { internalMutation, internalQuery, userMutation, userQuery } from "./functions";
+import { MutationCtx } from "./types";
 
 export const exists = userQuery({
   args: {

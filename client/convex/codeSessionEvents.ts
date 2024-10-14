@@ -1,8 +1,7 @@
 import { v } from "convex/values";
 import { userMutation } from "./functions";
 import { codeSessionEventType } from "./schema";
-import { Id } from "./_generated/dataModel";
-import { CodeSessionEventType, Ent, EntWriter, MutationCtx } from "./types";
+import { CodeSessionEventType, EntWriter } from "./types";
 
 export const commitCodeSessionEvent = userMutation({
   args: {
