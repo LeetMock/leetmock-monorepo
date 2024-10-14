@@ -31,6 +31,15 @@ export const getById = userQuery({
   },
 });
 
+export const getByIdInternal = internalQuery({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  handler: async (ctx, { sessionId }) => {
+    return await ctx.table("sessions").get(sessionId);
+  },
+});
+
 export const getByUserId = userQuery({
   args: {
     userId: v.string(),
@@ -50,12 +59,26 @@ export const getByUserId = userQuery({
   },
 });
 
-export const getByIdInternal = internalQuery({
+export const getActiveSession = userQuery({
   args: {
-    sessionId: v.id("sessions"),
+    userId: v.string(),
   },
-  handler: async (ctx, { sessionId }) => {
-    return ctx.table("sessions").getX(sessionId);
+  handler: async (ctx, { userId }) => {
+    const session = await ctx
+      .table("sessions", "by_user_id", (q) => q.eq("userId", userId))
+      .filter((q) =>
+        q.or(
+          q.eq(q.field("sessionStatus"), "not_started"),
+          q.eq(q.field("sessionStatus"), "in_progress")
+        )
+      )
+      .first();
+
+    if (!isDefined(session)) {
+      return undefined;
+    }
+
+    return session;
   },
 });
 
@@ -101,29 +124,6 @@ export const endSessionInternal = internalMutation({
   },
   handler: async (ctx, { sessionId }) => {
     await endSessionAction(ctx, sessionId);
-  },
-});
-
-export const getActiveSession = userQuery({
-  args: {
-    userId: v.string(),
-  },
-  handler: async (ctx, { userId }) => {
-    const session = await ctx
-      .table("sessions", "by_user_id", (q) => q.eq("userId", userId))
-      .filter((q) =>
-        q.or(
-          q.eq(q.field("sessionStatus"), "not_started"),
-          q.eq(q.field("sessionStatus"), "in_progress")
-        )
-      )
-      .first();
-
-    if (!isDefined(session)) {
-      return undefined;
-    }
-
-    return session;
   },
 });
 

@@ -1,5 +1,4 @@
 import asyncio
-
 from abc import ABC, abstractmethod
 from typing import TypeVar
 
@@ -21,10 +20,6 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
     async def synced(self):
         """Wait for the session to be synced with convex."""
         return await self._synced
-
-    async def update_state(self):
-        """Update the session state to convex."""
-        raise NotImplementedError
 
     @abstractmethod
     async def watch_state(self):
