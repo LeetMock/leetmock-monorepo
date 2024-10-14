@@ -154,7 +154,7 @@ export const StartInterviewDialog: React.FC = () => {
   const router = useRouter();
   const questions = useQuery(api.questions.getAll);
   const createAgentThread = useAction(api.actions.createAgentThread);
-  const createSession = useMutation(api.sessions.create);
+  const createSession = useMutation(api.sessions.createCodeSession);
 
   const [currentStep, setCurrentStep] = useState(0);
   const [startDialogOpen, setStartDialogOpen] = useState(false);
