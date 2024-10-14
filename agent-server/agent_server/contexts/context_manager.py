@@ -18,7 +18,7 @@ RECONNECT_MESSAGE = (
     "(User has disconnected and reconnected back to the interview, you would say:)"
 )
 
-LATEST_SNAPSHOT_QUERY = "editorSnapshots:getLatestSnapshotBySessionId"
+LATEST_SNAPSHOT_QUERY = "codeSessionStates:getLatestSessionStateBySessionId"
 
 EventTypes = Literal["snapshot_updated"]
 
