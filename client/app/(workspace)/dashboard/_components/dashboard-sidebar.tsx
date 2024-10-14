@@ -1,11 +1,11 @@
+import { Package2 } from "lucide-react";
 import Link from "next/link";
-import { Package2, PlusCircle } from "lucide-react";
 
+import { ProfileItem } from "@/components/profile-item";
+import { UserDropdown } from "@/components/user-dropdown";
+import { useConfig } from "@/hooks/use-config";
 import { NavList } from "./dashboard-navlist";
 import { UpgradeCard } from "./upgrade-card";
-import { UserDropdown } from "@/components/user-dropdown";
-import { ProfileItem } from "@/components/profile-item";
-import { useConfig } from "@/hooks/use-config";
 
 export const DashboardSidebar = () => {
   const { showUpgradeCard } = useConfig();

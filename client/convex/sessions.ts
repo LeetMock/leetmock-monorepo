@@ -171,6 +171,7 @@ export const createCodeSession = userMutation({
         output: "",
         isError: false,
       },
+      displayQuestion: false,
     });
 
     return sessionId;

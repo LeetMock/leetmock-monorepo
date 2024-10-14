@@ -17,6 +17,7 @@ import type {
 } from "convex/server";
 import type * as actions from "../actions.js";
 import type * as admins from "../admins.js";
+import type * as codeSessionEvents from "../codeSessionEvents.js";
 import type * as codeSessionStates from "../codeSessionStates.js";
 import type * as crons from "../crons.js";
 import type * as functions from "../functions.js";
@@ -39,6 +40,7 @@ import type * as userProfiles from "../userProfiles.js";
 declare const fullApi: ApiFromModules<{
   actions: typeof actions;
   admins: typeof admins;
+  codeSessionEvents: typeof codeSessionEvents;
   codeSessionStates: typeof codeSessionStates;
   crons: typeof crons;
   functions: typeof functions;

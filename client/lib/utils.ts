@@ -1,9 +1,9 @@
 import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
 import type { AccessTokenOptions, VideoGrant } from "livekit-server-sdk";
 import { AccessToken } from "livekit-server-sdk";
+import { twMerge } from "tailwind-merge";
 import { BG_COLORS } from "./constants";
-import { type DefinedObject, type Defined } from "./types";
+import { type DefinedObject } from "./types";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -109,13 +109,13 @@ interface Question {
 
 export function generateTestCode(question: any, language: string): string {
   switch (language) {
-    case 'python':
+    case "python":
       return generatePythonTestCode(question);
-    case 'java':
+    case "java":
       return generateJavaTestCode(question);
-    case 'cpp':
+    case "cpp":
       return generateCppTestCode(question);
-    case 'javascript':
+    case "javascript":
       return generateJavaScriptTestCode(question);
     default:
       throw new Error(`Unsupported language: ${language}`);
@@ -124,7 +124,7 @@ export function generateTestCode(question: any, language: string): string {
 
 function generatePythonTestCode(question: Question): string {
   const { functionName, inputParameters, tests, evalMode } = question;
-  const params = inputParameters['python'];
+  const params = inputParameters["python"];
 
   let testCode = `
 import unittest
@@ -168,7 +168,7 @@ class TestSolution(unittest.TestCase):
       .filter((_, i) => i % 2 === 0)
       .map((param, i) => {
         const paramType = params[i * 2 + 1];
-        if (paramType === 'Optional[ListNode]' || paramType === 'ListNode') {
+        if (paramType === "Optional[ListNode]" || paramType === "ListNode") {
           return `arrayToListNode(${JSON.stringify(test.input[param])})`;
         }
         return JSON.stringify(test.input[param]);
@@ -228,7 +228,7 @@ if __name__ == '__main__':
 
 function generateJavaTestCode(question: Question): string {
   const { functionName, inputParameters, tests } = question;
-  const params = inputParameters['java'];
+  const params = inputParameters["java"];
 
   let testCode = `
 import org.junit.jupiter.api.Test;
@@ -243,7 +243,7 @@ class SolutionTest {
   tests.forEach((test, index) => {
     const inputArgs = params
       .filter((_, i) => i % 2 === 0)
-      .map(param => JSON.stringify(test.input[param]))
+      .map((param) => JSON.stringify(test.input[param]))
       .join(", ");
 
     testCode += `
@@ -284,7 +284,7 @@ class TestResult {
 
 function generateCppTestCode(question: Question): string {
   const { functionName, inputParameters, tests } = question;
-  const params = inputParameters['cpp'];
+  const params = inputParameters["cpp"];
 
   let testCode = `
 #include <iostream>
@@ -303,7 +303,7 @@ int main() {
   tests.forEach((test, index) => {
     const inputArgs = params
       .filter((_, i) => i % 2 === 0)
-      .map(param => JSON.stringify(test.input[param]))
+      .map((param) => JSON.stringify(test.input[param]))
       .join(", ");
 
     testCode += `
@@ -345,7 +345,7 @@ int main() {
 
 function generateJavaScriptTestCode(question: Question): string {
   const { functionName, inputParameters, tests } = question;
-  const params = inputParameters['javascript'];
+  const params = inputParameters["javascript"];
 
   let testCode = `
 const assert = require('assert');
@@ -359,7 +359,7 @@ const results = [];
   tests.forEach((test, index) => {
     const inputArgs = params
       .filter((_, i) => i % 2 === 0)
-      .map(param => JSON.stringify(test.input[param]))
+      .map((param) => JSON.stringify(test.input[param]))
       .join(", ");
 
     testCode += `
@@ -405,8 +405,6 @@ export const allDefined = <T extends object>(obj: T): obj is DefinedObject<T> =>
   return Object.values(obj).every(isDefined);
 };
 
-
 export const get30DaysFromNowInSeconds = (current_time: number = Date.now()) => {
   return current_time + 30 * 24 * 60 * 60;
 };
-
