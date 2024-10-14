@@ -9,7 +9,7 @@ export const codeSessionEventType = v.union(
     }),
   }),
   v.object({
-    type: v.literal("tests_executed"),
+    type: v.literal("user_test_executed"),
     data: v.any(), // TODO: change this to the actual data type
   }),
   v.object({
@@ -21,7 +21,7 @@ export const codeSessionEventType = v.union(
     data: v.any(), // TODO: change this to the actual data type
   }),
   v.object({
-    type: v.literal("question_visibility_changed"),
+    type: v.literal("question_displayed"),
     data: v.boolean(),
   })
 );
@@ -67,6 +67,7 @@ const schema = defineEntSchema({
     .index("by_user_id", ["userId"])
     .index("by_user_id_and_status", ["userId", "sessionStatus"]),
   codeSessionStates: defineEnt({
+    displayQuestion: v.boolean(),
     editor: v.object({
       language: v.string(),
       content: v.string(),
@@ -78,13 +79,12 @@ const schema = defineEntSchema({
       executionTime: v.optional(v.number()),
     }),
   })
-    .field("displayQuestion", v.boolean(), { default: false })
     .edge("session")
     .edges("codeSessionEvents", { ref: true }),
   codeSessionEvents: defineEnt({
     event: codeSessionEventType,
+    acked: v.boolean(),
   })
-    .field("acked", v.boolean(), { default: false })
     .edge("codeSessionState")
     .index("by_session_id_and_acked", ["codeSessionStateId", "acked"]),
   questions: defineEnt({

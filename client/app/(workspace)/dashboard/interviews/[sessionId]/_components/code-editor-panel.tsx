@@ -16,6 +16,7 @@ import { useNonReactiveQuery } from "@/hooks/use-non-reactive-query";
 import { useResizePanel } from "@/hooks/use-resize-panel";
 import { RunTestResult } from "@/lib/types";
 import { cn, isDefined } from "@/lib/utils";
+import { useConnectionState } from "@livekit/components-react";
 import Editor from "@monaco-editor/react";
 import { toast } from "sonner";
 import { useWindowSize } from "usehooks-ts";
@@ -31,6 +32,7 @@ const darkEditorTheme: monacoEditor.IStandaloneThemeData = {
 };
 
 const language = "python";
+const UNCONNECTED_MESSAGE = "You are not connected to the interview room.";
 
 export interface CodeEditorPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   sessionId: Id<"sessions">;
@@ -45,20 +47,18 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
 }) => {
   const { theme } = useTheme();
   const editorContainerRef = useRef<HTMLDivElement>(null);
+  const connectionState = useConnectionState();
 
   // Convex
   const runTests = useAction(api.actions.runTests);
-  const runCode = useAction(api.actions.runCode);
-  const question = useQuery(api.questions.getById, { questionId: questionId });
+  const editorState = useNonReactiveQuery(api.codeSessionStates.getEditorState, { sessionId });
+  const terminalState = useQuery(api.codeSessionStates.getTerminalState, { sessionId });
+  const commitCodeSessionEvent = useMutation(api.codeSessionEvents.commitCodeSessionEvent);
 
   const [testResults, setTestResults] = useState<RunTestResult | null>(null);
   const [outputView, setOutputView] = useState<"output" | "testResults">("output");
   const [testRunCounter, setTestRunCounter] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
-
-  const editorState = useNonReactiveQuery(api.codeSessionStates.getEditorState, { sessionId });
-  const terminalState = useQuery(api.codeSessionStates.getTerminalState, { sessionId });
-  const commitCodeSessionEvent = useMutation(api.codeSessionEvents.commitCodeSessionEvent);
 
   const { height = 300 } = useWindowSize();
   const { size, isResizing, resizeHandleProps } = useResizePanel({
@@ -76,19 +76,28 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
 
   const handleCommitEvent = useCallback(
     (event: CodeSessionEventType) => {
+      if (connectionState !== "connected") {
+        toast.error(UNCONNECTED_MESSAGE);
+        return;
+      }
+
       const promise = commitCodeSessionEvent({ sessionId, event });
       toast.promise(promise, {
         success: `Event ${event.type} committed`,
         error: "Error committing event",
       });
     },
-    [sessionId, commitCodeSessionEvent]
+    [sessionId, commitCodeSessionEvent, connectionState]
   );
 
   const debouncedCommitEvent = useDebounceCallback(handleCommitEvent, 500);
 
   const handleRunTests = async () => {
     if (!isDefined(editorState)) return;
+    if (connectionState !== "connected") {
+      toast.error(UNCONNECTED_MESSAGE);
+      return;
+    }
 
     const { language, content } = editorState;
 
@@ -106,11 +115,11 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
       } else {
         const errorMessage =
           result.stderr || result.exception || "Error running tests. Please try again.";
-        alert(errorMessage);
+        toast.error(errorMessage);
       }
     } catch (error) {
       console.error("Error running tests:", error);
-      alert("Error running tests. Please try again.");
+      toast.error("Error running tests. Please try again.");
     }
 
     setIsRunning(false);
@@ -147,7 +156,11 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
               lineNumbers: "on",
               roundedSelection: false,
               scrollBeyondLastLine: false,
-              readOnly: false,
+              readOnly: connectionState !== "connected",
+              readOnlyMessage: {
+                value: "You are not connected to the interview room.",
+                isTrusted: true,
+              },
               minimap: {
                 enabled: false,
               },
