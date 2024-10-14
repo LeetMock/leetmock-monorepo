@@ -127,7 +127,7 @@ export const getActiveSession = userQuery({
   },
 });
 
-export const create = userMutation({
+export const createCodeSession = userMutation({
   args: {
     questionId: v.id("questions"),
     agentThreadId: v.string(),
@@ -148,6 +148,7 @@ export const create = userMutation({
       throw new Error("You already have an active session");
     }
 
+    const question = await ctx.table("questions").getX(questionId);
     const sessionId = await ctx.table("sessions").insert({
       userId: ctx.user.subject,
       questionId,
@@ -155,12 +156,6 @@ export const create = userMutation({
       assistantId,
       sessionStatus: "not_started",
     });
-
-    // Fetch the question data to get the starting Code
-    const question = await ctx.table("questions").get(questionId);
-    if (!isDefined(question)) {
-      throw new Error("Question not found");
-    }
 
     await ctx.table("codeSessionStates").insert({
       sessionId,

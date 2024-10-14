@@ -38,6 +38,7 @@ const schema = defineEntSchema({
     sessionStartTime: v.optional(v.number()),
     sessionEndTime: v.optional(v.number()),
   })
+    .edge("codeSessionState", { optional: true })
     .index("by_user_id", ["userId"])
     .index("by_user_id_and_status", ["userId", "sessionStatus"]),
   codeSessionStates: defineEnt({
@@ -52,7 +53,7 @@ const schema = defineEntSchema({
       isError: v.boolean(),
       executionTime: v.optional(v.number()),
     }),
-  }).index("by_session_id", ["sessionId"]),
+  }).edge("session"),
   questions: defineEnt({
     category: v.array(v.string()),
     difficulty: v.number(),

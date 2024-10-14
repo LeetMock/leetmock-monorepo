@@ -26,7 +26,7 @@ export const getSessionStates = userQuery({
   },
   handler: async (ctx, { sessionId }) => {
     return await ctx
-      .table("codeSessionStates", "by_session_id", (q) => q.eq("sessionId", sessionId))
+      .table("codeSessionStates", "sessionId", (q) => q.eq("sessionId", sessionId))
       .order("asc");
   },
 });
@@ -76,7 +76,7 @@ export const create = userMutation({
 
 async function queryLatestSessionState(ctx: QueryCtx, sessionId: Id<"sessions">) {
   const sessionState = await ctx
-    .table("codeSessionStates", "by_session_id", (q) => q.eq("sessionId", sessionId))
+    .table("codeSessionStates", "sessionId", (q) => q.eq("sessionId", sessionId))
     .order("desc")
     .firstX();
 
