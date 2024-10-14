@@ -2,7 +2,7 @@ import os
 import asyncio
 from typing import List
 from agent_server.contexts.convex import ConvexApi
-from agent_server.types import EditorSnapshot
+from agent_server.types import CodeSessionState
 import psutil
 
 from dotenv import load_dotenv, find_dotenv
@@ -195,7 +195,7 @@ async def entrypoint(ctx: JobContext):
         asyncio.create_task(debounced_send_reminder())
 
     @ctx_manager.on("snapshot_updated")
-    def on_snapshot_updated(snapshots: List[EditorSnapshot]):
+    def on_snapshot_updated(snapshots: List[CodeSessionState]):
         logger.info(f"snapshot_updated: {len(snapshots)}")
 
     await ctx_manager.setup(agent)

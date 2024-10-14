@@ -108,8 +108,8 @@ Class | Method | HTTP request | Description
 *MutationApi* | [**api_run_sessions_end_session_post**](docs/MutationApi.md#api_run_sessions_end_session_post) | **POST** /api/run/sessions/endSession | Calls a mutation at the path sessions.js:endSession
 *MutationApi* | [**api_run_sessions_start_session_post**](docs/MutationApi.md#api_run_sessions_start_session_post) | **POST** /api/run/sessions/startSession | Calls a mutation at the path sessions.js:startSession
 *QueryApi* | [**api_run_code_session_states_get_by_id_post**](docs/QueryApi.md#api_run_code_session_states_get_by_id_post) | **POST** /api/run/codeSessionStates/getById | Calls a query at the path codeSessionStates.js:getById
-*QueryApi* | [**api_run_code_session_states_get_latest_snapshot_by_session_id_post**](docs/QueryApi.md#api_run_code_session_states_get_latest_snapshot_by_session_id_post) | **POST** /api/run/codeSessionStates/getLatestSnapshotBySessionId | Calls a query at the path codeSessionStates.js:getLatestSnapshotBySessionId
-*QueryApi* | [**api_run_code_session_states_get_snapshots_post**](docs/QueryApi.md#api_run_code_session_states_get_snapshots_post) | **POST** /api/run/codeSessionStates/getSnapshots | Calls a query at the path codeSessionStates.js:getSnapshots
+*QueryApi* | [**api_run_code_session_states_get_latest_session_state_by_session_id_post**](docs/QueryApi.md#api_run_code_session_states_get_latest_session_state_by_session_id_post) | **POST** /api/run/codeSessionStates/getLatestSessionStateBySessionId | Calls a query at the path codeSessionStates.js:getLatestSessionStateBySessionId
+*QueryApi* | [**api_run_code_session_states_get_session_states_post**](docs/QueryApi.md#api_run_code_session_states_get_session_states_post) | **POST** /api/run/codeSessionStates/getSessionStates | Calls a query at the path codeSessionStates.js:getSessionStates
 *QueryApi* | [**api_run_questions_get_all_post**](docs/QueryApi.md#api_run_questions_get_all_post) | **POST** /api/run/questions/getAll | Calls a query at the path questions.js:getAll
 *QueryApi* | [**api_run_questions_get_by_id_post**](docs/QueryApi.md#api_run_questions_get_by_id_post) | **POST** /api/run/questions/getById | Calls a query at the path questions.js:getById
 *QueryApi* | [**api_run_sessions_exists_post**](docs/QueryApi.md#api_run_sessions_exists_post) | **POST** /api/run/sessions/exists | Calls a query at the path sessions.js:exists
@@ -137,9 +137,9 @@ Class | Method | HTTP request | Description
  - [RequestCodeSessionStatesCreate](docs/RequestCodeSessionStatesCreate.md)
  - [RequestCodeSessionStatesGetById](docs/RequestCodeSessionStatesGetById.md)
  - [RequestCodeSessionStatesGetByIdArgs](docs/RequestCodeSessionStatesGetByIdArgs.md)
- - [RequestCodeSessionStatesGetLatestSnapshotBySessionId](docs/RequestCodeSessionStatesGetLatestSnapshotBySessionId.md)
- - [RequestCodeSessionStatesGetLatestSnapshotBySessionIdInternal](docs/RequestCodeSessionStatesGetLatestSnapshotBySessionIdInternal.md)
- - [RequestCodeSessionStatesGetSnapshots](docs/RequestCodeSessionStatesGetSnapshots.md)
+ - [RequestCodeSessionStatesGetLatestSessionStateBySessionId](docs/RequestCodeSessionStatesGetLatestSessionStateBySessionId.md)
+ - [RequestCodeSessionStatesGetLatestSessionStateBySessionIdInternal](docs/RequestCodeSessionStatesGetLatestSessionStateBySessionIdInternal.md)
+ - [RequestCodeSessionStatesGetSessionStates](docs/RequestCodeSessionStatesGetSessionStates.md)
  - [RequestInviteCodesApplyInviteCode](docs/RequestInviteCodesApplyInviteCode.md)
  - [RequestInviteCodesApplyInviteCodeArgs](docs/RequestInviteCodesApplyInviteCodeArgs.md)
  - [RequestInviteCodesCreateInviteCode](docs/RequestInviteCodesCreateInviteCode.md)
@@ -188,9 +188,9 @@ Class | Method | HTTP request | Description
  - [ResponseAdminsPatchUserSubscription](docs/ResponseAdminsPatchUserSubscription.md)
  - [ResponseCodeSessionStatesCreate](docs/ResponseCodeSessionStatesCreate.md)
  - [ResponseCodeSessionStatesGetById](docs/ResponseCodeSessionStatesGetById.md)
- - [ResponseCodeSessionStatesGetLatestSnapshotBySessionId](docs/ResponseCodeSessionStatesGetLatestSnapshotBySessionId.md)
- - [ResponseCodeSessionStatesGetLatestSnapshotBySessionIdInternal](docs/ResponseCodeSessionStatesGetLatestSnapshotBySessionIdInternal.md)
- - [ResponseCodeSessionStatesGetSnapshots](docs/ResponseCodeSessionStatesGetSnapshots.md)
+ - [ResponseCodeSessionStatesGetLatestSessionStateBySessionId](docs/ResponseCodeSessionStatesGetLatestSessionStateBySessionId.md)
+ - [ResponseCodeSessionStatesGetLatestSessionStateBySessionIdInternal](docs/ResponseCodeSessionStatesGetLatestSessionStateBySessionIdInternal.md)
+ - [ResponseCodeSessionStatesGetSessionStates](docs/ResponseCodeSessionStatesGetSessionStates.md)
  - [ResponseInviteCodesApplyInviteCode](docs/ResponseInviteCodesApplyInviteCode.md)
  - [ResponseInviteCodesCreateInviteCode](docs/ResponseInviteCodesCreateInviteCode.md)
  - [ResponseQuestionsGetAll](docs/ResponseQuestionsGetAll.md)

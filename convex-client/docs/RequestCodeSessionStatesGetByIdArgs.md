@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**snapshot_id** | **str** | ID from table \&quot;codeSessionStates\&quot; | [optional] 
+**session_state_id** | **str** | ID from table \&quot;codeSessionStates\&quot; | [optional] 
 
 ## Example
 

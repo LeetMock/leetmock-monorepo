@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.request_code_session_states_get_snapshots import RequestCodeSessionStatesGetSnapshots
+from convex_client.models.request_code_session_states_get_latest_session_state_by_session_id_internal import RequestCodeSessionStatesGetLatestSessionStateBySessionIdInternal
 
-class TestRequestCodeSessionStatesGetSnapshots(unittest.TestCase):
-    """RequestCodeSessionStatesGetSnapshots unit test stubs"""
+class TestRequestCodeSessionStatesGetLatestSessionStateBySessionIdInternal(unittest.TestCase):
+    """RequestCodeSessionStatesGetLatestSessionStateBySessionIdInternal unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,28 +25,28 @@ class TestRequestCodeSessionStatesGetSnapshots(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> RequestCodeSessionStatesGetSnapshots:
-        """Test RequestCodeSessionStatesGetSnapshots
+    def make_instance(self, include_optional) -> RequestCodeSessionStatesGetLatestSessionStateBySessionIdInternal:
+        """Test RequestCodeSessionStatesGetLatestSessionStateBySessionIdInternal
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `RequestCodeSessionStatesGetSnapshots`
+        # uncomment below to create an instance of `RequestCodeSessionStatesGetLatestSessionStateBySessionIdInternal`
         """
-        model = RequestCodeSessionStatesGetSnapshots()
+        model = RequestCodeSessionStatesGetLatestSessionStateBySessionIdInternal()
         if include_optional:
-            return RequestCodeSessionStatesGetSnapshots(
+            return RequestCodeSessionStatesGetLatestSessionStateBySessionIdInternal(
                 args = convex_client.models.request_sessions_end_session_args.Request_sessions_endSession_args(
                     session_id = '', )
             )
         else:
-            return RequestCodeSessionStatesGetSnapshots(
+            return RequestCodeSessionStatesGetLatestSessionStateBySessionIdInternal(
                 args = convex_client.models.request_sessions_end_session_args.Request_sessions_endSession_args(
                     session_id = '', ),
         )
         """
 
-    def testRequestCodeSessionStatesGetSnapshots(self):
-        """Test RequestCodeSessionStatesGetSnapshots"""
+    def testRequestCodeSessionStatesGetLatestSessionStateBySessionIdInternal(self):
+        """Test RequestCodeSessionStatesGetLatestSessionStateBySessionIdInternal"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

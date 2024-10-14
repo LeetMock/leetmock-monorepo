@@ -26,8 +26,8 @@ class RequestCodeSessionStatesGetByIdArgs(BaseModel):
     """
     RequestCodeSessionStatesGetByIdArgs
     """ # noqa: E501
-    snapshot_id: Optional[StrictStr] = Field(default=None, description="ID from table \"codeSessionStates\"", alias="snapshotId")
-    __properties: ClassVar[List[str]] = ["snapshotId"]
+    session_state_id: Optional[StrictStr] = Field(default=None, description="ID from table \"codeSessionStates\"", alias="sessionStateId")
+    __properties: ClassVar[List[str]] = ["sessionStateId"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -80,7 +80,7 @@ class RequestCodeSessionStatesGetByIdArgs(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "snapshotId": obj.get("snapshotId")
+            "sessionStateId": obj.get("sessionStateId")
         })
         return _obj
 

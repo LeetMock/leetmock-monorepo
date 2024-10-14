@@ -17,8 +17,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
 from convex_client.models.request_code_session_states_get_by_id import RequestCodeSessionStatesGetById
-from convex_client.models.request_code_session_states_get_latest_snapshot_by_session_id import RequestCodeSessionStatesGetLatestSnapshotBySessionId
-from convex_client.models.request_code_session_states_get_snapshots import RequestCodeSessionStatesGetSnapshots
+from convex_client.models.request_code_session_states_get_latest_session_state_by_session_id import RequestCodeSessionStatesGetLatestSessionStateBySessionId
+from convex_client.models.request_code_session_states_get_session_states import RequestCodeSessionStatesGetSessionStates
 from convex_client.models.request_questions_get_all import RequestQuestionsGetAll
 from convex_client.models.request_questions_get_by_id import RequestQuestionsGetById
 from convex_client.models.request_sessions_exists import RequestSessionsExists
@@ -27,8 +27,8 @@ from convex_client.models.request_sessions_get_by_id import RequestSessionsGetBy
 from convex_client.models.request_sessions_get_by_user_id import RequestSessionsGetByUserId
 from convex_client.models.request_user_profiles_get_user_profile import RequestUserProfilesGetUserProfile
 from convex_client.models.response_code_session_states_get_by_id import ResponseCodeSessionStatesGetById
-from convex_client.models.response_code_session_states_get_latest_snapshot_by_session_id import ResponseCodeSessionStatesGetLatestSnapshotBySessionId
-from convex_client.models.response_code_session_states_get_snapshots import ResponseCodeSessionStatesGetSnapshots
+from convex_client.models.response_code_session_states_get_latest_session_state_by_session_id import ResponseCodeSessionStatesGetLatestSessionStateBySessionId
+from convex_client.models.response_code_session_states_get_session_states import ResponseCodeSessionStatesGetSessionStates
 from convex_client.models.response_questions_get_all import ResponseQuestionsGetAll
 from convex_client.models.response_questions_get_by_id import ResponseQuestionsGetById
 from convex_client.models.response_sessions_exists import ResponseSessionsExists
@@ -331,9 +331,9 @@ class QueryApi:
 
 
     @validate_call
-    def api_run_code_session_states_get_latest_snapshot_by_session_id_post(
+    def api_run_code_session_states_get_latest_session_state_by_session_id_post(
         self,
-        request_code_session_states_get_latest_snapshot_by_session_id: RequestCodeSessionStatesGetLatestSnapshotBySessionId,
+        request_code_session_states_get_latest_session_state_by_session_id: RequestCodeSessionStatesGetLatestSessionStateBySessionId,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -346,12 +346,12 @@ class QueryApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ResponseCodeSessionStatesGetLatestSnapshotBySessionId:
-        """Calls a query at the path codeSessionStates.js:getLatestSnapshotBySessionId
+    ) -> ResponseCodeSessionStatesGetLatestSessionStateBySessionId:
+        """Calls a query at the path codeSessionStates.js:getLatestSessionStateBySessionId
 
 
-        :param request_code_session_states_get_latest_snapshot_by_session_id: (required)
-        :type request_code_session_states_get_latest_snapshot_by_session_id: RequestCodeSessionStatesGetLatestSnapshotBySessionId
+        :param request_code_session_states_get_latest_session_state_by_session_id: (required)
+        :type request_code_session_states_get_latest_session_state_by_session_id: RequestCodeSessionStatesGetLatestSessionStateBySessionId
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -374,8 +374,8 @@ class QueryApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_code_session_states_get_latest_snapshot_by_session_id_post_serialize(
-            request_code_session_states_get_latest_snapshot_by_session_id=request_code_session_states_get_latest_snapshot_by_session_id,
+        _param = self._api_run_code_session_states_get_latest_session_state_by_session_id_post_serialize(
+            request_code_session_states_get_latest_session_state_by_session_id=request_code_session_states_get_latest_session_state_by_session_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -383,7 +383,7 @@ class QueryApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseCodeSessionStatesGetLatestSnapshotBySessionId",
+            '200': "ResponseCodeSessionStatesGetLatestSessionStateBySessionId",
             '400': "object",
             '500': "object",
         }
@@ -399,9 +399,9 @@ class QueryApi:
 
 
     @validate_call
-    def api_run_code_session_states_get_latest_snapshot_by_session_id_post_with_http_info(
+    def api_run_code_session_states_get_latest_session_state_by_session_id_post_with_http_info(
         self,
-        request_code_session_states_get_latest_snapshot_by_session_id: RequestCodeSessionStatesGetLatestSnapshotBySessionId,
+        request_code_session_states_get_latest_session_state_by_session_id: RequestCodeSessionStatesGetLatestSessionStateBySessionId,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -414,12 +414,12 @@ class QueryApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[ResponseCodeSessionStatesGetLatestSnapshotBySessionId]:
-        """Calls a query at the path codeSessionStates.js:getLatestSnapshotBySessionId
+    ) -> ApiResponse[ResponseCodeSessionStatesGetLatestSessionStateBySessionId]:
+        """Calls a query at the path codeSessionStates.js:getLatestSessionStateBySessionId
 
 
-        :param request_code_session_states_get_latest_snapshot_by_session_id: (required)
-        :type request_code_session_states_get_latest_snapshot_by_session_id: RequestCodeSessionStatesGetLatestSnapshotBySessionId
+        :param request_code_session_states_get_latest_session_state_by_session_id: (required)
+        :type request_code_session_states_get_latest_session_state_by_session_id: RequestCodeSessionStatesGetLatestSessionStateBySessionId
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -442,8 +442,8 @@ class QueryApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_code_session_states_get_latest_snapshot_by_session_id_post_serialize(
-            request_code_session_states_get_latest_snapshot_by_session_id=request_code_session_states_get_latest_snapshot_by_session_id,
+        _param = self._api_run_code_session_states_get_latest_session_state_by_session_id_post_serialize(
+            request_code_session_states_get_latest_session_state_by_session_id=request_code_session_states_get_latest_session_state_by_session_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -451,7 +451,7 @@ class QueryApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseCodeSessionStatesGetLatestSnapshotBySessionId",
+            '200': "ResponseCodeSessionStatesGetLatestSessionStateBySessionId",
             '400': "object",
             '500': "object",
         }
@@ -467,9 +467,9 @@ class QueryApi:
 
 
     @validate_call
-    def api_run_code_session_states_get_latest_snapshot_by_session_id_post_without_preload_content(
+    def api_run_code_session_states_get_latest_session_state_by_session_id_post_without_preload_content(
         self,
-        request_code_session_states_get_latest_snapshot_by_session_id: RequestCodeSessionStatesGetLatestSnapshotBySessionId,
+        request_code_session_states_get_latest_session_state_by_session_id: RequestCodeSessionStatesGetLatestSessionStateBySessionId,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -483,11 +483,11 @@ class QueryApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        """Calls a query at the path codeSessionStates.js:getLatestSnapshotBySessionId
+        """Calls a query at the path codeSessionStates.js:getLatestSessionStateBySessionId
 
 
-        :param request_code_session_states_get_latest_snapshot_by_session_id: (required)
-        :type request_code_session_states_get_latest_snapshot_by_session_id: RequestCodeSessionStatesGetLatestSnapshotBySessionId
+        :param request_code_session_states_get_latest_session_state_by_session_id: (required)
+        :type request_code_session_states_get_latest_session_state_by_session_id: RequestCodeSessionStatesGetLatestSessionStateBySessionId
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -510,8 +510,8 @@ class QueryApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_code_session_states_get_latest_snapshot_by_session_id_post_serialize(
-            request_code_session_states_get_latest_snapshot_by_session_id=request_code_session_states_get_latest_snapshot_by_session_id,
+        _param = self._api_run_code_session_states_get_latest_session_state_by_session_id_post_serialize(
+            request_code_session_states_get_latest_session_state_by_session_id=request_code_session_states_get_latest_session_state_by_session_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -519,7 +519,7 @@ class QueryApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseCodeSessionStatesGetLatestSnapshotBySessionId",
+            '200': "ResponseCodeSessionStatesGetLatestSessionStateBySessionId",
             '400': "object",
             '500': "object",
         }
@@ -530,9 +530,9 @@ class QueryApi:
         return response_data.response
 
 
-    def _api_run_code_session_states_get_latest_snapshot_by_session_id_post_serialize(
+    def _api_run_code_session_states_get_latest_session_state_by_session_id_post_serialize(
         self,
-        request_code_session_states_get_latest_snapshot_by_session_id,
+        request_code_session_states_get_latest_session_state_by_session_id,
         _request_auth,
         _content_type,
         _headers,
@@ -556,8 +556,8 @@ class QueryApi:
         # process the header parameters
         # process the form parameters
         # process the body parameter
-        if request_code_session_states_get_latest_snapshot_by_session_id is not None:
-            _body_params = request_code_session_states_get_latest_snapshot_by_session_id
+        if request_code_session_states_get_latest_session_state_by_session_id is not None:
+            _body_params = request_code_session_states_get_latest_session_state_by_session_id
 
 
         # set the HTTP header `Accept`
@@ -589,7 +589,7 @@ class QueryApi:
 
         return self.api_client.param_serialize(
             method='POST',
-            resource_path='/api/run/codeSessionStates/getLatestSnapshotBySessionId',
+            resource_path='/api/run/codeSessionStates/getLatestSessionStateBySessionId',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -606,9 +606,9 @@ class QueryApi:
 
 
     @validate_call
-    def api_run_code_session_states_get_snapshots_post(
+    def api_run_code_session_states_get_session_states_post(
         self,
-        request_code_session_states_get_snapshots: RequestCodeSessionStatesGetSnapshots,
+        request_code_session_states_get_session_states: RequestCodeSessionStatesGetSessionStates,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -621,12 +621,12 @@ class QueryApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ResponseCodeSessionStatesGetSnapshots:
-        """Calls a query at the path codeSessionStates.js:getSnapshots
+    ) -> ResponseCodeSessionStatesGetSessionStates:
+        """Calls a query at the path codeSessionStates.js:getSessionStates
 
 
-        :param request_code_session_states_get_snapshots: (required)
-        :type request_code_session_states_get_snapshots: RequestCodeSessionStatesGetSnapshots
+        :param request_code_session_states_get_session_states: (required)
+        :type request_code_session_states_get_session_states: RequestCodeSessionStatesGetSessionStates
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -649,8 +649,8 @@ class QueryApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_code_session_states_get_snapshots_post_serialize(
-            request_code_session_states_get_snapshots=request_code_session_states_get_snapshots,
+        _param = self._api_run_code_session_states_get_session_states_post_serialize(
+            request_code_session_states_get_session_states=request_code_session_states_get_session_states,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -658,7 +658,7 @@ class QueryApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseCodeSessionStatesGetSnapshots",
+            '200': "ResponseCodeSessionStatesGetSessionStates",
             '400': "object",
             '500': "object",
         }
@@ -674,9 +674,9 @@ class QueryApi:
 
 
     @validate_call
-    def api_run_code_session_states_get_snapshots_post_with_http_info(
+    def api_run_code_session_states_get_session_states_post_with_http_info(
         self,
-        request_code_session_states_get_snapshots: RequestCodeSessionStatesGetSnapshots,
+        request_code_session_states_get_session_states: RequestCodeSessionStatesGetSessionStates,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -689,12 +689,12 @@ class QueryApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[ResponseCodeSessionStatesGetSnapshots]:
-        """Calls a query at the path codeSessionStates.js:getSnapshots
+    ) -> ApiResponse[ResponseCodeSessionStatesGetSessionStates]:
+        """Calls a query at the path codeSessionStates.js:getSessionStates
 
 
-        :param request_code_session_states_get_snapshots: (required)
-        :type request_code_session_states_get_snapshots: RequestCodeSessionStatesGetSnapshots
+        :param request_code_session_states_get_session_states: (required)
+        :type request_code_session_states_get_session_states: RequestCodeSessionStatesGetSessionStates
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -717,8 +717,8 @@ class QueryApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_code_session_states_get_snapshots_post_serialize(
-            request_code_session_states_get_snapshots=request_code_session_states_get_snapshots,
+        _param = self._api_run_code_session_states_get_session_states_post_serialize(
+            request_code_session_states_get_session_states=request_code_session_states_get_session_states,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -726,7 +726,7 @@ class QueryApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseCodeSessionStatesGetSnapshots",
+            '200': "ResponseCodeSessionStatesGetSessionStates",
             '400': "object",
             '500': "object",
         }
@@ -742,9 +742,9 @@ class QueryApi:
 
 
     @validate_call
-    def api_run_code_session_states_get_snapshots_post_without_preload_content(
+    def api_run_code_session_states_get_session_states_post_without_preload_content(
         self,
-        request_code_session_states_get_snapshots: RequestCodeSessionStatesGetSnapshots,
+        request_code_session_states_get_session_states: RequestCodeSessionStatesGetSessionStates,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -758,11 +758,11 @@ class QueryApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        """Calls a query at the path codeSessionStates.js:getSnapshots
+        """Calls a query at the path codeSessionStates.js:getSessionStates
 
 
-        :param request_code_session_states_get_snapshots: (required)
-        :type request_code_session_states_get_snapshots: RequestCodeSessionStatesGetSnapshots
+        :param request_code_session_states_get_session_states: (required)
+        :type request_code_session_states_get_session_states: RequestCodeSessionStatesGetSessionStates
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -785,8 +785,8 @@ class QueryApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_code_session_states_get_snapshots_post_serialize(
-            request_code_session_states_get_snapshots=request_code_session_states_get_snapshots,
+        _param = self._api_run_code_session_states_get_session_states_post_serialize(
+            request_code_session_states_get_session_states=request_code_session_states_get_session_states,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -794,7 +794,7 @@ class QueryApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseCodeSessionStatesGetSnapshots",
+            '200': "ResponseCodeSessionStatesGetSessionStates",
             '400': "object",
             '500': "object",
         }
@@ -805,9 +805,9 @@ class QueryApi:
         return response_data.response
 
 
-    def _api_run_code_session_states_get_snapshots_post_serialize(
+    def _api_run_code_session_states_get_session_states_post_serialize(
         self,
-        request_code_session_states_get_snapshots,
+        request_code_session_states_get_session_states,
         _request_auth,
         _content_type,
         _headers,
@@ -831,8 +831,8 @@ class QueryApi:
         # process the header parameters
         # process the form parameters
         # process the body parameter
-        if request_code_session_states_get_snapshots is not None:
-            _body_params = request_code_session_states_get_snapshots
+        if request_code_session_states_get_session_states is not None:
+            _body_params = request_code_session_states_get_session_states
 
 
         # set the HTTP header `Accept`
@@ -864,7 +864,7 @@ class QueryApi:
 
         return self.api_client.param_serialize(
             method='POST',
-            resource_path='/api/run/codeSessionStates/getSnapshots',
+            resource_path='/api/run/codeSessionStates/getSessionStates',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,

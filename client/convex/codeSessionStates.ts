@@ -5,22 +5,22 @@ import { internalQuery, query, userMutation, userQuery } from "./functions";
 import { QueryCtx } from "./types";
 import { isDefined } from "@/lib/utils";
 
-// Get editor snapshot by ID
+// Get code session state by ID
 export const getById = userQuery({
   args: {
-    snapshotId: v.optional(v.id("codeSessionStates")),
+    sessionStateId: v.optional(v.id("codeSessionStates")),
   },
-  handler: async (ctx, { snapshotId }) => {
-    if (!isDefined(snapshotId)) {
+  handler: async (ctx, { sessionStateId }) => {
+    if (!isDefined(sessionStateId)) {
       return undefined;
     }
 
-    return await ctx.table("codeSessionStates").get(snapshotId);
+    return await ctx.table("codeSessionStates").get(sessionStateId);
   },
 });
 
-// Get all editor snapshots by session ID
-export const getSnapshots = userQuery({
+// Get all code session states by session ID
+export const getSessionStates = userQuery({
   args: {
     sessionId: v.id("sessions"),
   },
@@ -31,23 +31,23 @@ export const getSnapshots = userQuery({
   },
 });
 
-// Get latest snapshot by session ID
-export const getLatestSnapshotBySessionId = query({
+// Get latest code session state by session ID
+export const getLatestSessionStateBySessionId = query({
   args: {
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-    return await queryLatestSnapshot(ctx, sessionId);
+    return await queryLatestSessionState(ctx, sessionId);
   },
 });
 
-// Same as getLatestSnapshotBySessionId, but for internal use
-export const getLatestSnapshotBySessionIdInternal = internalQuery({
+// Same as getLatestSessionStateBySessionId, but for internal use
+export const getLatestSessionStateBySessionIdInternal = internalQuery({
   args: {
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-    return await queryLatestSnapshot(ctx, sessionId);
+    return await queryLatestSessionState(ctx, sessionId);
   },
 });
 
@@ -74,11 +74,11 @@ export const create = userMutation({
   },
 });
 
-async function queryLatestSnapshot(ctx: QueryCtx, sessionId: Id<"sessions">) {
-  const snapshot = await ctx
+async function queryLatestSessionState(ctx: QueryCtx, sessionId: Id<"sessions">) {
+  const sessionState = await ctx
     .table("codeSessionStates", "by_session_id", (q) => q.eq("sessionId", sessionId))
     .order("desc")
     .firstX();
 
-  return snapshot;
+  return sessionState;
 }

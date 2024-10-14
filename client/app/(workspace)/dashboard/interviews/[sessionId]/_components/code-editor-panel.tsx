@@ -11,7 +11,7 @@ import { TestResultsBlock } from "./test-results-block";
 import { Clock, Loader2, PlayIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
-import { EditorState, useEditorState } from "@/hooks/use-editor-state";
+import { CodeSessionState, useCodeSessionState } from "@/hooks/use-editor-state";
 import { toast } from "sonner";
 import { RunTestResult } from "@/lib/types";
 import { useResizePanel } from "@/hooks/use-resize-panel";
@@ -41,7 +41,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   const editorContainerRef = useRef<HTMLDivElement>(null);
 
   // Convex
-  const createSnapshot = useMutation(api.codeSessionStates.create);
+  const createSessionState = useMutation(api.codeSessionStates.create);
   const runTests = useAction(api.actions.runTests);
   const runCode = useAction(api.actions.runCode);
   const question = useQuery(api.questions.getById, { questionId: questionId });
@@ -59,30 +59,30 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     storageId: "leetmock.workspace.code-editor",
   });
 
-  const handleSnapshotChange = useCallback(
-    (snapshot: EditorState) => {
-      const promise = createSnapshot({ sessionId, ...snapshot });
+  const handleSessionStateChange = useCallback(
+    (sessionState: CodeSessionState) => {
+      const promise = createSessionState({ sessionId, ...sessionState });
       toast.promise(promise, {
-        success: "Snapshot saved",
-        error: "Error saving snapshot",
+        success: "Session state saved",
+        error: "Error saving session state",
       });
     },
-    [sessionId, createSnapshot]
+    [sessionId, createSessionState]
   );
 
   const {
-    editorState,
+    sessionState,
     isRunning,
     setIsRunning,
     onLanguageChange,
     onContentChange,
     onTerminalChange,
-  } = useEditorState(sessionId, question, handleSnapshotChange);
+  } = useCodeSessionState(sessionId, question, handleSessionStateChange);
 
   const language = "python";
 
   const handleRunCode = async () => {
-    const { language, content } = editorState!.editor;
+    const { language, content } = sessionState!.editor;
     setIsRunning(true);
     setOutputView("output");
     try {
@@ -103,7 +103,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   };
 
   const handleRunTests = async () => {
-    const { language, content } = editorState!.editor;
+    const { language, content } = sessionState!.editor;
     setIsRunning(true);
     setTestResults(null);
     setOutputView("testResults");
@@ -128,7 +128,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     setIsRunning(false);
   };
 
-  if (!editorState) {
+  if (!sessionState) {
     return <div>Loading...</div>;
   }
 
@@ -153,7 +153,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
             className="absolute inset-0"
             language={language}
             theme={theme === "dark" ? "customDarkTheme" : "vs-light"}
-            value={editorState.editor.content}
+            value={sessionState.editor.content}
             options={{
               fontSize: 14,
               lineNumbers: "on",
@@ -217,7 +217,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
           {!isRunning && outputView === "output" && (
             <div className="flex items-center text-sm text-gray-500">
               <Clock className="w-4 h-4 mr-1" />
-              <span>{editorState.terminal.executionTime} ms</span>
+              <span>{sessionState.terminal.executionTime} ms</span>
             </div>
           )}
         </div>
@@ -228,10 +228,10 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
             <pre
               className={cn(
                 "text-sm rounded-md absolute inset-3",
-                editorState.terminal.isError ? "text-red-500" : "text-gray-800 dark:text-gray-200"
+                sessionState.terminal.isError ? "text-red-500" : "text-gray-800 dark:text-gray-200"
               )}
             >
-              <code>{editorState.terminal.output}</code>
+              <code>{sessionState.terminal.output}</code>
             </pre>
           )}
         </div>
