@@ -199,6 +199,7 @@ async function handleSubscriptionDeleted(ctx: ActionCtx, subscription: Stripe.Su
 
 export const stripeWebhookHandler = httpAction(async (ctx, req) => {
   const body = await req.json();
+
   switch (body.type) {
     case "checkout.session.completed":
       console.log("received checkout.session.completed event", body);
