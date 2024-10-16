@@ -179,7 +179,6 @@ async def entrypoint(ctx: JobContext):
         logger.info("agent_stopped_speaking")
         asyncio.create_task(debounced_send_reminder())
 
-    await ctx_manager.setup()
     await ctx_manager.start()
 
     assistant.start(ctx.room)

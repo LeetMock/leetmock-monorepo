@@ -1,12 +1,13 @@
 import asyncio
 from typing import Generic, List, TypeVar
 
-from agent_server.agent import LangGraphLLM
+from agent_server.chan.request import ChanRequest, RequestConfig
+from agent_server.chan.validators import string_validator
 from agent_server.contexts.convex import ConvexApi
 from agent_server.contexts.session import BaseSession
-from agent_server.types import CodeSessionState, create_get_session_metadata_request
+from agent_server.types import CodeSessionState
 from agent_server.utils.logger import get_logger
-from livekit.agents import AutoSubscribe, JobContext
+from livekit.agents import JobContext
 from livekit.agents.llm import ChatContext
 from livekit.rtc import DataPacket
 
@@ -16,6 +17,12 @@ RECONNECT_MESSAGE = (
     "(User has disconnected and reconnected back to the interview, you would say:)"
 )
 
+SESSION_ID_CONFIG = RequestConfig(
+    topic="session-id",
+    validator=string_validator(min_length=1),
+    period=1.0,
+    exit_on_receive=True,
+)
 
 TEventTypes = TypeVar("TEventTypes", bound=str)
 
@@ -60,45 +67,16 @@ class AgentContextManager(Generic[TEventTypes]):
         return self._session_id_fut.result()
 
     async def setup(self):
-        self.ctx.room.on("data_received", self._on_data_received)
+        # Create a data channel request to fetch the session id
+        request = ChanRequest(SESSION_ID_CONFIG)
+        await request.connect(self.ctx)
 
-        await self.ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
-        await self._session_id_fut
-        await self._session.setup(self.session_id)
+        # Wait for the session id to be received
+        result = await request.result()
+        self._session_id_fut.set_result(result)
 
-    def _on_data_received(self, data: DataPacket):
-        if data.topic != "session-id":
-            logger.warning("Unexpected data topic: %s", data.topic)
-            return
-
-        session_id = data.data.decode("utf-8")
-        if len(session_id) == 0:
-            logger.warning("Received empty session id")
-            return
-
-        if not self._session_id_fut.done():
-            self._session_id_fut.set_result(session_id)
-            logger.info("session_id_fut set")
-            return
-        else:
-            logger.warning("session_id_fut already set")
-
-        asyncio.create_task(
-            self.ctx.room.local_participant.publish_data(
-                payload="session-id-received",
-                topic="session-id-received",
-                reliable=True,
-            )
-        )
-
-    # async def _prepare_initial_agent_context(self, agent: LangGraphLLM):
-    #     state = await agent.get_state()
-
-    #     messages = state.get("messages", [])  # type: ignore
-    #     logger.info(f"Got initial context: {messages}")
-
-    #     if len(messages) != 0:
-    #         self.chat_ctx.append(text=RECONNECT_MESSAGE, role="user")
+        # Setup the session with the session id
+        await self._session.start(result)
 
     async def start(self):
         async with self._start_lock:
@@ -109,4 +87,4 @@ class AgentContextManager(Generic[TEventTypes]):
                 return
 
             self._has_started = True
-            await self._session.start()
+            await self.setup()

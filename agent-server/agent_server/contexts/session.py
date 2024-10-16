@@ -43,17 +43,12 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
     def session_state(self) -> Any:
         raise NotImplementedError
 
-    @abstractmethod
-    async def setup(self, session_id: str):
-        """Initialize the session from convex."""
-        raise NotImplementedError
-
     async def stream_events(self):
         """Stream the events from convex."""
         raise NotImplementedError
 
     @abstractmethod
-    async def start(self):
+    async def start(self, session_id: str):
         """Start the session."""
         raise NotImplementedError
 
@@ -73,6 +68,9 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
         self._code_session_state: CodeSessionState | None = None
         self._watch_code_session_state_task: asyncio.Task | None = None
         self._synced_future: asyncio.Future[bool] = asyncio.Future()
+
+        self._has_started = False
+        self._start_lock = asyncio.Lock()
 
     @property
     def session_state(self) -> CodeSessionState:
@@ -95,6 +93,17 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
             if not self._synced_future.done():
                 self._synced_future.set_result(True)
 
+    async def stream_events(self):
+        """Stream the events from convex."""
+
+        subscription = self._api.subscribe(
+            CODE_SESSION_EVENT_QUERY, {"sessionId": self._session_id}
+        )
+        query_stream = AsyncQueryIterator.from_subscription(subscription)
+
+        async for events in query_stream:
+            logger.info(f"Code session events: {events}")
+
     async def setup(self, session_id: str):
         self._session_id = session_id
 
@@ -107,22 +116,19 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
             raise Exception(f"Error getting session metadata: {response.error_message}")
 
         self._session_metadata = response.value
-
-    async def stream_events(self):
-        """Stream the events from convex."""
-
-        subscription = self._api.subscribe(
-            CODE_SESSION_EVENT_QUERY, {"sessionId": self._session_id}
+        self._watch_code_session_state_task = asyncio.create_task(
+            self._watch_code_session_state()
         )
-        query_stream = AsyncQueryIterator.from_subscription(subscription)
-
-        async for events in query_stream:
-            logger.info(f"Code session events: {events}")
-
-    async def start(self):
-        if self._watch_code_session_state_task is None:
-            self._watch_code_session_state_task = asyncio.create_task(
-                self._watch_code_session_state()
-            )
 
         await self._synced_future
+
+    async def start(self, session_id: str):
+        async with self._start_lock:
+            if self._has_started:
+                logger.warning(
+                    "start method called multiple times. Ignoring subsequent calls."
+                )
+                return
+
+            self._has_started = True
+            await self.setup(session_id)
