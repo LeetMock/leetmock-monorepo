@@ -78,6 +78,7 @@ class AgentContextManager(Generic[TEventTypes]):
 
         # Setup the session with the session id
         await self._session.start(result)
+        await self.ctx.connect()
 
     async def start(self):
         async with self._start_lock:

@@ -65,8 +65,10 @@ class ChanRequest(Generic[T]):
 
         return self._result
 
-    async def _should_exit(self) -> bool:
-        return self._config.exit_on_receive and self._receive_fut.done()
+    def _should_exit(self) -> bool:
+        if self._config.exit_on_receive:
+            return self._receive_fut.done()
+        return False
 
     @property
     def request_topic(self) -> str:
@@ -95,7 +97,9 @@ class ChanRequest(Generic[T]):
 
     async def _request_data_task(self, ctx: JobContext):
         while not self._should_exit():
-            logger.info(f"Requesting data for topic {self._config.topic}")
+            logger.info(
+                f"Requesting data for topic {self._config.topic}: {self.serialized_payload}"
+            )
 
             await ctx.room.local_participant.publish_data(
                 topic=self.request_topic,
@@ -145,6 +149,7 @@ class ChanRequest(Generic[T]):
             if self._connected:
                 return
 
+            logger.info(f"Connecting to {self.request_topic}")
             ctx.room.on("data_received", self._on_receive_data)
             self._request_task = asyncio.create_task(self._request_data_task(ctx))
             self._connected = True
