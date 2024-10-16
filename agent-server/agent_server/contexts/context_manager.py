@@ -17,12 +17,7 @@ RECONNECT_MESSAGE = (
     "(User has disconnected and reconnected back to the interview, you would say:)"
 )
 
-SESSION_ID_CONFIG = RequestConfig(
-    topic="session-id",
-    validator=string_validator(min_length=1),
-    period=1.0,
-    exit_on_receive=True,
-)
+SESSION_ID_TOPIC = "session-id"
 
 TEventTypes = TypeVar("TEventTypes", bound=str)
 
@@ -68,7 +63,13 @@ class AgentContextManager(Generic[TEventTypes]):
 
     async def setup(self):
         # Create a data channel request to fetch the session id
-        request = ChanRequest(SESSION_ID_CONFIG)
+        config = RequestConfig(
+            topic=SESSION_ID_TOPIC,
+            validator=string_validator(min_length=1),
+            period=1.0,
+            exit_on_receive=True,
+        )
+        request = ChanRequest(config)
         await request.connect(self.ctx)
 
         # Wait for the session id to be received
