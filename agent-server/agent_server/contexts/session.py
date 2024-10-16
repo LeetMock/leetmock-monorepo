@@ -110,7 +110,6 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
         # Get session metadata
         request = create_get_session_metadata_request(self._session_id)
         response = self._api.action.api_run_actions_get_session_metadata_post(request)
-
         if response.status == "error" or response.value is None:
             logger.error(f"Error getting session metadata: {response.error_message}")
             raise Exception(f"Error getting session metadata: {response.error_message}")
@@ -119,7 +118,6 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
         self._watch_code_session_state_task = asyncio.create_task(
             self._watch_code_session_state()
         )
-
         await self._synced_future
 
     async def start(self, session_id: str):
