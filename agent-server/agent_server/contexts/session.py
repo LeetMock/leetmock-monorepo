@@ -124,7 +124,7 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
         async with self._start_lock:
             if self._has_started:
                 logger.warning(
-                    "start method called multiple times. Ignoring subsequent calls. "
+                    "start method called multiple times. Ignoring subsequent calls."
                 )
                 return
 
