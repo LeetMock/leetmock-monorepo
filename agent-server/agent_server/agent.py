@@ -10,7 +10,7 @@ from livekit.agents import llm
 from typing import AsyncGenerator, AsyncIterator
 from langgraph_sdk.schema import StreamPart
 from agent_server.utils.messages import convert_chat_ctx_to_langchain_messages
-from agent_server.types import SessionMetadata, EditorSnapshot
+from agent_server.types import SessionMetadata, CodeSessionState
 from agent_server.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -24,7 +24,7 @@ class LangGraphLLM(llm.LLM):
         self._unix_timestamp = int(datetime.now().timestamp())
         self._client = get_client(url=os.getenv("LANGGRAPH_API_URL"))
         self._session_metadata: SessionMetadata | None = None
-        self._snapshot: EditorSnapshot | None = None
+        self._snapshot: CodeSessionState | None = None
         self._interaction_type: str | None = None
 
     async def get_state(self):
@@ -40,7 +40,7 @@ class LangGraphLLM(llm.LLM):
 
     def set_agent_context(
         self,
-        snapshot: EditorSnapshot,
+        snapshot: CodeSessionState,
         interaction_type: str,
     ):
         self._snapshot = snapshot
@@ -55,8 +55,8 @@ class LangGraphLLM(llm.LLM):
         n: int | None = 1,
         parallel_tool_calls: bool | None = None,
     ) -> llm.LLMStream:
-
         langchain_messages = convert_chat_ctx_to_langchain_messages(chat_ctx)
+
         for i, message in enumerate(langchain_messages):
             key = f"{self._unix_timestamp}-{i}-{message.type}"
             message.id = hashlib.md5(key.encode()).hexdigest()

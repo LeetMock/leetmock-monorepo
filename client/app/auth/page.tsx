@@ -1,10 +1,9 @@
 "use client";
 
-import { Suspense, useMemo } from "react";
+import { SignIn, SignUp, useAuth } from "@clerk/clerk-react";
 import { Unauthenticated } from "convex/react";
-import { useSearchParams } from "next/navigation";
-import { SignIn, SignUp, useAuth, useSignIn } from "@clerk/clerk-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useMemo } from "react";
 
 type AuthAction = "signin" | "signup";
 

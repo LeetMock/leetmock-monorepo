@@ -4,8 +4,8 @@ set positional-arguments
 gen-convex-client:
     npm config set registry https://registry.npmjs.org
     rm -f convex-client.yaml
-    cd client && npm run generate-schema && cd ..
     rm -rf convex-client
+    cd client && npm run generate-schema && cd ..
     openapi-generator-cli generate \
     -i convex-client.yaml \
     -g python \

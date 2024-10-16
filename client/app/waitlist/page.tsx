@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { useTheme } from "next-themes";
-import { Sun, Moon } from "lucide-react";
-import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useMutation } from "convex/react";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 import { toast } from "sonner";
 
 const WaitlistPage = () => {

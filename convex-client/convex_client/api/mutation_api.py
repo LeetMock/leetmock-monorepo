@@ -18,16 +18,16 @@ from typing_extensions import Annotated
 
 from convex_client.models.request_admins_create_user_profile import RequestAdminsCreateUserProfile
 from convex_client.models.request_admins_patch_user_subscription import RequestAdminsPatchUserSubscription
-from convex_client.models.request_editor_snapshots_create import RequestEditorSnapshotsCreate
+from convex_client.models.request_code_session_events_commit_code_session_event import RequestCodeSessionEventsCommitCodeSessionEvent
 from convex_client.models.request_invite_codes_apply_invite_code import RequestInviteCodesApplyInviteCode
-from convex_client.models.request_sessions_create import RequestSessionsCreate
+from convex_client.models.request_sessions_create_code_session import RequestSessionsCreateCodeSession
 from convex_client.models.request_sessions_end_session import RequestSessionsEndSession
 from convex_client.models.request_sessions_start_session import RequestSessionsStartSession
 from convex_client.models.response_admins_create_user_profile import ResponseAdminsCreateUserProfile
 from convex_client.models.response_admins_patch_user_subscription import ResponseAdminsPatchUserSubscription
-from convex_client.models.response_editor_snapshots_create import ResponseEditorSnapshotsCreate
+from convex_client.models.response_code_session_events_commit_code_session_event import ResponseCodeSessionEventsCommitCodeSessionEvent
 from convex_client.models.response_invite_codes_apply_invite_code import ResponseInviteCodesApplyInviteCode
-from convex_client.models.response_sessions_create import ResponseSessionsCreate
+from convex_client.models.response_sessions_create_code_session import ResponseSessionsCreateCodeSession
 from convex_client.models.response_sessions_end_session import ResponseSessionsEndSession
 from convex_client.models.response_sessions_start_session import ResponseSessionsStartSession
 
@@ -600,9 +600,9 @@ class MutationApi:
 
 
     @validate_call
-    def api_run_editor_snapshots_create_post(
+    def api_run_code_session_events_commit_code_session_event_post(
         self,
-        request_editor_snapshots_create: RequestEditorSnapshotsCreate,
+        request_code_session_events_commit_code_session_event: RequestCodeSessionEventsCommitCodeSessionEvent,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -615,12 +615,12 @@ class MutationApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ResponseEditorSnapshotsCreate:
-        """Calls a mutation at the path editorSnapshots.js:create
+    ) -> ResponseCodeSessionEventsCommitCodeSessionEvent:
+        """Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
 
 
-        :param request_editor_snapshots_create: (required)
-        :type request_editor_snapshots_create: RequestEditorSnapshotsCreate
+        :param request_code_session_events_commit_code_session_event: (required)
+        :type request_code_session_events_commit_code_session_event: RequestCodeSessionEventsCommitCodeSessionEvent
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -643,8 +643,8 @@ class MutationApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_editor_snapshots_create_post_serialize(
-            request_editor_snapshots_create=request_editor_snapshots_create,
+        _param = self._api_run_code_session_events_commit_code_session_event_post_serialize(
+            request_code_session_events_commit_code_session_event=request_code_session_events_commit_code_session_event,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -652,7 +652,7 @@ class MutationApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseEditorSnapshotsCreate",
+            '200': "ResponseCodeSessionEventsCommitCodeSessionEvent",
             '400': "object",
             '500': "object",
         }
@@ -668,9 +668,9 @@ class MutationApi:
 
 
     @validate_call
-    def api_run_editor_snapshots_create_post_with_http_info(
+    def api_run_code_session_events_commit_code_session_event_post_with_http_info(
         self,
-        request_editor_snapshots_create: RequestEditorSnapshotsCreate,
+        request_code_session_events_commit_code_session_event: RequestCodeSessionEventsCommitCodeSessionEvent,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -683,12 +683,12 @@ class MutationApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[ResponseEditorSnapshotsCreate]:
-        """Calls a mutation at the path editorSnapshots.js:create
+    ) -> ApiResponse[ResponseCodeSessionEventsCommitCodeSessionEvent]:
+        """Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
 
 
-        :param request_editor_snapshots_create: (required)
-        :type request_editor_snapshots_create: RequestEditorSnapshotsCreate
+        :param request_code_session_events_commit_code_session_event: (required)
+        :type request_code_session_events_commit_code_session_event: RequestCodeSessionEventsCommitCodeSessionEvent
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -711,8 +711,8 @@ class MutationApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_editor_snapshots_create_post_serialize(
-            request_editor_snapshots_create=request_editor_snapshots_create,
+        _param = self._api_run_code_session_events_commit_code_session_event_post_serialize(
+            request_code_session_events_commit_code_session_event=request_code_session_events_commit_code_session_event,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -720,7 +720,7 @@ class MutationApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseEditorSnapshotsCreate",
+            '200': "ResponseCodeSessionEventsCommitCodeSessionEvent",
             '400': "object",
             '500': "object",
         }
@@ -736,9 +736,9 @@ class MutationApi:
 
 
     @validate_call
-    def api_run_editor_snapshots_create_post_without_preload_content(
+    def api_run_code_session_events_commit_code_session_event_post_without_preload_content(
         self,
-        request_editor_snapshots_create: RequestEditorSnapshotsCreate,
+        request_code_session_events_commit_code_session_event: RequestCodeSessionEventsCommitCodeSessionEvent,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -752,11 +752,11 @@ class MutationApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        """Calls a mutation at the path editorSnapshots.js:create
+        """Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
 
 
-        :param request_editor_snapshots_create: (required)
-        :type request_editor_snapshots_create: RequestEditorSnapshotsCreate
+        :param request_code_session_events_commit_code_session_event: (required)
+        :type request_code_session_events_commit_code_session_event: RequestCodeSessionEventsCommitCodeSessionEvent
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -779,8 +779,8 @@ class MutationApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_editor_snapshots_create_post_serialize(
-            request_editor_snapshots_create=request_editor_snapshots_create,
+        _param = self._api_run_code_session_events_commit_code_session_event_post_serialize(
+            request_code_session_events_commit_code_session_event=request_code_session_events_commit_code_session_event,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -788,7 +788,7 @@ class MutationApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseEditorSnapshotsCreate",
+            '200': "ResponseCodeSessionEventsCommitCodeSessionEvent",
             '400': "object",
             '500': "object",
         }
@@ -799,9 +799,9 @@ class MutationApi:
         return response_data.response
 
 
-    def _api_run_editor_snapshots_create_post_serialize(
+    def _api_run_code_session_events_commit_code_session_event_post_serialize(
         self,
-        request_editor_snapshots_create,
+        request_code_session_events_commit_code_session_event,
         _request_auth,
         _content_type,
         _headers,
@@ -825,8 +825,8 @@ class MutationApi:
         # process the header parameters
         # process the form parameters
         # process the body parameter
-        if request_editor_snapshots_create is not None:
-            _body_params = request_editor_snapshots_create
+        if request_code_session_events_commit_code_session_event is not None:
+            _body_params = request_code_session_events_commit_code_session_event
 
 
         # set the HTTP header `Accept`
@@ -858,7 +858,7 @@ class MutationApi:
 
         return self.api_client.param_serialize(
             method='POST',
-            resource_path='/api/run/editorSnapshots/create',
+            resource_path='/api/run/codeSessionEvents/commitCodeSessionEvent',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -1150,9 +1150,9 @@ class MutationApi:
 
 
     @validate_call
-    def api_run_sessions_create_post(
+    def api_run_sessions_create_code_session_post(
         self,
-        request_sessions_create: RequestSessionsCreate,
+        request_sessions_create_code_session: RequestSessionsCreateCodeSession,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1165,12 +1165,12 @@ class MutationApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ResponseSessionsCreate:
-        """Calls a mutation at the path sessions.js:create
+    ) -> ResponseSessionsCreateCodeSession:
+        """Calls a mutation at the path sessions.js:createCodeSession
 
 
-        :param request_sessions_create: (required)
-        :type request_sessions_create: RequestSessionsCreate
+        :param request_sessions_create_code_session: (required)
+        :type request_sessions_create_code_session: RequestSessionsCreateCodeSession
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1193,8 +1193,8 @@ class MutationApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_sessions_create_post_serialize(
-            request_sessions_create=request_sessions_create,
+        _param = self._api_run_sessions_create_code_session_post_serialize(
+            request_sessions_create_code_session=request_sessions_create_code_session,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1202,7 +1202,7 @@ class MutationApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseSessionsCreate",
+            '200': "ResponseSessionsCreateCodeSession",
             '400': "object",
             '500': "object",
         }
@@ -1218,9 +1218,9 @@ class MutationApi:
 
 
     @validate_call
-    def api_run_sessions_create_post_with_http_info(
+    def api_run_sessions_create_code_session_post_with_http_info(
         self,
-        request_sessions_create: RequestSessionsCreate,
+        request_sessions_create_code_session: RequestSessionsCreateCodeSession,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1233,12 +1233,12 @@ class MutationApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[ResponseSessionsCreate]:
-        """Calls a mutation at the path sessions.js:create
+    ) -> ApiResponse[ResponseSessionsCreateCodeSession]:
+        """Calls a mutation at the path sessions.js:createCodeSession
 
 
-        :param request_sessions_create: (required)
-        :type request_sessions_create: RequestSessionsCreate
+        :param request_sessions_create_code_session: (required)
+        :type request_sessions_create_code_session: RequestSessionsCreateCodeSession
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1261,8 +1261,8 @@ class MutationApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_sessions_create_post_serialize(
-            request_sessions_create=request_sessions_create,
+        _param = self._api_run_sessions_create_code_session_post_serialize(
+            request_sessions_create_code_session=request_sessions_create_code_session,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1270,7 +1270,7 @@ class MutationApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseSessionsCreate",
+            '200': "ResponseSessionsCreateCodeSession",
             '400': "object",
             '500': "object",
         }
@@ -1286,9 +1286,9 @@ class MutationApi:
 
 
     @validate_call
-    def api_run_sessions_create_post_without_preload_content(
+    def api_run_sessions_create_code_session_post_without_preload_content(
         self,
-        request_sessions_create: RequestSessionsCreate,
+        request_sessions_create_code_session: RequestSessionsCreateCodeSession,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1302,11 +1302,11 @@ class MutationApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        """Calls a mutation at the path sessions.js:create
+        """Calls a mutation at the path sessions.js:createCodeSession
 
 
-        :param request_sessions_create: (required)
-        :type request_sessions_create: RequestSessionsCreate
+        :param request_sessions_create_code_session: (required)
+        :type request_sessions_create_code_session: RequestSessionsCreateCodeSession
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1329,8 +1329,8 @@ class MutationApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_sessions_create_post_serialize(
-            request_sessions_create=request_sessions_create,
+        _param = self._api_run_sessions_create_code_session_post_serialize(
+            request_sessions_create_code_session=request_sessions_create_code_session,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1338,7 +1338,7 @@ class MutationApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseSessionsCreate",
+            '200': "ResponseSessionsCreateCodeSession",
             '400': "object",
             '500': "object",
         }
@@ -1349,9 +1349,9 @@ class MutationApi:
         return response_data.response
 
 
-    def _api_run_sessions_create_post_serialize(
+    def _api_run_sessions_create_code_session_post_serialize(
         self,
-        request_sessions_create,
+        request_sessions_create_code_session,
         _request_auth,
         _content_type,
         _headers,
@@ -1375,8 +1375,8 @@ class MutationApi:
         # process the header parameters
         # process the form parameters
         # process the body parameter
-        if request_sessions_create is not None:
-            _body_params = request_sessions_create
+        if request_sessions_create_code_session is not None:
+            _body_params = request_sessions_create_code_session
 
 
         # set the HTTP header `Accept`
@@ -1408,7 +1408,7 @@ class MutationApi:
 
         return self.api_client.param_serialize(
             method='POST',
-            resource_path='/api/run/sessions/create',
+            resource_path='/api/run/sessions/createCodeSession',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,

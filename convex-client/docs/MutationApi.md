@@ -6,9 +6,9 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**api_run_admins_create_user_profile_post**](MutationApi.md#api_run_admins_create_user_profile_post) | **POST** /api/run/admins/createUserProfile | Calls a mutation at the path admins.js:createUserProfile
 [**api_run_admins_patch_user_subscription_post**](MutationApi.md#api_run_admins_patch_user_subscription_post) | **POST** /api/run/admins/patchUserSubscription | Calls a mutation at the path admins.js:patchUserSubscription
-[**api_run_editor_snapshots_create_post**](MutationApi.md#api_run_editor_snapshots_create_post) | **POST** /api/run/editorSnapshots/create | Calls a mutation at the path editorSnapshots.js:create
+[**api_run_code_session_events_commit_code_session_event_post**](MutationApi.md#api_run_code_session_events_commit_code_session_event_post) | **POST** /api/run/codeSessionEvents/commitCodeSessionEvent | Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
 [**api_run_invite_codes_apply_invite_code_post**](MutationApi.md#api_run_invite_codes_apply_invite_code_post) | **POST** /api/run/inviteCodes/applyInviteCode | Calls a mutation at the path inviteCodes.js:applyInviteCode
-[**api_run_sessions_create_post**](MutationApi.md#api_run_sessions_create_post) | **POST** /api/run/sessions/create | Calls a mutation at the path sessions.js:create
+[**api_run_sessions_create_code_session_post**](MutationApi.md#api_run_sessions_create_code_session_post) | **POST** /api/run/sessions/createCodeSession | Calls a mutation at the path sessions.js:createCodeSession
 [**api_run_sessions_end_session_post**](MutationApi.md#api_run_sessions_end_session_post) | **POST** /api/run/sessions/endSession | Calls a mutation at the path sessions.js:endSession
 [**api_run_sessions_start_session_post**](MutationApi.md#api_run_sessions_start_session_post) | **POST** /api/run/sessions/startSession | Calls a mutation at the path sessions.js:startSession
 
@@ -171,10 +171,10 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **api_run_editor_snapshots_create_post**
-> ResponseEditorSnapshotsCreate api_run_editor_snapshots_create_post(request_editor_snapshots_create)
+# **api_run_code_session_events_commit_code_session_event_post**
+> ResponseCodeSessionEventsCommitCodeSessionEvent api_run_code_session_events_commit_code_session_event_post(request_code_session_events_commit_code_session_event)
 
-Calls a mutation at the path editorSnapshots.js:create
+Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
 
 ### Example
 
@@ -182,8 +182,8 @@ Calls a mutation at the path editorSnapshots.js:create
 
 ```python
 import convex_client
-from convex_client.models.request_editor_snapshots_create import RequestEditorSnapshotsCreate
-from convex_client.models.response_editor_snapshots_create import ResponseEditorSnapshotsCreate
+from convex_client.models.request_code_session_events_commit_code_session_event import RequestCodeSessionEventsCommitCodeSessionEvent
+from convex_client.models.response_code_session_events_commit_code_session_event import ResponseCodeSessionEventsCommitCodeSessionEvent
 from convex_client.rest import ApiException
 from pprint import pprint
 
@@ -207,15 +207,15 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.MutationApi(api_client)
-    request_editor_snapshots_create = convex_client.RequestEditorSnapshotsCreate() # RequestEditorSnapshotsCreate | 
+    request_code_session_events_commit_code_session_event = convex_client.RequestCodeSessionEventsCommitCodeSessionEvent() # RequestCodeSessionEventsCommitCodeSessionEvent | 
 
     try:
-        # Calls a mutation at the path editorSnapshots.js:create
-        api_response = api_instance.api_run_editor_snapshots_create_post(request_editor_snapshots_create)
-        print("The response of MutationApi->api_run_editor_snapshots_create_post:\n")
+        # Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
+        api_response = api_instance.api_run_code_session_events_commit_code_session_event_post(request_code_session_events_commit_code_session_event)
+        print("The response of MutationApi->api_run_code_session_events_commit_code_session_event_post:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling MutationApi->api_run_editor_snapshots_create_post: %s\n" % e)
+        print("Exception when calling MutationApi->api_run_code_session_events_commit_code_session_event_post: %s\n" % e)
 ```
 
 
@@ -225,11 +225,11 @@ with convex_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **request_editor_snapshots_create** | [**RequestEditorSnapshotsCreate**](RequestEditorSnapshotsCreate.md)|  | 
+ **request_code_session_events_commit_code_session_event** | [**RequestCodeSessionEventsCommitCodeSessionEvent**](RequestCodeSessionEventsCommitCodeSessionEvent.md)|  | 
 
 ### Return type
 
-[**ResponseEditorSnapshotsCreate**](ResponseEditorSnapshotsCreate.md)
+[**ResponseCodeSessionEventsCommitCodeSessionEvent**](ResponseCodeSessionEventsCommitCodeSessionEvent.md)
 
 ### Authorization
 
@@ -329,10 +329,10 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **api_run_sessions_create_post**
-> ResponseSessionsCreate api_run_sessions_create_post(request_sessions_create)
+# **api_run_sessions_create_code_session_post**
+> ResponseSessionsCreateCodeSession api_run_sessions_create_code_session_post(request_sessions_create_code_session)
 
-Calls a mutation at the path sessions.js:create
+Calls a mutation at the path sessions.js:createCodeSession
 
 ### Example
 
@@ -340,8 +340,8 @@ Calls a mutation at the path sessions.js:create
 
 ```python
 import convex_client
-from convex_client.models.request_sessions_create import RequestSessionsCreate
-from convex_client.models.response_sessions_create import ResponseSessionsCreate
+from convex_client.models.request_sessions_create_code_session import RequestSessionsCreateCodeSession
+from convex_client.models.response_sessions_create_code_session import ResponseSessionsCreateCodeSession
 from convex_client.rest import ApiException
 from pprint import pprint
 
@@ -365,15 +365,15 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.MutationApi(api_client)
-    request_sessions_create = convex_client.RequestSessionsCreate() # RequestSessionsCreate | 
+    request_sessions_create_code_session = convex_client.RequestSessionsCreateCodeSession() # RequestSessionsCreateCodeSession | 
 
     try:
-        # Calls a mutation at the path sessions.js:create
-        api_response = api_instance.api_run_sessions_create_post(request_sessions_create)
-        print("The response of MutationApi->api_run_sessions_create_post:\n")
+        # Calls a mutation at the path sessions.js:createCodeSession
+        api_response = api_instance.api_run_sessions_create_code_session_post(request_sessions_create_code_session)
+        print("The response of MutationApi->api_run_sessions_create_code_session_post:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling MutationApi->api_run_sessions_create_post: %s\n" % e)
+        print("Exception when calling MutationApi->api_run_sessions_create_code_session_post: %s\n" % e)
 ```
 
 
@@ -383,11 +383,11 @@ with convex_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **request_sessions_create** | [**RequestSessionsCreate**](RequestSessionsCreate.md)|  | 
+ **request_sessions_create_code_session** | [**RequestSessionsCreateCodeSession**](RequestSessionsCreateCodeSession.md)|  | 
 
 ### Return type
 
-[**ResponseSessionsCreate**](ResponseSessionsCreate.md)
+[**ResponseSessionsCreateCodeSession**](ResponseSessionsCreateCodeSession.md)
 
 ### Authorization
 

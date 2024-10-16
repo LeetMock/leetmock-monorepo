@@ -1,5 +1,30 @@
-import { v } from "convex/values";
 import { defineEnt, defineEntSchema, getEntDefinitions } from "convex-ents";
+import { v } from "convex/values";
+
+export const codeSessionEventType = v.union(
+  v.object({
+    type: v.literal("content_changed"),
+    data: v.object({
+      content: v.string(),
+    }),
+  }),
+  v.object({
+    type: v.literal("user_test_executed"),
+    data: v.any(), // TODO: change this to the actual data type
+  }),
+  v.object({
+    type: v.literal("testcase_added"),
+    data: v.any(), // TODO: change this to the actual data type
+  }),
+  v.object({
+    type: v.literal("testcase_removed"),
+    data: v.any(), // TODO: change this to the actual data type
+  }),
+  v.object({
+    type: v.literal("question_displayed"),
+    data: v.boolean(),
+  })
+);
 
 // Schema definition
 const schema = defineEntSchema({
@@ -38,10 +63,11 @@ const schema = defineEntSchema({
     sessionStartTime: v.optional(v.number()),
     sessionEndTime: v.optional(v.number()),
   })
+    .edge("codeSessionState", { optional: true })
     .index("by_user_id", ["userId"])
     .index("by_user_id_and_status", ["userId", "sessionStatus"]),
-  editorSnapshots: defineEnt({
-    sessionId: v.id("sessions"),
+  codeSessionStates: defineEnt({
+    displayQuestion: v.boolean(),
     editor: v.object({
       language: v.string(),
       content: v.string(),
@@ -52,7 +78,17 @@ const schema = defineEntSchema({
       isError: v.boolean(),
       executionTime: v.optional(v.number()),
     }),
-  }).index("by_session_id", ["sessionId"]),
+  })
+    .deletion("soft")
+    .edge("session")
+    .edges("codeSessionEvents", { ref: true }),
+  codeSessionEvents: defineEnt({
+    event: codeSessionEventType,
+    acked: v.boolean(),
+  })
+    .deletion("soft")
+    .edge("codeSessionState")
+    .index("by_session_id_and_acked", ["codeSessionStateId", "acked"]),
   questions: defineEnt({
     category: v.array(v.string()),
     difficulty: v.number(),

@@ -1,6 +1,5 @@
 import { QuestionHolder } from "@/components/QuestionHolder";
 import { cn } from "@/lib/utils";
-import { LucideFileText } from "lucide-react";
 
 interface CodeQuestionPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   question: {

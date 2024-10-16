@@ -1,20 +1,20 @@
-import axios from "axios";
 import { Client } from "@langchain/langgraph-sdk";
+import axios from "axios";
 import type { VideoGrant } from "livekit-server-sdk";
 
-import { action } from "./_generated/server";
 import { api, internal } from "./_generated/api";
+import { action } from "./_generated/server";
 
+import { DATA_STRUCTURES } from "@/lib/constants";
+import { CodeRunResult, RunCodeResult, RunTestResult, TokenResult } from "@/lib/types";
 import {
   createToken,
   generateRandomAlphanumeric,
-  getFileExtension,
   generateTestCode,
+  getFileExtension,
   isDefined,
 } from "@/lib/utils";
-import { TokenResult, CodeRunResult, RunCodeResult, RunTestResult } from "@/lib/types";
 import { ConvexError, v } from "convex/values";
-import { DATA_STRUCTURES } from "@/lib/constants";
 
 import { retry } from "@lifeomic/attempt";
 
@@ -212,40 +212,6 @@ export const runTests = action({
 // ============================================================================
 // Below are actions used for agent server
 // ============================================================================
-
-// TODO: should check user identity, but this api is used by the agent server so we skip that for now
-export const getEditorSnapshot = action({
-  args: {
-    sessionId: v.id("sessions"),
-  },
-  returns: v.object({
-    sessionId: v.id("sessions"),
-    editor: v.object({
-      language: v.string(),
-      content: v.string(),
-      lastUpdated: v.number(),
-    }),
-    terminal: v.object({
-      output: v.string(),
-      isError: v.boolean(),
-      executionTime: v.optional(v.number()),
-    }),
-  }),
-  handler: async (ctx, { sessionId }) => {
-    const snapshot = await ctx.runQuery(
-      internal.editorSnapshots.getLatestSnapshotBySessionIdInternal,
-      { sessionId }
-    );
-
-    if (!isDefined(snapshot)) {
-      throw new ConvexError({ name: "NoSnapshotFound", message: "No snapshot found" });
-    }
-
-    const { _id, _creationTime, ...rest } = snapshot;
-    return rest;
-  },
-});
-
 // TODO: should check user identity, but this api is used by the agent server so we skip that for now
 export const getSessionMetadata = action({
   args: {

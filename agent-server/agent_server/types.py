@@ -1,13 +1,15 @@
 from convex_client.models import (
-    ResponseActionsGetSessionMetadataValue,
-    RequestEditorSnapshotsCreateArgs,
     RequestActionsGetSessionMetadata,
+    RequestCodeSessionEventsCommitCodeSessionEventArgsEvent,
     RequestSessionsEndSessionArgs,
+    ResponseActionsGetSessionMetadataValue,
+    ResponseCodeSessionEventsGetNextEventBatchValueInner,
+    ResponseCodeSessionStatesGetValue,
 )
 
-
 SessionMetadata = ResponseActionsGetSessionMetadataValue
-EditorSnapshot = RequestEditorSnapshotsCreateArgs
+CodeSessionState = ResponseCodeSessionStatesGetValue
+CodeSessionEvent = RequestCodeSessionEventsCommitCodeSessionEventArgsEvent
 
 RequestGetSessionMetadata = RequestActionsGetSessionMetadata
 RequestGetSessionMetadataArgs = RequestSessionsEndSessionArgs

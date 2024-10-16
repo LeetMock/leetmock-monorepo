@@ -1,8 +1,7 @@
 import logging
 
-from convex import ConvexError, QuerySubscription, QuerySetSubscription
+from convex import ConvexError, QuerySetSubscription, QuerySubscription
 from pydantic import BaseModel
-
 
 logger = logging.getLogger("convex")
 
@@ -12,6 +11,10 @@ class AsyncQueryIterator(BaseModel):
 
     class Config:
         arbitrary_types_allowed = True
+
+    @classmethod
+    def from_subscription(cls, sub: QuerySubscription):
+        return cls(sub=sub)
 
     def __aiter__(self):
         return self
@@ -28,6 +31,10 @@ class AsyncQuerySetIterator(BaseModel):
 
     class Config:
         arbitrary_types_allowed = True
+
+    @classmethod
+    def from_subscription(cls, sub: QuerySetSubscription):
+        return cls(sub=sub)
 
     def __aiter__(self):
         return self

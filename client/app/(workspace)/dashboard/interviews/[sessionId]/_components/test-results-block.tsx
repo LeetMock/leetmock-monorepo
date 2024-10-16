@@ -1,10 +1,10 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
+import { TestCase, TestResultsProps } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { TestResultsProps, TestCase } from "@/lib/types";
+import { Fragment, useState } from "react";
 
 export const TestResultsBlock: React.FC<TestResultsProps> = ({ results }) => {
-  const [selectedCase, setSelectedCase] = React.useState<TestCase | null>(null);
+  const [selectedCase, setSelectedCase] = useState<TestCase | null>(null);
   const passedCount = results.filter((r) => r.passed).length;
   const allPassed = passedCount === results.length;
 
@@ -71,10 +71,10 @@ const TestCaseDetail: React.FC<{ title: string; data: any }> = ({ title, data })
 
   const renderErrorMessage = (error: string) => {
     return error.split("\n").map((line, index) => (
-      <React.Fragment key={index}>
+      <Fragment key={index}>
         {line}
         <br />
-      </React.Fragment>
+      </Fragment>
     ));
   };
 

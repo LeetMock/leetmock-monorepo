@@ -1,16 +1,15 @@
 import asyncio
+from typing import Generic, List, TypeVar
 
-from typing import List, Literal
-
-from livekit.rtc import DataPacket
-from livekit.agents import JobContext, AutoSubscribe
-from livekit.agents.llm import ChatContext
-from livekit.agents.utils import EventEmitter
-from agent_server.utils.query_iterators import AsyncQueryIterator
+from agent_server.chan.request import ChanRequest, RequestConfig
+from agent_server.chan.validators import string_validator
 from agent_server.contexts.convex import ConvexApi
-from agent_server.agent import LangGraphLLM
-from agent_server.types import EditorSnapshot, create_get_session_metadata_request
+from agent_server.contexts.session import BaseSession
+from agent_server.types import CodeSessionState
 from agent_server.utils.logger import get_logger
+from livekit.agents import JobContext
+from livekit.agents.llm import ChatContext
+from livekit.rtc import DataPacket
 
 logger = get_logger(__name__)
 
@@ -18,36 +17,43 @@ RECONNECT_MESSAGE = (
     "(User has disconnected and reconnected back to the interview, you would say:)"
 )
 
-LATEST_SNAPSHOT_QUERY = "editorSnapshots:getLatestSnapshotBySessionId"
+SESSION_ID_TOPIC = "session-id"
 
-EventTypes = Literal["snapshot_updated"]
+TEventTypes = TypeVar("TEventTypes", bound=str)
 
 
-class AgentContextManager(EventEmitter[EventTypes]):
+class AgentContextManager(Generic[TEventTypes]):
     """AgentContextManager is a context manager for the agent."""
 
-    def __init__(self, ctx: JobContext, api: ConvexApi):
+    def __init__(
+        self,
+        ctx: JobContext,
+        api: ConvexApi,
+        session: BaseSession[TEventTypes],
+    ):
         super().__init__()
 
         self.ctx = ctx
         self.api = api
 
+        self._session = session
         self._session_id_fut = asyncio.Future[str]()
-        self._initialized_fut = asyncio.Future[bool]()
         self._chat_ctx = ChatContext()
-        self._snapshots: List[EditorSnapshot] = []
+        self._snapshots: List[CodeSessionState] = []
 
         self._has_started = False
         self._start_lock = asyncio.Lock()
-        self._subscribe_task: asyncio.Task | None = None
-        self._update_task: asyncio.Task | None = None
+
+    @property
+    def session(self) -> BaseSession[TEventTypes]:
+        return self._session
 
     @property
     def chat_ctx(self) -> ChatContext:
         return self._chat_ctx
 
     @property
-    def snapshots(self) -> List[EditorSnapshot]:
+    def snapshots(self) -> List[CodeSessionState]:
         return self._snapshots
 
     @property
@@ -55,81 +61,24 @@ class AgentContextManager(EventEmitter[EventTypes]):
         assert self._session_id_fut.done(), "Session id not set yet"
         return self._session_id_fut.result()
 
-    async def setup(self, agent: LangGraphLLM):
-        self.ctx.room.on("data_received", self._on_data_received)
-
-        await self.ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
-        await self._session_id_fut
-        await self._prepare_session_and_acknowledge(agent)
-        await self._prepare_initial_agent_context(agent)
-
-    def _on_data_received(self, data: DataPacket):
-        if data.topic != "session-id":
-            logger.warning("Unexpected data topic: %s", data.topic)
-            return
-
-        session_id = data.data.decode("utf-8")
-        if len(session_id) == 0:
-            logger.warning("Received empty session id")
-            return
-
-        if not self._session_id_fut.done():
-            self._session_id_fut.set_result(session_id)
-            logger.info("session_id_fut set")
-            return
-        else:
-            logger.warning("session_id_fut already set")
-
-        asyncio.create_task(
-            self.ctx.room.local_participant.publish_data(
-                payload="session-id-received",
-                topic="session-id-received",
-                reliable=True,
-            )
+    async def setup(self):
+        config = RequestConfig(
+            topic=SESSION_ID_TOPIC,
+            validator=string_validator(min_length=1),
+            period=1.0,
+            exit_on_receive=True,
         )
 
-    async def _prepare_session_and_acknowledge(self, agent: LangGraphLLM):
-        request = create_get_session_metadata_request(self._session_id_fut.result())
-        response = self.api.action.api_run_actions_get_session_metadata_post(request)
+        # Create a data channel request to fetch the session id
+        request = ChanRequest(config)
+        await request.connect(self.ctx)
 
-        if response.status == "error" or response.value is None:
-            logger.error(f"Error getting session metadata: {response.error_message}")
-            raise Exception(f"Error getting session metadata: {response.error_message}")
+        # Wait for the session id to be received
+        result = await request.result()
+        self._session_id_fut.set_result(result)
 
-        logger.info("Acked session id")
-        agent.set_agent_session(response.value)
-
-    async def _prepare_initial_agent_context(self, agent: LangGraphLLM):
-        state = await agent.get_state()
-
-        messages = state.get("messages", [])  # type: ignore
-        logger.info(f"Got initial context: {messages}")
-
-        if len(messages) != 0:
-            self.chat_ctx.append(text=RECONNECT_MESSAGE, role="user")
-
-    async def _update_convex_state(self):
-        logger.info("Updating convex state")
-        pass
-
-    async def _subscribe_snapshot_state(self):
-        logger.info("Subscribing to snapshot state")
-
-        subscription = self.api.subscribe(
-            LATEST_SNAPSHOT_QUERY,
-            {"sessionId": self.session_id},
-        )
-        query_iterator = AsyncQueryIterator(sub=subscription)
-
-        async for part in query_iterator:
-            if not self._initialized_fut.done():
-                self._initialized_fut.set_result(True)
-
-            snapshot = EditorSnapshot.model_validate(part)
-            self._snapshots.append(snapshot)
-            self.emit("snapshot_updated", self._snapshots)
-
-        logger.error("Reached unreachable code in _subscribe_snapshot_state")
+        # Setup the session with the session id
+        await self._session.start(result)
 
     async def start(self):
         async with self._start_lock:
@@ -140,6 +89,5 @@ class AgentContextManager(EventEmitter[EventTypes]):
                 return
 
             self._has_started = True
-            self._subscribe_task = asyncio.create_task(self._subscribe_snapshot_state())
-            self._update_task = asyncio.create_task(self._update_convex_state())
-            await self._initialized_fut
+            await self.ctx.connect()
+            await self.setup()
