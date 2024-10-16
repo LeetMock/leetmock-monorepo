@@ -5,8 +5,11 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**creation_time** | **float** |  | 
+**id** | **str** | ID from table \&quot;codeSessionStates\&quot; | 
 **display_question** | **bool** |  | 
 **editor** | [**ResponseCodeSessionStatesGetValueEditor**](ResponseCodeSessionStatesGetValueEditor.md) |  | 
+**session_id** | **str** | ID from table \&quot;sessions\&quot; | 
 **terminal** | [**ResponseCodeSessionStatesGetValueTerminal**](ResponseCodeSessionStatesGetValueTerminal.md) |  | 
 
 ## Example

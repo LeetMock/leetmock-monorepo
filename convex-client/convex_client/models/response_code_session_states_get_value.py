@@ -17,8 +17,8 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool
-from typing import Any, ClassVar, Dict, List
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr
+from typing import Any, ClassVar, Dict, List, Union
 from convex_client.models.response_code_session_states_get_value_editor import ResponseCodeSessionStatesGetValueEditor
 from convex_client.models.response_code_session_states_get_value_terminal import ResponseCodeSessionStatesGetValueTerminal
 from typing import Optional, Set
@@ -28,10 +28,13 @@ class ResponseCodeSessionStatesGetValue(BaseModel):
     """
     ResponseCodeSessionStatesGetValue
     """ # noqa: E501
+    creation_time: Union[StrictFloat, StrictInt] = Field(alias="_creationTime")
+    id: StrictStr = Field(description="ID from table \"codeSessionStates\"", alias="_id")
     display_question: StrictBool = Field(alias="displayQuestion")
     editor: ResponseCodeSessionStatesGetValueEditor
+    session_id: StrictStr = Field(description="ID from table \"sessions\"", alias="sessionId")
     terminal: ResponseCodeSessionStatesGetValueTerminal
-    __properties: ClassVar[List[str]] = ["displayQuestion", "editor", "terminal"]
+    __properties: ClassVar[List[str]] = ["_creationTime", "_id", "displayQuestion", "editor", "sessionId", "terminal"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -90,8 +93,11 @@ class ResponseCodeSessionStatesGetValue(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
+            "_creationTime": obj.get("_creationTime"),
+            "_id": obj.get("_id"),
             "displayQuestion": obj.get("displayQuestion"),
             "editor": ResponseCodeSessionStatesGetValueEditor.from_dict(obj["editor"]) if obj.get("editor") is not None else None,
+            "sessionId": obj.get("sessionId"),
             "terminal": ResponseCodeSessionStatesGetValueTerminal.from_dict(obj["terminal"]) if obj.get("terminal") is not None else None
         })
         return _obj

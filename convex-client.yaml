@@ -1694,10 +1694,18 @@ components:
         value:
           type: object
           required:
+            - _creationTime
+            - _id
             - displayQuestion
             - editor
+            - sessionId
             - terminal
           properties:
+            _creationTime:
+              type: number
+            _id:
+              type: string
+              description: ID from table "codeSessionStates"
             displayQuestion:
               type: boolean
             editor:
@@ -1713,6 +1721,9 @@ components:
                   type: string
                 lastUpdated:
                   type: number
+            sessionId:
+              type: string
+              description: ID from table "sessions"
             terminal:
               type: object
               required:
