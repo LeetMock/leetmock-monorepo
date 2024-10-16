@@ -33,10 +33,10 @@ export const useAgent = (sessionId: Id<"sessions">) => {
   )[0];
 
   // Data channel to send session id to agent server
-  const { send: sendSessionId } = useDataChannel(`receive-${session_id_topic}`);
+  const { send: sendSessionId } = useDataChannel(session_id_topic);
 
   // Listen to agent server requesting session id from client
-  useDataChannel(`request-${session_id_topic}`, (message) => {
+  useDataChannel(session_id_topic, (message) => {
     console.log("Got request for session id", message);
     sendSessionId(encode(sessionId), { reliable: true });
     setAgentReceivedSessionId(true);

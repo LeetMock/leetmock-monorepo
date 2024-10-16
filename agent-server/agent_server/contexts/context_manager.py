@@ -62,13 +62,14 @@ class AgentContextManager(Generic[TEventTypes]):
         return self._session_id_fut.result()
 
     async def setup(self):
-        # Create a data channel request to fetch the session id
         config = RequestConfig(
             topic=SESSION_ID_TOPIC,
             validator=string_validator(min_length=1),
             period=1.0,
             exit_on_receive=True,
         )
+
+        # Create a data channel request to fetch the session id
         request = ChanRequest(config)
         await request.connect(self.ctx)
 
@@ -78,7 +79,6 @@ class AgentContextManager(Generic[TEventTypes]):
 
         # Setup the session with the session id
         await self._session.start(result)
-        await self.ctx.connect()
 
     async def start(self):
         async with self._start_lock:
@@ -89,4 +89,5 @@ class AgentContextManager(Generic[TEventTypes]):
                 return
 
             self._has_started = True
+            await self.ctx.connect()
             await self.setup()
