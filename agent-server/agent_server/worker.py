@@ -199,6 +199,5 @@ if __name__ == "__main__":
             # load_fnc=CustomLoadCalc.get_load,
             # load_threshold=0.80,  # max(cpu_load, mem_load)
             # shutdown_process_timeout=30,  # seconds
-            num_idle_processes=5,  # number of idle agents to keep
         )
     )

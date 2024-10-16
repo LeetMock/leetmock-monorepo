@@ -19,6 +19,7 @@ export type AgentState =
   | "speaking";
 
 const state_attribute = "lk.agent.state";
+const session_id_topic = "session-id";
 
 export const useAgent = (sessionId: Id<"sessions">) => {
   const [agentReceivedSessionId, setAgentReceivedSessionId] = useState(false);
@@ -31,11 +32,13 @@ export const useAgent = (sessionId: Id<"sessions">) => {
     agentParticipant?.identity
   )[0];
 
-  const { send: sendSessionId } = useDataChannel("session-id");
+  // Data channel to send session id to agent server
+  const { send: sendSessionId } = useDataChannel(`receive-${session_id_topic}`);
 
-  // Agent server send ack to client that it received the session id
-  useDataChannel("session-id-received", (message) => {
-    console.log("Received session id ack", message);
+  // Listen to agent server requesting session id from client
+  useDataChannel(`request-${session_id_topic}`, (message) => {
+    console.log("Got request for session id", message);
+    sendSessionId(encode(sessionId), { reliable: true });
     setAgentReceivedSessionId(true);
   });
 
@@ -45,20 +48,6 @@ export const useAgent = (sessionId: Id<"sessions">) => {
       setAgentReceivedSessionId(false);
     }
   }, [connectionState]);
-
-  useEffect(() => {
-    if (agentReceivedSessionId) return;
-    if (!sessionId) return;
-
-    // Keep sending the session id to the agent server until it is received
-    if (connectionState === ConnectionState.Connected) {
-      const interval = setInterval(() => {
-        sendSessionId(encode(sessionId), { reliable: true });
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }
-  }, [agentReceivedSessionId, connectionState, sendSessionId, sessionId]);
 
   const isAgentConnected = useMemo(() => {
     return agentParticipant !== undefined && agentReceivedSessionId;
