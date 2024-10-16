@@ -71,14 +71,6 @@ class ChanRequest(Generic[T]):
         return False
 
     @property
-    def request_topic(self) -> str:
-        return f"request-{self._config.topic}"
-
-    @property
-    def receive_topic(self) -> str:
-        return f"receive-{self._config.topic}"
-
-    @property
     def serialized_payload(self) -> bytes:
         if self._serialized_payload is not None:
             return self._serialized_payload
@@ -102,17 +94,19 @@ class ChanRequest(Generic[T]):
             )
 
             await ctx.room.local_participant.publish_data(
-                topic=self.request_topic,
+                topic=self._config.topic,
                 payload=self.serialized_payload,
                 reliable=self._config.reliable,
             )
             await asyncio.sleep(self._config.period)
 
-    async def _on_receive_data(self, data: DataPacket):
+    def _on_receive_data(self, data: DataPacket):
+        logger.info(f"Received data for topic {self._config.topic}")
+
         if self._should_exit():
             return
 
-        if data.topic != self.receive_topic:
+        if data.topic != self._config.topic:
             return
 
         logger.info(f"Received data for topic {self._config.topic}")
@@ -128,7 +122,7 @@ class ChanRequest(Generic[T]):
             self._receive_fut.set_result(True)
 
         # Execute callbacks in parallel
-        await asyncio.gather(*[cb(self._result) for cb in self._on_update_callbacks])
+        asyncio.gather(*[cb(self._result) for cb in self._on_update_callbacks])
 
     async def on_update(
         self, callback: Callable[[T], Coroutine[Any, Any, None] | None]
@@ -149,7 +143,7 @@ class ChanRequest(Generic[T]):
             if self._connected:
                 return
 
-            logger.info(f"Connecting to {self.request_topic}")
+            logger.info(f"Connecting to topic `{self._config.topic}`")
             ctx.room.on("data_received", self._on_receive_data)
             self._request_task = asyncio.create_task(self._request_data_task(ctx))
             self._connected = True
