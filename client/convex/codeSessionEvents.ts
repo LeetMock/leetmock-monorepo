@@ -4,6 +4,7 @@ import { mutation, query, userMutation } from "./functions";
 import {
   CodeSessionEvent,
   codeSessionEventSchema,
+  codeSessionEventSchemas,
   CodeSessionEventType,
   EntWriter,
   QueryCtx,
@@ -68,7 +69,7 @@ export const getNextContentChangeEvent = query({
       id: v.id("codeSessionEvents"),
       ts: v.number(),
       acked: v.boolean(),
-      event: v.any(),
+      event: codeSessionEventSchemas.content_changed,
     })
   ),
   handler: async (ctx, { codeSessionStateId }) => {
