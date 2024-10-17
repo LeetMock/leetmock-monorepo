@@ -1,4 +1,5 @@
 import asyncio
+import json
 from abc import ABC, abstractmethod
 from re import S
 from typing import Any, AsyncGenerator, AsyncIterator, Literal, Optional, TypeVar
@@ -12,6 +13,7 @@ from agent_server.types import (
 from agent_server.utils.logger import get_logger
 from agent_server.utils.query_iterators import AsyncQueryIterator
 from livekit.agents.utils import EventEmitter
+from sympy import limit
 
 logger = get_logger(__name__)
 
@@ -97,12 +99,14 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
         """Stream the events from convex."""
 
         subscription = self._api.subscribe(
-            CODE_SESSION_EVENT_QUERY, {"sessionId": self._session_id}
+            CODE_SESSION_EVENT_QUERY,
+            {"codeSessionStateId": self.session_state.id, "limit": 5},
         )
         query_stream = AsyncQueryIterator.from_subscription(subscription)
 
+        logger.info(f"Streaming code session events state id: {self.session_state.id}")
         async for events in query_stream:
-            logger.info(f"Code session events: {events}")
+            logger.info(f"Code session events: {json.dumps(events, indent=2)}")
 
     async def setup(self, session_id: str):
         self._session_id = session_id

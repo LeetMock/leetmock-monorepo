@@ -41,7 +41,7 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
   const startSession = useMutation(api.sessions.startSession);
   const endSession = useMutation(api.sessions.endSession);
 
-  const [timeLeft, setTimeLeft] = useState<number>(60 * 5);
+  const [timeLeft, setTimeLeft] = useState<number>(60 * 15);
   const [isEndInterviewDialogOpen, setIsEndInterviewDialogOpen] = useState<boolean>(false);
 
   const { state } = useAgent(session.sessionId);
@@ -51,7 +51,7 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
       if (!isDefined(session?.sessionStartTime)) return;
 
       const currentTime = Date.now();
-      const endTime = session.sessionStartTime + minutesToMilliseconds(5);
+      const endTime = session.sessionStartTime + minutesToMilliseconds(15);
       const timeLeft = getTimeDurationSeconds(currentTime, endTime);
       setTimeLeft(Math.max(timeLeft, 0));
     }, 500);

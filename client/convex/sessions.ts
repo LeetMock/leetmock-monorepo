@@ -97,9 +97,13 @@ export const startSession = userMutation({
     const startTime = session.sessionStartTime ? session.sessionStartTime : Date.now();
 
     if (session.sessionStatus === "not_started") {
-      await ctx.scheduler.runAfter(minutesToMilliseconds(5), internal.sessions.endSessionInternal, {
-        sessionId,
-      });
+      await ctx.scheduler.runAfter(
+        minutesToMilliseconds(15),
+        internal.sessions.endSessionInternal,
+        {
+          sessionId,
+        }
+      );
     }
 
     await session.patch({
