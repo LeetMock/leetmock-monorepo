@@ -1,30 +1,6 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from "convex-ents";
 import { v } from "convex/values";
-
-export const codeSessionEventType = v.union(
-  v.object({
-    type: v.literal("content_changed"),
-    data: v.object({
-      content: v.string(),
-    }),
-  }),
-  v.object({
-    type: v.literal("user_test_executed"),
-    data: v.any(), // TODO: change this to the actual data type
-  }),
-  v.object({
-    type: v.literal("testcase_added"),
-    data: v.any(), // TODO: change this to the actual data type
-  }),
-  v.object({
-    type: v.literal("testcase_removed"),
-    data: v.any(), // TODO: change this to the actual data type
-  }),
-  v.object({
-    type: v.literal("question_displayed"),
-    data: v.boolean(),
-  })
-);
+import { codeSessionEventSchema } from "./types";
 
 // Schema definition
 const schema = defineEntSchema({
@@ -83,12 +59,12 @@ const schema = defineEntSchema({
     .edge("session")
     .edges("codeSessionEvents", { ref: true }),
   codeSessionEvents: defineEnt({
-    event: codeSessionEventType,
+    event: codeSessionEventSchema,
     acked: v.boolean(),
   })
     .deletion("soft")
     .edge("codeSessionState")
-    .index("by_session_id_and_acked", ["codeSessionStateId", "acked"]),
+    .index("by_session_id_and_acked_and_type", ["codeSessionStateId", "acked", "event.type"]),
   questions: defineEnt({
     category: v.array(v.string()),
     difficulty: v.number(),

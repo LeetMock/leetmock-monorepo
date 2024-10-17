@@ -17,18 +17,21 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict
-from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_code_session_events_get_next_event_batch_args import RequestCodeSessionEventsGetNextEventBatchArgs
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr
+from typing import Any, ClassVar, Dict, List, Union
+from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestCodeSessionEventsGetNextEventBatch(BaseModel):
+class ResponseCodeSessionEventsGetNextContentChangeEventValue(BaseModel):
     """
-    RequestCodeSessionEventsGetNextEventBatch
+    ResponseCodeSessionEventsGetNextContentChangeEventValue
     """ # noqa: E501
-    args: RequestCodeSessionEventsGetNextEventBatchArgs
-    __properties: ClassVar[List[str]] = ["args"]
+    acked: StrictBool
+    event: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf
+    id: StrictStr = Field(description="ID from table \"codeSessionEvents\"")
+    ts: Union[StrictFloat, StrictInt]
+    __properties: ClassVar[List[str]] = ["acked", "event", "id", "ts"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -48,7 +51,7 @@ class RequestCodeSessionEventsGetNextEventBatch(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsGetNextEventBatch from a JSON string"""
+        """Create an instance of ResponseCodeSessionEventsGetNextContentChangeEventValue from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -69,14 +72,14 @@ class RequestCodeSessionEventsGetNextEventBatch(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of args
-        if self.args:
-            _dict['args'] = self.args.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of event
+        if self.event:
+            _dict['event'] = self.event.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsGetNextEventBatch from a dict"""
+        """Create an instance of ResponseCodeSessionEventsGetNextContentChangeEventValue from a dict"""
         if obj is None:
             return None
 
@@ -84,7 +87,10 @@ class RequestCodeSessionEventsGetNextEventBatch(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "args": RequestCodeSessionEventsGetNextEventBatchArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
+            "acked": obj.get("acked"),
+            "event": RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf.from_dict(obj["event"]) if obj.get("event") is not None else None,
+            "id": obj.get("id"),
+            "ts": obj.get("ts")
         })
         return _obj
 

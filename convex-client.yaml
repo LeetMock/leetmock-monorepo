@@ -696,6 +696,37 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/codeSessionEvents/ackCodeSessionEvent:
+    post:
+      summary: Calls a mutation at the path codeSessionEvents.js:ackCodeSessionEvent
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codeSessionEvents.ackCodeSessionEvent"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codeSessionEvents.ackCodeSessionEvent"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
   /api/run/codeSessionEvents/commitCodeSessionEvent:
     post:
       summary: Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
@@ -727,16 +758,16 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
-  /api/run/codeSessionEvents/getNextEventBatch:
+  /api/run/codeSessionEvents/getNextContentChangeEvent:
     post:
-      summary: Calls a query at the path codeSessionEvents.js:getNextEventBatch
+      summary: Calls a query at the path codeSessionEvents.js:getNextContentChangeEvent
       tags:
         - query
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Request_codeSessionEvents.getNextEventBatch"
+              $ref: "#/components/schemas/Request_codeSessionEvents.getNextContentChangeEvent"
         required: true
       responses:
         "200":
@@ -744,7 +775,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Response_codeSessionEvents.getNextEventBatch"
+                $ref: "#/components/schemas/Response_codeSessionEvents.getNextContentChangeEvent"
         "400":
           description: Failed operation
           content:
@@ -1827,6 +1858,36 @@ components:
           type: object
         value: {}
 
+    Request_codeSessionEvents.ackCodeSessionEvent:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - eventId
+          properties:
+            eventId:
+              type: string
+              description: ID from table "codeSessionEvents"
+
+    Response_codeSessionEvents.ackCodeSessionEvent:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
     Request_codeSessionEvents.commitCodeSessionEvent:
       type: object
       required:
@@ -1917,7 +1978,7 @@ components:
           type: object
         value: {}
 
-    Request_codeSessionEvents.getNextEventBatch:
+    Request_codeSessionEvents.getNextContentChangeEvent:
       type: object
       required:
         - args
@@ -1926,15 +1987,12 @@ components:
           type: object
           required:
             - codeSessionStateId
-            - limit
           properties:
             codeSessionStateId:
               type: string
               description: ID from table "codeSessionStates"
-            limit:
-              type: number
 
-    Response_codeSessionEvents.getNextEventBatch:
+    Response_codeSessionEvents.getNextContentChangeEvent:
       type: object
       required:
         - status
@@ -1949,74 +2007,37 @@ components:
         errorData:
           type: object
         value:
-          type: array
-          items:
-            type: object
-            required:
-              - event
-              - ts
-            properties:
-              event:
-                oneOf:
-                  - type: object
-                    required:
-                      - data
-                      - type
-                    properties:
-                      data:
-                        type: object
-                        required:
-                          - content
-                        properties:
-                          content:
-                            type: string
-                      type:
-                        type: string
-                        enum:
-                          - "content_changed"
-                  - type: object
-                    required:
-                      - data
-                      - type
-                    properties:
-                      data: {}
-                      type:
-                        type: string
-                        enum:
-                          - "user_test_executed"
-                  - type: object
-                    required:
-                      - data
-                      - type
-                    properties:
-                      data: {}
-                      type:
-                        type: string
-                        enum:
-                          - "testcase_added"
-                  - type: object
-                    required:
-                      - data
-                      - type
-                    properties:
-                      data: {}
-                      type:
-                        type: string
-                        enum:
-                          - "testcase_removed"
-                  - type: object
-                    required:
-                      - data
-                      - type
-                    properties:
-                      data:
-                        type: boolean
-                      type:
-                        type: string
-                        enum:
-                          - "question_displayed"
-              ts:
-                type: number
+          type: object
+          required:
+            - acked
+            - event
+            - id
+            - ts
+          properties:
+            acked:
+              type: boolean
+            event:
+              type: object
+              required:
+                - data
+                - type
+              properties:
+                data:
+                  type: object
+                  required:
+                    - content
+                  properties:
+                    content:
+                      type: string
+                type:
+                  type: string
+                  enum:
+                    - "content_changed"
+            id:
+              type: string
+              description: ID from table "codeSessionEvents"
+            ts:
+              type: number
 
     FailedResponse:
       type: object

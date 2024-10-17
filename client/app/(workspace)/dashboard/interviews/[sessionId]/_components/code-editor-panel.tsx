@@ -11,7 +11,7 @@ import { useDebounceCallback } from "usehooks-ts";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { CodeSessionEventType } from "@/convex/types";
+import { CodeSessionEvent } from "@/convex/types";
 import { useNonReactiveQuery } from "@/hooks/use-non-reactive-query";
 import { useResizePanel } from "@/hooks/use-resize-panel";
 import { RunTestResult } from "@/lib/types";
@@ -75,7 +75,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   );
 
   const handleCommitEvent = useCallback(
-    (event: CodeSessionEventType) => {
+    (event: CodeSessionEvent) => {
       if (connectionState !== "connected") {
         toast.error(UNCONNECTED_MESSAGE);
         return;
