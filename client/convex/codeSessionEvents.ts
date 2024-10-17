@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query, userMutation } from "./functions";
+import { mutation, query, userMutation } from "./functions";
 import { codeSessionEventType } from "./schema";
 import { CodeSessionEventType, EntWriter } from "./types";
 
@@ -41,6 +41,25 @@ async function handleContentChangeEvent(
     },
   });
 }
+
+export const ackCodeSessionEvents = mutation({
+  args: {
+    eventIds: v.array(v.id("codeSessionEvents")),
+  },
+  handler: async (ctx, { eventIds }) => {
+    const promises = eventIds.map(async (eventId) => {
+      try {
+        await ctx.table("codeSessionEvents").getX(eventId).patch({
+          acked: true,
+        });
+      } catch (e) {
+        console.error(`Error acking event ${eventId}: ${e}`);
+      }
+    });
+
+    await Promise.all(promises);
+  },
+});
 
 export const getNextEventBatch = query({
   args: {
