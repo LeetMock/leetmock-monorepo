@@ -16,7 +16,7 @@ from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
 from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
-from convex_client.models.request_code_session_events_get_next_event_batch import RequestCodeSessionEventsGetNextEventBatch
+from convex_client.models.request_code_session_events_get_next_content_change_event import RequestCodeSessionEventsGetNextContentChangeEvent
 from convex_client.models.request_code_session_states_get import RequestCodeSessionStatesGet
 from convex_client.models.request_code_session_states_get_editor_state import RequestCodeSessionStatesGetEditorState
 from convex_client.models.request_code_session_states_get_session_state_by_session_id import RequestCodeSessionStatesGetSessionStateBySessionId
@@ -28,7 +28,7 @@ from convex_client.models.request_sessions_get_active_session import RequestSess
 from convex_client.models.request_sessions_get_by_id import RequestSessionsGetById
 from convex_client.models.request_sessions_get_by_user_id import RequestSessionsGetByUserId
 from convex_client.models.request_user_profiles_get_user_profile import RequestUserProfilesGetUserProfile
-from convex_client.models.response_code_session_events_get_next_event_batch import ResponseCodeSessionEventsGetNextEventBatch
+from convex_client.models.response_code_session_events_get_next_content_change_event import ResponseCodeSessionEventsGetNextContentChangeEvent
 from convex_client.models.response_code_session_states_get import ResponseCodeSessionStatesGet
 from convex_client.models.response_code_session_states_get_editor_state import ResponseCodeSessionStatesGetEditorState
 from convex_client.models.response_code_session_states_get_session_state_by_session_id import ResponseCodeSessionStatesGetSessionStateBySessionId
@@ -60,9 +60,9 @@ class QueryApi:
 
 
     @validate_call
-    def api_run_code_session_events_get_next_event_batch_post(
+    def api_run_code_session_events_get_next_content_change_event_post(
         self,
-        request_code_session_events_get_next_event_batch: RequestCodeSessionEventsGetNextEventBatch,
+        request_code_session_events_get_next_content_change_event: RequestCodeSessionEventsGetNextContentChangeEvent,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -75,12 +75,12 @@ class QueryApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ResponseCodeSessionEventsGetNextEventBatch:
-        """Calls a query at the path codeSessionEvents.js:getNextEventBatch
+    ) -> ResponseCodeSessionEventsGetNextContentChangeEvent:
+        """Calls a query at the path codeSessionEvents.js:getNextContentChangeEvent
 
 
-        :param request_code_session_events_get_next_event_batch: (required)
-        :type request_code_session_events_get_next_event_batch: RequestCodeSessionEventsGetNextEventBatch
+        :param request_code_session_events_get_next_content_change_event: (required)
+        :type request_code_session_events_get_next_content_change_event: RequestCodeSessionEventsGetNextContentChangeEvent
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -103,8 +103,8 @@ class QueryApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_code_session_events_get_next_event_batch_post_serialize(
-            request_code_session_events_get_next_event_batch=request_code_session_events_get_next_event_batch,
+        _param = self._api_run_code_session_events_get_next_content_change_event_post_serialize(
+            request_code_session_events_get_next_content_change_event=request_code_session_events_get_next_content_change_event,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -112,7 +112,7 @@ class QueryApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseCodeSessionEventsGetNextEventBatch",
+            '200': "ResponseCodeSessionEventsGetNextContentChangeEvent",
             '400': "object",
             '500': "object",
         }
@@ -128,9 +128,9 @@ class QueryApi:
 
 
     @validate_call
-    def api_run_code_session_events_get_next_event_batch_post_with_http_info(
+    def api_run_code_session_events_get_next_content_change_event_post_with_http_info(
         self,
-        request_code_session_events_get_next_event_batch: RequestCodeSessionEventsGetNextEventBatch,
+        request_code_session_events_get_next_content_change_event: RequestCodeSessionEventsGetNextContentChangeEvent,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -143,12 +143,12 @@ class QueryApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[ResponseCodeSessionEventsGetNextEventBatch]:
-        """Calls a query at the path codeSessionEvents.js:getNextEventBatch
+    ) -> ApiResponse[ResponseCodeSessionEventsGetNextContentChangeEvent]:
+        """Calls a query at the path codeSessionEvents.js:getNextContentChangeEvent
 
 
-        :param request_code_session_events_get_next_event_batch: (required)
-        :type request_code_session_events_get_next_event_batch: RequestCodeSessionEventsGetNextEventBatch
+        :param request_code_session_events_get_next_content_change_event: (required)
+        :type request_code_session_events_get_next_content_change_event: RequestCodeSessionEventsGetNextContentChangeEvent
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -171,8 +171,8 @@ class QueryApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_code_session_events_get_next_event_batch_post_serialize(
-            request_code_session_events_get_next_event_batch=request_code_session_events_get_next_event_batch,
+        _param = self._api_run_code_session_events_get_next_content_change_event_post_serialize(
+            request_code_session_events_get_next_content_change_event=request_code_session_events_get_next_content_change_event,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -180,7 +180,7 @@ class QueryApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseCodeSessionEventsGetNextEventBatch",
+            '200': "ResponseCodeSessionEventsGetNextContentChangeEvent",
             '400': "object",
             '500': "object",
         }
@@ -196,9 +196,9 @@ class QueryApi:
 
 
     @validate_call
-    def api_run_code_session_events_get_next_event_batch_post_without_preload_content(
+    def api_run_code_session_events_get_next_content_change_event_post_without_preload_content(
         self,
-        request_code_session_events_get_next_event_batch: RequestCodeSessionEventsGetNextEventBatch,
+        request_code_session_events_get_next_content_change_event: RequestCodeSessionEventsGetNextContentChangeEvent,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -212,11 +212,11 @@ class QueryApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        """Calls a query at the path codeSessionEvents.js:getNextEventBatch
+        """Calls a query at the path codeSessionEvents.js:getNextContentChangeEvent
 
 
-        :param request_code_session_events_get_next_event_batch: (required)
-        :type request_code_session_events_get_next_event_batch: RequestCodeSessionEventsGetNextEventBatch
+        :param request_code_session_events_get_next_content_change_event: (required)
+        :type request_code_session_events_get_next_content_change_event: RequestCodeSessionEventsGetNextContentChangeEvent
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -239,8 +239,8 @@ class QueryApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_code_session_events_get_next_event_batch_post_serialize(
-            request_code_session_events_get_next_event_batch=request_code_session_events_get_next_event_batch,
+        _param = self._api_run_code_session_events_get_next_content_change_event_post_serialize(
+            request_code_session_events_get_next_content_change_event=request_code_session_events_get_next_content_change_event,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -248,7 +248,7 @@ class QueryApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseCodeSessionEventsGetNextEventBatch",
+            '200': "ResponseCodeSessionEventsGetNextContentChangeEvent",
             '400': "object",
             '500': "object",
         }
@@ -259,9 +259,9 @@ class QueryApi:
         return response_data.response
 
 
-    def _api_run_code_session_events_get_next_event_batch_post_serialize(
+    def _api_run_code_session_events_get_next_content_change_event_post_serialize(
         self,
-        request_code_session_events_get_next_event_batch,
+        request_code_session_events_get_next_content_change_event,
         _request_auth,
         _content_type,
         _headers,
@@ -285,8 +285,8 @@ class QueryApi:
         # process the header parameters
         # process the form parameters
         # process the body parameter
-        if request_code_session_events_get_next_event_batch is not None:
-            _body_params = request_code_session_events_get_next_event_batch
+        if request_code_session_events_get_next_content_change_event is not None:
+            _body_params = request_code_session_events_get_next_content_change_event
 
 
         # set the HTTP header `Accept`
@@ -318,7 +318,7 @@ class QueryApi:
 
         return self.api_client.param_serialize(
             method='POST',
-            resource_path='/api/run/codeSessionEvents/getNextEventBatch',
+            resource_path='/api/run/codeSessionEvents/getNextContentChangeEvent',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,

@@ -1,11 +1,11 @@
 import asyncio
-import json
 from abc import ABC, abstractmethod
-from re import S
-from typing import Any, AsyncGenerator, AsyncIterator, Literal, Optional, TypeVar
+from ast import List
+from typing import Any, Dict, Literal, Type, TypeVar
 
 from agent_server.contexts.convex import ConvexApi
 from agent_server.types import (
+    CodeSessionContentChangedEvent,
     CodeSessionState,
     SessionMetadata,
     create_get_session_metadata_request,
@@ -13,12 +13,13 @@ from agent_server.types import (
 from agent_server.utils.logger import get_logger
 from agent_server.utils.query_iterators import AsyncQueryIterator
 from livekit.agents.utils import EventEmitter
-from sympy import limit
+from pydantic import BaseModel
 
 logger = get_logger(__name__)
 
 
 TEventTypes = TypeVar("TEventTypes", bound=str)
+TEvent = TypeVar("TEvent", bound=BaseModel)
 
 
 class BaseSession(EventEmitter[TEventTypes], ABC):
@@ -30,6 +31,10 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
         self._api = api
         self._session_id: str | None = None
         self._session_metadata: SessionMetadata | None = None
+
+        self._tasks: Dict[str, asyncio.Task] = {}
+        self._has_started = False
+        self._start_lock = asyncio.Lock()
 
     @property
     def session_id(self) -> str:
@@ -45,21 +50,59 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
     def session_state(self) -> Any:
         raise NotImplementedError
 
-    async def stream_events(self):
-        """Stream the events from convex."""
-        raise NotImplementedError
+    async def _event_stream_task(
+        self,
+        event_type: TEventTypes,
+        query: str,
+        params: Dict[str, Any],
+        validator_cls: Type[TEvent],
+    ):
+        subscription = self._api.subscribe(query, params)
+        query_stream = AsyncQueryIterator.from_subscription(subscription)
+
+        logger.info(f"Watching query `{query}` with params `{params}`")
+        async for raw_event in query_stream:
+            event = validator_cls.model_validate(raw_event)
+            self.emit(event_type, event)
+
+    def create_event_stream_task(
+        self,
+        event_type: TEventTypes,
+        query: str,
+        params: Dict[str, Any],
+        validator_cls: Type[TEvent],
+    ):
+        if event_type in self._tasks:
+            logger.warning(
+                f"Event stream task for {event_type} already exists. Ignoring."
+            )
+            return
+
+        self._tasks[event_type] = asyncio.create_task(
+            self._event_stream_task(event_type, query, params, validator_cls)
+        )
 
     @abstractmethod
-    async def start(self, session_id: str):
+    async def setup(self, session_id: str):
         """Start the session."""
         raise NotImplementedError
+
+    async def start(self, session_id: str):
+        async with self._start_lock:
+            if self._has_started:
+                logger.warning(
+                    "start method called multiple times. Ignoring subsequent calls."
+                )
+                return
+
+            self._has_started = True
+            await self.setup(session_id)
 
 
 CodeSessionEventTypes = Literal["content_changed"]
 
 
 CODE_SESSION_STATE_QUERY = "codeSessionStates:get"
-CODE_SESSION_EVENT_QUERY = "codeSessionEvents:getNextEventBatch"
 
 
 class CodeSession(BaseSession[CodeSessionEventTypes]):
@@ -70,9 +113,6 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
         self._code_session_state: CodeSessionState | None = None
         self._watch_code_session_state_task: asyncio.Task | None = None
         self._synced_future: asyncio.Future[bool] = asyncio.Future()
-
-        self._has_started = False
-        self._start_lock = asyncio.Lock()
 
     @property
     def session_state(self) -> CodeSessionState:
@@ -95,18 +135,8 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
             if not self._synced_future.done():
                 self._synced_future.set_result(True)
 
-    async def stream_events(self):
-        """Stream the events from convex."""
-
-        subscription = self._api.subscribe(
-            CODE_SESSION_EVENT_QUERY,
-            {"codeSessionStateId": self.session_state.id, "limit": 5},
-        )
-        query_stream = AsyncQueryIterator.from_subscription(subscription)
-
-        logger.info(f"Streaming code session events state id: {self.session_state.id}")
-        async for events in query_stream:
-            logger.info(f"Code session events: {json.dumps(events, indent=2)}")
+    def _on_content_changed(self, event: CodeSessionContentChangedEvent):
+        logger.info(f"Code session content changed: {event}")
 
     async def setup(self, session_id: str):
         self._session_id = session_id
@@ -122,15 +152,15 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
         self._watch_code_session_state_task = asyncio.create_task(
             self._watch_code_session_state()
         )
+
         await self._synced_future
 
-    async def start(self, session_id: str):
-        async with self._start_lock:
-            if self._has_started:
-                logger.warning(
-                    "start method called multiple times. Ignoring subsequent calls."
-                )
-                return
+        self.on("content_changed", self._on_content_changed)
 
-            self._has_started = True
-            await self.setup(session_id)
+        # Create event stream tasks
+        self.create_event_stream_task(
+            "content_changed",
+            "codeSessionEvents:getNextContentChangeEvent",
+            {"codeSessionStateId": self.session_state.id},
+            CodeSessionContentChangedEvent,
+        )

@@ -26,10 +26,10 @@ class TestQueryApi(unittest.TestCase):
     def tearDown(self) -> None:
         pass
 
-    def test_api_run_code_session_events_get_next_event_batch_post(self) -> None:
-        """Test case for api_run_code_session_events_get_next_event_batch_post
+    def test_api_run_code_session_events_get_next_content_change_event_post(self) -> None:
+        """Test case for api_run_code_session_events_get_next_content_change_event_post
 
-        Calls a query at the path codeSessionEvents.js:getNextEventBatch
+        Calls a query at the path codeSessionEvents.js:getNextContentChangeEvent
         """
         pass
 
