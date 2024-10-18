@@ -149,7 +149,7 @@ export const InterviewTypeSelection: React.FC = () => {
 };
 
 export const StartInterviewDialog: React.FC = () => {
-  const { maxStep, codeInterview, hasConfiguredSession, updateCodeInterview, reset } =
+  const { maxStep, codeInterview, hasConfiguredSession, updateCodeInterview, reset, setType } =
     useSessionCreateModal();
   const router = useRouter();
   const questions = useQuery(api.questions.getAll);
@@ -159,14 +159,26 @@ export const StartInterviewDialog: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [startDialogOpen, setStartDialogOpen] = useState(false);
 
+  const handleRandomPick = useCallback(() => {
+    if (questions && questions.length > 0) {
+      const randomIndex = Math.floor(Math.random() * questions.length);
+      const randomQuestion = questions[randomIndex];
+      updateCodeInterview({ questionId: randomQuestion._id });
+      setCurrentStep(2); // Move to the next step (Configure Interview)
+    }
+  }, [questions, updateCodeInterview]);
+
+  const handleQuestionSelect = useCallback((questionId: Id<"questions">) => {
+    updateCodeInterview({ questionId });
+  }, [updateCodeInterview]);
+
   const handleSessionCreate = useCallback(async () => {
-    if (!questions) return; // Check if questions is undefined
+    if (!questions) return;
     const question = questions.find((q) => q._id === codeInterview.questionId);
     if (!question) return;
 
-    const { functionName, inputParameters } = question; // Assuming these fields exist in your question object
+    const { functionName, inputParameters } = question;
 
-    // TODO: wrap inside an action
     const promise = createAgentThread({ graphId: "code-mock-v1" })
       .then(({ threadId, assistantId }) => {
         return createSession({
@@ -177,6 +189,7 @@ export const StartInterviewDialog: React.FC = () => {
       })
       .then((sessionId) => {
         reset();
+        setStartDialogOpen(false);
         router.push(`/dashboard/interviews/${sessionId}`);
       });
 
@@ -206,7 +219,7 @@ export const StartInterviewDialog: React.FC = () => {
           <DialogHeader>
             <DialogTitle className="text-2xl">Choose Interview Type</DialogTitle>
             <DialogDescription className="text-base">
-              Select the type of interview you&apos;d like to start.
+              Select the type of interview you'd like to start.
             </DialogDescription>
           </DialogHeader>
           <Stepper
@@ -217,12 +230,14 @@ export const StartInterviewDialog: React.FC = () => {
           <Wait data={{ questions }}>
             {({ questions }) =>
               currentStep === 1 && (
-                <div className="flex-grow overflow-y-auto max-h-[calc(100vh-20rem)]">
+                <div className="flex flex-col h-[calc(100vh-20rem)]">
                   <CodeQuestionViewer
                     questions={questions}
                     onQuestionSelected={(questionId) => {
                       updateCodeInterview({ questionId });
+                      setCurrentStep(1);
                     }}
+                    onRandomPick={handleRandomPick}
                   />
                 </div>
               )
