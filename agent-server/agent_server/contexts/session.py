@@ -4,6 +4,7 @@ from ast import List
 from typing import Any, Dict, Literal, Type, TypeVar
 
 from agent_server.contexts.convex import ConvexApi
+from agent_server.convex.query_generator import AsyncQueryGenerator
 from agent_server.types import (
     CodeSessionContentChangedEvent,
     CodeSessionState,
@@ -11,7 +12,6 @@ from agent_server.types import (
     create_get_session_metadata_request,
 )
 from agent_server.utils.logger import get_logger
-from agent_server.utils.query_iterators import AsyncQueryIterator
 from livekit.agents.utils import EventEmitter
 from pydantic import BaseModel
 
@@ -58,7 +58,7 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
         validator_cls: Type[TEvent],
     ):
         subscription = self._api.subscribe(query, params)
-        query_stream = AsyncQueryIterator.from_subscription(subscription)
+        query_stream = AsyncQueryGenerator.from_subscription(subscription)
 
         logger.info(f"Watching query `{query}` with params `{params}`")
         async for raw_event in query_stream:
@@ -125,7 +125,7 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
         subscription = self._api.subscribe(
             CODE_SESSION_STATE_QUERY, {"sessionId": self._session_id}
         )
-        query_stream = AsyncQueryIterator.from_subscription(subscription)
+        query_stream = AsyncQueryGenerator.from_subscription(subscription)
 
         logger.info(f"Watching code session state for {self._session_id}")
         async for raw_state in query_stream:
@@ -134,6 +134,12 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
 
             if not self._synced_future.done():
                 self._synced_future.set_result(True)
+
+    def _on_code_session_state_changed(self, event: CodeSessionState):
+        logger.info(f"Code session state: {event}")
+
+        if not self._synced_future.done():
+            self._synced_future.set_result(True)
 
     def _on_content_changed(self, event: CodeSessionContentChangedEvent):
         logger.info(f"Code session content changed: {event}")
