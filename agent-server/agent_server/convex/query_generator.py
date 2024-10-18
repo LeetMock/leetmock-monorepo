@@ -6,7 +6,7 @@ from pydantic import BaseModel
 logger = logging.getLogger("convex")
 
 
-class AsyncQueryIterator(BaseModel):
+class AsyncQueryGenerator(BaseModel):
     sub: QuerySubscription
 
     class Config:
@@ -26,7 +26,7 @@ class AsyncQueryIterator(BaseModel):
         return result["value"]
 
 
-class AsyncQuerySetIterator(BaseModel):
+class AsyncQuerySetGenerator(BaseModel):
     sub: QuerySetSubscription
 
     class Config:

@@ -1,15 +1,14 @@
 import asyncio
 from typing import Generic, List, TypeVar
 
-from agent_server.chan.request import ChanRequest, RequestConfig
-from agent_server.chan.validators import string_validator
 from agent_server.contexts.convex import ConvexApi
 from agent_server.contexts.session import BaseSession
+from agent_server.livekit.chan_value import ChanConfig, ChanValue
+from agent_server.livekit.validators import string_validator
 from agent_server.types import CodeSessionState
 from agent_server.utils.logger import get_logger
 from livekit.agents import JobContext
 from livekit.agents.llm import ChatContext
-from livekit.rtc import DataPacket
 
 logger = get_logger(__name__)
 
@@ -62,7 +61,7 @@ class AgentContextManager(Generic[TEventTypes]):
         return self._session_id_fut.result()
 
     async def setup(self):
-        config = RequestConfig(
+        config = ChanConfig(
             topic=SESSION_ID_TOPIC,
             validator=string_validator(min_length=1),
             period=1.0,
@@ -70,7 +69,7 @@ class AgentContextManager(Generic[TEventTypes]):
         )
 
         # Create a data channel request to fetch the session id
-        request = ChanRequest(config)
+        request = ChanValue(config)
         await request.connect(self.ctx)
 
         # Wait for the session id to be received
