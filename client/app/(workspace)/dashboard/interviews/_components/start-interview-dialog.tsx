@@ -159,6 +159,19 @@ export const StartInterviewDialog: React.FC = () => {
   const [startDialogOpen, setStartDialogOpen] = useState(false);
 
 
+  const handleRandomPick = useCallback(() => {
+    if (questions && questions.length > 0) {
+      const randomIndex = Math.floor(Math.random() * questions.length);
+      const randomQuestion = questions[randomIndex];
+      updateCodeInterview({ questionId: randomQuestion._id });
+      setCurrentStep(2); // Move to the next step (Configure Interview)
+    }
+  }, [questions, updateCodeInterview]);
+
+  const handleQuestionSelect = useCallback((questionId: Id<"questions">) => {
+    updateCodeInterview({ questionId });
+  }, [updateCodeInterview]);
+
   const handleSessionCreate = useCallback(async () => {
     if (!questions) return;
     const question = questions.find((q) => q._id === codeInterview.questionId);
@@ -166,9 +179,6 @@ export const StartInterviewDialog: React.FC = () => {
 
     const { functionName, inputParameters } = question;
 
-    const promise = createAgentThread({ graphId: "code-mock-v1" })
-
-    // TODO: wrap inside an action
     const promise = createAgentThread({ graphId: "code-mock-v1" })
       .then(({ threadId, assistantId }) => {
         return createSession({
@@ -229,6 +239,7 @@ export const StartInterviewDialog: React.FC = () => {
                       updateCodeInterview({ questionId });
                       setCurrentStep(1);
                     }}
+                    onRandomPick={handleRandomPick}
                   />
                 </div>
               )
