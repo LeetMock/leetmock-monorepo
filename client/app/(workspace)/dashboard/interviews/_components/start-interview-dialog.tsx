@@ -168,9 +168,6 @@ export const StartInterviewDialog: React.FC = () => {
     }
   }, [questions, updateCodeInterview]);
 
-  const handleQuestionSelect = useCallback((questionId: Id<"questions">) => {
-    updateCodeInterview({ questionId });
-  }, [updateCodeInterview]);
 
   const handleSessionCreate = useCallback(async () => {
     if (!questions) return;
@@ -239,7 +236,6 @@ export const StartInterviewDialog: React.FC = () => {
                       updateCodeInterview({ questionId });
                       setCurrentStep(1);
                     }}
-                    onRandomPick={handleRandomPick}
                   />
                 </div>
               )
