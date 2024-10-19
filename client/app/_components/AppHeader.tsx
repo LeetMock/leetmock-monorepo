@@ -52,9 +52,8 @@ export default function AppHeader() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-lg" : "bg-transparent"
-      }`}
+      className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-lg" : "bg-transparent"
+        }`}
     >
       <nav className={`w-full transition-all duration-300 ${isScrolled ? "py-2" : "py-4"}`}>
         <Container>
@@ -129,9 +128,9 @@ export default function AppHeader() {
               <div className="mt-12 lg:mt-0">
                 <Link
                   href="/dashboard"
-                  className="relative flex h-9 w-full items-center justify-center px-4 before:absolute before:inset-0 before:rounded-full before:bg-primary before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
+                  className="relative flex h-9 w-full items-center justify-center px-4 before:absolute before:inset-0 before:rounded-full before:bg-blue-600 dark:before:bg-orange-500 before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
                 >
-                  <span className="relative text-sm font-semibold text-white"> Get Started</span>
+                  <span className="relative text-sm font-semibold text-white">Get Started</span>
                 </Link>
               </div>
             </div>

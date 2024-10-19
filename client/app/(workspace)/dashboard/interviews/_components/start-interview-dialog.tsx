@@ -18,6 +18,7 @@ import { SessionType, useSessionCreateModal } from "@/hooks/use-session-create-m
 import { useAction, useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { CodeQuestionViewer } from "./code-question-viewer";
+import { CodeInterviewConfig } from "./code-interview-config";
 import { Wait } from "@/components/wait";
 import { Id } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
@@ -168,9 +169,6 @@ export const StartInterviewDialog: React.FC = () => {
     }
   }, [questions, updateCodeInterview]);
 
-  const handleQuestionSelect = useCallback((questionId: Id<"questions">) => {
-    updateCodeInterview({ questionId });
-  }, [updateCodeInterview]);
 
   const handleSessionCreate = useCallback(async () => {
     if (!questions) return;
@@ -222,10 +220,12 @@ export const StartInterviewDialog: React.FC = () => {
               Select the type of interview you'd like to start.
             </DialogDescription>
           </DialogHeader>
+
           <Stepper
             steps={["Select Interview Type", "Select Problem", "Configure Interview"]}
             currentStep={maxStep}
           />
+
           {currentStep === 0 && <InterviewTypeSelection />}
           <Wait data={{ questions }}>
             {({ questions }) =>
@@ -237,7 +237,6 @@ export const StartInterviewDialog: React.FC = () => {
                       updateCodeInterview({ questionId });
                       setCurrentStep(1);
                     }}
-                    onRandomPick={handleRandomPick}
                   />
                 </div>
               )
@@ -245,12 +244,7 @@ export const StartInterviewDialog: React.FC = () => {
           </Wait>
           {currentStep === 2 && (
             <div className="flex justify-center items-center flex-1">
-              <div className="flex flex-col items-center gap-2">
-                <div className="text-lg">No Config Available</div>
-                <div className="text-sm text-muted-foreground">
-                  You can configure your interview later.
-                </div>
-              </div>
+              <CodeInterviewConfig />
             </div>
           )}
           <div className="flex justify-between">

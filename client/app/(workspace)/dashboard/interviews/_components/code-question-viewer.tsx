@@ -37,8 +37,7 @@ const DifficultyBubble: React.FC<{ difficulty: number }> = ({ difficulty }) => {
 export const CodeQuestionViewer: React.FC<{
   questions: Question[];
   onQuestionSelected: (id: Id<"questions">) => void;
-  onRandomPick: () => void;
-}> = ({ questions, onQuestionSelected, onRandomPick }) => {
+}> = ({ questions, onQuestionSelected }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDifficulties, setSelectedDifficulties] = useState<number[]>([]);
   const [searchTags, setSearchTags] = useState("");
@@ -144,7 +143,7 @@ export const CodeQuestionViewer: React.FC<{
         />
         <div className="col-span-1">
           <Button
-            onClick={onRandomPick}
+            onClick={handleRandomSelect}
             className="w-full"
             disabled={filteredQuestions.length === 0}
           >
