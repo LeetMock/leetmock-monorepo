@@ -1,9 +1,8 @@
 from typing import Literal, get_args
 
-from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from langchain_core.language_models.chat_models import BaseChatModel
-
+from langchain_openai import ChatOpenAI
 
 ModelName = Literal["gpt-4o", "gpt-4o-mini", "claude-35"]
 
@@ -19,7 +18,7 @@ ChatbotConfig = {
     "background": {
         "model_name": "gpt-4o",
         "temperature": 0.9,
-    }
+    },
 }
 
 
