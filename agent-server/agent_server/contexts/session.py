@@ -1,20 +1,19 @@
 import asyncio
 from abc import ABC, abstractmethod
-from ast import List
-from typing import Any, Dict, Literal, Type, TypeVar
+from typing import Literal, TypeVar
 
 from agent_server.convex.api import ConvexApi
-from agent_server.convex.query_generator import AsyncQueryGenerator
 from agent_server.convex.query_watcher import QueryWatcher
-from agent_server.types import (
+from agent_server.utils.logger import get_logger
+from livekit.agents.utils import EventEmitter
+from pydantic import BaseModel
+
+from libs.convex_types import (
     CodeSessionContentChangedEvent,
     CodeSessionState,
     SessionMetadata,
     create_get_session_metadata_request,
 )
-from agent_server.utils.logger import get_logger
-from livekit.agents.utils import EventEmitter
-from pydantic import BaseModel
 
 logger = get_logger(__name__)
 

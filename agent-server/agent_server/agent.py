@@ -2,16 +2,16 @@ from __future__ import annotations
 
 import hashlib
 import os
-
 from datetime import datetime
-from pprint import pprint
-from langgraph_sdk.client import get_client
-from livekit.agents import llm
 from typing import AsyncGenerator, AsyncIterator
-from langgraph_sdk.schema import StreamPart
-from agent_server.utils.messages import convert_chat_ctx_to_langchain_messages
-from agent_server.types import SessionMetadata, CodeSessionState
+
 from agent_server.utils.logger import get_logger
+from agent_server.utils.messages import convert_chat_ctx_to_langchain_messages
+from langgraph_sdk.client import get_client
+from langgraph_sdk.schema import StreamPart
+from livekit.agents import llm
+
+from libs.convex_types import CodeSessionState, SessionMetadata
 
 logger = get_logger(__name__)
 
@@ -60,9 +60,6 @@ class LangGraphLLM(llm.LLM):
         for i, message in enumerate(langchain_messages):
             key = f"{self._unix_timestamp}-{i}-{message.type}"
             message.id = hashlib.md5(key.encode()).hexdigest()
-
-        print("Following is copied_ctx.messages, not conmmitted yet!")
-        pprint(langchain_messages)
 
         assert self._session_metadata is not None, "Session metadata is not set"
         assert self._snapshot is not None, "Snapshot is not set"
