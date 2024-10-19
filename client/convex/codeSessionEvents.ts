@@ -1,3 +1,4 @@
+import { isDefined } from "@/lib/utils";
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
 import { mutation, query, userMutation } from "./functions";
@@ -64,16 +65,19 @@ export const getNextContentChangeEvent = query({
   args: {
     codeSessionStateId: v.id("codeSessionStates"),
   },
-  returns: v.optional(
+  returns: v.union(
     v.object({
       id: v.id("codeSessionEvents"),
       ts: v.number(),
       acked: v.boolean(),
       event: codeSessionEventSchemas.content_changed,
-    })
+    }),
+    v.null()
   ),
   handler: async (ctx, { codeSessionStateId }) => {
-    return await getNextEventByType(ctx, codeSessionStateId, "content_changed");
+    const event = await getNextEventByType(ctx, codeSessionStateId, "content_changed");
+    console.log("event", event);
+    return event;
   },
 });
 
@@ -99,7 +103,7 @@ async function getNextEventByType<T extends CodeSessionEventType>(
     .order("asc")
     .first();
 
-  if (!event) {
+  if (!isDefined(event)) {
     return undefined;
   }
 

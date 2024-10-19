@@ -82,6 +82,11 @@ class ResponseCodeSessionEventsGetNextContentChangeEvent(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of value
         if self.value:
             _dict['value'] = self.value.to_dict()
+        # set to None if value (nullable) is None
+        # and model_fields_set contains the field
+        if self.value is None and "value" in self.model_fields_set:
+            _dict['value'] = None
+
         return _dict
 
     @classmethod

@@ -1,7 +1,7 @@
 import asyncio
 import json
 from inspect import iscoroutinefunction
-from typing import Any, Callable, Coroutine, Dict, Generic, List, TypeVar
+from typing import Any, Callable, Coroutine, Dict, Generic, List, Self, TypeVar
 
 from agent_server.utils.logger import get_logger
 from livekit.agents import JobContext
@@ -101,8 +101,6 @@ class ChanValue(Generic[T]):
             await asyncio.sleep(self._config.period)
 
     def _on_receive_data(self, data: DataPacket):
-        logger.info(f"Received data for topic {self._config.topic}")
-
         if self._should_exit():
             return
 
@@ -139,12 +137,16 @@ class ChanValue(Generic[T]):
 
         self._callbacks.append(wrapped_callback)
 
-    async def connect(self, ctx: JobContext):
-        async with self._connect_lock:
-            if self._connected:
-                return
+    def connect(self, ctx: JobContext) -> Self:
+        if self._connected:
+            logger.warning("Already connected to topic `%s`", self._config.topic)
+            return self
 
-            logger.info(f"Connecting to topic `{self._config.topic}`")
+        self._connected = True
+        logger.info(f"Connecting to topic `{self._config.topic}`")
+
+        if self._request_task is None:
             ctx.room.on("data_received", self._on_receive_data)
             self._request_task = asyncio.create_task(self._request_data_task(ctx))
-            self._connected = True
+
+        return self

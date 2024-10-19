@@ -1,8 +1,8 @@
 import asyncio
-from typing import Generic, List, TypeVar
+from typing import Generic, List, TypeVar, cast
 
-from agent_server.contexts.convex import ConvexApi
-from agent_server.contexts.session import BaseSession
+from agent_server.contexts.session import BaseSession, CodeSession
+from agent_server.convex.api import ConvexApi
 from agent_server.livekit.chan_value import ChanConfig, ChanValue
 from agent_server.livekit.validators import string_validator
 from agent_server.types import CodeSessionState
@@ -18,24 +18,23 @@ RECONNECT_MESSAGE = (
 
 SESSION_ID_TOPIC = "session-id"
 
-TEventTypes = TypeVar("TEventTypes", bound=str)
+TSession = TypeVar("TSession", bound=BaseSession)
 
 
-class AgentContextManager(Generic[TEventTypes]):
+class AgentContextManager(Generic[TSession]):
     """AgentContextManager is a context manager for the agent."""
 
     def __init__(
         self,
         ctx: JobContext,
         api: ConvexApi,
-        session: BaseSession[TEventTypes],
     ):
         super().__init__()
 
         self.ctx = ctx
         self.api = api
 
-        self._session = session
+        self._session: TSession | None = None
         self._session_id_fut = asyncio.Future[str]()
         self._chat_ctx = ChatContext()
         self._snapshots: List[CodeSessionState] = []
@@ -44,16 +43,13 @@ class AgentContextManager(Generic[TEventTypes]):
         self._start_lock = asyncio.Lock()
 
     @property
-    def session(self) -> BaseSession[TEventTypes]:
+    def session(self) -> TSession:
+        assert self._session is not None, "Session not set yet"
         return self._session
 
     @property
     def chat_ctx(self) -> ChatContext:
         return self._chat_ctx
-
-    @property
-    def snapshots(self) -> List[CodeSessionState]:
-        return self._snapshots
 
     @property
     def session_id(self) -> str:
@@ -63,20 +59,21 @@ class AgentContextManager(Generic[TEventTypes]):
     async def setup(self):
         config = ChanConfig(
             topic=SESSION_ID_TOPIC,
-            validator=string_validator(min_length=1),
             period=1.0,
             exit_on_receive=True,
+            validator=string_validator(min_length=1),
         )
 
-        # Create a data channel request to fetch the session id
-        request = ChanValue(config)
-        await request.connect(self.ctx)
+        # Create a data channel value to fetch the session id
+        value = ChanValue(config).connect(self.ctx)
 
         # Wait for the session id to be received
-        result = await request.result()
+        result = await value.result()
         self._session_id_fut.set_result(result)
 
         # Setup the session with the session id
+        # TODO: adjust this part for other session types
+        self._session = cast(TSession, CodeSession(self.api))
         await self._session.start(result)
 
     async def start(self):
