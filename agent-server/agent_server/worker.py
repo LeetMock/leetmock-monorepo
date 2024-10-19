@@ -4,8 +4,8 @@ import os
 import psutil
 from agent_server.agent import LangGraphLLM, NoOpLLMStream
 from agent_server.contexts.context_manager import AgentContextManager
-from agent_server.contexts.convex import ConvexApi
 from agent_server.contexts.session import CodeSession
+from agent_server.convex.api import ConvexApi
 from agent_server.utils.logger import get_logger
 from dotenv import find_dotenv, load_dotenv
 from livekit.agents import cli  # type: ignore
@@ -60,9 +60,7 @@ class CustomLoadCalc(_DefaultLoadCalc):
 async def entrypoint(ctx: JobContext):
     agent = LangGraphLLM()
     convex_api = ConvexApi(convex_url=os.getenv("CONVEX_URL") or "")
-    ctx_manager = AgentContextManager(
-        ctx=ctx, api=convex_api, session=CodeSession(api=convex_api)
-    )
+    ctx_manager = AgentContextManager[CodeSession](ctx=ctx, api=convex_api)
 
     reminder_task: asyncio.Task | None = None
     reminder_delay = 24  # seconds
@@ -133,7 +131,7 @@ async def entrypoint(ctx: JobContext):
         llm=agent,
         tts=openai.TTS(),
         chat_ctx=ctx_manager.chat_ctx,
-        interrupt_speech_duration=0.7,
+        interrupt_speech_duration=0.4,
         before_llm_cb=before_llm_callback,
     )
 

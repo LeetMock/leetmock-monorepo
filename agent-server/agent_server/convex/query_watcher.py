@@ -3,7 +3,7 @@ from inspect import iscoroutinefunction
 from typing import Any, Callable, Coroutine, Dict, Generic, List, Type, TypeVar
 from venv import logger
 
-from agent_server.contexts.convex import ConvexApi
+from agent_server.convex.api import ConvexApi
 from agent_server.convex.query_generator import AsyncQueryGenerator
 from pydantic import BaseModel, Field, PrivateAttr
 
@@ -22,11 +22,25 @@ class QueryWatcher(BaseModel, Generic[TModel]):
         ..., description="The validator class to use to validate the query result"
     )
 
+    dedup: bool = Field(default=True, description="Whether to deduplicate events")
+
     _callbacks: List[Callable[[TModel], Coroutine[Any, Any, None]]] = PrivateAttr(
         default_factory=list
     )
 
     _query_watch_task: asyncio.Task | None = PrivateAttr(default=None)
+
+    _last_data: TModel | None = PrivateAttr(default=None)
+
+    @classmethod
+    def from_query(
+        cls,
+        query: str,
+        params: Dict[str, Any],
+        validator_cls: Type[TModel],
+        dedup: bool = True,
+    ):
+        return cls(query=query, params=params, validator_cls=validator_cls, dedup=dedup)
 
     def on_update(self, callback: Callable[[TModel], Coroutine[Any, Any, None] | None]):
         async def wrapped_callback(result: TModel) -> None:
@@ -39,6 +53,7 @@ class QueryWatcher(BaseModel, Generic[TModel]):
                 logger.error(f"Error in callback: {e}")
 
         self._callbacks.append(wrapped_callback)
+        return self
 
     async def _run_query_watch_task(self, api: ConvexApi):
         subscription = api.subscribe(self.query, self.params)
@@ -47,12 +62,20 @@ class QueryWatcher(BaseModel, Generic[TModel]):
 
         logger.info(f"Watching query `{self.query}` with params `{self.params}`")
         async for raw_data in query_stream:
+            if raw_data is None:
+                continue
+
             try:
                 data = self.validator_cls.model_validate(raw_data)
             except Exception as e:
                 logger.error(f"Error validating data: {e}")
                 continue
 
+            if self.dedup and data == self._last_data:
+                logger.debug(f"Skipping duplicated data: {data}")
+                continue
+
+            self._last_data = data
             await asyncio.gather(
                 *[cb(data) for cb in self._callbacks],
                 return_exceptions=True,

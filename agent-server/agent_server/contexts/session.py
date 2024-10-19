@@ -3,8 +3,9 @@ from abc import ABC, abstractmethod
 from ast import List
 from typing import Any, Dict, Literal, Type, TypeVar
 
-from agent_server.contexts.convex import ConvexApi
+from agent_server.convex.api import ConvexApi
 from agent_server.convex.query_generator import AsyncQueryGenerator
+from agent_server.convex.query_watcher import QueryWatcher
 from agent_server.types import (
     CodeSessionContentChangedEvent,
     CodeSessionState,
@@ -29,58 +30,8 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
         super().__init__()
 
         self._api = api
-        self._session_id: str | None = None
-        self._session_metadata: SessionMetadata | None = None
-
-        self._tasks: Dict[str, asyncio.Task] = {}
         self._has_started = False
         self._start_lock = asyncio.Lock()
-
-    @property
-    def session_id(self) -> str:
-        assert self._session_id is not None
-        return self._session_id
-
-    @property
-    def session_metadata(self) -> SessionMetadata:
-        assert self._session_metadata is not None
-        return self._session_metadata
-
-    @property
-    def session_state(self) -> Any:
-        raise NotImplementedError
-
-    async def _event_stream_task(
-        self,
-        event_type: TEventTypes,
-        query: str,
-        params: Dict[str, Any],
-        validator_cls: Type[TEvent],
-    ):
-        subscription = self._api.subscribe(query, params)
-        query_stream = AsyncQueryGenerator.from_subscription(subscription)
-
-        logger.info(f"Watching query `{query}` with params `{params}`")
-        async for raw_event in query_stream:
-            event = validator_cls.model_validate(raw_event)
-            self.emit(event_type, event)
-
-    def create_event_stream_task(
-        self,
-        event_type: TEventTypes,
-        query: str,
-        params: Dict[str, Any],
-        validator_cls: Type[TEvent],
-    ):
-        if event_type in self._tasks:
-            logger.warning(
-                f"Event stream task for {event_type} already exists. Ignoring."
-            )
-            return
-
-        self._tasks[event_type] = asyncio.create_task(
-            self._event_stream_task(event_type, query, params, validator_cls)
-        )
 
     @abstractmethod
     async def setup(self, session_id: str):
@@ -103,6 +54,7 @@ CodeSessionEventTypes = Literal["content_changed"]
 
 
 CODE_SESSION_STATE_QUERY = "codeSessionStates:get"
+CONTENT_CHANGED_QUERY = "codeSessionEvents:getNextContentChangeEvent"
 
 
 class CodeSession(BaseSession[CodeSessionEventTypes]):
@@ -110,39 +62,31 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
     def __init__(self, api: ConvexApi):
         super().__init__(api)
 
+        self._session_id: str | None = None
+        self._session_metadata: SessionMetadata | None = None
         self._code_session_state: CodeSessionState | None = None
-        self._watch_code_session_state_task: asyncio.Task | None = None
         self._synced_future: asyncio.Future[bool] = asyncio.Future()
+
+    @property
+    def session_metadata(self) -> SessionMetadata:
+        assert self._session_metadata is not None
+        return self._session_metadata
 
     @property
     def session_state(self) -> CodeSessionState:
         assert self._code_session_state is not None
         return self._code_session_state
 
-    async def _watch_code_session_state(self):
-        """Watch the changes of code session state from convex."""
-
-        subscription = self._api.subscribe(
-            CODE_SESSION_STATE_QUERY, {"sessionId": self._session_id}
-        )
-        query_stream = AsyncQueryGenerator.from_subscription(subscription)
-
-        logger.info(f"Watching code session state for {self._session_id}")
-        async for raw_state in query_stream:
-            self._code_session_state = CodeSessionState.model_validate(raw_state)
-            logger.info(f"Code session state: {self._code_session_state}")
-
-            if not self._synced_future.done():
-                self._synced_future.set_result(True)
-
-    def _on_code_session_state_changed(self, event: CodeSessionState):
-        logger.info(f"Code session state: {event}")
+    def _handle_code_session_state_changed(self, state: CodeSessionState):
+        logger.info(f"Code session state: {state}")
+        self._code_session_state = state
 
         if not self._synced_future.done():
             self._synced_future.set_result(True)
 
-    def _on_content_changed(self, event: CodeSessionContentChangedEvent):
+    def _handle_content_changed(self, event: CodeSessionContentChangedEvent):
         logger.info(f"Code session content changed: {event}")
+        self.emit("content_changed", event)
 
     async def setup(self, session_id: str):
         self._session_id = session_id
@@ -155,18 +99,22 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
             raise Exception(f"Error getting session metadata: {response.error_message}")
 
         self._session_metadata = response.value
-        self._watch_code_session_state_task = asyncio.create_task(
-            self._watch_code_session_state()
+
+        session_state_watcher = QueryWatcher.from_query(
+            query=CODE_SESSION_STATE_QUERY,
+            params={"sessionId": self._session_id},
+            validator_cls=CodeSessionState,
         )
 
+        session_state_watcher.on_update(self._handle_code_session_state_changed)
+        session_state_watcher.watch(self._api)
         await self._synced_future
 
-        self.on("content_changed", self._on_content_changed)
-
-        # Create event stream tasks
-        self.create_event_stream_task(
-            "content_changed",
-            "codeSessionEvents:getNextContentChangeEvent",
-            {"codeSessionStateId": self.session_state.id},
-            CodeSessionContentChangedEvent,
+        content_changed_watcher = QueryWatcher.from_query(
+            query=CONTENT_CHANGED_QUERY,
+            params={"codeSessionStateId": self.session_state.id},
+            validator_cls=CodeSessionContentChangedEvent,
         )
+
+        content_changed_watcher.on_update(self._handle_content_changed)
+        content_changed_watcher.watch(self._api)

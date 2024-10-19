@@ -2038,6 +2038,7 @@ components:
               description: ID from table "codeSessionEvents"
             ts:
               type: number
+          nullable: true
 
     FailedResponse:
       type: object
