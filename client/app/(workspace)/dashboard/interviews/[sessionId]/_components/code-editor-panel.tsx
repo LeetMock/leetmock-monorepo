@@ -76,10 +76,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
 
   const handleCommitEvent = useCallback(
     (event: CodeSessionEvent) => {
-      if (connectionState !== "connected") {
-        toast.error(UNCONNECTED_MESSAGE);
-        return;
-      }
+      if (connectionState !== "connected") return;
 
       const promise = commitCodeSessionEvent({ sessionId, event });
       toast.promise(promise, {
@@ -125,10 +122,6 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     setIsRunning(false);
   };
 
-  if (!stateLoaded) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className={cn("h-full w-full flex flex-col", className)} {...props}>
       <div
@@ -150,13 +143,13 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
             className="absolute inset-0"
             language={language}
             theme={theme === "dark" ? "customDarkTheme" : "vs-light"}
-            value={editorState!.content}
+            value={editorState ? editorState.content : ""}
             options={{
               fontSize: 14,
               lineNumbers: "on",
               roundedSelection: false,
               scrollBeyondLastLine: false,
-              readOnly: connectionState !== "connected",
+              readOnly: connectionState !== "connected" || !stateLoaded,
               readOnlyMessage: {
                 value: "You are not connected to the interview room.",
                 isTrusted: true,
@@ -223,7 +216,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
           {!isRunning && outputView === "output" && (
             <div className="flex items-center text-sm text-gray-500">
               <Clock className="w-4 h-4 mr-1" />
-              <span>{terminalState!.executionTime} ms</span>
+              <span>{terminalState ? terminalState.executionTime : 0} ms</span>
             </div>
           )}
         </div>
@@ -234,10 +227,10 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
             <pre
               className={cn(
                 "text-sm rounded-md absolute inset-3",
-                terminalState!.isError ? "text-red-500" : "text-gray-800 dark:text-gray-200"
+                terminalState?.isError ? "text-red-500" : "text-gray-800 dark:text-gray-200"
               )}
             >
-              <code>{terminalState!.output}</code>
+              <code>{terminalState ? terminalState.output : ""}</code>
             </pre>
           )}
         </div>
