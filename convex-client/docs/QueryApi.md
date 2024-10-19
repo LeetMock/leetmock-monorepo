@@ -4,7 +4,7 @@ All URIs are relative to *https://posh-chihuahua-941.convex.cloud*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**api_run_code_session_events_get_next_event_batch_post**](QueryApi.md#api_run_code_session_events_get_next_event_batch_post) | **POST** /api/run/codeSessionEvents/getNextEventBatch | Calls a query at the path codeSessionEvents.js:getNextEventBatch
+[**api_run_code_session_events_get_next_content_change_event_post**](QueryApi.md#api_run_code_session_events_get_next_content_change_event_post) | **POST** /api/run/codeSessionEvents/getNextContentChangeEvent | Calls a query at the path codeSessionEvents.js:getNextContentChangeEvent
 [**api_run_code_session_states_get_editor_state_post**](QueryApi.md#api_run_code_session_states_get_editor_state_post) | **POST** /api/run/codeSessionStates/getEditorState | Calls a query at the path codeSessionStates.js:getEditorState
 [**api_run_code_session_states_get_post**](QueryApi.md#api_run_code_session_states_get_post) | **POST** /api/run/codeSessionStates/get | Calls a query at the path codeSessionStates.js:get
 [**api_run_code_session_states_get_session_state_by_session_id_post**](QueryApi.md#api_run_code_session_states_get_session_state_by_session_id_post) | **POST** /api/run/codeSessionStates/getSessionStateBySessionId | Calls a query at the path codeSessionStates.js:getSessionStateBySessionId
@@ -18,10 +18,10 @@ Method | HTTP request | Description
 [**api_run_user_profiles_get_user_profile_post**](QueryApi.md#api_run_user_profiles_get_user_profile_post) | **POST** /api/run/userProfiles/getUserProfile | Calls a query at the path userProfiles.js:getUserProfile
 
 
-# **api_run_code_session_events_get_next_event_batch_post**
-> ResponseCodeSessionEventsGetNextEventBatch api_run_code_session_events_get_next_event_batch_post(request_code_session_events_get_next_event_batch)
+# **api_run_code_session_events_get_next_content_change_event_post**
+> ResponseCodeSessionEventsGetNextContentChangeEvent api_run_code_session_events_get_next_content_change_event_post(request_code_session_events_get_next_content_change_event)
 
-Calls a query at the path codeSessionEvents.js:getNextEventBatch
+Calls a query at the path codeSessionEvents.js:getNextContentChangeEvent
 
 ### Example
 
@@ -29,8 +29,8 @@ Calls a query at the path codeSessionEvents.js:getNextEventBatch
 
 ```python
 import convex_client
-from convex_client.models.request_code_session_events_get_next_event_batch import RequestCodeSessionEventsGetNextEventBatch
-from convex_client.models.response_code_session_events_get_next_event_batch import ResponseCodeSessionEventsGetNextEventBatch
+from convex_client.models.request_code_session_events_get_next_content_change_event import RequestCodeSessionEventsGetNextContentChangeEvent
+from convex_client.models.response_code_session_events_get_next_content_change_event import ResponseCodeSessionEventsGetNextContentChangeEvent
 from convex_client.rest import ApiException
 from pprint import pprint
 
@@ -54,15 +54,15 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.QueryApi(api_client)
-    request_code_session_events_get_next_event_batch = convex_client.RequestCodeSessionEventsGetNextEventBatch() # RequestCodeSessionEventsGetNextEventBatch | 
+    request_code_session_events_get_next_content_change_event = convex_client.RequestCodeSessionEventsGetNextContentChangeEvent() # RequestCodeSessionEventsGetNextContentChangeEvent | 
 
     try:
-        # Calls a query at the path codeSessionEvents.js:getNextEventBatch
-        api_response = api_instance.api_run_code_session_events_get_next_event_batch_post(request_code_session_events_get_next_event_batch)
-        print("The response of QueryApi->api_run_code_session_events_get_next_event_batch_post:\n")
+        # Calls a query at the path codeSessionEvents.js:getNextContentChangeEvent
+        api_response = api_instance.api_run_code_session_events_get_next_content_change_event_post(request_code_session_events_get_next_content_change_event)
+        print("The response of QueryApi->api_run_code_session_events_get_next_content_change_event_post:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling QueryApi->api_run_code_session_events_get_next_event_batch_post: %s\n" % e)
+        print("Exception when calling QueryApi->api_run_code_session_events_get_next_content_change_event_post: %s\n" % e)
 ```
 
 
@@ -72,11 +72,11 @@ with convex_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **request_code_session_events_get_next_event_batch** | [**RequestCodeSessionEventsGetNextEventBatch**](RequestCodeSessionEventsGetNextEventBatch.md)|  | 
+ **request_code_session_events_get_next_content_change_event** | [**RequestCodeSessionEventsGetNextContentChangeEvent**](RequestCodeSessionEventsGetNextContentChangeEvent.md)|  | 
 
 ### Return type
 
-[**ResponseCodeSessionEventsGetNextEventBatch**](ResponseCodeSessionEventsGetNextEventBatch.md)
+[**ResponseCodeSessionEventsGetNextContentChangeEvent**](ResponseCodeSessionEventsGetNextContentChangeEvent.md)
 
 ### Authorization
 

@@ -1,7 +1,7 @@
 import asyncio
 import json
 from inspect import iscoroutinefunction
-from typing import Any, Callable, Coroutine, Dict, Generic, List, TypeVar
+from typing import Any, Callable, Coroutine, Dict, Generic, List, Self, TypeVar
 
 from agent_server.utils.logger import get_logger
 from livekit.agents import JobContext
@@ -13,7 +13,7 @@ logger = get_logger(__name__)
 T = TypeVar("T")
 
 
-class RequestConfig(BaseModel, Generic[T]):
+class ChanConfig(BaseModel, Generic[T]):
     """The configuration for a request"""
 
     topic: str = Field(..., description="The topic to publish the request to")
@@ -40,9 +40,9 @@ class RequestConfig(BaseModel, Generic[T]):
     )
 
 
-class ChanRequest(Generic[T]):
+class ChanValue(Generic[T]):
 
-    def __init__(self, request_config: RequestConfig[T]):
+    def __init__(self, request_config: ChanConfig[T]):
         self._config = request_config.model_copy()
         self._receive_fut = asyncio.Future()
 
@@ -52,7 +52,7 @@ class ChanRequest(Generic[T]):
         self._connect_lock = asyncio.Lock()
         self._connected = False
 
-        self._on_update_callbacks: List[Callable[[T], Coroutine[Any, Any, None]]] = []
+        self._callbacks: List[Callable[[T], Coroutine[Any, Any, None]]] = []
 
     async def wait(self):
         await self._receive_fut
@@ -101,8 +101,6 @@ class ChanRequest(Generic[T]):
             await asyncio.sleep(self._config.period)
 
     def _on_receive_data(self, data: DataPacket):
-        logger.info(f"Received data for topic {self._config.topic}")
-
         if self._should_exit():
             return
 
@@ -122,11 +120,12 @@ class ChanRequest(Generic[T]):
             self._receive_fut.set_result(True)
 
         # Execute callbacks in parallel
-        asyncio.gather(*[cb(self._result) for cb in self._on_update_callbacks])
+        asyncio.gather(
+            *[cb(self._result) for cb in self._callbacks],
+            return_exceptions=True,
+        )
 
-    async def on_update(
-        self, callback: Callable[[T], Coroutine[Any, Any, None] | None]
-    ):
+    def on_update(self, callback: Callable[[T], Coroutine[Any, Any, None] | None]):
         async def wrapped_callback(result: T) -> None:
             try:
                 if iscoroutinefunction(callback):
@@ -136,14 +135,18 @@ class ChanRequest(Generic[T]):
             except Exception as e:
                 logger.error(f"Error in callback: {e}")
 
-        self._on_update_callbacks.append(wrapped_callback)
+        self._callbacks.append(wrapped_callback)
 
-    async def connect(self, ctx: JobContext):
-        async with self._connect_lock:
-            if self._connected:
-                return
+    def connect(self, ctx: JobContext) -> Self:
+        if self._connected:
+            logger.warning("Already connected to topic `%s`", self._config.topic)
+            return self
 
-            logger.info(f"Connecting to topic `{self._config.topic}`")
+        self._connected = True
+        logger.info(f"Connecting to topic `{self._config.topic}`")
+
+        if self._request_task is None:
             ctx.room.on("data_received", self._on_receive_data)
             self._request_task = asyncio.create_task(self._request_data_task(ctx))
-            self._connected = True
+
+        return self

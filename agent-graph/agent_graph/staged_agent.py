@@ -1,34 +1,26 @@
 import os
 import time
+from typing import Annotated, Any, Dict, List, Literal, TypedDict
+
 import convex_client
-
-from typing import Annotated, List, Literal, TypedDict, Dict, Any
-
+from agent_graph.llms import ModelName, get_model
+from agent_graph.prompts import TESTCASE_INTERNAL_ERROR_PROMPT, format_test_context
+from agent_graph.utils import (
+    get_default_config,
+    get_default_state,
+    remove_tasks,
+    tasks_to_str,
+)
 from convex_client.models.request_actions_run_tests import RequestActionsRunTests
 from convex_client.models.request_actions_run_tests_args import (
     RequestActionsRunTestsArgs,
 )
-
-
 from langchain import hub  # type: ignore
-from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, SystemMessage
-from langchain_core.runnables.config import RunnableConfig
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
 from langchain_core.prompts import ChatPromptTemplate
-
-from langgraph.graph import END, StateGraph, add_messages, START
+from langchain_core.runnables.config import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
-from agent_graph.prompts import (
-    TESTCASE_INTERNAL_ERROR_PROMPT,
-    format_test_context,
-)
-from agent_graph.utils import (
-    get_default_config,
-    get_default_state,
-    tasks_to_str,
-    remove_tasks,
-)
-from agent_graph.llms import get_model, ModelName
-import json
+from langgraph.graph import END, START, StateGraph, add_messages
 
 # --------------------- Types & Constants --------------------- #
 InteractionType = Literal["response_required", "reminder_required"]

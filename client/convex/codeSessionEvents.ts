@@ -1,12 +1,20 @@
+import { isDefined } from "@/lib/utils";
 import { v } from "convex/values";
-import { query, userMutation } from "./functions";
-import { codeSessionEventType } from "./schema";
-import { CodeSessionEventType, EntWriter } from "./types";
+import { Id } from "./_generated/dataModel";
+import { mutation, query, userMutation } from "./functions";
+import {
+  CodeSessionEvent,
+  codeSessionEventSchema,
+  codeSessionEventSchemas,
+  CodeSessionEventType,
+  EntWriter,
+  QueryCtx,
+} from "./types";
 
 export const commitCodeSessionEvent = userMutation({
   args: {
     sessionId: v.id("sessions"),
-    event: codeSessionEventType,
+    event: codeSessionEventSchema,
   },
   handler: async (ctx, { sessionId, event }) => {
     const sessionState = await ctx.table("sessions").getX(sessionId).edgeX("codeSessionState");
@@ -29,7 +37,7 @@ export const commitCodeSessionEvent = userMutation({
 
 async function handleContentChangeEvent(
   sessionState: EntWriter<"codeSessionStates">,
-  e: Extract<CodeSessionEventType, { type: "content_changed" }>
+  e: Extract<CodeSessionEvent, { type: "content_changed" }>
 ) {
   const { content } = e.data;
 
@@ -42,28 +50,67 @@ async function handleContentChangeEvent(
   });
 }
 
-export const getNextEventBatch = query({
+export const ackCodeSessionEvent = mutation({
   args: {
-    codeSessionStateId: v.id("codeSessionStates"),
-    limit: v.number(),
+    eventId: v.id("codeSessionEvents"),
   },
-  returns: v.array(
-    v.object({
-      ts: v.number(),
-      event: codeSessionEventType,
-    })
-  ),
-  handler: async (ctx, { codeSessionStateId, limit }) => {
-    const events = await ctx
-      .table("codeSessionEvents", "by_session_id_and_acked", (q) =>
-        q.eq("codeSessionStateId", codeSessionStateId).eq("acked", false)
-      )
-      .order("asc")
-      .take(limit)
-      .map(({ _creationTime, event }) => {
-        return { ts: _creationTime, event };
-      });
-
-    return events;
+  handler: async (ctx, { eventId }) => {
+    await ctx.table("codeSessionEvents").getX(eventId).patch({
+      acked: true,
+    });
   },
 });
+
+export const getNextContentChangeEvent = query({
+  args: {
+    codeSessionStateId: v.id("codeSessionStates"),
+  },
+  returns: v.union(
+    v.object({
+      id: v.id("codeSessionEvents"),
+      ts: v.number(),
+      acked: v.boolean(),
+      event: codeSessionEventSchemas.content_changed,
+    }),
+    v.null()
+  ),
+  handler: async (ctx, { codeSessionStateId }) => {
+    const event = await getNextEventByType(ctx, codeSessionStateId, "content_changed");
+    console.log("event", event);
+    return event;
+  },
+});
+
+// TODO: add other event queries here ...
+
+async function getNextEventByType<T extends CodeSessionEventType>(
+  ctx: QueryCtx,
+  codeSessionStateId: Id<"codeSessionStates">,
+  eventType: T
+): Promise<
+  | {
+      id: Id<"codeSessionEvents">;
+      ts: number;
+      event: Extract<CodeSessionEvent, { type: T }>;
+      acked: boolean;
+    }
+  | undefined
+> {
+  const event = await ctx
+    .table("codeSessionEvents", "by_session_id_and_acked_and_type", (q) =>
+      q.eq("codeSessionStateId", codeSessionStateId).eq("acked", false).eq("event.type", eventType)
+    )
+    .order("asc")
+    .first();
+
+  if (!isDefined(event)) {
+    return undefined;
+  }
+
+  return {
+    id: event._id,
+    ts: event._creationTime,
+    event: event.event as unknown as Extract<CodeSessionEvent, { type: T }>,
+    acked: event.acked,
+  };
+}

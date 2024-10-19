@@ -97,9 +97,13 @@ export const startSession = userMutation({
     const startTime = session.sessionStartTime ? session.sessionStartTime : Date.now();
 
     if (session.sessionStatus === "not_started") {
-      await ctx.scheduler.runAfter(minutesToMilliseconds(5), internal.sessions.endSessionInternal, {
-        sessionId,
-      });
+      await ctx.scheduler.runAfter(
+        minutesToMilliseconds(15),
+        internal.sessions.endSessionInternal,
+        {
+          sessionId,
+        }
+      );
     }
 
     await session.patch({
@@ -157,14 +161,16 @@ export const createCodeSession = userMutation({
       sessionStatus: "not_started",
     });
 
-    await ctx.table("codeSessionStates").insert({
+    const initialContent = CODE_TEMPLATES["python"](
+      question.functionName,
+      question.inputParameters["python"]
+    );
+
+    const codeSessionStateId = await ctx.table("codeSessionStates").insert({
       sessionId,
       editor: {
         language: "python",
-        content: CODE_TEMPLATES["python"](
-          question.functionName,
-          question.inputParameters["python"]
-        ),
+        content: initialContent,
         lastUpdated: Date.now(),
       },
       terminal: {
@@ -172,6 +178,18 @@ export const createCodeSession = userMutation({
         isError: false,
       },
       displayQuestion: false,
+    });
+
+    // Populate initial content changed event
+    await ctx.table("codeSessionEvents").insert({
+      codeSessionStateId,
+      event: {
+        type: "content_changed",
+        data: {
+          content: initialContent,
+        },
+      },
+      acked: false,
     });
 
     return sessionId;

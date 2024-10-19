@@ -19,15 +19,15 @@ import json
 
 from pydantic import BaseModel, ConfigDict
 from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_code_session_events_get_next_event_batch_args import RequestCodeSessionEventsGetNextEventBatchArgs
+from convex_client.models.request_code_session_events_get_next_content_change_event_args import RequestCodeSessionEventsGetNextContentChangeEventArgs
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestCodeSessionEventsGetNextEventBatch(BaseModel):
+class RequestCodeSessionEventsGetNextContentChangeEvent(BaseModel):
     """
-    RequestCodeSessionEventsGetNextEventBatch
+    RequestCodeSessionEventsGetNextContentChangeEvent
     """ # noqa: E501
-    args: RequestCodeSessionEventsGetNextEventBatchArgs
+    args: RequestCodeSessionEventsGetNextContentChangeEventArgs
     __properties: ClassVar[List[str]] = ["args"]
 
     model_config = ConfigDict(
@@ -48,7 +48,7 @@ class RequestCodeSessionEventsGetNextEventBatch(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsGetNextEventBatch from a JSON string"""
+        """Create an instance of RequestCodeSessionEventsGetNextContentChangeEvent from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -76,7 +76,7 @@ class RequestCodeSessionEventsGetNextEventBatch(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsGetNextEventBatch from a dict"""
+        """Create an instance of RequestCodeSessionEventsGetNextContentChangeEvent from a dict"""
         if obj is None:
             return None
 
@@ -84,7 +84,7 @@ class RequestCodeSessionEventsGetNextEventBatch(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "args": RequestCodeSessionEventsGetNextEventBatchArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
+            "args": RequestCodeSessionEventsGetNextContentChangeEventArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
         })
         return _obj
 

@@ -9,7 +9,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = ">=3.12,<3.13"
 livekit-plugins-deepgram = ">=0.6.4"
 livekit-plugins-openai = ">=0.8.0"
 livekit-plugins-silero = ">=0.6.3"
@@ -25,6 +25,7 @@ livekit-agents = ">=0.9.1"
 convex = "^0.6.0"
 openapi-generator-cli = "^4.3.1"
 convex_client = { path = "../convex-client", develop = true }
+libs = { path = "../libs", develop = true }
 livekit-plugins-elevenlabs = ">=0.7.5"
 elevenlabs = "^1.9.0"
 

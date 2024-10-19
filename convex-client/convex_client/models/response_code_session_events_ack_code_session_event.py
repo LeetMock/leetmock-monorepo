@@ -19,18 +19,17 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
-from convex_client.models.response_code_session_events_get_next_event_batch_value_inner import ResponseCodeSessionEventsGetNextEventBatchValueInner
 from typing import Optional, Set
 from typing_extensions import Self
 
-class ResponseCodeSessionEventsGetNextEventBatch(BaseModel):
+class ResponseCodeSessionEventsAckCodeSessionEvent(BaseModel):
     """
-    ResponseCodeSessionEventsGetNextEventBatch
+    ResponseCodeSessionEventsAckCodeSessionEvent
     """ # noqa: E501
     status: StrictStr
     error_message: Optional[StrictStr] = Field(default=None, alias="errorMessage")
     error_data: Optional[Dict[str, Any]] = Field(default=None, alias="errorData")
-    value: Optional[List[ResponseCodeSessionEventsGetNextEventBatchValueInner]] = None
+    value: Optional[Any] = None
     __properties: ClassVar[List[str]] = ["status", "errorMessage", "errorData", "value"]
 
     @field_validator('status')
@@ -58,7 +57,7 @@ class ResponseCodeSessionEventsGetNextEventBatch(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of ResponseCodeSessionEventsGetNextEventBatch from a JSON string"""
+        """Create an instance of ResponseCodeSessionEventsAckCodeSessionEvent from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -79,18 +78,16 @@ class ResponseCodeSessionEventsGetNextEventBatch(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of each item in value (list)
-        _items = []
-        if self.value:
-            for _item_value in self.value:
-                if _item_value:
-                    _items.append(_item_value.to_dict())
-            _dict['value'] = _items
+        # set to None if value (nullable) is None
+        # and model_fields_set contains the field
+        if self.value is None and "value" in self.model_fields_set:
+            _dict['value'] = None
+
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of ResponseCodeSessionEventsGetNextEventBatch from a dict"""
+        """Create an instance of ResponseCodeSessionEventsAckCodeSessionEvent from a dict"""
         if obj is None:
             return None
 
@@ -101,7 +98,7 @@ class ResponseCodeSessionEventsGetNextEventBatch(BaseModel):
             "status": obj.get("status"),
             "errorMessage": obj.get("errorMessage"),
             "errorData": obj.get("errorData"),
-            "value": [ResponseCodeSessionEventsGetNextEventBatchValueInner.from_dict(_item) for _item in obj["value"]] if obj.get("value") is not None else None
+            "value": obj.get("value")
         })
         return _obj
 
