@@ -7,8 +7,8 @@ const SubgraphStateAnnotation = Annotation.Root({
 
 type SubgraphState = typeof SubgraphStateAnnotation.State;
 
-const subgraphNode1 = async (_: SubgraphState) => {
-  return { bar: "bar" };
+const subgraphNode1 = async (state: SubgraphState) => {
+  return { bar: "bar" + state.bar };
 };
 
 const subgraphNode2 = async (state: SubgraphState) => {
