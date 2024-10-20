@@ -165,7 +165,7 @@ export const StartInterviewDialog: React.FC = () => {
     const { functionName, inputParameters } = question; // Assuming these fields exist in your question object
 
     // TODO: wrap inside an action
-    const promise = createAgentThread({ graphId: "code-mock-v1" })
+    const promise = createAgentThread({ graphId: "code-mock-base" })
       .then(({ threadId, assistantId }) => {
         return createSession({
           questionId: codeInterview.questionId!,
