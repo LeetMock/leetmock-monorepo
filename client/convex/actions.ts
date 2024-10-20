@@ -77,8 +77,10 @@ export const createAgentThread = action({
     const client = new Client({ apiKey, apiUrl });
 
     const thread = await client.threads.create();
+    console.log("thread", thread);
+    console.log("graphId", graphId);
     const assistants = await client.assistants.search({ graphId });
-
+    console.log("assistants", assistants);
     if (assistants.length === 0) {
       throw new Error("No assistants found");
     }

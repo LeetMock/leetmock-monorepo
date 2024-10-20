@@ -167,6 +167,7 @@ export const StartInterviewDialog: React.FC = () => {
     const { functionName, inputParameters } = question;
 
     const promise = createAgentThread({ graphId: "code-mock-v1" })
+
       .then(({ threadId, assistantId }) => {
         return createSession({
           questionId: codeInterview.questionId!,
