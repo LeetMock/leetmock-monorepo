@@ -1,10 +1,9 @@
 {
   "dockerfile_lines": [],
   "graphs": {
-    "code-mock-v1": "./agent-graph/agent_graph/simple_agent/graph.py:graph",
-    "code-mock-v2": "./agent-graph/agent_graph/staged_agent/graph.py:graph"
+    "test-agent": "./agent-graph-ts/test-agent.ts:graph",
+    "code-mock-base": "./agent-graph-ts/code-interviews/base-agent.ts:graph"
   },
   "env": ".env",
-  "python_version": "3.12",
-  "dependencies": ["./agent-graph", "./libs", "./convex-client"]
+  "node_version": "20"
 }
