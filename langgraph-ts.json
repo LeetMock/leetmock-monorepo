@@ -1,0 +1,9 @@
+{
+  "node_version": "20",
+  "dockerfile_lines": [],
+  "dependencies": ["./agent-graph-ts"],
+  "graphs": {
+    "test-agent": "./agent-graph-ts/test-agent.ts:graph"
+  },
+  "env": ".env"
+}
