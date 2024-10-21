@@ -1,11 +1,11 @@
 from enum import Enum
-from typing import Annotated, List, Literal
+from typing import Annotated, List
 
 from agent_graph.constants import JOIN_CALL_MESSAGE
-from agent_graph.llms import get_model
+from agent_graph.template.stage_subgraph import create_graph as create_stage_subgraph
 from langchain_core.messages import AnyMessage, HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
-from langgraph.graph import END, START, MessagesState, StateGraph, add_messages
+from langgraph.graph import END, START, StateGraph, add_messages
 from pydantic.v1 import BaseModel, Field
 
 
@@ -26,6 +26,8 @@ class AgentState(BaseModel):
     event: str | None = Field(default=None)
 
     trigger: bool = Field(default=False)
+
+    stage_idx: int = Field(default=0)
 
 
 # --------------------- agent graph nodes --------------------- #
@@ -49,15 +51,11 @@ async def on_event(state: AgentState):
 async def on_trigger(state: AgentState):
     # TODO: process and update state
     # e.g. update task status, etc.
-    return dict(trigger=False)
+    return None
 
 
-async def stage_runner(state: AgentState):
-    # Example stage workflow
-    llm = get_model("gpt-4o-mini")
-    result = await llm.ainvoke(state.messages)
-
-    return dict(messages=[result])
+async def on_stage_end(state: AgentState):
+    return dict(trigger=False, stage_idx=state.stage_idx + 1)
 
 
 # --------------------- agent graph edges --------------------- #
@@ -79,26 +77,43 @@ async def should_trigger_event(state: AgentState):
     return END
 
 
+async def select_stage(state: AgentState):
+    stages = ["stage_1", "stage_2", "stage_3"]
+    return stages[state.stage_idx % len(stages)]
+
+
 def create_graph():
-    graph_builder = (
+    return (
         StateGraph(AgentState)
         # nodes
         .add_node("init_state", init_state)
         .add_node("on_event", on_event)
         .add_node("on_trigger", on_trigger)
-        .add_node("stage_runner", stage_runner)
+        .add_node("stage_1", create_stage_subgraph())
+        .add_node("stage_2", create_stage_subgraph())
+        .add_node("stage_3", create_stage_subgraph())
+        .add_node("on_stage_end", on_stage_end)
         # edges
         .add_conditional_edges(
-            START, decide_entry_point, ["init_state", "on_event", "on_trigger", END]
+            source=START,
+            path=decide_entry_point,
+            path_map=["init_state", "on_event", "on_trigger", END],
         )
-        .add_conditional_edges("init_state", should_trigger_event, ["on_event", END])
+        .add_conditional_edges(
+            source="init_state",
+            path=should_trigger_event,
+            path_map=["on_event", END],
+        )
         .add_edge("on_event", END)
-        .add_edge("on_trigger", "stage_runner")
-        .add_edge("stage_runner", END)
+        .add_conditional_edges(
+            source="on_trigger",
+            path=select_stage,
+            path_map=["stage_1", "stage_2", "stage_3"],
+        )
+        .add_edge(["stage_1", "stage_2", "stage_3"], "on_stage_end")
+        .add_edge("on_stage_end", END)
         .compile(checkpointer=MemorySaver())
     )
-
-    return graph_builder
 
 
 graph = create_graph()

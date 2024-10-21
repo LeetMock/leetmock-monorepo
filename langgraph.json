@@ -3,7 +3,7 @@
   "graphs": {
     "code-mock-v1": "./agent-graph/agent_graph/simple_agent/graph.py:graph",
     "staged-agent": "./agent-graph/agent_graph/staged_agent/graph.py:graph",
-    "template": "./agent-graph/agent_graph/template.py:graph"
+    "template": "./agent-graph/agent_graph/template/graph.py:graph"
   },
   "env": ".env",
   "python_version": "3.12",
