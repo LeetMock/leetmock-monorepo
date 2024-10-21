@@ -6,7 +6,7 @@ authors = ["Brian Yin <toubatbrian@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.9.0,<3.13"
+python = ">=3.12,<3.13"
 libs = { path = "libs", develop = true }
 agent_graph = { path = "agent-graph", develop = true }
 convex-client = { path = "convex-client", develop = true }
