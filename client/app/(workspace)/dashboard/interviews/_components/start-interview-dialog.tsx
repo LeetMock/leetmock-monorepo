@@ -159,16 +159,6 @@ export const StartInterviewDialog: React.FC = () => {
   const [startDialogOpen, setStartDialogOpen] = useState(false);
 
 
-  const handleRandomPick = useCallback(() => {
-    if (questions && questions.length > 0) {
-      const randomIndex = Math.floor(Math.random() * questions.length);
-      const randomQuestion = questions[randomIndex];
-      updateCodeInterview({ questionId: randomQuestion._id });
-      setCurrentStep(2); // Move to the next step (Configure Interview)
-    }
-  }, [questions, updateCodeInterview]);
-
-
   const handleSessionCreate = useCallback(async () => {
     if (!questions) return;
     const question = questions.find((q) => q._id === codeInterview.questionId);
