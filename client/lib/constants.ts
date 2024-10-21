@@ -10,6 +10,9 @@ export const LANGUAGES: Language[] = [
   { value: "cpp", label: "C++" },
 ];
 
+export const AVAILABLE_LANGUAGES = ["python"];
+export const AVAILABLE_VOICES = ["Brian", "alloy"];
+
 export const VOICES: Language[] = [
   { value: "nova", label: "Nova" },
   { value: "alloy", label: "Alloy" },

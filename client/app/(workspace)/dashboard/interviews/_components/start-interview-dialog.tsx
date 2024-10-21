@@ -160,15 +160,6 @@ export const StartInterviewDialog: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [startDialogOpen, setStartDialogOpen] = useState(false);
 
-  const handleRandomPick = useCallback(() => {
-    if (questions && questions.length > 0) {
-      const randomIndex = Math.floor(Math.random() * questions.length);
-      const randomQuestion = questions[randomIndex];
-      updateCodeInterview({ questionId: randomQuestion._id });
-      setCurrentStep(2); // Move to the next step (Configure Interview)
-    }
-  }, [questions, updateCodeInterview]);
-
 
   const handleSessionCreate = useCallback(async () => {
     if (!questions) return;
@@ -243,8 +234,10 @@ export const StartInterviewDialog: React.FC = () => {
             }
           </Wait>
           {currentStep === 2 && (
-            <div className="flex justify-center items-center flex-1">
-              <CodeInterviewConfig />
+            <div className="flex flex-col h-[calc(100vh-20rem)]">
+              <CodeInterviewConfig
+                selectedQuestion={questions?.find((q) => q._id === codeInterview.questionId)}
+              />
             </div>
           )}
           <div className="flex justify-between">
