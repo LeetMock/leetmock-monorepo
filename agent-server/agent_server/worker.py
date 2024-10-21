@@ -129,7 +129,7 @@ async def entrypoint(ctx: JobContext):
         vad=silero.VAD.load(),
         stt=deepgram.STT(),
         llm=agent,
-        tts=openai.TTS(),
+        tts=tts,
         chat_ctx=ctx_manager.chat_ctx,
         interrupt_speech_duration=0.4,
         before_llm_cb=before_llm_callback,
