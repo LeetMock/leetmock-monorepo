@@ -48,7 +48,7 @@ class AgentConfig(BaseModel):
 async def init_state(state: AgentState):
     messages = [HumanMessage(content=JOIN_CALL_MESSAGE)]
     prompts = AgentPromptTemplates.from_hub(
-        "code-mock-staged-v1", ["intro", "coding", "eval"]
+        "code-mock-staged-v1", [StageTypes.INTRO, StageTypes.CODING, StageTypes.EVAL]
     )
 
     return dict(initialized=True, messages=messages, prompts=prompts)
