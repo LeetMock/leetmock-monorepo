@@ -1,9 +1,25 @@
-from typing import Any, List, Type, TypeVar, cast
+from typing import Any, Dict, List, Type, TypeVar, cast
 
-from agent_graph.llms import ChatbotConfig
+from langchain import hub
+from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables.config import RunnableConfig
+from pydantic.v1 import BaseModel, Field
 
 T = TypeVar("T")
+
+
+class AgentPromptTemplates(BaseModel):
+    """Prompt templates for the agent."""
+
+    prompt_map: Dict[str, PromptTemplate] = Field(..., description="Prompt templates")
+
+    def __getitem__(self, key: str) -> PromptTemplate:
+        return self.prompt_map[key]
+
+    @classmethod
+    def from_hub(cls, prefix: str, prompt_names: List[str]):
+        prompt_map = {name: hub.pull(f"{prefix}_{name}") for name in prompt_names}
+        return cls(prompt_map=prompt_map)
 
 
 def _validate_value(value: Any) -> bool:
