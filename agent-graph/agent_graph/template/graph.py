@@ -110,7 +110,9 @@ def create_graph():
             path=select_stage,
             path_map=["stage_1", "stage_2", "stage_3"],
         )
-        .add_edge(["stage_1", "stage_2", "stage_3"], "on_stage_end")
+        .add_edge("stage_1", "on_stage_end")
+        .add_edge("stage_2", "on_stage_end")
+        .add_edge("stage_3", "on_stage_end")
         .add_edge("on_stage_end", END)
         .compile(checkpointer=MemorySaver())
     )
