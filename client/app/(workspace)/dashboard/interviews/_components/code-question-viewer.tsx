@@ -144,6 +144,7 @@ export const CodeQuestionViewer: React.FC<{
         <div className="col-span-1">
           <Button
             onClick={handleRandomSelect}
+
             className="w-full"
             disabled={filteredQuestions.length === 0}
           >

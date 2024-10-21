@@ -59,7 +59,8 @@ export const QuestionCard: React.FC<{
         <Badge
           className={cn(
             getDifficultyColor(difficulty),
-            "text-[10px] px-1.5 py-0.5 min-w-[40px] text-center flex-shrink-0 font-medium rounded-full"
+            "text-[10px] px-1.5 py-0.5 min-w-[40px] text-center flex-shrink-0 font-medium rounded-full",
+            "pointer-events-none"
           )}
         >
           {getDifficultyText(difficulty)}

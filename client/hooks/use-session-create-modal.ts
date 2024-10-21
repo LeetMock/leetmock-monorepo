@@ -58,7 +58,7 @@ export const useSessionCreateModal = () => {
   const maxStep = useMemo(() => {
     if (!hasSetInterviewType) return 0;
     if (!hasSetProblem) return 1;
-    if (!hasConfiguredSession) return 2;
+    if (!false) return 2;
     return 3;
   }, [hasSetInterviewType, hasSetProblem, hasConfiguredSession]);
 

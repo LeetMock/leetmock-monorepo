@@ -1,31 +1,31 @@
 # convex_client.QueryApi
 
-All URIs are relative to *https://posh-chihuahua-941.convex.cloud*
+All URIs are relative to *https://neat-warbler-689.convex.cloud*
 
-Method | HTTP request | Description
-------------- | ------------- | -------------
-[**api_run_code_session_events_get_next_content_change_event_post**](QueryApi.md#api_run_code_session_events_get_next_content_change_event_post) | **POST** /api/run/codeSessionEvents/getNextContentChangeEvent | Calls a query at the path codeSessionEvents.js:getNextContentChangeEvent
-[**api_run_code_session_states_get_editor_state_post**](QueryApi.md#api_run_code_session_states_get_editor_state_post) | **POST** /api/run/codeSessionStates/getEditorState | Calls a query at the path codeSessionStates.js:getEditorState
-[**api_run_code_session_states_get_post**](QueryApi.md#api_run_code_session_states_get_post) | **POST** /api/run/codeSessionStates/get | Calls a query at the path codeSessionStates.js:get
-[**api_run_code_session_states_get_session_state_by_session_id_post**](QueryApi.md#api_run_code_session_states_get_session_state_by_session_id_post) | **POST** /api/run/codeSessionStates/getSessionStateBySessionId | Calls a query at the path codeSessionStates.js:getSessionStateBySessionId
-[**api_run_code_session_states_get_terminal_state_post**](QueryApi.md#api_run_code_session_states_get_terminal_state_post) | **POST** /api/run/codeSessionStates/getTerminalState | Calls a query at the path codeSessionStates.js:getTerminalState
-[**api_run_questions_get_all_post**](QueryApi.md#api_run_questions_get_all_post) | **POST** /api/run/questions/getAll | Calls a query at the path questions.js:getAll
-[**api_run_questions_get_by_id_post**](QueryApi.md#api_run_questions_get_by_id_post) | **POST** /api/run/questions/getById | Calls a query at the path questions.js:getById
-[**api_run_sessions_exists_post**](QueryApi.md#api_run_sessions_exists_post) | **POST** /api/run/sessions/exists | Calls a query at the path sessions.js:exists
-[**api_run_sessions_get_active_session_post**](QueryApi.md#api_run_sessions_get_active_session_post) | **POST** /api/run/sessions/getActiveSession | Calls a query at the path sessions.js:getActiveSession
-[**api_run_sessions_get_by_id_post**](QueryApi.md#api_run_sessions_get_by_id_post) | **POST** /api/run/sessions/getById | Calls a query at the path sessions.js:getById
-[**api_run_sessions_get_by_user_id_post**](QueryApi.md#api_run_sessions_get_by_user_id_post) | **POST** /api/run/sessions/getByUserId | Calls a query at the path sessions.js:getByUserId
-[**api_run_user_profiles_get_user_profile_post**](QueryApi.md#api_run_user_profiles_get_user_profile_post) | **POST** /api/run/userProfiles/getUserProfile | Calls a query at the path userProfiles.js:getUserProfile
-
+| Method                                                                                                                                               | HTTP request                                                   | Description                                                               |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [**api_run_code_session_events_get_next_content_change_event_post**](QueryApi.md#api_run_code_session_events_get_next_content_change_event_post)     | **POST** /api/run/codeSessionEvents/getNextContentChangeEvent  | Calls a query at the path codeSessionEvents.js:getNextContentChangeEvent  |
+| [**api_run_code_session_states_get_editor_state_post**](QueryApi.md#api_run_code_session_states_get_editor_state_post)                               | **POST** /api/run/codeSessionStates/getEditorState             | Calls a query at the path codeSessionStates.js:getEditorState             |
+| [**api_run_code_session_states_get_post**](QueryApi.md#api_run_code_session_states_get_post)                                                         | **POST** /api/run/codeSessionStates/get                        | Calls a query at the path codeSessionStates.js:get                        |
+| [**api_run_code_session_states_get_session_state_by_session_id_post**](QueryApi.md#api_run_code_session_states_get_session_state_by_session_id_post) | **POST** /api/run/codeSessionStates/getSessionStateBySessionId | Calls a query at the path codeSessionStates.js:getSessionStateBySessionId |
+| [**api_run_code_session_states_get_terminal_state_post**](QueryApi.md#api_run_code_session_states_get_terminal_state_post)                           | **POST** /api/run/codeSessionStates/getTerminalState           | Calls a query at the path codeSessionStates.js:getTerminalState           |
+| [**api_run_questions_get_all_post**](QueryApi.md#api_run_questions_get_all_post)                                                                     | **POST** /api/run/questions/getAll                             | Calls a query at the path questions.js:getAll                             |
+| [**api_run_questions_get_by_id_post**](QueryApi.md#api_run_questions_get_by_id_post)                                                                 | **POST** /api/run/questions/getById                            | Calls a query at the path questions.js:getById                            |
+| [**api_run_sessions_exists_post**](QueryApi.md#api_run_sessions_exists_post)                                                                         | **POST** /api/run/sessions/exists                              | Calls a query at the path sessions.js:exists                              |
+| [**api_run_sessions_get_active_session_post**](QueryApi.md#api_run_sessions_get_active_session_post)                                                 | **POST** /api/run/sessions/getActiveSession                    | Calls a query at the path sessions.js:getActiveSession                    |
+| [**api_run_sessions_get_by_id_post**](QueryApi.md#api_run_sessions_get_by_id_post)                                                                   | **POST** /api/run/sessions/getById                             | Calls a query at the path sessions.js:getById                             |
+| [**api_run_sessions_get_by_user_id_post**](QueryApi.md#api_run_sessions_get_by_user_id_post)                                                         | **POST** /api/run/sessions/getByUserId                         | Calls a query at the path sessions.js:getByUserId                         |
+| [**api_run_user_profiles_get_user_profile_post**](QueryApi.md#api_run_user_profiles_get_user_profile_post)                                           | **POST** /api/run/userProfiles/getUserProfile                  | Calls a query at the path userProfiles.js:getUserProfile                  |
 
 # **api_run_code_session_events_get_next_content_change_event_post**
+
 > ResponseCodeSessionEventsGetNextContentChangeEvent api_run_code_session_events_get_next_content_change_event_post(request_code_session_events_get_next_content_change_event)
 
 Calls a query at the path codeSessionEvents.js:getNextContentChangeEvent
 
 ### Example
 
-* Bearer Authentication (bearerAuth):
+- Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -34,10 +34,10 @@ from convex_client.models.response_code_session_events_get_next_content_change_e
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -54,7 +54,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.QueryApi(api_client)
-    request_code_session_events_get_next_content_change_event = convex_client.RequestCodeSessionEventsGetNextContentChangeEvent() # RequestCodeSessionEventsGetNextContentChangeEvent | 
+    request_code_session_events_get_next_content_change_event = convex_client.RequestCodeSessionEventsGetNextContentChangeEvent() # RequestCodeSessionEventsGetNextContentChangeEvent |
 
     try:
         # Calls a query at the path codeSessionEvents.js:getNextContentChangeEvent
@@ -65,14 +65,11 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling QueryApi->api_run_code_session_events_get_next_content_change_event_post: %s\n" % e)
 ```
 
-
-
 ### Parameters
 
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **request_code_session_events_get_next_content_change_event** | [**RequestCodeSessionEventsGetNextContentChangeEvent**](RequestCodeSessionEventsGetNextContentChangeEvent.md)|  | 
+| Name                                                          | Type                                                                                                          | Description | Notes |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ----------- | ----- |
+| **request_code_session_events_get_next_content_change_event** | [**RequestCodeSessionEventsGetNextContentChangeEvent**](RequestCodeSessionEventsGetNextContentChangeEvent.md) |             |
 
 ### Return type
 
@@ -84,27 +81,28 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
- - **Accept**: application/json
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Convex executed your request and returned a result |  -  |
-**400** | Failed operation |  -  |
-**500** | Convex Internal Error |  -  |
+| Status code | Description                                        | Response headers |
+| ----------- | -------------------------------------------------- | ---------------- |
+| **200**     | Convex executed your request and returned a result | -                |
+| **400**     | Failed operation                                   | -                |
+| **500**     | Convex Internal Error                              | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_code_session_states_get_editor_state_post**
+
 > ResponseCodeSessionStatesGetEditorState api_run_code_session_states_get_editor_state_post(request_code_session_states_get_editor_state)
 
 Calls a query at the path codeSessionStates.js:getEditorState
 
 ### Example
 
-* Bearer Authentication (bearerAuth):
+- Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -113,10 +111,10 @@ from convex_client.models.response_code_session_states_get_editor_state import R
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -133,7 +131,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.QueryApi(api_client)
-    request_code_session_states_get_editor_state = convex_client.RequestCodeSessionStatesGetEditorState() # RequestCodeSessionStatesGetEditorState | 
+    request_code_session_states_get_editor_state = convex_client.RequestCodeSessionStatesGetEditorState() # RequestCodeSessionStatesGetEditorState |
 
     try:
         # Calls a query at the path codeSessionStates.js:getEditorState
@@ -144,14 +142,11 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling QueryApi->api_run_code_session_states_get_editor_state_post: %s\n" % e)
 ```
 
-
-
 ### Parameters
 
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **request_code_session_states_get_editor_state** | [**RequestCodeSessionStatesGetEditorState**](RequestCodeSessionStatesGetEditorState.md)|  | 
+| Name                                             | Type                                                                                    | Description | Notes |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------- | ----------- | ----- |
+| **request_code_session_states_get_editor_state** | [**RequestCodeSessionStatesGetEditorState**](RequestCodeSessionStatesGetEditorState.md) |             |
 
 ### Return type
 
@@ -163,27 +158,28 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
- - **Accept**: application/json
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Convex executed your request and returned a result |  -  |
-**400** | Failed operation |  -  |
-**500** | Convex Internal Error |  -  |
+| Status code | Description                                        | Response headers |
+| ----------- | -------------------------------------------------- | ---------------- |
+| **200**     | Convex executed your request and returned a result | -                |
+| **400**     | Failed operation                                   | -                |
+| **500**     | Convex Internal Error                              | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_code_session_states_get_post**
+
 > ResponseCodeSessionStatesGet api_run_code_session_states_get_post(request_code_session_states_get)
 
 Calls a query at the path codeSessionStates.js:get
 
 ### Example
 
-* Bearer Authentication (bearerAuth):
+- Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -192,10 +188,10 @@ from convex_client.models.response_code_session_states_get import ResponseCodeSe
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -212,7 +208,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.QueryApi(api_client)
-    request_code_session_states_get = convex_client.RequestCodeSessionStatesGet() # RequestCodeSessionStatesGet | 
+    request_code_session_states_get = convex_client.RequestCodeSessionStatesGet() # RequestCodeSessionStatesGet |
 
     try:
         # Calls a query at the path codeSessionStates.js:get
@@ -223,14 +219,11 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling QueryApi->api_run_code_session_states_get_post: %s\n" % e)
 ```
 
-
-
 ### Parameters
 
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **request_code_session_states_get** | [**RequestCodeSessionStatesGet**](RequestCodeSessionStatesGet.md)|  | 
+| Name                                | Type                                                              | Description | Notes |
+| ----------------------------------- | ----------------------------------------------------------------- | ----------- | ----- |
+| **request_code_session_states_get** | [**RequestCodeSessionStatesGet**](RequestCodeSessionStatesGet.md) |             |
 
 ### Return type
 
@@ -242,27 +235,28 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
- - **Accept**: application/json
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Convex executed your request and returned a result |  -  |
-**400** | Failed operation |  -  |
-**500** | Convex Internal Error |  -  |
+| Status code | Description                                        | Response headers |
+| ----------- | -------------------------------------------------- | ---------------- |
+| **200**     | Convex executed your request and returned a result | -                |
+| **400**     | Failed operation                                   | -                |
+| **500**     | Convex Internal Error                              | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_code_session_states_get_session_state_by_session_id_post**
+
 > ResponseCodeSessionStatesGetSessionStateBySessionId api_run_code_session_states_get_session_state_by_session_id_post(request_code_session_states_get_session_state_by_session_id)
 
 Calls a query at the path codeSessionStates.js:getSessionStateBySessionId
 
 ### Example
 
-* Bearer Authentication (bearerAuth):
+- Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -271,10 +265,10 @@ from convex_client.models.response_code_session_states_get_session_state_by_sess
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -291,7 +285,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.QueryApi(api_client)
-    request_code_session_states_get_session_state_by_session_id = convex_client.RequestCodeSessionStatesGetSessionStateBySessionId() # RequestCodeSessionStatesGetSessionStateBySessionId | 
+    request_code_session_states_get_session_state_by_session_id = convex_client.RequestCodeSessionStatesGetSessionStateBySessionId() # RequestCodeSessionStatesGetSessionStateBySessionId |
 
     try:
         # Calls a query at the path codeSessionStates.js:getSessionStateBySessionId
@@ -302,14 +296,11 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling QueryApi->api_run_code_session_states_get_session_state_by_session_id_post: %s\n" % e)
 ```
 
-
-
 ### Parameters
 
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **request_code_session_states_get_session_state_by_session_id** | [**RequestCodeSessionStatesGetSessionStateBySessionId**](RequestCodeSessionStatesGetSessionStateBySessionId.md)|  | 
+| Name                                                            | Type                                                                                                            | Description | Notes |
+| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ----------- | ----- |
+| **request_code_session_states_get_session_state_by_session_id** | [**RequestCodeSessionStatesGetSessionStateBySessionId**](RequestCodeSessionStatesGetSessionStateBySessionId.md) |             |
 
 ### Return type
 
@@ -321,27 +312,28 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
- - **Accept**: application/json
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Convex executed your request and returned a result |  -  |
-**400** | Failed operation |  -  |
-**500** | Convex Internal Error |  -  |
+| Status code | Description                                        | Response headers |
+| ----------- | -------------------------------------------------- | ---------------- |
+| **200**     | Convex executed your request and returned a result | -                |
+| **400**     | Failed operation                                   | -                |
+| **500**     | Convex Internal Error                              | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_code_session_states_get_terminal_state_post**
+
 > ResponseCodeSessionStatesGetTerminalState api_run_code_session_states_get_terminal_state_post(request_code_session_states_get_terminal_state)
 
 Calls a query at the path codeSessionStates.js:getTerminalState
 
 ### Example
 
-* Bearer Authentication (bearerAuth):
+- Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -350,10 +342,10 @@ from convex_client.models.response_code_session_states_get_terminal_state import
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -370,7 +362,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.QueryApi(api_client)
-    request_code_session_states_get_terminal_state = convex_client.RequestCodeSessionStatesGetTerminalState() # RequestCodeSessionStatesGetTerminalState | 
+    request_code_session_states_get_terminal_state = convex_client.RequestCodeSessionStatesGetTerminalState() # RequestCodeSessionStatesGetTerminalState |
 
     try:
         # Calls a query at the path codeSessionStates.js:getTerminalState
@@ -381,14 +373,11 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling QueryApi->api_run_code_session_states_get_terminal_state_post: %s\n" % e)
 ```
 
-
-
 ### Parameters
 
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **request_code_session_states_get_terminal_state** | [**RequestCodeSessionStatesGetTerminalState**](RequestCodeSessionStatesGetTerminalState.md)|  | 
+| Name                                               | Type                                                                                        | Description | Notes |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------- | ----------- | ----- |
+| **request_code_session_states_get_terminal_state** | [**RequestCodeSessionStatesGetTerminalState**](RequestCodeSessionStatesGetTerminalState.md) |             |
 
 ### Return type
 
@@ -400,27 +389,28 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
- - **Accept**: application/json
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Convex executed your request and returned a result |  -  |
-**400** | Failed operation |  -  |
-**500** | Convex Internal Error |  -  |
+| Status code | Description                                        | Response headers |
+| ----------- | -------------------------------------------------- | ---------------- |
+| **200**     | Convex executed your request and returned a result | -                |
+| **400**     | Failed operation                                   | -                |
+| **500**     | Convex Internal Error                              | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_questions_get_all_post**
+
 > ResponseQuestionsGetAll api_run_questions_get_all_post(request_questions_get_all)
 
 Calls a query at the path questions.js:getAll
 
 ### Example
 
-* Bearer Authentication (bearerAuth):
+- Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -429,10 +419,10 @@ from convex_client.models.response_questions_get_all import ResponseQuestionsGet
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -449,7 +439,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.QueryApi(api_client)
-    request_questions_get_all = convex_client.RequestQuestionsGetAll() # RequestQuestionsGetAll | 
+    request_questions_get_all = convex_client.RequestQuestionsGetAll() # RequestQuestionsGetAll |
 
     try:
         # Calls a query at the path questions.js:getAll
@@ -460,14 +450,11 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling QueryApi->api_run_questions_get_all_post: %s\n" % e)
 ```
 
-
-
 ### Parameters
 
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **request_questions_get_all** | [**RequestQuestionsGetAll**](RequestQuestionsGetAll.md)|  | 
+| Name                          | Type                                                    | Description | Notes |
+| ----------------------------- | ------------------------------------------------------- | ----------- | ----- |
+| **request_questions_get_all** | [**RequestQuestionsGetAll**](RequestQuestionsGetAll.md) |             |
 
 ### Return type
 
@@ -479,27 +466,28 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
- - **Accept**: application/json
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Convex executed your request and returned a result |  -  |
-**400** | Failed operation |  -  |
-**500** | Convex Internal Error |  -  |
+| Status code | Description                                        | Response headers |
+| ----------- | -------------------------------------------------- | ---------------- |
+| **200**     | Convex executed your request and returned a result | -                |
+| **400**     | Failed operation                                   | -                |
+| **500**     | Convex Internal Error                              | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_questions_get_by_id_post**
+
 > ResponseQuestionsGetById api_run_questions_get_by_id_post(request_questions_get_by_id)
 
 Calls a query at the path questions.js:getById
 
 ### Example
 
-* Bearer Authentication (bearerAuth):
+- Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -508,10 +496,10 @@ from convex_client.models.response_questions_get_by_id import ResponseQuestionsG
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -528,7 +516,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.QueryApi(api_client)
-    request_questions_get_by_id = convex_client.RequestQuestionsGetById() # RequestQuestionsGetById | 
+    request_questions_get_by_id = convex_client.RequestQuestionsGetById() # RequestQuestionsGetById |
 
     try:
         # Calls a query at the path questions.js:getById
@@ -539,14 +527,11 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling QueryApi->api_run_questions_get_by_id_post: %s\n" % e)
 ```
 
-
-
 ### Parameters
 
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **request_questions_get_by_id** | [**RequestQuestionsGetById**](RequestQuestionsGetById.md)|  | 
+| Name                            | Type                                                      | Description | Notes |
+| ------------------------------- | --------------------------------------------------------- | ----------- | ----- |
+| **request_questions_get_by_id** | [**RequestQuestionsGetById**](RequestQuestionsGetById.md) |             |
 
 ### Return type
 
@@ -558,27 +543,28 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
- - **Accept**: application/json
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Convex executed your request and returned a result |  -  |
-**400** | Failed operation |  -  |
-**500** | Convex Internal Error |  -  |
+| Status code | Description                                        | Response headers |
+| ----------- | -------------------------------------------------- | ---------------- |
+| **200**     | Convex executed your request and returned a result | -                |
+| **400**     | Failed operation                                   | -                |
+| **500**     | Convex Internal Error                              | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_sessions_exists_post**
+
 > ResponseSessionsExists api_run_sessions_exists_post(request_sessions_exists)
 
 Calls a query at the path sessions.js:exists
 
 ### Example
 
-* Bearer Authentication (bearerAuth):
+- Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -587,10 +573,10 @@ from convex_client.models.response_sessions_exists import ResponseSessionsExists
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -607,7 +593,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.QueryApi(api_client)
-    request_sessions_exists = convex_client.RequestSessionsExists() # RequestSessionsExists | 
+    request_sessions_exists = convex_client.RequestSessionsExists() # RequestSessionsExists |
 
     try:
         # Calls a query at the path sessions.js:exists
@@ -618,14 +604,11 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling QueryApi->api_run_sessions_exists_post: %s\n" % e)
 ```
 
-
-
 ### Parameters
 
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **request_sessions_exists** | [**RequestSessionsExists**](RequestSessionsExists.md)|  | 
+| Name                        | Type                                                  | Description | Notes |
+| --------------------------- | ----------------------------------------------------- | ----------- | ----- |
+| **request_sessions_exists** | [**RequestSessionsExists**](RequestSessionsExists.md) |             |
 
 ### Return type
 
@@ -637,27 +620,28 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
- - **Accept**: application/json
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Convex executed your request and returned a result |  -  |
-**400** | Failed operation |  -  |
-**500** | Convex Internal Error |  -  |
+| Status code | Description                                        | Response headers |
+| ----------- | -------------------------------------------------- | ---------------- |
+| **200**     | Convex executed your request and returned a result | -                |
+| **400**     | Failed operation                                   | -                |
+| **500**     | Convex Internal Error                              | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_sessions_get_active_session_post**
+
 > ResponseSessionsGetActiveSession api_run_sessions_get_active_session_post(request_sessions_get_active_session)
 
 Calls a query at the path sessions.js:getActiveSession
 
 ### Example
 
-* Bearer Authentication (bearerAuth):
+- Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -666,10 +650,10 @@ from convex_client.models.response_sessions_get_active_session import ResponseSe
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -686,7 +670,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.QueryApi(api_client)
-    request_sessions_get_active_session = convex_client.RequestSessionsGetActiveSession() # RequestSessionsGetActiveSession | 
+    request_sessions_get_active_session = convex_client.RequestSessionsGetActiveSession() # RequestSessionsGetActiveSession |
 
     try:
         # Calls a query at the path sessions.js:getActiveSession
@@ -697,14 +681,11 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling QueryApi->api_run_sessions_get_active_session_post: %s\n" % e)
 ```
 
-
-
 ### Parameters
 
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **request_sessions_get_active_session** | [**RequestSessionsGetActiveSession**](RequestSessionsGetActiveSession.md)|  | 
+| Name                                    | Type                                                                      | Description | Notes |
+| --------------------------------------- | ------------------------------------------------------------------------- | ----------- | ----- |
+| **request_sessions_get_active_session** | [**RequestSessionsGetActiveSession**](RequestSessionsGetActiveSession.md) |             |
 
 ### Return type
 
@@ -716,27 +697,28 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
- - **Accept**: application/json
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Convex executed your request and returned a result |  -  |
-**400** | Failed operation |  -  |
-**500** | Convex Internal Error |  -  |
+| Status code | Description                                        | Response headers |
+| ----------- | -------------------------------------------------- | ---------------- |
+| **200**     | Convex executed your request and returned a result | -                |
+| **400**     | Failed operation                                   | -                |
+| **500**     | Convex Internal Error                              | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_sessions_get_by_id_post**
+
 > ResponseSessionsGetById api_run_sessions_get_by_id_post(request_sessions_get_by_id)
 
 Calls a query at the path sessions.js:getById
 
 ### Example
 
-* Bearer Authentication (bearerAuth):
+- Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -745,10 +727,10 @@ from convex_client.models.response_sessions_get_by_id import ResponseSessionsGet
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -765,7 +747,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.QueryApi(api_client)
-    request_sessions_get_by_id = convex_client.RequestSessionsGetById() # RequestSessionsGetById | 
+    request_sessions_get_by_id = convex_client.RequestSessionsGetById() # RequestSessionsGetById |
 
     try:
         # Calls a query at the path sessions.js:getById
@@ -776,14 +758,11 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling QueryApi->api_run_sessions_get_by_id_post: %s\n" % e)
 ```
 
-
-
 ### Parameters
 
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **request_sessions_get_by_id** | [**RequestSessionsGetById**](RequestSessionsGetById.md)|  | 
+| Name                           | Type                                                    | Description | Notes |
+| ------------------------------ | ------------------------------------------------------- | ----------- | ----- |
+| **request_sessions_get_by_id** | [**RequestSessionsGetById**](RequestSessionsGetById.md) |             |
 
 ### Return type
 
@@ -795,27 +774,28 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
- - **Accept**: application/json
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Convex executed your request and returned a result |  -  |
-**400** | Failed operation |  -  |
-**500** | Convex Internal Error |  -  |
+| Status code | Description                                        | Response headers |
+| ----------- | -------------------------------------------------- | ---------------- |
+| **200**     | Convex executed your request and returned a result | -                |
+| **400**     | Failed operation                                   | -                |
+| **500**     | Convex Internal Error                              | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_sessions_get_by_user_id_post**
+
 > ResponseSessionsGetByUserId api_run_sessions_get_by_user_id_post(request_sessions_get_by_user_id)
 
 Calls a query at the path sessions.js:getByUserId
 
 ### Example
 
-* Bearer Authentication (bearerAuth):
+- Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -824,10 +804,10 @@ from convex_client.models.response_sessions_get_by_user_id import ResponseSessio
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -844,7 +824,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.QueryApi(api_client)
-    request_sessions_get_by_user_id = convex_client.RequestSessionsGetByUserId() # RequestSessionsGetByUserId | 
+    request_sessions_get_by_user_id = convex_client.RequestSessionsGetByUserId() # RequestSessionsGetByUserId |
 
     try:
         # Calls a query at the path sessions.js:getByUserId
@@ -855,14 +835,11 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling QueryApi->api_run_sessions_get_by_user_id_post: %s\n" % e)
 ```
 
-
-
 ### Parameters
 
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **request_sessions_get_by_user_id** | [**RequestSessionsGetByUserId**](RequestSessionsGetByUserId.md)|  | 
+| Name                                | Type                                                            | Description | Notes |
+| ----------------------------------- | --------------------------------------------------------------- | ----------- | ----- |
+| **request_sessions_get_by_user_id** | [**RequestSessionsGetByUserId**](RequestSessionsGetByUserId.md) |             |
 
 ### Return type
 
@@ -874,27 +851,28 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
- - **Accept**: application/json
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Convex executed your request and returned a result |  -  |
-**400** | Failed operation |  -  |
-**500** | Convex Internal Error |  -  |
+| Status code | Description                                        | Response headers |
+| ----------- | -------------------------------------------------- | ---------------- |
+| **200**     | Convex executed your request and returned a result | -                |
+| **400**     | Failed operation                                   | -                |
+| **500**     | Convex Internal Error                              | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_user_profiles_get_user_profile_post**
+
 > ResponseUserProfilesGetUserProfile api_run_user_profiles_get_user_profile_post(request_user_profiles_get_user_profile)
 
 Calls a query at the path userProfiles.js:getUserProfile
 
 ### Example
 
-* Bearer Authentication (bearerAuth):
+- Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -903,10 +881,10 @@ from convex_client.models.response_user_profiles_get_user_profile import Respons
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -923,7 +901,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.QueryApi(api_client)
-    request_user_profiles_get_user_profile = convex_client.RequestUserProfilesGetUserProfile() # RequestUserProfilesGetUserProfile | 
+    request_user_profiles_get_user_profile = convex_client.RequestUserProfilesGetUserProfile() # RequestUserProfilesGetUserProfile |
 
     try:
         # Calls a query at the path userProfiles.js:getUserProfile
@@ -934,14 +912,11 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling QueryApi->api_run_user_profiles_get_user_profile_post: %s\n" % e)
 ```
 
-
-
 ### Parameters
 
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **request_user_profiles_get_user_profile** | [**RequestUserProfilesGetUserProfile**](RequestUserProfilesGetUserProfile.md)|  | 
+| Name                                       | Type                                                                          | Description | Notes |
+| ------------------------------------------ | ----------------------------------------------------------------------------- | ----------- | ----- |
+| **request_user_profiles_get_user_profile** | [**RequestUserProfilesGetUserProfile**](RequestUserProfilesGetUserProfile.md) |             |
 
 ### Return type
 
@@ -953,16 +928,15 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
- - **Accept**: application/json
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Convex executed your request and returned a result |  -  |
-**400** | Failed operation |  -  |
-**500** | Convex Internal Error |  -  |
+| Status code | Description                                        | Response headers |
+| ----------- | -------------------------------------------------- | ---------------- |
+| **200**     | Convex executed your request and returned a result | -                |
+| **400**     | Failed operation                                   | -                |
+| **500**     | Convex Internal Error                              | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-

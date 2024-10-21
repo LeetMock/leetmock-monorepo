@@ -240,8 +240,10 @@ export const StartInterviewDialog: React.FC = () => {
             }
           </Wait>
           {currentStep === 2 && (
-            <div className="flex justify-center items-center flex-1">
-              <CodeInterviewConfig />
+            <div className="flex flex-col h-[calc(100vh-20rem)]">
+              <CodeInterviewConfig
+                selectedQuestion={questions?.find((q) => q._id === codeInterview.questionId)}
+              />
             </div>
           )}
           <div className="flex justify-between">
