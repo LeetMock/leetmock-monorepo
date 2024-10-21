@@ -1,5 +1,6 @@
+from asyncio import Task
 from enum import Enum
-from typing import Annotated, List
+from typing import Annotated, Dict, List
 
 from agent_graph.constants import JOIN_CALL_MESSAGE
 from agent_graph.utils import AgentPromptTemplates
@@ -9,11 +10,10 @@ from langgraph.graph import END, START, StateGraph, add_messages
 from pydantic.v1 import BaseModel, Field
 
 
-class Stages(str, Enum):
+class StageTypes(str, Enum):
     INTRO = "intro"
     CODING = "coding"
     EVAL = "eval"
-    END = END
 
 
 class AgentState(BaseModel):
@@ -30,6 +30,8 @@ class AgentState(BaseModel):
     stage_idx: int = Field(default=0)
 
     prompts: AgentPromptTemplates | None = Field(default=None)
+
+    tasks: Dict[StageTypes, List[Task]] = Field(default=dict)
 
 
 class AgentConfig(BaseModel):
