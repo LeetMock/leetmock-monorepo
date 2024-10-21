@@ -33,13 +33,6 @@ class TestActionApi(unittest.TestCase):
         """
         pass
 
-    def test_api_run_actions_get_editor_snapshot_post(self) -> None:
-        """Test case for api_run_actions_get_editor_snapshot_post
-
-        Calls a action at the path actions.js:getEditorSnapshot
-        """
-        pass
-
     def test_api_run_actions_get_session_metadata_post(self) -> None:
         """Test case for api_run_actions_get_session_metadata_post
 

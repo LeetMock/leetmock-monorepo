@@ -1,12 +1,12 @@
 import { v } from "convex/values";
 
-import { Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
 
-import { MutationCtx } from "./types";
-import { userMutation, userQuery, internalMutation, internalQuery } from "./functions";
-import { isDefined, minutesToMilliseconds } from "@/lib/utils";
 import { CODE_TEMPLATES } from "@/lib/constants";
+import { isDefined, minutesToMilliseconds } from "@/lib/utils";
+import { internalMutation, internalQuery, userMutation, userQuery } from "./functions";
+import { MutationCtx } from "./types";
 
 export const exists = userQuery({
   args: {
@@ -23,6 +23,15 @@ export const exists = userQuery({
 });
 
 export const getById = userQuery({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  handler: async (ctx, { sessionId }) => {
+    return await ctx.table("sessions").get(sessionId);
+  },
+});
+
+export const getByIdInternal = internalQuery({
   args: {
     sessionId: v.id("sessions"),
   },
@@ -50,12 +59,26 @@ export const getByUserId = userQuery({
   },
 });
 
-export const getByIdInternal = internalQuery({
+export const getActiveSession = userQuery({
   args: {
-    sessionId: v.id("sessions"),
+    userId: v.string(),
   },
-  handler: async (ctx, { sessionId }) => {
-    return ctx.table("sessions").getX(sessionId);
+  handler: async (ctx, { userId }) => {
+    const session = await ctx
+      .table("sessions", "by_user_id", (q) => q.eq("userId", userId))
+      .filter((q) =>
+        q.or(
+          q.eq(q.field("sessionStatus"), "not_started"),
+          q.eq(q.field("sessionStatus"), "in_progress")
+        )
+      )
+      .first();
+
+    if (!isDefined(session)) {
+      return undefined;
+    }
+
+    return session;
   },
 });
 
@@ -74,9 +97,13 @@ export const startSession = userMutation({
     const startTime = session.sessionStartTime ? session.sessionStartTime : Date.now();
 
     if (session.sessionStatus === "not_started") {
-      await ctx.scheduler.runAfter(minutesToMilliseconds(5), internal.sessions.endSessionInternal, {
-        sessionId,
-      });
+      await ctx.scheduler.runAfter(
+        minutesToMilliseconds(15),
+        internal.sessions.endSessionInternal,
+        {
+          sessionId,
+        }
+      );
     }
 
     await session.patch({
@@ -104,30 +131,7 @@ export const endSessionInternal = internalMutation({
   },
 });
 
-export const getActiveSession = userQuery({
-  args: {
-    userId: v.string(),
-  },
-  handler: async (ctx, { userId }) => {
-    const session = await ctx
-      .table("sessions", "by_user_id", (q) => q.eq("userId", userId))
-      .filter((q) =>
-        q.or(
-          q.eq(q.field("sessionStatus"), "not_started"),
-          q.eq(q.field("sessionStatus"), "in_progress")
-        )
-      )
-      .first();
-
-    if (!isDefined(session)) {
-      return undefined;
-    }
-
-    return session;
-  },
-});
-
-export const create = userMutation({
+export const createCodeSession = userMutation({
   args: {
     questionId: v.id("questions"),
     agentThreadId: v.string(),
@@ -148,6 +152,7 @@ export const create = userMutation({
       throw new Error("You already have an active session");
     }
 
+    const question = await ctx.table("questions").getX(questionId);
     const sessionId = await ctx.table("sessions").insert({
       userId: ctx.user.subject,
       questionId,
@@ -156,26 +161,35 @@ export const create = userMutation({
       sessionStatus: "not_started",
     });
 
-    // Fetch the question data to get the starting Code
-    const question = await ctx.table("questions").get(questionId);
-    if (!isDefined(question)) {
-      throw new Error("Question not found");
-    }
+    const initialContent = CODE_TEMPLATES["python"](
+      question.functionName,
+      question.inputParameters["python"]
+    );
 
-    await ctx.table("editorSnapshots").insert({
+    const codeSessionStateId = await ctx.table("codeSessionStates").insert({
       sessionId,
       editor: {
         language: "python",
-        content: CODE_TEMPLATES["python"](
-          question.functionName,
-          question.inputParameters["python"]
-        ),
+        content: initialContent,
         lastUpdated: Date.now(),
       },
       terminal: {
         output: "",
         isError: false,
       },
+      displayQuestion: false,
+    });
+
+    // Populate initial content changed event
+    await ctx.table("codeSessionEvents").insert({
+      codeSessionStateId,
+      event: {
+        type: "content_changed",
+        data: {
+          content: initialContent,
+        },
+      },
+      acked: false,
     });
 
     return sessionId;

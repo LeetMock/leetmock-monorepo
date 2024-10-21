@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Id } from "@/convex/_generated/dataModel";
+import { cn } from "@/lib/utils";
+import React, { useState } from "react";
 
 const getDifficultyColor = (difficulty: number) => {
   const colors = {
     1: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
     2: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-    3: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+    3: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
   };
   return colors[difficulty] || "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200";
 };
@@ -19,7 +19,7 @@ const getDifficultyText = (difficulty: number) => {
   const labels = {
     1: "Easy",
     2: "Medium",
-    3: "Hard"
+    3: "Hard",
   };
   return labels[difficulty] || "Unknown";
 };
@@ -53,7 +53,9 @@ export const QuestionCard: React.FC<{
       onClick={() => onQuestionSelected(_id)}
     >
       <CardHeader className="flex flex-row items-start justify-between p-2">
-        <CardTitle className="font-medium text-xs mb-0 line-clamp-2 mr-2 flex-grow">{title}</CardTitle>
+        <CardTitle className="font-medium text-xs mb-0 line-clamp-2 mr-2 flex-grow">
+          {title}
+        </CardTitle>
         <Badge
           className={cn(
             getDifficultyColor(difficulty),
@@ -64,10 +66,7 @@ export const QuestionCard: React.FC<{
         </Badge>
       </CardHeader>
       <CardContent className="p-2 pt-0">
-        <div
-          className="flex flex-wrap gap-1 cursor-pointer"
-          onClick={handleCategoryClick}
-        >
+        <div className="flex flex-wrap gap-1 cursor-pointer" onClick={handleCategoryClick}>
           {displayCategories.map((element: string, index: number) => (
             <Badge
               key={index}

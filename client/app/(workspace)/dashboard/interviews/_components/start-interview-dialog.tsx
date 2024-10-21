@@ -1,4 +1,7 @@
+import { Stepper } from "@/components/stepper";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -7,22 +10,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MoveRight, Code, Database, Users, Lock } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { useCallback, useState } from "react";
-import { cn } from "@/lib/utils";
-import React from "react";
-import { Stepper } from "@/components/stepper";
-import { SessionType, useSessionCreateModal } from "@/hooks/use-session-create-modal";
-import { useAction, useMutation, useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { CodeQuestionViewer } from "./code-question-viewer";
-import { CodeInterviewConfig } from "./code-interview-config";
 import { Wait } from "@/components/wait";
-import { Id } from "@/convex/_generated/dataModel";
-import { toast } from "sonner";
+import { api } from "@/convex/_generated/api";
+import { SessionType, useSessionCreateModal } from "@/hooks/use-session-create-modal";
+import { cn } from "@/lib/utils";
+import { useAction, useMutation, useQuery } from "convex/react";
+import { Code, Database, Lock, MoveRight, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
+import React, { useCallback, useState } from "react";
+import { toast } from "sonner";
+import { CodeInterviewConfig } from "./code-interview-config";
+import { CodeQuestionViewer } from "./code-question-viewer";
 
 interface SessionMeta {
   title: string;
@@ -155,7 +153,7 @@ export const StartInterviewDialog: React.FC = () => {
   const router = useRouter();
   const questions = useQuery(api.questions.getAll);
   const createAgentThread = useAction(api.actions.createAgentThread);
-  const createSession = useMutation(api.sessions.create);
+  const createSession = useMutation(api.sessions.createCodeSession);
 
   const [currentStep, setCurrentStep] = useState(0);
   const [startDialogOpen, setStartDialogOpen] = useState(false);
@@ -168,7 +166,6 @@ export const StartInterviewDialog: React.FC = () => {
       setCurrentStep(2); // Move to the next step (Configure Interview)
     }
   }, [questions, updateCodeInterview]);
-
 
   const handleSessionCreate = useCallback(async () => {
     if (!questions) return;

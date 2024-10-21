@@ -1,8 +1,9 @@
 {
   "dockerfile_lines": [],
   "graphs": {
-    "code-mock-v1": "./agent-graph/agent_graph/simple_agent.py:graph",
-    "code-mock-v2": "./agent-graph/agent_graph/staged_agent.py:graph"
+    "code-mock-v1": "./agent-graph/agent_graph/simple_agent/graph.py:graph",
+    "code-mock-v2": "./agent-graph/agent_graph/staged_agent/graph.py:graph",
+    "template": "./agent-graph/agent_graph/template/graph.py:graph"
   },
   "env": ".env",
   "python_version": "3.12",

@@ -95,21 +95,23 @@ All URIs are relative to *https://posh-chihuahua-941.convex.cloud*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *ActionApi* | [**api_run_actions_create_agent_thread_post**](docs/ActionApi.md#api_run_actions_create_agent_thread_post) | **POST** /api/run/actions/createAgentThread | Calls a action at the path actions.js:createAgentThread
-*ActionApi* | [**api_run_actions_get_editor_snapshot_post**](docs/ActionApi.md#api_run_actions_get_editor_snapshot_post) | **POST** /api/run/actions/getEditorSnapshot | Calls a action at the path actions.js:getEditorSnapshot
 *ActionApi* | [**api_run_actions_get_session_metadata_post**](docs/ActionApi.md#api_run_actions_get_session_metadata_post) | **POST** /api/run/actions/getSessionMetadata | Calls a action at the path actions.js:getSessionMetadata
 *ActionApi* | [**api_run_actions_get_token_post**](docs/ActionApi.md#api_run_actions_get_token_post) | **POST** /api/run/actions/getToken | Calls a action at the path actions.js:getToken
 *ActionApi* | [**api_run_actions_run_code_post**](docs/ActionApi.md#api_run_actions_run_code_post) | **POST** /api/run/actions/runCode | Calls a action at the path actions.js:runCode
 *ActionApi* | [**api_run_actions_run_tests_post**](docs/ActionApi.md#api_run_actions_run_tests_post) | **POST** /api/run/actions/runTests | Calls a action at the path actions.js:runTests
 *MutationApi* | [**api_run_admins_create_user_profile_post**](docs/MutationApi.md#api_run_admins_create_user_profile_post) | **POST** /api/run/admins/createUserProfile | Calls a mutation at the path admins.js:createUserProfile
 *MutationApi* | [**api_run_admins_patch_user_subscription_post**](docs/MutationApi.md#api_run_admins_patch_user_subscription_post) | **POST** /api/run/admins/patchUserSubscription | Calls a mutation at the path admins.js:patchUserSubscription
-*MutationApi* | [**api_run_editor_snapshots_create_post**](docs/MutationApi.md#api_run_editor_snapshots_create_post) | **POST** /api/run/editorSnapshots/create | Calls a mutation at the path editorSnapshots.js:create
+*MutationApi* | [**api_run_code_session_events_ack_code_session_event_post**](docs/MutationApi.md#api_run_code_session_events_ack_code_session_event_post) | **POST** /api/run/codeSessionEvents/ackCodeSessionEvent | Calls a mutation at the path codeSessionEvents.js:ackCodeSessionEvent
+*MutationApi* | [**api_run_code_session_events_commit_code_session_event_post**](docs/MutationApi.md#api_run_code_session_events_commit_code_session_event_post) | **POST** /api/run/codeSessionEvents/commitCodeSessionEvent | Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
 *MutationApi* | [**api_run_invite_codes_apply_invite_code_post**](docs/MutationApi.md#api_run_invite_codes_apply_invite_code_post) | **POST** /api/run/inviteCodes/applyInviteCode | Calls a mutation at the path inviteCodes.js:applyInviteCode
-*MutationApi* | [**api_run_sessions_create_post**](docs/MutationApi.md#api_run_sessions_create_post) | **POST** /api/run/sessions/create | Calls a mutation at the path sessions.js:create
+*MutationApi* | [**api_run_sessions_create_code_session_post**](docs/MutationApi.md#api_run_sessions_create_code_session_post) | **POST** /api/run/sessions/createCodeSession | Calls a mutation at the path sessions.js:createCodeSession
 *MutationApi* | [**api_run_sessions_end_session_post**](docs/MutationApi.md#api_run_sessions_end_session_post) | **POST** /api/run/sessions/endSession | Calls a mutation at the path sessions.js:endSession
 *MutationApi* | [**api_run_sessions_start_session_post**](docs/MutationApi.md#api_run_sessions_start_session_post) | **POST** /api/run/sessions/startSession | Calls a mutation at the path sessions.js:startSession
-*QueryApi* | [**api_run_editor_snapshots_get_by_id_post**](docs/QueryApi.md#api_run_editor_snapshots_get_by_id_post) | **POST** /api/run/editorSnapshots/getById | Calls a query at the path editorSnapshots.js:getById
-*QueryApi* | [**api_run_editor_snapshots_get_latest_snapshot_by_session_id_post**](docs/QueryApi.md#api_run_editor_snapshots_get_latest_snapshot_by_session_id_post) | **POST** /api/run/editorSnapshots/getLatestSnapshotBySessionId | Calls a query at the path editorSnapshots.js:getLatestSnapshotBySessionId
-*QueryApi* | [**api_run_editor_snapshots_get_snapshots_post**](docs/QueryApi.md#api_run_editor_snapshots_get_snapshots_post) | **POST** /api/run/editorSnapshots/getSnapshots | Calls a query at the path editorSnapshots.js:getSnapshots
+*QueryApi* | [**api_run_code_session_events_get_next_content_change_event_post**](docs/QueryApi.md#api_run_code_session_events_get_next_content_change_event_post) | **POST** /api/run/codeSessionEvents/getNextContentChangeEvent | Calls a query at the path codeSessionEvents.js:getNextContentChangeEvent
+*QueryApi* | [**api_run_code_session_states_get_editor_state_post**](docs/QueryApi.md#api_run_code_session_states_get_editor_state_post) | **POST** /api/run/codeSessionStates/getEditorState | Calls a query at the path codeSessionStates.js:getEditorState
+*QueryApi* | [**api_run_code_session_states_get_post**](docs/QueryApi.md#api_run_code_session_states_get_post) | **POST** /api/run/codeSessionStates/get | Calls a query at the path codeSessionStates.js:get
+*QueryApi* | [**api_run_code_session_states_get_session_state_by_session_id_post**](docs/QueryApi.md#api_run_code_session_states_get_session_state_by_session_id_post) | **POST** /api/run/codeSessionStates/getSessionStateBySessionId | Calls a query at the path codeSessionStates.js:getSessionStateBySessionId
+*QueryApi* | [**api_run_code_session_states_get_terminal_state_post**](docs/QueryApi.md#api_run_code_session_states_get_terminal_state_post) | **POST** /api/run/codeSessionStates/getTerminalState | Calls a query at the path codeSessionStates.js:getTerminalState
 *QueryApi* | [**api_run_questions_get_all_post**](docs/QueryApi.md#api_run_questions_get_all_post) | **POST** /api/run/questions/getAll | Calls a query at the path questions.js:getAll
 *QueryApi* | [**api_run_questions_get_by_id_post**](docs/QueryApi.md#api_run_questions_get_by_id_post) | **POST** /api/run/questions/getById | Calls a query at the path questions.js:getById
 *QueryApi* | [**api_run_sessions_exists_post**](docs/QueryApi.md#api_run_sessions_exists_post) | **POST** /api/run/sessions/exists | Calls a query at the path sessions.js:exists
@@ -123,7 +125,6 @@ Class | Method | HTTP request | Description
 
  - [RequestActionsCreateAgentThread](docs/RequestActionsCreateAgentThread.md)
  - [RequestActionsCreateAgentThreadArgs](docs/RequestActionsCreateAgentThreadArgs.md)
- - [RequestActionsGetEditorSnapshot](docs/RequestActionsGetEditorSnapshot.md)
  - [RequestActionsGetSessionMetadata](docs/RequestActionsGetSessionMetadata.md)
  - [RequestActionsGetToken](docs/RequestActionsGetToken.md)
  - [RequestActionsRunCode](docs/RequestActionsRunCode.md)
@@ -134,15 +135,23 @@ Class | Method | HTTP request | Description
  - [RequestAdminsCreateUserProfileArgs](docs/RequestAdminsCreateUserProfileArgs.md)
  - [RequestAdminsPatchUserSubscription](docs/RequestAdminsPatchUserSubscription.md)
  - [RequestAdminsPatchUserSubscriptionArgs](docs/RequestAdminsPatchUserSubscriptionArgs.md)
- - [RequestEditorSnapshotsCreate](docs/RequestEditorSnapshotsCreate.md)
- - [RequestEditorSnapshotsCreateArgs](docs/RequestEditorSnapshotsCreateArgs.md)
- - [RequestEditorSnapshotsCreateArgsEditor](docs/RequestEditorSnapshotsCreateArgsEditor.md)
- - [RequestEditorSnapshotsCreateArgsTerminal](docs/RequestEditorSnapshotsCreateArgsTerminal.md)
- - [RequestEditorSnapshotsGetById](docs/RequestEditorSnapshotsGetById.md)
- - [RequestEditorSnapshotsGetByIdArgs](docs/RequestEditorSnapshotsGetByIdArgs.md)
- - [RequestEditorSnapshotsGetLatestSnapshotBySessionId](docs/RequestEditorSnapshotsGetLatestSnapshotBySessionId.md)
- - [RequestEditorSnapshotsGetLatestSnapshotBySessionIdInternal](docs/RequestEditorSnapshotsGetLatestSnapshotBySessionIdInternal.md)
- - [RequestEditorSnapshotsGetSnapshots](docs/RequestEditorSnapshotsGetSnapshots.md)
+ - [RequestCodeSessionEventsAckCodeSessionEvent](docs/RequestCodeSessionEventsAckCodeSessionEvent.md)
+ - [RequestCodeSessionEventsAckCodeSessionEventArgs](docs/RequestCodeSessionEventsAckCodeSessionEventArgs.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEvent](docs/RequestCodeSessionEventsCommitCodeSessionEvent.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgs](docs/RequestCodeSessionEventsCommitCodeSessionEventArgs.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgsEvent](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEvent.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOfData](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOfData.md)
+ - [RequestCodeSessionEventsGetNextContentChangeEvent](docs/RequestCodeSessionEventsGetNextContentChangeEvent.md)
+ - [RequestCodeSessionEventsGetNextContentChangeEventArgs](docs/RequestCodeSessionEventsGetNextContentChangeEventArgs.md)
+ - [RequestCodeSessionStatesGet](docs/RequestCodeSessionStatesGet.md)
+ - [RequestCodeSessionStatesGetEditorState](docs/RequestCodeSessionStatesGetEditorState.md)
+ - [RequestCodeSessionStatesGetSessionStateBySessionId](docs/RequestCodeSessionStatesGetSessionStateBySessionId.md)
+ - [RequestCodeSessionStatesGetTerminalState](docs/RequestCodeSessionStatesGetTerminalState.md)
  - [RequestInviteCodesApplyInviteCode](docs/RequestInviteCodesApplyInviteCode.md)
  - [RequestInviteCodesApplyInviteCodeArgs](docs/RequestInviteCodesApplyInviteCodeArgs.md)
  - [RequestInviteCodesCreateInviteCode](docs/RequestInviteCodesCreateInviteCode.md)
@@ -153,8 +162,8 @@ Class | Method | HTTP request | Description
  - [RequestQuestionsGetByIdArgs](docs/RequestQuestionsGetByIdArgs.md)
  - [RequestQuestionsGetByIdInternal](docs/RequestQuestionsGetByIdInternal.md)
  - [RequestQuestionsGetByIdInternalArgs](docs/RequestQuestionsGetByIdInternalArgs.md)
- - [RequestSessionsCreate](docs/RequestSessionsCreate.md)
- - [RequestSessionsCreateArgs](docs/RequestSessionsCreateArgs.md)
+ - [RequestSessionsCreateCodeSession](docs/RequestSessionsCreateCodeSession.md)
+ - [RequestSessionsCreateCodeSessionArgs](docs/RequestSessionsCreateCodeSessionArgs.md)
  - [RequestSessionsEndSession](docs/RequestSessionsEndSession.md)
  - [RequestSessionsEndSessionArgs](docs/RequestSessionsEndSessionArgs.md)
  - [RequestSessionsEndSessionInternal](docs/RequestSessionsEndSessionInternal.md)
@@ -169,6 +178,7 @@ Class | Method | HTTP request | Description
  - [RequestUserProfilesGetByEmailInternal](docs/RequestUserProfilesGetByEmailInternal.md)
  - [RequestUserProfilesGetByEmailInternalArgs](docs/RequestUserProfilesGetByEmailInternalArgs.md)
  - [RequestUserProfilesGetUserProfile](docs/RequestUserProfilesGetUserProfile.md)
+ - [RequestUserProfilesGetUserProfileInternal](docs/RequestUserProfilesGetUserProfileInternal.md)
  - [RequestUserProfilesRefreshMinutesForYearlyPlansInternal](docs/RequestUserProfilesRefreshMinutesForYearlyPlansInternal.md)
  - [RequestUserProfilesUpdateSubscriptionByEmailInternal](docs/RequestUserProfilesUpdateSubscriptionByEmailInternal.md)
  - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgs](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgs.md)
@@ -177,7 +187,6 @@ Class | Method | HTTP request | Description
  - [RequestUserProfilesVoidSubscriptionInternal](docs/RequestUserProfilesVoidSubscriptionInternal.md)
  - [RequestUserProfilesVoidSubscriptionInternalArgs](docs/RequestUserProfilesVoidSubscriptionInternalArgs.md)
  - [ResponseActionsCreateAgentThread](docs/ResponseActionsCreateAgentThread.md)
- - [ResponseActionsGetEditorSnapshot](docs/ResponseActionsGetEditorSnapshot.md)
  - [ResponseActionsGetSessionMetadata](docs/ResponseActionsGetSessionMetadata.md)
  - [ResponseActionsGetSessionMetadataValue](docs/ResponseActionsGetSessionMetadataValue.md)
  - [ResponseActionsGetToken](docs/ResponseActionsGetToken.md)
@@ -185,17 +194,23 @@ Class | Method | HTTP request | Description
  - [ResponseActionsRunTests](docs/ResponseActionsRunTests.md)
  - [ResponseAdminsCreateUserProfile](docs/ResponseAdminsCreateUserProfile.md)
  - [ResponseAdminsPatchUserSubscription](docs/ResponseAdminsPatchUserSubscription.md)
- - [ResponseEditorSnapshotsCreate](docs/ResponseEditorSnapshotsCreate.md)
- - [ResponseEditorSnapshotsGetById](docs/ResponseEditorSnapshotsGetById.md)
- - [ResponseEditorSnapshotsGetLatestSnapshotBySessionId](docs/ResponseEditorSnapshotsGetLatestSnapshotBySessionId.md)
- - [ResponseEditorSnapshotsGetLatestSnapshotBySessionIdInternal](docs/ResponseEditorSnapshotsGetLatestSnapshotBySessionIdInternal.md)
- - [ResponseEditorSnapshotsGetSnapshots](docs/ResponseEditorSnapshotsGetSnapshots.md)
+ - [ResponseCodeSessionEventsAckCodeSessionEvent](docs/ResponseCodeSessionEventsAckCodeSessionEvent.md)
+ - [ResponseCodeSessionEventsCommitCodeSessionEvent](docs/ResponseCodeSessionEventsCommitCodeSessionEvent.md)
+ - [ResponseCodeSessionEventsGetNextContentChangeEvent](docs/ResponseCodeSessionEventsGetNextContentChangeEvent.md)
+ - [ResponseCodeSessionEventsGetNextContentChangeEventValue](docs/ResponseCodeSessionEventsGetNextContentChangeEventValue.md)
+ - [ResponseCodeSessionStatesGet](docs/ResponseCodeSessionStatesGet.md)
+ - [ResponseCodeSessionStatesGetEditorState](docs/ResponseCodeSessionStatesGetEditorState.md)
+ - [ResponseCodeSessionStatesGetSessionStateBySessionId](docs/ResponseCodeSessionStatesGetSessionStateBySessionId.md)
+ - [ResponseCodeSessionStatesGetTerminalState](docs/ResponseCodeSessionStatesGetTerminalState.md)
+ - [ResponseCodeSessionStatesGetValue](docs/ResponseCodeSessionStatesGetValue.md)
+ - [ResponseCodeSessionStatesGetValueEditor](docs/ResponseCodeSessionStatesGetValueEditor.md)
+ - [ResponseCodeSessionStatesGetValueTerminal](docs/ResponseCodeSessionStatesGetValueTerminal.md)
  - [ResponseInviteCodesApplyInviteCode](docs/ResponseInviteCodesApplyInviteCode.md)
  - [ResponseInviteCodesCreateInviteCode](docs/ResponseInviteCodesCreateInviteCode.md)
  - [ResponseQuestionsGetAll](docs/ResponseQuestionsGetAll.md)
  - [ResponseQuestionsGetById](docs/ResponseQuestionsGetById.md)
  - [ResponseQuestionsGetByIdInternal](docs/ResponseQuestionsGetByIdInternal.md)
- - [ResponseSessionsCreate](docs/ResponseSessionsCreate.md)
+ - [ResponseSessionsCreateCodeSession](docs/ResponseSessionsCreateCodeSession.md)
  - [ResponseSessionsEndSession](docs/ResponseSessionsEndSession.md)
  - [ResponseSessionsEndSessionInternal](docs/ResponseSessionsEndSessionInternal.md)
  - [ResponseSessionsExists](docs/ResponseSessionsExists.md)
@@ -206,6 +221,7 @@ Class | Method | HTTP request | Description
  - [ResponseSessionsStartSession](docs/ResponseSessionsStartSession.md)
  - [ResponseUserProfilesGetByEmailInternal](docs/ResponseUserProfilesGetByEmailInternal.md)
  - [ResponseUserProfilesGetUserProfile](docs/ResponseUserProfilesGetUserProfile.md)
+ - [ResponseUserProfilesGetUserProfileInternal](docs/ResponseUserProfilesGetUserProfileInternal.md)
  - [ResponseUserProfilesRefreshMinutesForYearlyPlansInternal](docs/ResponseUserProfilesRefreshMinutesForYearlyPlansInternal.md)
  - [ResponseUserProfilesUpdateSubscriptionByEmailInternal](docs/ResponseUserProfilesUpdateSubscriptionByEmailInternal.md)
  - [ResponseUserProfilesVoidSubscriptionInternal](docs/ResponseUserProfilesVoidSubscriptionInternal.md)

@@ -1,8 +1,7 @@
-import { cn, getInitials } from "@/lib/utils";
+import { getInitials } from "@/lib/utils";
 import { useUser, useAuth } from "@clerk/clerk-react";
-import { ChevronsUpDown, LaptopIcon, LogOut, MoonIcon, SunIcon, UserIcon } from "lucide-react";
+import { LaptopIcon, LogOut, MoonIcon, SunIcon, UserIcon } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { ButtonProps } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,

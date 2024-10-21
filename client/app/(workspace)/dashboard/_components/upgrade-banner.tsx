@@ -1,9 +1,9 @@
-import Link from "next/link";
+import { AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Terminal, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { AlertDescription } from "@/components/ui/alert";
 import { useTheme } from "next-themes";
+import Link from "next/link";
 
 export const UpgradeBanner: React.FC<{ className?: string }> = ({ className }) => {
   const { theme } = useTheme();

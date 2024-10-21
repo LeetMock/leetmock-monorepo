@@ -101,7 +101,7 @@ struct TreeNode {
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
 };
-`.trim()
+`.trim(),
 };
 
 export const CODE_TEMPLATES: { [key: string]: CodeTemplate } = {
@@ -110,7 +110,10 @@ export const CODE_TEMPLATES: { [key: string]: CodeTemplate } = {
 from typing import List, Any
 
 class Solution:
-    def ${functionName}(self, ${params.filter((_, i) => i % 2 === 0).map((param, i) => `${param}: ${params[i * 2 + 1]}`).join(', ')}):
+    def ${functionName}(self, ${params
+      .filter((_, i) => i % 2 === 0)
+      .map((param, i) => `${param}: ${params[i * 2 + 1]}`)
+      .join(", ")}):
         # TODO: Write your Python code here
         pass
 `.trim(),
@@ -119,7 +122,7 @@ class Solution:
     `
 class Solution {
     /**
-     * @param {${params.filter((_, i) => i % 2 !== 0).join('} @param {')}
+     * @param {${params.filter((_, i) => i % 2 !== 0).join("} @param {")}
      */
     ${functionName}(${params.filter((_, i) => i % 2 === 0).join(", ")}) {
         // TODO: Write your JavaScript code here
@@ -132,7 +135,10 @@ class Solution {
 import java.util.List;
 
 class Solution {
-    public Object ${functionName}(${params.filter((_, i) => i % 2 === 0).map((param, i) => `${params[i * 2 + 1]} ${param}`).join(', ')}) {
+    public Object ${functionName}(${params
+      .filter((_, i) => i % 2 === 0)
+      .map((param, i) => `${params[i * 2 + 1]} ${param}`)
+      .join(", ")}) {
         // TODO: Write your Java code here
         return null;
     }
@@ -146,7 +152,10 @@ class Solution {
 
 class Solution {
 public:
-    int ${functionName}(${params.filter((_, i) => i % 2 === 0).map((param, i) => `${params[i * 2 + 1]} ${param}`).join(', ')}) {
+    int ${functionName}(${params
+      .filter((_, i) => i % 2 === 0)
+      .map((param, i) => `${params[i * 2 + 1]} ${param}`)
+      .join(", ")}) {
         // TODO: Write your C++ code here
         return 0;
     }
@@ -154,14 +163,11 @@ public:
 `.trim(),
 };
 
-export enum Topic {
-  EditorState = "editor-state",
-  Question = "question",
-}
-
 export const FREE_PLAN_MINUTES_ONLY_ONCE = 30;
 
-export const PLANS: { [key: string]: { name: "free" | "basic" | "premium" | "enterprise"; minutes: number } } = {
+export const PLANS: {
+  [key: string]: { name: "free" | "basic" | "premium" | "enterprise"; minutes: number };
+} = {
   free: {
     name: "free",
     minutes: 0,
@@ -177,9 +183,8 @@ export const PLANS: { [key: string]: { name: "free" | "basic" | "premium" | "ent
   enterprise: {
     name: "enterprise",
     minutes: 500,
-  }
-}
+  },
+};
 
-export const MINUTE_PRICE = 0.20;
+export const MINUTE_PRICE = 0.2;
 export const MINUTE_PRICE_DISCOUNTED = 0.16;
-

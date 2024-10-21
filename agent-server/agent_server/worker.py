@@ -1,36 +1,22 @@
-import os
 import asyncio
-from typing import List
-from agent_server.contexts.convex import ConvexApi
-from agent_server.types import EditorSnapshot
-import psutil
+import os
 
-from dotenv import load_dotenv, find_dotenv
-from convex_client.models import (
-    RequestActionsGetEditorSnapshot,
-    RequestSessionsEndSessionArgs,
-)
-from livekit.agents import (
-    JobContext,
-    WorkerOptions,
-    cli,  # type: ignore
-    llm,
-    utils,
-)
-from livekit.agents.worker import _DefaultLoadCalc
-from livekit.agents.voice_assistant import VoiceAssistant
-from livekit.plugins import deepgram, silero, elevenlabs, openai
+import psutil
 from agent_server.agent import LangGraphLLM, NoOpLLMStream
 from agent_server.contexts.context_manager import AgentContextManager
+from agent_server.contexts.session import CodeSession
+from agent_server.convex.api import ConvexApi
 from agent_server.utils.logger import get_logger
+from dotenv import find_dotenv, load_dotenv
+from livekit.agents import cli  # type: ignore
+from livekit.agents import JobContext, WorkerOptions, llm, utils
+from livekit.agents.voice_assistant import VoiceAssistant
+from livekit.agents.worker import _DefaultLoadCalc
+from livekit.plugins import deepgram, elevenlabs, openai, silero
 
 logger = get_logger(__name__)
 
 load_dotenv(find_dotenv())
-
-logger.info(f"LIVEKIT_API_KEY: {os.getenv('LIVEKIT_API_KEY')}")
-logger.info(f"LIVEKIT_API_SECRET: {os.getenv('LIVEKIT_API_SECRET')}")
-logger.info(f"LIVEKIT_URL: {os.getenv('LIVEKIT_URL')}")
 
 
 class CustomLoadCalc(_DefaultLoadCalc):
@@ -74,7 +60,7 @@ class CustomLoadCalc(_DefaultLoadCalc):
 async def entrypoint(ctx: JobContext):
     agent = LangGraphLLM()
     convex_api = ConvexApi(convex_url=os.getenv("CONVEX_URL") or "")
-    ctx_manager = AgentContextManager(ctx=ctx, api=convex_api)
+    ctx_manager = AgentContextManager[CodeSession](ctx=ctx, api=convex_api)
 
     reminder_task: asyncio.Task | None = None
     reminder_delay = 24  # seconds
@@ -110,18 +96,11 @@ async def entrypoint(ctx: JobContext):
         )
 
     def invoke_agent(chat_ctx: llm.ChatContext, interaction_type: str) -> llm.LLMStream:
-        request = RequestActionsGetEditorSnapshot(
-            args=RequestSessionsEndSessionArgs(sessionId=ctx_manager.session_id)
-        )
-        response = convex_api.action.api_run_actions_get_editor_snapshot_post(request)
+        code_session_state = ctx_manager.session.session_state
+        code_session_metadata = ctx_manager.session.session_metadata
 
-        if response.status == "error" or response.value is None:
-            logger.error(f"Error getting snapshot: {response.error_message}")
-            raise Exception(f"Error getting snapshot: {response.error_message}")
-
-        logger.info(f"Got snapshot: {response.value}")
-
-        agent.set_agent_context(response.value, interaction_type)
+        agent.set_agent_session(code_session_metadata)
+        agent.set_agent_context(code_session_state, interaction_type)
         return agent.chat(chat_ctx=chat_ctx)
 
     def before_llm_callback(
@@ -150,9 +129,9 @@ async def entrypoint(ctx: JobContext):
         vad=silero.VAD.load(),
         stt=deepgram.STT(),
         llm=agent,
-        tts=tts,
+        tts=openai.TTS(),
         chat_ctx=ctx_manager.chat_ctx,
-        interrupt_speech_duration=0.7,
+        interrupt_speech_duration=0.4,
         before_llm_cb=before_llm_callback,
     )
 
@@ -198,18 +177,8 @@ async def entrypoint(ctx: JobContext):
         logger.info("agent_stopped_speaking")
         asyncio.create_task(debounced_send_reminder())
 
-    @ctx_manager.on("snapshot_updated")
-    def on_snapshot_updated(snapshots: List[EditorSnapshot]):
-        logger.info(f"snapshot_updated: {len(snapshots)}")
-
-    await ctx_manager.setup(agent)
     await ctx_manager.start()
 
-    assistant.start(ctx.room)
-
-    await session_id_fut
-    await prepare_session_and_acknowledge()
-    await prepare_initial_agent_context()
     assistant.start(ctx.room)
 
     await assistant.say(
@@ -218,28 +187,6 @@ async def entrypoint(ctx: JobContext):
         add_to_chat_ctx=True,
     )
 
-
-"""
-langgraph: agent execution flow
-event-driven: when to call agent
-
-[
-    Event("snapshot_updated", [EditorSnapshot])
-    Event("conversation_updated", [ChatMessage])
-    Event("conversation_updated", [ChatMessage])
-    Event("conversation_updated", [ChatMessage])
-    Event("conversation_updated", [ChatMessage])
-    Event("reminder_required", [])
-    Event("snapshot_updated", [EditorSnapshot])
-    Event("snapshot_updated", [EditorSnapshot])
-    Event("snapshot_updated", [EditorSnapshot])
-    Event("snapshot_updated", [EditorSnapshot])
-    Event("snapshot_updated", [EditorSnapshot])
-]
-
-Invoker
-
-"""
 
 if __name__ == "__main__":
     cli.run_app(
@@ -250,6 +197,5 @@ if __name__ == "__main__":
             # load_fnc=CustomLoadCalc.get_load,
             # load_threshold=0.80,  # max(cpu_load, mem_load)
             # shutdown_process_timeout=30,  # seconds
-            num_idle_processes=5,  # number of idle agents to keep
         )
     )

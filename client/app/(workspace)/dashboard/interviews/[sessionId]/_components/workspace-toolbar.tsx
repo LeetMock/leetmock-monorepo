@@ -1,29 +1,5 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useUser } from "@clerk/clerk-react";
-import { UserDropdown } from "@/components/user-dropdown";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  cn,
-  getFirstLetter,
-  getRandomColor,
-  getTimeDurationSeconds,
-  isDefined,
-  minutesToMilliseconds,
-} from "@/lib/utils";
-import { TimerCountdown } from "./timer-countdown";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Loader2, Play, Settings } from "lucide-react";
-import { CircleStop } from "lucide-react";
-import { useConnectionState, useRoomContext } from "@livekit/components-react";
-import { useConnection } from "@/hooks/use-connection";
-import { ConnectionState } from "livekit-client";
-import { Id } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { toast } from "sonner";
-import { useTheme } from "next-themes";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,7 +10,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { UserDropdown } from "@/components/user-dropdown";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { useAgent } from "@/hooks/use-agent";
+import { useConnection } from "@/hooks/use-connection";
+import { cn, getTimeDurationSeconds, isDefined, minutesToMilliseconds } from "@/lib/utils";
+import { useConnectionState, useRoomContext } from "@livekit/components-react";
+import { useMutation } from "convex/react";
+import { ConnectionState } from "livekit-client";
+import { CircleStop, Loader2, Play, Settings } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { TimerCountdown } from "./timer-countdown";
 
 interface WorkspaceToolbarProps {
   session: {
@@ -52,7 +41,7 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
   const startSession = useMutation(api.sessions.startSession);
   const endSession = useMutation(api.sessions.endSession);
 
-  const [timeLeft, setTimeLeft] = useState<number>(60 * 5);
+  const [timeLeft, setTimeLeft] = useState<number>(60 * 15);
   const [isEndInterviewDialogOpen, setIsEndInterviewDialogOpen] = useState<boolean>(false);
 
   const { state } = useAgent(session.sessionId);
@@ -62,7 +51,7 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
       if (!isDefined(session?.sessionStartTime)) return;
 
       const currentTime = Date.now();
-      const endTime = session.sessionStartTime + minutesToMilliseconds(5);
+      const endTime = session.sessionStartTime + minutesToMilliseconds(15);
       const timeLeft = getTimeDurationSeconds(currentTime, endTime);
       setTimeLeft(Math.max(timeLeft, 0));
     }, 500);

@@ -2,16 +2,16 @@ from __future__ import annotations
 
 import hashlib
 import os
-
 from datetime import datetime
-from pprint import pprint
-from langgraph_sdk.client import get_client
-from livekit.agents import llm
 from typing import AsyncGenerator, AsyncIterator
-from langgraph_sdk.schema import StreamPart
-from agent_server.utils.messages import convert_chat_ctx_to_langchain_messages
-from agent_server.types import SessionMetadata, EditorSnapshot
+
 from agent_server.utils.logger import get_logger
+from agent_server.utils.messages import convert_chat_ctx_to_langchain_messages
+from langgraph_sdk.client import get_client
+from langgraph_sdk.schema import StreamPart
+from livekit.agents import llm
+
+from libs.convex_types import CodeSessionState, SessionMetadata
 
 logger = get_logger(__name__)
 
@@ -24,7 +24,7 @@ class LangGraphLLM(llm.LLM):
         self._unix_timestamp = int(datetime.now().timestamp())
         self._client = get_client(url=os.getenv("LANGGRAPH_API_URL"))
         self._session_metadata: SessionMetadata | None = None
-        self._snapshot: EditorSnapshot | None = None
+        self._snapshot: CodeSessionState | None = None
         self._interaction_type: str | None = None
 
     async def get_state(self):
@@ -40,7 +40,7 @@ class LangGraphLLM(llm.LLM):
 
     def set_agent_context(
         self,
-        snapshot: EditorSnapshot,
+        snapshot: CodeSessionState,
         interaction_type: str,
     ):
         self._snapshot = snapshot
@@ -55,14 +55,11 @@ class LangGraphLLM(llm.LLM):
         n: int | None = 1,
         parallel_tool_calls: bool | None = None,
     ) -> llm.LLMStream:
-
         langchain_messages = convert_chat_ctx_to_langchain_messages(chat_ctx)
+
         for i, message in enumerate(langchain_messages):
             key = f"{self._unix_timestamp}-{i}-{message.type}"
             message.id = hashlib.md5(key.encode()).hexdigest()
-
-        print("Following is copied_ctx.messages, not conmmitted yet!")
-        pprint(langchain_messages)
 
         assert self._session_metadata is not None, "Session metadata is not set"
         assert self._snapshot is not None, "Snapshot is not set"
@@ -143,7 +140,6 @@ class SimpleLLMStream(llm.LLMStream):
         logger.info("Agent stream started")
 
         async for chunk in stream:
-            logger.info(f"Received chunk event: {chunk.event}")
             tags = chunk.data.get("tags", [])
             if "chatbot" not in tags:
                 continue
@@ -152,6 +148,7 @@ class SimpleLLMStream(llm.LLMStream):
             if event != "on_chat_model_stream":
                 continue
 
+            # logger.info(f"Received chunk data: {chunk.data}")
             content = chunk.data.get("data", {}).get("chunk", {}).get("content", "")
             logger.info(f"Received chunk content: `{content}`")
             yield self._create_llm_chunk(content)

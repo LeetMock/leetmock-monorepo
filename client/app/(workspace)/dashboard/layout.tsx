@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import { useConfig } from "@/hooks/use-config";
 import { usePathname } from "next/navigation";
+import { useMemo } from "react";
 import { DashboardSidebar } from "./_components/dashboard-sidebar";
 import { UpgradeBanner } from "./_components/upgrade-banner";
-import { useConfig } from "@/hooks/use-config";
 
 const dashboardPages = ["/dashboard/interviews", "/dashboard/settings"];
 
