@@ -214,7 +214,7 @@ export const StartInterviewDialog: React.FC = () => {
           <DialogHeader>
             <DialogTitle className="text-2xl">Choose Interview Type</DialogTitle>
             <DialogDescription className="text-base">
-              Select the type of interview you'd like to start.
+              Select the type of interview you&apos;d like to start.
             </DialogDescription>
           </DialogHeader>
 

@@ -1,27 +1,27 @@
 # convex_client.MutationApi
 
-All URIs are relative to *https://neat-warbler-689.convex.cloud*
+All URIs are relative to *https://posh-chihuahua-941.convex.cloud*
 
-| Method                                                                                                                                      | HTTP request                                               | Description                                                              |
-| ------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------ |
-| [**api_run_admins_create_user_profile_post**](MutationApi.md#api_run_admins_create_user_profile_post)                                       | **POST** /api/run/admins/createUserProfile                 | Calls a mutation at the path admins.js:createUserProfile                 |
-| [**api_run_admins_patch_user_subscription_post**](MutationApi.md#api_run_admins_patch_user_subscription_post)                               | **POST** /api/run/admins/patchUserSubscription             | Calls a mutation at the path admins.js:patchUserSubscription             |
-| [**api_run_code_session_events_ack_code_session_event_post**](MutationApi.md#api_run_code_session_events_ack_code_session_event_post)       | **POST** /api/run/codeSessionEvents/ackCodeSessionEvent    | Calls a mutation at the path codeSessionEvents.js:ackCodeSessionEvent    |
-| [**api_run_code_session_events_commit_code_session_event_post**](MutationApi.md#api_run_code_session_events_commit_code_session_event_post) | **POST** /api/run/codeSessionEvents/commitCodeSessionEvent | Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent |
-| [**api_run_invite_codes_apply_invite_code_post**](MutationApi.md#api_run_invite_codes_apply_invite_code_post)                               | **POST** /api/run/inviteCodes/applyInviteCode              | Calls a mutation at the path inviteCodes.js:applyInviteCode              |
-| [**api_run_sessions_create_code_session_post**](MutationApi.md#api_run_sessions_create_code_session_post)                                   | **POST** /api/run/sessions/createCodeSession               | Calls a mutation at the path sessions.js:createCodeSession               |
-| [**api_run_sessions_end_session_post**](MutationApi.md#api_run_sessions_end_session_post)                                                   | **POST** /api/run/sessions/endSession                      | Calls a mutation at the path sessions.js:endSession                      |
-| [**api_run_sessions_start_session_post**](MutationApi.md#api_run_sessions_start_session_post)                                               | **POST** /api/run/sessions/startSession                    | Calls a mutation at the path sessions.js:startSession                    |
+Method | HTTP request | Description
+------------- | ------------- | -------------
+[**api_run_admins_create_user_profile_post**](MutationApi.md#api_run_admins_create_user_profile_post) | **POST** /api/run/admins/createUserProfile | Calls a mutation at the path admins.js:createUserProfile
+[**api_run_admins_patch_user_subscription_post**](MutationApi.md#api_run_admins_patch_user_subscription_post) | **POST** /api/run/admins/patchUserSubscription | Calls a mutation at the path admins.js:patchUserSubscription
+[**api_run_code_session_events_ack_code_session_event_post**](MutationApi.md#api_run_code_session_events_ack_code_session_event_post) | **POST** /api/run/codeSessionEvents/ackCodeSessionEvent | Calls a mutation at the path codeSessionEvents.js:ackCodeSessionEvent
+[**api_run_code_session_events_commit_code_session_event_post**](MutationApi.md#api_run_code_session_events_commit_code_session_event_post) | **POST** /api/run/codeSessionEvents/commitCodeSessionEvent | Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
+[**api_run_invite_codes_apply_invite_code_post**](MutationApi.md#api_run_invite_codes_apply_invite_code_post) | **POST** /api/run/inviteCodes/applyInviteCode | Calls a mutation at the path inviteCodes.js:applyInviteCode
+[**api_run_sessions_create_code_session_post**](MutationApi.md#api_run_sessions_create_code_session_post) | **POST** /api/run/sessions/createCodeSession | Calls a mutation at the path sessions.js:createCodeSession
+[**api_run_sessions_end_session_post**](MutationApi.md#api_run_sessions_end_session_post) | **POST** /api/run/sessions/endSession | Calls a mutation at the path sessions.js:endSession
+[**api_run_sessions_start_session_post**](MutationApi.md#api_run_sessions_start_session_post) | **POST** /api/run/sessions/startSession | Calls a mutation at the path sessions.js:startSession
+
 
 # **api_run_admins_create_user_profile_post**
-
 > ResponseAdminsCreateUserProfile api_run_admins_create_user_profile_post(request_admins_create_user_profile)
 
 Calls a mutation at the path admins.js:createUserProfile
 
 ### Example
 
-- Bearer Authentication (bearerAuth):
+* Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -30,10 +30,10 @@ from convex_client.models.response_admins_create_user_profile import ResponseAdm
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
+# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://neat-warbler-689.convex.cloud"
+    host = "https://posh-chihuahua-941.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -50,7 +50,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.MutationApi(api_client)
-    request_admins_create_user_profile = convex_client.RequestAdminsCreateUserProfile() # RequestAdminsCreateUserProfile |
+    request_admins_create_user_profile = convex_client.RequestAdminsCreateUserProfile() # RequestAdminsCreateUserProfile | 
 
     try:
         # Calls a mutation at the path admins.js:createUserProfile
@@ -61,11 +61,14 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling MutationApi->api_run_admins_create_user_profile_post: %s\n" % e)
 ```
 
+
+
 ### Parameters
 
-| Name                                   | Type                                                                    | Description | Notes |
-| -------------------------------------- | ----------------------------------------------------------------------- | ----------- | ----- |
-| **request_admins_create_user_profile** | [**RequestAdminsCreateUserProfile**](RequestAdminsCreateUserProfile.md) |             |
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_admins_create_user_profile** | [**RequestAdminsCreateUserProfile**](RequestAdminsCreateUserProfile.md)|  | 
 
 ### Return type
 
@@ -77,28 +80,27 @@ with convex_client.ApiClient(configuration) as api_client:
 
 ### HTTP request headers
 
-- **Content-Type**: application/json
-- **Accept**: application/json
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description                                        | Response headers |
-| ----------- | -------------------------------------------------- | ---------------- |
-| **200**     | Convex executed your request and returned a result | -                |
-| **400**     | Failed operation                                   | -                |
-| **500**     | Convex Internal Error                              | -                |
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_admins_patch_user_subscription_post**
-
 > ResponseAdminsPatchUserSubscription api_run_admins_patch_user_subscription_post(request_admins_patch_user_subscription)
 
 Calls a mutation at the path admins.js:patchUserSubscription
 
 ### Example
 
-- Bearer Authentication (bearerAuth):
+* Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -107,10 +109,10 @@ from convex_client.models.response_admins_patch_user_subscription import Respons
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
+# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://neat-warbler-689.convex.cloud"
+    host = "https://posh-chihuahua-941.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -127,7 +129,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.MutationApi(api_client)
-    request_admins_patch_user_subscription = convex_client.RequestAdminsPatchUserSubscription() # RequestAdminsPatchUserSubscription |
+    request_admins_patch_user_subscription = convex_client.RequestAdminsPatchUserSubscription() # RequestAdminsPatchUserSubscription | 
 
     try:
         # Calls a mutation at the path admins.js:patchUserSubscription
@@ -138,11 +140,14 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling MutationApi->api_run_admins_patch_user_subscription_post: %s\n" % e)
 ```
 
+
+
 ### Parameters
 
-| Name                                       | Type                                                                            | Description | Notes |
-| ------------------------------------------ | ------------------------------------------------------------------------------- | ----------- | ----- |
-| **request_admins_patch_user_subscription** | [**RequestAdminsPatchUserSubscription**](RequestAdminsPatchUserSubscription.md) |             |
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_admins_patch_user_subscription** | [**RequestAdminsPatchUserSubscription**](RequestAdminsPatchUserSubscription.md)|  | 
 
 ### Return type
 
@@ -154,28 +159,27 @@ with convex_client.ApiClient(configuration) as api_client:
 
 ### HTTP request headers
 
-- **Content-Type**: application/json
-- **Accept**: application/json
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description                                        | Response headers |
-| ----------- | -------------------------------------------------- | ---------------- |
-| **200**     | Convex executed your request and returned a result | -                |
-| **400**     | Failed operation                                   | -                |
-| **500**     | Convex Internal Error                              | -                |
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_code_session_events_ack_code_session_event_post**
-
 > ResponseCodeSessionEventsAckCodeSessionEvent api_run_code_session_events_ack_code_session_event_post(request_code_session_events_ack_code_session_event)
 
 Calls a mutation at the path codeSessionEvents.js:ackCodeSessionEvent
 
 ### Example
 
-- Bearer Authentication (bearerAuth):
+* Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -184,10 +188,10 @@ from convex_client.models.response_code_session_events_ack_code_session_event im
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
+# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://neat-warbler-689.convex.cloud"
+    host = "https://posh-chihuahua-941.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -204,7 +208,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.MutationApi(api_client)
-    request_code_session_events_ack_code_session_event = convex_client.RequestCodeSessionEventsAckCodeSessionEvent() # RequestCodeSessionEventsAckCodeSessionEvent |
+    request_code_session_events_ack_code_session_event = convex_client.RequestCodeSessionEventsAckCodeSessionEvent() # RequestCodeSessionEventsAckCodeSessionEvent | 
 
     try:
         # Calls a mutation at the path codeSessionEvents.js:ackCodeSessionEvent
@@ -215,11 +219,14 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling MutationApi->api_run_code_session_events_ack_code_session_event_post: %s\n" % e)
 ```
 
+
+
 ### Parameters
 
-| Name                                                   | Type                                                                                              | Description | Notes |
-| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------- | ----------- | ----- |
-| **request_code_session_events_ack_code_session_event** | [**RequestCodeSessionEventsAckCodeSessionEvent**](RequestCodeSessionEventsAckCodeSessionEvent.md) |             |
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_code_session_events_ack_code_session_event** | [**RequestCodeSessionEventsAckCodeSessionEvent**](RequestCodeSessionEventsAckCodeSessionEvent.md)|  | 
 
 ### Return type
 
@@ -231,28 +238,27 @@ with convex_client.ApiClient(configuration) as api_client:
 
 ### HTTP request headers
 
-- **Content-Type**: application/json
-- **Accept**: application/json
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description                                        | Response headers |
-| ----------- | -------------------------------------------------- | ---------------- |
-| **200**     | Convex executed your request and returned a result | -                |
-| **400**     | Failed operation                                   | -                |
-| **500**     | Convex Internal Error                              | -                |
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_code_session_events_commit_code_session_event_post**
-
 > ResponseCodeSessionEventsCommitCodeSessionEvent api_run_code_session_events_commit_code_session_event_post(request_code_session_events_commit_code_session_event)
 
 Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
 
 ### Example
 
-- Bearer Authentication (bearerAuth):
+* Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -261,10 +267,10 @@ from convex_client.models.response_code_session_events_commit_code_session_event
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
+# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://neat-warbler-689.convex.cloud"
+    host = "https://posh-chihuahua-941.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -281,7 +287,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.MutationApi(api_client)
-    request_code_session_events_commit_code_session_event = convex_client.RequestCodeSessionEventsCommitCodeSessionEvent() # RequestCodeSessionEventsCommitCodeSessionEvent |
+    request_code_session_events_commit_code_session_event = convex_client.RequestCodeSessionEventsCommitCodeSessionEvent() # RequestCodeSessionEventsCommitCodeSessionEvent | 
 
     try:
         # Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
@@ -292,11 +298,14 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling MutationApi->api_run_code_session_events_commit_code_session_event_post: %s\n" % e)
 ```
 
+
+
 ### Parameters
 
-| Name                                                      | Type                                                                                                    | Description | Notes |
-| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ----------- | ----- |
-| **request_code_session_events_commit_code_session_event** | [**RequestCodeSessionEventsCommitCodeSessionEvent**](RequestCodeSessionEventsCommitCodeSessionEvent.md) |             |
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_code_session_events_commit_code_session_event** | [**RequestCodeSessionEventsCommitCodeSessionEvent**](RequestCodeSessionEventsCommitCodeSessionEvent.md)|  | 
 
 ### Return type
 
@@ -308,28 +317,27 @@ with convex_client.ApiClient(configuration) as api_client:
 
 ### HTTP request headers
 
-- **Content-Type**: application/json
-- **Accept**: application/json
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description                                        | Response headers |
-| ----------- | -------------------------------------------------- | ---------------- |
-| **200**     | Convex executed your request and returned a result | -                |
-| **400**     | Failed operation                                   | -                |
-| **500**     | Convex Internal Error                              | -                |
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_invite_codes_apply_invite_code_post**
-
 > ResponseInviteCodesApplyInviteCode api_run_invite_codes_apply_invite_code_post(request_invite_codes_apply_invite_code)
 
 Calls a mutation at the path inviteCodes.js:applyInviteCode
 
 ### Example
 
-- Bearer Authentication (bearerAuth):
+* Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -338,10 +346,10 @@ from convex_client.models.response_invite_codes_apply_invite_code import Respons
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
+# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://neat-warbler-689.convex.cloud"
+    host = "https://posh-chihuahua-941.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -358,7 +366,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.MutationApi(api_client)
-    request_invite_codes_apply_invite_code = convex_client.RequestInviteCodesApplyInviteCode() # RequestInviteCodesApplyInviteCode |
+    request_invite_codes_apply_invite_code = convex_client.RequestInviteCodesApplyInviteCode() # RequestInviteCodesApplyInviteCode | 
 
     try:
         # Calls a mutation at the path inviteCodes.js:applyInviteCode
@@ -369,11 +377,14 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling MutationApi->api_run_invite_codes_apply_invite_code_post: %s\n" % e)
 ```
 
+
+
 ### Parameters
 
-| Name                                       | Type                                                                          | Description | Notes |
-| ------------------------------------------ | ----------------------------------------------------------------------------- | ----------- | ----- |
-| **request_invite_codes_apply_invite_code** | [**RequestInviteCodesApplyInviteCode**](RequestInviteCodesApplyInviteCode.md) |             |
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_invite_codes_apply_invite_code** | [**RequestInviteCodesApplyInviteCode**](RequestInviteCodesApplyInviteCode.md)|  | 
 
 ### Return type
 
@@ -385,28 +396,27 @@ with convex_client.ApiClient(configuration) as api_client:
 
 ### HTTP request headers
 
-- **Content-Type**: application/json
-- **Accept**: application/json
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description                                        | Response headers |
-| ----------- | -------------------------------------------------- | ---------------- |
-| **200**     | Convex executed your request and returned a result | -                |
-| **400**     | Failed operation                                   | -                |
-| **500**     | Convex Internal Error                              | -                |
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_sessions_create_code_session_post**
-
 > ResponseSessionsCreateCodeSession api_run_sessions_create_code_session_post(request_sessions_create_code_session)
 
 Calls a mutation at the path sessions.js:createCodeSession
 
 ### Example
 
-- Bearer Authentication (bearerAuth):
+* Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -415,10 +425,10 @@ from convex_client.models.response_sessions_create_code_session import ResponseS
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
+# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://neat-warbler-689.convex.cloud"
+    host = "https://posh-chihuahua-941.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -435,7 +445,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.MutationApi(api_client)
-    request_sessions_create_code_session = convex_client.RequestSessionsCreateCodeSession() # RequestSessionsCreateCodeSession |
+    request_sessions_create_code_session = convex_client.RequestSessionsCreateCodeSession() # RequestSessionsCreateCodeSession | 
 
     try:
         # Calls a mutation at the path sessions.js:createCodeSession
@@ -446,11 +456,14 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling MutationApi->api_run_sessions_create_code_session_post: %s\n" % e)
 ```
 
+
+
 ### Parameters
 
-| Name                                     | Type                                                                        | Description | Notes |
-| ---------------------------------------- | --------------------------------------------------------------------------- | ----------- | ----- |
-| **request_sessions_create_code_session** | [**RequestSessionsCreateCodeSession**](RequestSessionsCreateCodeSession.md) |             |
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_sessions_create_code_session** | [**RequestSessionsCreateCodeSession**](RequestSessionsCreateCodeSession.md)|  | 
 
 ### Return type
 
@@ -462,28 +475,27 @@ with convex_client.ApiClient(configuration) as api_client:
 
 ### HTTP request headers
 
-- **Content-Type**: application/json
-- **Accept**: application/json
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description                                        | Response headers |
-| ----------- | -------------------------------------------------- | ---------------- |
-| **200**     | Convex executed your request and returned a result | -                |
-| **400**     | Failed operation                                   | -                |
-| **500**     | Convex Internal Error                              | -                |
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_sessions_end_session_post**
-
 > ResponseSessionsEndSession api_run_sessions_end_session_post(request_sessions_end_session)
 
 Calls a mutation at the path sessions.js:endSession
 
 ### Example
 
-- Bearer Authentication (bearerAuth):
+* Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -492,10 +504,10 @@ from convex_client.models.response_sessions_end_session import ResponseSessionsE
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
+# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://neat-warbler-689.convex.cloud"
+    host = "https://posh-chihuahua-941.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -512,7 +524,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.MutationApi(api_client)
-    request_sessions_end_session = convex_client.RequestSessionsEndSession() # RequestSessionsEndSession |
+    request_sessions_end_session = convex_client.RequestSessionsEndSession() # RequestSessionsEndSession | 
 
     try:
         # Calls a mutation at the path sessions.js:endSession
@@ -523,11 +535,14 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling MutationApi->api_run_sessions_end_session_post: %s\n" % e)
 ```
 
+
+
 ### Parameters
 
-| Name                             | Type                                                          | Description | Notes |
-| -------------------------------- | ------------------------------------------------------------- | ----------- | ----- |
-| **request_sessions_end_session** | [**RequestSessionsEndSession**](RequestSessionsEndSession.md) |             |
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_sessions_end_session** | [**RequestSessionsEndSession**](RequestSessionsEndSession.md)|  | 
 
 ### Return type
 
@@ -539,28 +554,27 @@ with convex_client.ApiClient(configuration) as api_client:
 
 ### HTTP request headers
 
-- **Content-Type**: application/json
-- **Accept**: application/json
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description                                        | Response headers |
-| ----------- | -------------------------------------------------- | ---------------- |
-| **200**     | Convex executed your request and returned a result | -                |
-| **400**     | Failed operation                                   | -                |
-| **500**     | Convex Internal Error                              | -                |
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_run_sessions_start_session_post**
-
 > ResponseSessionsStartSession api_run_sessions_start_session_post(request_sessions_start_session)
 
 Calls a mutation at the path sessions.js:startSession
 
 ### Example
 
-- Bearer Authentication (bearerAuth):
+* Bearer Authentication (bearerAuth):
 
 ```python
 import convex_client
@@ -569,10 +583,10 @@ from convex_client.models.response_sessions_start_session import ResponseSession
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
+# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://neat-warbler-689.convex.cloud"
+    host = "https://posh-chihuahua-941.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -589,7 +603,7 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.MutationApi(api_client)
-    request_sessions_start_session = convex_client.RequestSessionsStartSession() # RequestSessionsStartSession |
+    request_sessions_start_session = convex_client.RequestSessionsStartSession() # RequestSessionsStartSession | 
 
     try:
         # Calls a mutation at the path sessions.js:startSession
@@ -600,11 +614,14 @@ with convex_client.ApiClient(configuration) as api_client:
         print("Exception when calling MutationApi->api_run_sessions_start_session_post: %s\n" % e)
 ```
 
+
+
 ### Parameters
 
-| Name                               | Type                                                              | Description | Notes |
-| ---------------------------------- | ----------------------------------------------------------------- | ----------- | ----- |
-| **request_sessions_start_session** | [**RequestSessionsStartSession**](RequestSessionsStartSession.md) |             |
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_sessions_start_session** | [**RequestSessionsStartSession**](RequestSessionsStartSession.md)|  | 
 
 ### Return type
 
@@ -616,15 +633,16 @@ with convex_client.ApiClient(configuration) as api_client:
 
 ### HTTP request headers
 
-- **Content-Type**: application/json
-- **Accept**: application/json
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 ### HTTP response details
 
-| Status code | Description                                        | Response headers |
-| ----------- | -------------------------------------------------- | ---------------- |
-| **200**     | Convex executed your request and returned a result | -                |
-| **400**     | Failed operation                                   | -                |
-| **500**     | Convex Internal Error                              | -                |
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
