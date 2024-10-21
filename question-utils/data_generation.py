@@ -5,7 +5,7 @@ import anthropic
 from utils import extract_function_name
 import json
 
-client = anthropic.Anthropic(api_key='Your API Key')
+client = anthropic.Anthropic(api_key='')
 MODEL = "claude-3-5-sonnet-20240620"
 
 def generate_function_name(question: Question) -> str:
@@ -159,3 +159,32 @@ Return only one of these modes as a string, without any additional text or expla
         raise ValueError(f"Invalid eval mode: {eval_mode}")
     print("evalMode: ", eval_mode)
     return eval_mode
+
+def html_to_markdown(html: str) -> str:
+    print(html)
+    print("\n converting html to markdown")
+    prompt = f"""You are an expert at converting html to markdown. Convert the following html question description to markdown:
+
+    Instructions:
+    1. Strictly follow the markdown format
+    2. Don't add any additional text or explanation
+    3. Only return the markdown content, nothing else
+
+    HTML: {html}
+    Markdown: 
+    
+    """
+
+    response = client.messages.create(
+        model=MODEL,
+        max_tokens=50,
+        messages=[
+            {"role": "user", "content": prompt}
+        ]
+    )
+    raw_response = response.content
+    return raw_response
+
+
+a = html_to_markdown("<p>For two strings <code>s</code> and <code>t</code>, we say &quot;<code>t</code> divides <code>s</code>&quot; if and only if <code>s = t + t + t + ... + t + t</code> (i.e., <code>t</code> is concatenated with itself one or more times).</p>\n\n<p>Given two strings <code>str1</code> and <code>str2</code>, return <em>the largest string </em><code>x</code><em> such that </em><code>x</code><em> divides both </em><code>str1</code><em> and </em><code>str2</code>.</p>\n\n<p>&nbsp;</p>\n<p><strong class=\"example\">Example 1:</strong></p>\n\n<pre>\n<strong>Input:</strong> str1 = &quot;ABCABC&quot;, str2 = &quot;ABC&quot;\n<strong>Output:</strong> &quot;ABC&quot;\n</pre>\n\n<p><strong class=\"example\">Example 2:</strong></p>\n\n<pre>\n<strong>Input:</strong> str1 = &quot;ABABAB&quot;, str2 = &quot;ABAB&quot;\n<strong>Output:</strong> &quot;AB&quot;\n</pre>\n\n<p><strong class=\"example\">Example 3:</strong></p>\n\n<pre>\n<strong>Input:</strong> str1 = &quot;LEET&quot;, str2 = &quot;CODE&quot;\n<strong>Output:</strong> &quot;&quot;\n</pre>\n\n<p>&nbsp;</p>\n<p><strong>Constraints:</strong></p>\n\n<ul>\n\t<li><code>1 &lt;= str1.length, str2.length &lt;= 1000</code></li>\n\t<li><code>str1</code> and <code>str2</code> consist of English uppercase letters.</li>\n</ul>\n")
+print(a)
