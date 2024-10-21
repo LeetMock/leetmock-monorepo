@@ -2,6 +2,7 @@ import { HTMLAttributes, useEffect, useState } from "react";
 
 import WaveReveal from "@/components/animata/text/wave-reveal";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface ImageProps extends HTMLAttributes<HTMLDivElement> {
   item: { image: string; title: string };
@@ -23,11 +24,11 @@ const List = ({ item, className, index, activeItem, ...props }: ImageProps) => {
         {
           "flex-grow": index === activeItem,
         },
-        className,
+        className
       )}
       {...props}
     >
-      <img
+      <Image
         src={item.image}
         alt={item.title}
         className={cn("h-full w-full object-cover", {

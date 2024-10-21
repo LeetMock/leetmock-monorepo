@@ -1,5 +1,6 @@
-import { Container } from "./Container";
+import Image from "next/image";
 import React from "react";
+import { Container } from "./Container";
 
 interface FeatureCardProps {
   title: string;
@@ -19,7 +20,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   return (
     <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-orange-500/20">
       <div className="relative space-y-8 py-12 p-8 h-full flex flex-col">
-        <img
+        <Image
           src={imageSrc}
           className="w-12"
           width="512"

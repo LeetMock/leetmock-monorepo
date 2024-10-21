@@ -1,6 +1,7 @@
-import Link from "next/link";
 import TiltCard from "@/components/animata/card/tilted-card";
 import { useAuth } from "@clerk/clerk-react";
+import Image from "next/image";
+import Link from "next/link";
 import { Container } from "./Container";
 
 export const HeroSection = () => {
@@ -83,63 +84,63 @@ export const HeroSection = () => {
           </div>
           <div className="mt-12 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6">
             <div className="p-4 grayscale transition duration-200 hover:grayscale-0">
-              <img
+              <Image
                 src="./clients/microsoft.svg"
                 className="h-12 w-auto mx-auto"
                 loading="lazy"
                 alt="client logo"
-                width=""
-                height=""
+                width={100}
+                height={100}
               />
             </div>
             <div className="p-4 grayscale transition duration-200 hover:grayscale-0">
-              <img
+              <Image
                 src="./clients/airbnb.svg"
                 className="h-12 w-auto mx-auto"
                 loading="lazy"
                 alt="client logo"
-                width=""
-                height=""
+                width={100}
+                height={100}
               />
             </div>
             <div className="p-4 flex grayscale transition duration-200 hover:grayscale-0">
-              <img
+              <Image
                 src="./clients/google.svg"
                 className="h-9 w-auto m-auto"
                 loading="lazy"
                 alt="client logo"
-                width=""
-                height=""
+                width={100}
+                height={100}
               />
             </div>
             <div className="p-4 grayscale transition duration-200 hover:grayscale-0">
-              <img
+              <Image
                 src="./clients/nvidia.svg"
                 className="h-12 w-auto mx-auto"
                 loading="lazy"
                 alt="client logo"
-                width=""
-                height=""
+                width={100}
+                height={100}
               />
             </div>
             <div className="p-4 flex grayscale transition duration-200 hover:grayscale-0">
-              <img
+              <Image
                 src="./clients/netflix.svg"
                 className="h-8 w-auto m-auto"
                 loading="lazy"
                 alt="client logo"
-                width=""
-                height=""
+                width={100}
+                height={100}
               />
             </div>
             <div className="p-4 grayscale transition duration-200 hover:grayscale-0">
-              <img
+              <Image
                 src="./clients/google-cloud.svg"
                 className="h-12 w-auto mx-auto"
                 loading="lazy"
                 alt="client logo"
-                width=""
-                height=""
+                width={100}
+                height={100}
               />
             </div>
           </div>
