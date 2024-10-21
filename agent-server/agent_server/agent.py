@@ -66,7 +66,7 @@ class LangGraphLLM(llm.LLM):
         assert self._interaction_type is not None, "Interaction type is not set"
 
         lang_graph_input = dict(
-            messages=langchain_messages,
+            incoming_messages=langchain_messages,
             coding_question=self._session_metadata.question_content,
             editor_content=self._snapshot.editor.content,
             content_last_updated=self._snapshot.editor.last_updated,
@@ -149,7 +149,7 @@ class SimpleLLMStream(llm.LLMStream):
                 continue
 
             # logger.info(f"Received chunk data: {chunk.data}")
-            content = chunk.data.get("data", {}).get("chunk", [])[1].get("content", "")
+            content = chunk.data.get("data", {}).get("chunk", {}).get("content", "")
             logger.info(f"Received chunk content: `{content}`")
             yield self._create_llm_chunk(content)
 
