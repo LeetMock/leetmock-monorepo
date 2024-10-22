@@ -102,7 +102,7 @@ export const Hero = () => {
       {/* Shadow effect */}
       <div className="shadow"></div>
 
-      
+
     </section>
   );
 };

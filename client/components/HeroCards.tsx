@@ -1,16 +1,16 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from "@/components/ui/card";
-import { Check, Linkedin } from "lucide-react";
-import { LightBulbIcon } from "@/components/Icons";
+import { Check } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import GithubCardShiny from "./animata/card/github-card-shiny";
 
@@ -62,25 +62,26 @@ export const HeroCards = () => {
         />
         <Card className="h-full w-full rounded-[calc(1.5rem-2px)] bg-card">
           <CardHeader className="mt-8 flex justify-center items-center pb-2">
-            <img
+            <Image
               src="https://i.pravatar.cc/150?img=31"
               alt="user avatar"
               className="absolute grayscale-[0%] -top-12 rounded-full w-24 h-24 aspect-square object-cover"
             />
             <CardTitle className="text-center">Jessica</CardTitle>
-            <CardDescription className="font-normal text-primary">Full Stack Developer</CardDescription>
+            <CardDescription className="font-normal text-primary">
+              Full Stack Developer
+            </CardDescription>
           </CardHeader>
 
           <CardContent className="text-center pb-2">
             <p>
-              I love practicing coding interviews with LeetMock. Its personalized feedback helps me sharpen my skills in ways no other platform has before.
+              I love practicing coding interviews with LeetMock. Its personalized feedback helps me
+              sharpen my skills in ways no other platform has before.
             </p>
           </CardContent>
 
           <CardFooter>
-            <div>
-              {/* You can add additional content here if needed */}
-            </div>
+            <div>{/* You can add additional content here if needed */}</div>
           </CardFooter>
         </Card>
       </div>
@@ -123,13 +124,16 @@ export const HeroCards = () => {
 
           <CardFooter className="flex">
             <div className="space-y-4">
-              {["600 interview minutes", "Various question options", "Personalized feedback / recap", "Email Support"].map(
-                (benefit: string) => (
-                  <span key={benefit} className="flex">
-                    <Check className="text-green-500" /> <h3 className="ml-2">{benefit}</h3>
-                  </span>
-                )
-              )}
+              {[
+                "600 interview minutes",
+                "Various question options",
+                "Personalized feedback / recap",
+                "Email Support",
+              ].map((benefit: string) => (
+                <span key={benefit} className="flex">
+                  <Check className="text-green-500" /> <h3 className="ml-2">{benefit}</h3>
+                </span>
+              ))}
             </div>
           </CardFooter>
         </Card>

@@ -2,7 +2,7 @@
 
 import { useAction, useMutation, useQuery } from "convex/react";
 import { Clock, Loader2, PlayIcon } from "lucide-react";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { editor as monacoEditor } from "monaco-editor";
 import { useTheme } from "next-themes";
@@ -59,6 +59,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   const [outputView, setOutputView] = useState<"output" | "testResults">("output");
   const [testRunCounter, setTestRunCounter] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [localEditorContent, setLocalEditorContent] = useState<string | undefined>(undefined);
 
   const { height = 300 } = useWindowSize();
   const { size, isResizing, resizeHandleProps } = useResizePanel({
@@ -68,6 +69,11 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     direction: "vertical",
     storageId: "leetmock.workspace.code-editor",
   });
+
+  useEffect(() => {
+    if (!isDefined(editorState)) return;
+    setLocalEditorContent(editorState.content);
+  }, [editorState]);
 
   const stateLoaded = useMemo(
     () => isDefined(editorState) && isDefined(terminalState),
@@ -104,7 +110,11 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     setTestRunCounter((prev) => prev + 1);
 
     try {
-      const result = await runTests({ language, code: content, questionId: questionId });
+      const result = await runTests({
+        language,
+        code: localEditorContent || content,
+        questionId: questionId,
+      });
       // const executionTime = result.executionTime;
       if (result.status === "success" && result.testResults) {
         const executionTime = result.executionTime;
@@ -158,12 +168,13 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
                 enabled: false,
               },
             }}
-            onChange={(value) =>
+            onChange={(value) => {
               debouncedCommitEvent({
                 type: "content_changed",
                 data: { content: value || "" },
-              })
-            }
+              });
+              setLocalEditorContent(value || "");
+            }}
             beforeMount={(monaco) => {
               monaco.editor.defineTheme("customDarkTheme", darkEditorTheme);
               monaco.editor.setTheme("customDarkTheme");

@@ -572,6 +572,99 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/codeSessionEvents/ackCodeSessionEvent:
+    post:
+      summary: Calls a mutation at the path codeSessionEvents.js:ackCodeSessionEvent
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codeSessionEvents.ackCodeSessionEvent"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codeSessionEvents.ackCodeSessionEvent"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/codeSessionEvents/commitCodeSessionEvent:
+    post:
+      summary: Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codeSessionEvents.commitCodeSessionEvent"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codeSessionEvents.commitCodeSessionEvent"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/codeSessionEvents/getNextContentChangeEvent:
+    post:
+      summary: Calls a query at the path codeSessionEvents.js:getNextContentChangeEvent
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codeSessionEvents.getNextContentChangeEvent"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codeSessionEvents.getNextContentChangeEvent"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
   /api/run/codeSessionStates/get:
     post:
       summary: Calls a query at the path codeSessionStates.js:get
@@ -683,99 +776,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Response_codeSessionStates.getTerminalState"
-        "400":
-          description: Failed operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-        "500":
-          description: Convex Internal Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-
-  /api/run/codeSessionEvents/ackCodeSessionEvent:
-    post:
-      summary: Calls a mutation at the path codeSessionEvents.js:ackCodeSessionEvent
-      tags:
-        - mutation
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Request_codeSessionEvents.ackCodeSessionEvent"
-        required: true
-      responses:
-        "200":
-          description: Convex executed your request and returned a result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Response_codeSessionEvents.ackCodeSessionEvent"
-        "400":
-          description: Failed operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-        "500":
-          description: Convex Internal Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-
-  /api/run/codeSessionEvents/commitCodeSessionEvent:
-    post:
-      summary: Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
-      tags:
-        - mutation
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Request_codeSessionEvents.commitCodeSessionEvent"
-        required: true
-      responses:
-        "200":
-          description: Convex executed your request and returned a result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Response_codeSessionEvents.commitCodeSessionEvent"
-        "400":
-          description: Failed operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-        "500":
-          description: Convex Internal Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-
-  /api/run/codeSessionEvents/getNextContentChangeEvent:
-    post:
-      summary: Calls a query at the path codeSessionEvents.js:getNextContentChangeEvent
-      tags:
-        - query
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Request_codeSessionEvents.getNextContentChangeEvent"
-        required: true
-      responses:
-        "200":
-          description: Convex executed your request and returned a result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Response_codeSessionEvents.getNextContentChangeEvent"
         "400":
           description: Failed operation
           content:
@@ -1694,170 +1694,6 @@ components:
           type: object
         value: {}
 
-    Request_codeSessionStates.get:
-      type: object
-      required:
-        - args
-      properties:
-        args:
-          type: object
-          required:
-            - sessionId
-          properties:
-            sessionId:
-              type: string
-              description: ID from table "sessions"
-
-    Response_codeSessionStates.get:
-      type: object
-      required:
-        - status
-      properties:
-        status:
-          type: string
-          enum:
-            - "success"
-            - "error"
-        errorMessage:
-          type: string
-        errorData:
-          type: object
-        value:
-          type: object
-          required:
-            - _creationTime
-            - _id
-            - displayQuestion
-            - editor
-            - sessionId
-            - terminal
-          properties:
-            _creationTime:
-              type: number
-            _id:
-              type: string
-              description: ID from table "codeSessionStates"
-            displayQuestion:
-              type: boolean
-            editor:
-              type: object
-              required:
-                - content
-                - language
-                - lastUpdated
-              properties:
-                content:
-                  type: string
-                language:
-                  type: string
-                lastUpdated:
-                  type: number
-            sessionId:
-              type: string
-              description: ID from table "sessions"
-            terminal:
-              type: object
-              required:
-                - isError
-                - output
-              properties:
-                executionTime:
-                  type: number
-                isError:
-                  type: boolean
-                output:
-                  type: string
-
-    Request_codeSessionStates.getEditorState:
-      type: object
-      required:
-        - args
-      properties:
-        args:
-          type: object
-          required:
-            - sessionId
-          properties:
-            sessionId:
-              type: string
-              description: ID from table "sessions"
-
-    Response_codeSessionStates.getEditorState:
-      type: object
-      required:
-        - status
-      properties:
-        status:
-          type: string
-          enum:
-            - "success"
-            - "error"
-        errorMessage:
-          type: string
-        errorData:
-          type: object
-        value: {}
-
-    Request_codeSessionStates.getSessionStateBySessionId:
-      type: object
-      required:
-        - args
-      properties:
-        args:
-          type: object
-          required:
-            - sessionId
-          properties:
-            sessionId:
-              type: string
-              description: ID from table "sessions"
-
-    Response_codeSessionStates.getSessionStateBySessionId:
-      type: object
-      required:
-        - status
-      properties:
-        status:
-          type: string
-          enum:
-            - "success"
-            - "error"
-        errorMessage:
-          type: string
-        errorData:
-          type: object
-        value: {}
-
-    Request_codeSessionStates.getTerminalState:
-      type: object
-      required:
-        - args
-      properties:
-        args:
-          type: object
-          required:
-            - sessionId
-          properties:
-            sessionId:
-              type: string
-              description: ID from table "sessions"
-
-    Response_codeSessionStates.getTerminalState:
-      type: object
-      required:
-        - status
-      properties:
-        status:
-          type: string
-          enum:
-            - "success"
-            - "error"
-        errorMessage:
-          type: string
-        errorData:
-          type: object
-        value: {}
-
     Request_codeSessionEvents.ackCodeSessionEvent:
       type: object
       required:
@@ -2039,6 +1875,170 @@ components:
             ts:
               type: number
           nullable: true
+
+    Request_codeSessionStates.get:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_codeSessionStates.get:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value:
+          type: object
+          required:
+            - _creationTime
+            - _id
+            - displayQuestion
+            - editor
+            - sessionId
+            - terminal
+          properties:
+            _creationTime:
+              type: number
+            _id:
+              type: string
+              description: ID from table "codeSessionStates"
+            displayQuestion:
+              type: boolean
+            editor:
+              type: object
+              required:
+                - content
+                - language
+                - lastUpdated
+              properties:
+                content:
+                  type: string
+                language:
+                  type: string
+                lastUpdated:
+                  type: number
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+            terminal:
+              type: object
+              required:
+                - isError
+                - output
+              properties:
+                executionTime:
+                  type: number
+                isError:
+                  type: boolean
+                output:
+                  type: string
+
+    Request_codeSessionStates.getEditorState:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_codeSessionStates.getEditorState:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_codeSessionStates.getSessionStateBySessionId:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_codeSessionStates.getSessionStateBySessionId:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_codeSessionStates.getTerminalState:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_codeSessionStates.getTerminalState:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
 
     FailedResponse:
       type: object

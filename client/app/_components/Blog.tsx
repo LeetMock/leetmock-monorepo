@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Container } from "./Container";
 
 export const Blog = () => {
@@ -40,7 +41,7 @@ export const Blog = () => {
                 className="group p-6 sm:p-8 rounded-3xl bg-white border border-gray-100 dark:shadow-none dark:border-gray-700 dark:bg-gray-800 bg-opacity-50 shadow-2xl shadow-gray-600/10 flex flex-col"
               >
                 <div className="relative overflow-hidden rounded-xl">
-                  <img
+                  <Image
                     src={blog.image}
                     alt="art cover"
                     loading="lazy"

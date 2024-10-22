@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Container } from "./Container";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Container } from "./Container";
 
 const links = [
   {
@@ -129,9 +129,9 @@ export default function AppHeader() {
               <div className="mt-12 lg:mt-0">
                 <Link
                   href="/dashboard"
-                  className="relative flex h-9 w-full items-center justify-center px-4 before:absolute before:inset-0 before:rounded-full before:bg-primary before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
+                  className="relative flex h-9 w-full items-center justify-center px-4 before:absolute before:inset-0 before:rounded-full before:bg-blue-600 dark:before:bg-orange-500 before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
                 >
-                  <span className="relative text-sm font-semibold text-white"> Get Started</span>
+                  <span className="relative text-sm font-semibold text-white">Get Started</span>
                 </Link>
               </div>
             </div>

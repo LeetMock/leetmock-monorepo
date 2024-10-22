@@ -19,6 +19,7 @@ import { Code, Database, Lock, MoveRight, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useState } from "react";
 import { toast } from "sonner";
+import { CodeInterviewConfig } from "./code-interview-config";
 import { CodeQuestionViewer } from "./code-question-viewer";
 
 interface SessionMeta {
@@ -147,7 +148,7 @@ export const InterviewTypeSelection: React.FC = () => {
 };
 
 export const StartInterviewDialog: React.FC = () => {
-  const { maxStep, codeInterview, hasConfiguredSession, updateCodeInterview, reset } =
+  const { maxStep, codeInterview, hasConfiguredSession, updateCodeInterview, reset, setType } =
     useSessionCreateModal();
   const router = useRouter();
   const questions = useQuery(api.questions.getAll);
@@ -158,13 +159,12 @@ export const StartInterviewDialog: React.FC = () => {
   const [startDialogOpen, setStartDialogOpen] = useState(false);
 
   const handleSessionCreate = useCallback(async () => {
-    if (!questions) return; // Check if questions is undefined
+    if (!questions) return;
     const question = questions.find((q) => q._id === codeInterview.questionId);
     if (!question) return;
 
-    const { functionName, inputParameters } = question; // Assuming these fields exist in your question object
+    const { functionName, inputParameters } = question;
 
-    // TODO: wrap inside an action
     const promise = createAgentThread({ graphId: "code-mock-v1" })
       .then(({ threadId, assistantId }) => {
         return createSession({
@@ -175,6 +175,7 @@ export const StartInterviewDialog: React.FC = () => {
       })
       .then((sessionId) => {
         reset();
+        setStartDialogOpen(false);
         router.push(`/dashboard/interviews/${sessionId}`);
       });
 
@@ -207,19 +208,22 @@ export const StartInterviewDialog: React.FC = () => {
               Select the type of interview you&apos;d like to start.
             </DialogDescription>
           </DialogHeader>
+
           <Stepper
             steps={["Select Interview Type", "Select Problem", "Configure Interview"]}
             currentStep={maxStep}
           />
+
           {currentStep === 0 && <InterviewTypeSelection />}
           <Wait data={{ questions }}>
             {({ questions }) =>
               currentStep === 1 && (
-                <div className="flex-grow overflow-y-auto max-h-[calc(100vh-20rem)]">
+                <div className="flex flex-col h-[calc(100vh-20rem)]">
                   <CodeQuestionViewer
                     questions={questions}
                     onQuestionSelected={(questionId) => {
                       updateCodeInterview({ questionId });
+                      setCurrentStep(1);
                     }}
                   />
                 </div>
@@ -227,13 +231,10 @@ export const StartInterviewDialog: React.FC = () => {
             }
           </Wait>
           {currentStep === 2 && (
-            <div className="flex justify-center items-center flex-1">
-              <div className="flex flex-col items-center gap-2">
-                <div className="text-lg">No Config Available</div>
-                <div className="text-sm text-muted-foreground">
-                  You can configure your interview later.
-                </div>
-              </div>
+            <div className="flex flex-col h-[calc(100vh-20rem)]">
+              <CodeInterviewConfig
+                selectedQuestion={questions?.find((q) => q._id === codeInterview.questionId)}
+              />
             </div>
           )}
           <div className="flex justify-between">
