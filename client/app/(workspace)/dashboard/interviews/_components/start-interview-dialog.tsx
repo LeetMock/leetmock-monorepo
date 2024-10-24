@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 import { useAction, useMutation, useQuery } from "convex/react";
 import { Code, Database, Lock, MoveRight, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { CodeInterviewConfig } from "./code-interview-config";
 import { CodeQuestionViewer } from "./code-question-viewer";
@@ -148,7 +148,7 @@ export const InterviewTypeSelection: React.FC = () => {
 };
 
 export const StartInterviewDialog: React.FC = () => {
-  const { maxStep, codeInterview, hasConfiguredSession, updateCodeInterview, reset, setType } =
+  const { maxStep, codeInterview, codeInterviewConfig, updateCodeInterview, updateCodeInterviewConfig: updateConfig, reset, setType } =
     useSessionCreateModal();
   const router = useRouter();
   const questions = useQuery(api.questions.getAll);
@@ -163,14 +163,18 @@ export const StartInterviewDialog: React.FC = () => {
     const question = questions.find((q) => q._id === codeInterview.questionId);
     if (!question) return;
 
-    const { functionName, inputParameters } = question;
-
     const promise = createAgentThread({ graphId: "code-mock-v1" })
       .then(({ threadId, assistantId }) => {
         return createSession({
           questionId: codeInterview.questionId!,
           agentThreadId: threadId,
           assistantId: assistantId,
+          interviewType: "coding",
+          interviewMode: codeInterviewConfig.mode!,
+          interviewFlow: codeInterviewConfig.interviewFlow!,
+          programmingLanguage: codeInterviewConfig.language!,
+          timeLimit: codeInterviewConfig.interviewTime!,
+          voice: codeInterviewConfig.voice!,
         });
       })
       .then((sessionId) => {
@@ -184,7 +188,7 @@ export const StartInterviewDialog: React.FC = () => {
       success: "Interview created",
       error: (error) => error.message,
     });
-  }, [questions, createAgentThread, codeInterview, createSession, router, reset]);
+  }, [questions, createAgentThread, codeInterview, codeInterviewConfig, createSession, router, reset]);
 
   return (
     <>
@@ -233,6 +237,7 @@ export const StartInterviewDialog: React.FC = () => {
           {currentStep === 2 && (
             <div className="flex flex-col h-[calc(100vh-20rem)]">
               <CodeInterviewConfig
+                onConfigUpdate={updateConfig}
                 selectedQuestion={questions?.find((q) => q._id === codeInterview.questionId)}
               />
             </div>

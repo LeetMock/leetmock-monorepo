@@ -57,6 +57,7 @@ export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ session
       sessionStatus: session.sessionStatus,
       questionId: session.questionId,
       sessionStartTime: session.sessionStartTime,
+      timeLimit: session.timeLimit,
     };
   }, [session]);
 

@@ -136,8 +136,14 @@ export const createCodeSession = userMutation({
     questionId: v.id("questions"),
     agentThreadId: v.string(),
     assistantId: v.string(),
+    interviewType: v.union(v.literal("coding"), v.literal("system_design"), v.literal("behavioral")),
+    interviewMode: v.union(v.literal("practice"), v.literal("strict")),
+    interviewFlow: v.array(v.string()),
+    programmingLanguage: v.string(),
+    timeLimit: v.number(),
+    voice: v.string(),
   },
-  handler: async (ctx, { questionId, agentThreadId, assistantId }) => {
+  handler: async (ctx, { questionId, agentThreadId, assistantId, interviewMode, interviewType, interviewFlow, programmingLanguage, timeLimit, voice }) => {
     const activeSession = await ctx
       .table("sessions", "by_user_id", (q) => q.eq("userId", ctx.user.subject))
       .filter((q) =>
@@ -154,11 +160,20 @@ export const createCodeSession = userMutation({
 
     const question = await ctx.table("questions").getX(questionId);
     const sessionId = await ctx.table("sessions").insert({
-      userId: ctx.user.subject,
-      questionId,
       agentThreadId,
       assistantId,
+      interviewMode,
+      interviewType,
+      meta: {
+        interviewFlow: interviewFlow,
+        programmingLanguage: programmingLanguage,
+        metaData: {},
+      },
+      questionId,
+      userId: ctx.user.subject,
+      timeLimit,
       sessionStatus: "not_started",
+      voice
     });
 
     const initialContent = CODE_TEMPLATES["python"](

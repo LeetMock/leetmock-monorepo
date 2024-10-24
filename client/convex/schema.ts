@@ -36,8 +36,17 @@ const schema = defineEntSchema({
       v.literal("in_progress"),
       v.literal("completed")
     ),
+    timeLimit: v.number(),
+    voice: v.string(),
     sessionStartTime: v.optional(v.number()),
     sessionEndTime: v.optional(v.number()),
+    interviewType: v.string(),
+    interviewMode: v.union(v.literal("practice"), v.literal("strict")),
+    meta: v.object({
+      interviewFlow: v.array(v.string()),
+      programmingLanguage: v.union(v.string(), v.null()),
+      metaData: v.record(v.string(), v.any()),
+    }),
   })
     .edge("codeSessionState", { optional: true })
     .index("by_user_id", ["userId"])
