@@ -2,6 +2,7 @@ from collections import defaultdict
 from enum import Enum
 from typing import Annotated, Dict, List, Set
 
+from agent_graph.code_mock_staged_v1 import intro_stage
 from agent_graph.code_mock_staged_v1.constants import (
     CODING_OBSERVATIONS,
     CODING_TASKS,
@@ -162,10 +163,9 @@ def create_graph():
         .add_node("init_state", init_state)
         .add_node("on_event", on_event)
         .add_node("on_trigger", on_trigger)
-        .add_node("stage_1", create_stage_subgraph())
-        .add_node("stage_2", create_stage_subgraph())
-        .add_node("stage_3", create_stage_subgraph())
+        .add_node("intro_stage", intro_stage.create_graph())
         .add_node("track_stage_tasks", track_stage_tasks)
+        .add_node("track_stage_observations", track_stage_observations)
         # edges
         .add_conditional_edges(
             source=START,
@@ -181,12 +181,12 @@ def create_graph():
         .add_conditional_edges(
             source="on_trigger",
             path=select_stage,
-            path_map=["stage_1", "stage_2", "stage_3"],
+            path_map=["intro_stage", END],
         )
-        .add_edge("stage_1", "track_stage_tasks")
-        .add_edge("stage_2", "track_stage_tasks")
-        .add_edge("stage_3", "track_stage_tasks")
+        .add_edge("intro_stage", "track_stage_tasks")
+        .add_edge("intro_stage", "track_stage_observations")
         .add_edge("track_stage_tasks", END)
+        .add_edge("track_stage_observations", END)
         .compile(checkpointer=MemorySaver())
     )
 
