@@ -1,8 +1,19 @@
-from asyncio import Task
+from collections import defaultdict
 from enum import Enum
-from typing import Annotated, Dict, List
+from typing import Annotated, Dict, List, Set
 
+from agent_graph.code_mock_staged_v1.constants import (
+    CODING_OBSERVATIONS,
+    CODING_TASKS,
+    EVAL_OBSERVATIONS,
+    EVAL_TASKS,
+    INTRO_OBSERVATIONS,
+    INTRO_TASKS,
+    StageTypes,
+    get_next_stage,
+)
 from agent_graph.constants import JOIN_CALL_MESSAGE
+from agent_graph.types import Observation, Task
 from agent_graph.utils import AgentPromptTemplates
 from langchain_core.messages import AnyMessage, HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
@@ -10,28 +21,53 @@ from langgraph.graph import END, START, StateGraph, add_messages
 from pydantic.v1 import BaseModel, Field
 
 
-class StageTypes(str, Enum):
-    INTRO = "intro"
-    CODING = "coding"
-    EVAL = "eval"
-
-
 class AgentState(BaseModel):
     """State of the agent."""
 
-    messages: Annotated[List[AnyMessage], add_messages] = Field(default_factory=list)
+    messages: Annotated[List[AnyMessage], add_messages] = Field(
+        default_factory=list,
+        description="Messages to be sent to the model",
+    )
 
-    initialized: bool = Field(default=False)
+    initialized: bool = Field(
+        default=False,
+        description="Whether the agent is initialized",
+    )
 
-    event: str | None = Field(default=None)
+    event: str | None = Field(
+        default=None,
+        description="Event triggered by the user",
+    )
 
-    trigger: bool = Field(default=False)
+    trigger: bool = Field(
+        default=False,
+        description="Whether the agent should be triggered",
+    )
 
-    stage_idx: int = Field(default=0)
+    current_stage: StageTypes = Field(
+        default=StageTypes.INTRO,
+        description="Current stage of the agent",
+    )
 
-    prompts: AgentPromptTemplates | None = Field(default=None)
+    tasks: Dict[StageTypes, List[Task]] = Field(
+        default=lambda: defaultdict(list),
+        description="Tasks for the agent",
+    )
 
-    tasks: Dict[StageTypes, List[Task]] = Field(default=dict)
+    observations: Dict[StageTypes, List[Observation]] = Field(
+        default=lambda: defaultdict(list),
+        description="Observations for the agent",
+    )
+
+    completed_tasks: Dict[StageTypes, Set[str]] = Field(
+        default=lambda: defaultdict(set),
+        description="Completed tasks for the agent",
+    )
+
+    caught_observations: Dict[StageTypes, Set[str]] = Field(
+        default=lambda: defaultdict(set),
+        description="Caught observations for the agent",
+    )
 
 
 class AgentConfig(BaseModel):
@@ -47,11 +83,14 @@ class AgentConfig(BaseModel):
 # --------------------- agent graph nodes --------------------- #
 async def init_state(state: AgentState):
     messages = [HumanMessage(content=JOIN_CALL_MESSAGE)]
-    prompts = AgentPromptTemplates.from_hub(
-        "code-mock-staged-v1", [StageTypes.INTRO, StageTypes.CODING, StageTypes.EVAL]
-    )
 
-    return dict(initialized=True, messages=messages, prompts=prompts)
+    tasks = {
+        StageTypes.INTRO: INTRO_TASKS,
+        StageTypes.CODING: CODING_TASKS,
+        StageTypes.EVAL: EVAL_TASKS,
+    }
+
+    return dict(initialized=True, messages=messages, tasks=tasks)
 
 
 async def on_event(state: AgentState):
@@ -69,8 +108,28 @@ async def on_trigger(state: AgentState):
     return None
 
 
-async def on_stage_end(state: AgentState):
-    return dict(trigger=False, stage_idx=state.stage_idx + 1)
+# call LLM to see if there are any tasks completed in the current stage
+async def track_stage_tasks(state: AgentState):
+    return None
+
+
+async def track_stage_observations(state: AgentState):
+    return None
+
+
+async def decide_next_stage(state: AgentState):
+    stage_tasks = state.tasks[state.current_stage]
+    required_task_names = set(task.name for task in stage_tasks if task.required)
+    completed_task_names = state.completed_tasks[state.current_stage]
+
+    completed_stage_tasks = len(required_task_names - completed_task_names) == 0
+    next_stage = (
+        get_next_stage(state.current_stage)
+        if completed_stage_tasks
+        else state.current_stage
+    )
+
+    return dict(current_stage=next_stage, trigger=False)
 
 
 # --------------------- agent graph edges --------------------- #
@@ -93,8 +152,7 @@ async def should_trigger_event(state: AgentState):
 
 
 async def select_stage(state: AgentState):
-    stages = ["stage_1", "stage_2", "stage_3"]
-    return stages[state.stage_idx % len(stages)]
+    return state.current_stage
 
 
 def create_graph():
@@ -107,7 +165,7 @@ def create_graph():
         .add_node("stage_1", create_stage_subgraph())
         .add_node("stage_2", create_stage_subgraph())
         .add_node("stage_3", create_stage_subgraph())
-        .add_node("on_stage_end", on_stage_end)
+        .add_node("track_stage_tasks", track_stage_tasks)
         # edges
         .add_conditional_edges(
             source=START,
@@ -125,10 +183,10 @@ def create_graph():
             path=select_stage,
             path_map=["stage_1", "stage_2", "stage_3"],
         )
-        .add_edge("stage_1", "on_stage_end")
-        .add_edge("stage_2", "on_stage_end")
-        .add_edge("stage_3", "on_stage_end")
-        .add_edge("on_stage_end", END)
+        .add_edge("stage_1", "track_stage_tasks")
+        .add_edge("stage_2", "track_stage_tasks")
+        .add_edge("stage_3", "track_stage_tasks")
+        .add_edge("track_stage_tasks", END)
         .compile(checkpointer=MemorySaver())
     )
 

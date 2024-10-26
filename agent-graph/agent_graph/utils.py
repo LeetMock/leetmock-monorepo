@@ -11,15 +11,22 @@ T = TypeVar("T")
 class AgentPromptTemplates(BaseModel):
     """Prompt templates for the agent."""
 
-    prompt_map: Dict[str, PromptTemplate] = Field(..., description="Prompt templates")
+    prefix: str = Field(..., description="Prefix for the prompt templates")
+    prompt_map: Dict[str, PromptTemplate] = Field(
+        default_factory=dict, description="Prompt templates"
+    )
 
     def __getitem__(self, key: str) -> PromptTemplate:
         return self.prompt_map[key]
 
     @classmethod
-    def from_hub(cls, prefix: str, prompt_names: List[str]):
-        prompt_map = {name: hub.pull(f"{prefix}_{name}") for name in prompt_names}
-        return cls(prompt_map=prompt_map)
+    def from_prefix(cls, prefix: str):
+        return cls(prefix=prefix)
+
+    def add_prompt_from_hub(self, prompt_name: str):
+        prompt = hub.pull(f"{self.prefix}_{prompt_name}")
+        self.prompt_map[prompt_name] = prompt
+        return prompt
 
 
 def _validate_value(value: Any) -> bool:
