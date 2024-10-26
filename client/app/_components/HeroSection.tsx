@@ -27,8 +27,7 @@ export const HeroSection = () => {
               </span>
             </h1>
             <p className="mt-8 text-gray-700 dark:text-gray-300">
-              Practice coding interviews with AI. Get personalized feedback. Improve interview
-              skills.
+              Master interviews with personalized AI feedback. Build lasting skills and muscle memory for success.
             </p>
             {isLoaded && (
               <div className="mt-16 flex flex-wrap justify-center gap-y-4 gap-x-6">
@@ -56,27 +55,29 @@ export const HeroSection = () => {
                 </h6>
                 <div className="mt-2 flex-grow flex items-start">
                   <p className="text-gray-500 text-left">
-                    Get personalized feedback on your skills and performance.
+                    Deep, actionable insights that fuel rapid development and real interview readiness.
                   </p>
                 </div>
               </div>
               <div className="flex-1 mx-4 flex flex-col">
                 <h6 className="text-lg font-semibold text-gray-700 dark:text-white mb-auto text-center">
-                  Effective Practice
+                  Cultivate a Good Habit
                 </h6>
                 <div className="mt-2 flex-grow flex items-start">
                   <p className="text-gray-500 text-left">
-                    Practice interviews with AI. Improve skills via the unique experience.
+
+                    Internalize good coding habits and muscle memory so that you can excel in real
+                    interviews.
                   </p>
                 </div>
               </div>
               <div className="flex-1 flex flex-col">
                 <h6 className="text-lg font-semibold text-gray-700 dark:text-white mb-auto text-center">
-                  Flexible Schedule
+                  Flexible & Effective
                 </h6>
                 <div className="mt-2 flex-grow flex items-start">
                   <p className="text-gray-500 text-left">
-                    Practice coding interviews at your own pace. No need to wait for a slot.
+                    Tailored, well-crafted AI, anytime, anywhere, at your own pace. No scheduling, no waiting.
                   </p>
                 </div>
               </div>
