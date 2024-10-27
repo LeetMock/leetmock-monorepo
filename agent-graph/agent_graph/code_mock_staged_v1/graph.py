@@ -198,10 +198,12 @@ async def track_stage_signals(state: AgentState):
 
 async def decide_next_stage(state: AgentState):
     stage_steps = state.steps[state.current_stage]
-    required_step_names = set(step.name for step in stage_steps if step.required)
+    required_step_names = [step.name for step in stage_steps if step.required]
     completed_step_names = state.completed_steps[state.current_stage]
 
-    completed_stage_steps = len(required_step_names - set(completed_step_names)) == 0
+    completed_stage_steps = (
+        len(set(required_step_names) - set(completed_step_names)) == 0
+    )
     next_stage = (
         get_next_stage(state.current_stage)
         if completed_stage_steps
