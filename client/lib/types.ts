@@ -49,3 +49,8 @@ export type Defined<T> = T extends null | undefined ? never : T;
 export type DefinedObject<T> = {
   [P in keyof T]: Defined<T[P]>;
 };
+
+export interface Testcase {
+  id: string;
+  input: Record<string, any>;
+}

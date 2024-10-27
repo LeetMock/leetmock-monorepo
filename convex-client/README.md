@@ -55,10 +55,10 @@ import convex_client
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -90,7 +90,7 @@ with convex_client.ApiClient(configuration) as api_client:
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://posh-chihuahua-941.convex.cloud*
+All URIs are relative to *https://neat-warbler-689.convex.cloud*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
@@ -133,6 +133,8 @@ Class | Method | HTTP request | Description
  - [RequestActionsRunTestsArgs](docs/RequestActionsRunTestsArgs.md)
  - [RequestAdminsCreateUserProfile](docs/RequestAdminsCreateUserProfile.md)
  - [RequestAdminsCreateUserProfileArgs](docs/RequestAdminsCreateUserProfileArgs.md)
+ - [RequestAdminsCreateUserProfileArgsRole](docs/RequestAdminsCreateUserProfileArgsRole.md)
+ - [RequestAdminsCreateUserProfileArgsSubscription](docs/RequestAdminsCreateUserProfileArgsSubscription.md)
  - [RequestAdminsPatchUserSubscription](docs/RequestAdminsPatchUserSubscription.md)
  - [RequestAdminsPatchUserSubscriptionArgs](docs/RequestAdminsPatchUserSubscriptionArgs.md)
  - [RequestCodeSessionEventsAckCodeSessionEvent](docs/RequestCodeSessionEventsAckCodeSessionEvent.md)
@@ -156,7 +158,6 @@ Class | Method | HTTP request | Description
  - [RequestInviteCodesApplyInviteCodeArgs](docs/RequestInviteCodesApplyInviteCodeArgs.md)
  - [RequestInviteCodesCreateInviteCode](docs/RequestInviteCodesCreateInviteCode.md)
  - [RequestInviteCodesCreateInviteCodeArgs](docs/RequestInviteCodesCreateInviteCodeArgs.md)
- - [RequestInviteCodesCreateInviteCodeArgsAssignedRole](docs/RequestInviteCodesCreateInviteCodeArgsAssignedRole.md)
  - [RequestQuestionsGetAll](docs/RequestQuestionsGetAll.md)
  - [RequestQuestionsGetById](docs/RequestQuestionsGetById.md)
  - [RequestQuestionsGetByIdArgs](docs/RequestQuestionsGetByIdArgs.md)
@@ -164,6 +165,8 @@ Class | Method | HTTP request | Description
  - [RequestQuestionsGetByIdInternalArgs](docs/RequestQuestionsGetByIdInternalArgs.md)
  - [RequestSessionsCreateCodeSession](docs/RequestSessionsCreateCodeSession.md)
  - [RequestSessionsCreateCodeSessionArgs](docs/RequestSessionsCreateCodeSessionArgs.md)
+ - [RequestSessionsCreateCodeSessionArgsInterviewMode](docs/RequestSessionsCreateCodeSessionArgsInterviewMode.md)
+ - [RequestSessionsCreateCodeSessionArgsInterviewType](docs/RequestSessionsCreateCodeSessionArgsInterviewType.md)
  - [RequestSessionsEndSession](docs/RequestSessionsEndSession.md)
  - [RequestSessionsEndSessionArgs](docs/RequestSessionsEndSessionArgs.md)
  - [RequestSessionsEndSessionInternal](docs/RequestSessionsEndSessionInternal.md)
@@ -183,7 +186,6 @@ Class | Method | HTTP request | Description
  - [RequestUserProfilesUpdateSubscriptionByEmailInternal](docs/RequestUserProfilesUpdateSubscriptionByEmailInternal.md)
  - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgs](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgs.md)
  - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval.md)
- - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.md)
  - [RequestUserProfilesVoidSubscriptionInternal](docs/RequestUserProfilesVoidSubscriptionInternal.md)
  - [RequestUserProfilesVoidSubscriptionInternalArgs](docs/RequestUserProfilesVoidSubscriptionInternalArgs.md)
  - [ResponseActionsCreateAgentThread](docs/ResponseActionsCreateAgentThread.md)

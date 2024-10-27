@@ -38,14 +38,30 @@ class TestRequestSessionsCreateCodeSession(unittest.TestCase):
                 args = convex_client.models.request_sessions_create_code_session_args.Request_sessions_createCodeSession_args(
                     agent_thread_id = '', 
                     assistant_id = '', 
-                    question_id = '', )
+                    interview_flow = [
+                        ''
+                        ], 
+                    interview_mode = null, 
+                    interview_type = null, 
+                    programming_language = '', 
+                    question_id = '', 
+                    time_limit = 1.337, 
+                    voice = '', )
             )
         else:
             return RequestSessionsCreateCodeSession(
                 args = convex_client.models.request_sessions_create_code_session_args.Request_sessions_createCodeSession_args(
                     agent_thread_id = '', 
                     assistant_id = '', 
-                    question_id = '', ),
+                    interview_flow = [
+                        ''
+                        ], 
+                    interview_mode = null, 
+                    interview_type = null, 
+                    programming_language = '', 
+                    question_id = '', 
+                    time_limit = 1.337, 
+                    voice = '', ),
         )
         """
 

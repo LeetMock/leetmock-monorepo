@@ -17,8 +17,10 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List
+from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
+from typing import Any, ClassVar, Dict, List, Union
+from convex_client.models.request_sessions_create_code_session_args_interview_mode import RequestSessionsCreateCodeSessionArgsInterviewMode
+from convex_client.models.request_sessions_create_code_session_args_interview_type import RequestSessionsCreateCodeSessionArgsInterviewType
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -28,8 +30,14 @@ class RequestSessionsCreateCodeSessionArgs(BaseModel):
     """ # noqa: E501
     agent_thread_id: StrictStr = Field(alias="agentThreadId")
     assistant_id: StrictStr = Field(alias="assistantId")
+    interview_flow: List[StrictStr] = Field(alias="interviewFlow")
+    interview_mode: RequestSessionsCreateCodeSessionArgsInterviewMode = Field(alias="interviewMode")
+    interview_type: RequestSessionsCreateCodeSessionArgsInterviewType = Field(alias="interviewType")
+    programming_language: StrictStr = Field(alias="programmingLanguage")
     question_id: StrictStr = Field(description="ID from table \"questions\"", alias="questionId")
-    __properties: ClassVar[List[str]] = ["agentThreadId", "assistantId", "questionId"]
+    time_limit: Union[StrictFloat, StrictInt] = Field(alias="timeLimit")
+    voice: StrictStr
+    __properties: ClassVar[List[str]] = ["agentThreadId", "assistantId", "interviewFlow", "interviewMode", "interviewType", "programmingLanguage", "questionId", "timeLimit", "voice"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -70,6 +78,12 @@ class RequestSessionsCreateCodeSessionArgs(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of interview_mode
+        if self.interview_mode:
+            _dict['interviewMode'] = self.interview_mode.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of interview_type
+        if self.interview_type:
+            _dict['interviewType'] = self.interview_type.to_dict()
         return _dict
 
     @classmethod
@@ -84,7 +98,13 @@ class RequestSessionsCreateCodeSessionArgs(BaseModel):
         _obj = cls.model_validate({
             "agentThreadId": obj.get("agentThreadId"),
             "assistantId": obj.get("assistantId"),
-            "questionId": obj.get("questionId")
+            "interviewFlow": obj.get("interviewFlow"),
+            "interviewMode": RequestSessionsCreateCodeSessionArgsInterviewMode.from_dict(obj["interviewMode"]) if obj.get("interviewMode") is not None else None,
+            "interviewType": RequestSessionsCreateCodeSessionArgsInterviewType.from_dict(obj["interviewType"]) if obj.get("interviewType") is not None else None,
+            "programmingLanguage": obj.get("programmingLanguage"),
+            "questionId": obj.get("questionId"),
+            "timeLimit": obj.get("timeLimit"),
+            "voice": obj.get("voice")
         })
         return _obj
 

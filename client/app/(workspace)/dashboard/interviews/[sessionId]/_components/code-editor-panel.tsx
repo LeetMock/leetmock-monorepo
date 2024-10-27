@@ -21,6 +21,9 @@ import Editor from "@monaco-editor/react";
 import { toast } from "sonner";
 import { useWindowSize } from "usehooks-ts";
 import { TestResultsBlock } from "./test-results-block";
+import { TestcaseEditor } from './testcase-editor';
+import { Testcase } from "@/lib/types";
+
 
 const darkEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -56,11 +59,11 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   const commitCodeSessionEvent = useMutation(api.codeSessionEvents.commitCodeSessionEvent);
 
   const [testResults, setTestResults] = useState<RunTestResult | null>(null);
-  const [outputView, setOutputView] = useState<"output" | "testResults">("output");
+  const [outputView, setOutputView] = useState<"Testcase" | "testResults">("Testcase");
   const [testRunCounter, setTestRunCounter] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
 
-  const { height = 300 } = useWindowSize();
+  const { height } = useWindowSize();
   const { size, isResizing, resizeHandleProps } = useResizePanel({
     defaultSize: 400,
     minSize: 200,
@@ -120,6 +123,18 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     }
 
     setIsRunning(false);
+  };
+
+  const [testcases, setTestcases] = useState<Testcase[]>([
+    { id: 'Case 1', input: { nums_list: '[2,7,11,15]', target_val: '9' } },
+  ]);
+
+  const inputKeys = ['nums_list', 'target_val']; // Define the keys expected in the input object
+
+  const handleTestcasesChange = (updatedTestcases: Testcase[]) => {
+    setTestcases(updatedTestcases);
+    // call convex to update the testcases
+    // updateTestcases({ sessionId, testcases: updatedTestcases });
   };
 
   return (
@@ -184,22 +199,23 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
       </div>
       <div
         className={cn(
-          "flex px-3 py-2 flex-col space-y-2 h-full w-full border",
+          "flex flex-col space-y-2 w-full border overflow-hidden",
           "bg-background rounded-md shadow-md"
         )}
+        style={{ height: `calc(100% - ${size}px - 2px)` }}
       >
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center px-3 py-2">
           <div className="flex space-x-2">
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setOutputView("output")}
+              onClick={() => setOutputView("Testcase")}
               className={cn(
                 "text-sm font-medium",
-                outputView === "output" ? "bg-secondary" : "hover:bg-secondary/50"
+                outputView === "Testcase" ? "bg-secondary" : "hover:bg-secondary/50"
               )}
             >
-              Output
+              Testcase
             </Button>
             <Button
               variant="ghost"
@@ -213,28 +229,33 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
               Test Results
             </Button>
           </div>
-          {!isRunning && outputView === "output" && (
+          {!isRunning && outputView === "Testcase" && (
             <div className="flex items-center text-sm text-gray-500">
               <Clock className="w-4 h-4 mr-1" />
               <span>{terminalState ? terminalState.executionTime : 0} ms</span>
             </div>
           )}
         </div>
-        <div className="p-2 rounded-md bg-secondary h-full overflow-auto relative">
-          {outputView === "testResults" && testResults ? (
-            <TestResultsBlock key={testRunCounter} results={testResults} />
-          ) : (
-            <pre
-              className={cn(
-                "text-sm rounded-md absolute inset-3",
-                terminalState?.isError ? "text-red-500" : "text-gray-800 dark:text-gray-200"
-              )}
-            >
-              <code>{terminalState ? terminalState.output : ""}</code>
-            </pre>
-          )}
+        <div className="flex-grow overflow-auto px-2">
+          <div className="h-full p-2 rounded-md bg-secondary/10 relative">
+            {outputView === "testResults" ? (
+              testResults ? (
+                <TestResultsBlock key={testRunCounter} results={testResults} />
+              ) : (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                  Please run tests first to get results
+                </div>
+              )
+            ) : (
+              <TestcaseEditor
+                initialTestcases={testcases}
+                onTestcasesChange={handleTestcasesChange}
+                inputKeys={inputKeys}
+              />
+            )}
+          </div>
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-end px-3 pb-2">
           <Button
             variant="outline-blue"
             className="h-9 min-w-24"

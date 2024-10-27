@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **minutes_remaining** | **float** |  | [optional] 
-**subscription** | [**RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName**](RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.md) |  | [optional] 
+**subscription** | [**RequestAdminsCreateUserProfileArgsSubscription**](RequestAdminsCreateUserProfileArgsSubscription.md) |  | [optional] 
 **user_id** | **str** |  | 
 
 ## Example
