@@ -55,17 +55,14 @@ INTRO_SIGNALS: List[Signal] = [
     Signal.from_info(
         name="candidate_intro_done",
         desc="The candidate has introduced themselves about their background.",
-        required=True,
     ),
     Signal.from_info(
         name="candidate_goals_done",
         desc="The candidate has finished talking about their career goals.",
-        required=False,
     ),
     Signal.from_info(
         name="candidate_projects_done",
         desc="The candidate has finished talking about their past projects and their role in them.",
-        required=False,
     ),
 ]
 
@@ -112,22 +109,18 @@ CODING_SIGNALS: List[Signal] = [
     Signal.from_info(
         name="clarifying_questions",
         desc="The candidate has asked clarifying questions about the problem.",
-        required=False,
     ),
     Signal.from_info(
         name="thought_process",
         desc="The candidate has finished explaining their high-level thought process for solving the problem.",
-        required=False,
     ),
     Signal.from_info(
         name="code_finished",
         desc="The candidate has finished writing the code.",
-        required=True,
     ),
     Signal.from_info(
         name="passed_all_tests",
         desc="The candidate has explained their code.",
-        required=False,
     ),
 ]
 
@@ -168,6 +161,5 @@ EVAL_SIGNALS: List[Signal] = [
     Signal.from_info(
         name="user_questions",
         desc="User has asked questions about the interview process or the candidate.",
-        required=False,
     ),
 ]

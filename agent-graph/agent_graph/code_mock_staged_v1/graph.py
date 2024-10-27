@@ -1,6 +1,5 @@
 from collections import defaultdict
-from enum import Enum
-from typing import Annotated, Dict, List, Set
+from typing import Annotated, Dict, List, Set, cast
 
 from agent_graph.code_mock_staged_v1 import intro_stage
 from agent_graph.code_mock_staged_v1.constants import (
@@ -13,10 +12,22 @@ from agent_graph.code_mock_staged_v1.constants import (
     StageTypes,
     get_next_stage,
 )
+from agent_graph.code_mock_staged_v1.prompts import (
+    INTRO_PROMPT,
+    SIGNAL_TRACKING_PROMPT,
+    STEP_TRACKING_PROMPT,
+)
+from agent_graph.code_mock_staged_v1.schemas import TrackSignals, TrackSteps
 from agent_graph.constants import JOIN_CALL_MESSAGE
+from agent_graph.llms import get_model
 from agent_graph.types import Signal, Step
 from agent_graph.utils import AgentPromptTemplates
 from langchain_core.messages import AnyMessage, HumanMessage
+from langchain_core.prompts import (
+    ChatPromptTemplate,
+    MessagesPlaceholder,
+    SystemMessagePromptTemplate,
+)
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph, add_messages
 from pydantic.v1 import BaseModel, Field
@@ -55,19 +66,19 @@ class AgentState(BaseModel):
         description="Steps for the agent",
     )
 
-    observations: Dict[StageTypes, List[Signal]] = Field(
+    signals: Dict[StageTypes, List[Signal]] = Field(
         default=lambda: defaultdict(list),
-        description="Observations for the agent",
+        description="Signals for the agent",
     )
 
-    completed_tasks: Dict[StageTypes, Set[str]] = Field(
+    completed_steps: Dict[StageTypes, Set[str]] = Field(
         default=lambda: defaultdict(set),
-        description="Completed tasks for the agent",
+        description="Completed steps for the agent",
     )
 
-    caught_observations: Dict[StageTypes, Set[str]] = Field(
+    caught_signals: Dict[StageTypes, Set[str]] = Field(
         default=lambda: defaultdict(set),
-        description="Caught observations for the agent",
+        description="Caught signals for the agent",
     )
 
 
@@ -105,25 +116,73 @@ async def on_event(state: AgentState):
 
 async def on_trigger(state: AgentState):
     # TODO: process and update state
-    # e.g. update task status, etc.
+    # e.g. update step status, etc.
     return None
 
 
-# call LLM to see if there are any tasks completed in the current stage
-async def track_stage_tasks(state: AgentState):
-    return None
+# call LLM to see if there are any steps completed in the current stage
+async def track_stage_steps(state: AgentState):
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            SystemMessagePromptTemplate.from_template(STEP_TRACKING_PROMPT),
+            MessagesPlaceholder(variable_name="messages"),
+        ]
+    )
+    llm = get_model("gpt-4o", temperature=0.1)
+    structured_llm = llm.with_structured_output(TrackSteps)
+
+    chain = prompt | structured_llm
+    result = cast(
+        TrackSteps,
+        await chain.ainvoke(
+            {
+                "messages": state.messages,
+                "steps": state.steps[state.current_stage],
+                "completed_steps": state.completed_steps[state.current_stage],
+            }
+        ),
+    )
+
+    valid_step_names = {step.name for step in state.steps[state.current_stage]}
+    new_completed_steps = [s for s in result.steps if s in valid_step_names]
+    for s in new_completed_steps:
+        state.completed_steps[state.current_stage].add(s)
+
+    return dict(completed_steps=state.completed_steps)
 
 
-async def track_stage_observations(state: AgentState):
-    return None
+async def track_stage_signals(state: AgentState):
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            SystemMessagePromptTemplate.from_template(SIGNAL_TRACKING_PROMPT),
+            MessagesPlaceholder(variable_name="messages"),
+        ]
+    )
+    llm = get_model("gpt-4o", temperature=0.1)
+    structured_llm = llm.with_structured_output(TrackSignals)
+
+    chain = prompt | structured_llm
+    result = cast(
+        TrackSignals,
+        await chain.ainvoke(
+            {"messages": state.messages, "signals": state.signals[state.current_stage]}
+        ),
+    )
+
+    valid_signal_names = {signal.name for signal in state.signals[state.current_stage]}
+    new_caught_signals = [s for s in result.signals if s in valid_signal_names]
+    for s in new_caught_signals:
+        state.caught_signals[state.current_stage].add(s)
+
+    return dict(caught_signals=state.caught_signals)
 
 
 async def decide_next_stage(state: AgentState):
     stage_steps = state.steps[state.current_stage]
     required_step_names = set(step.name for step in stage_steps if step.required)
-    completed_step_names = state.completed_tasks[state.current_stage]
+    completed_step_names = state.completed_steps[state.current_stage]
 
-    completed_stage_steps = len(required_step_names - completed_step_names) == 0
+    completed_stage_steps = len(required_step_names - set(completed_step_names)) == 0
     next_stage = (
         get_next_stage(state.current_stage)
         if completed_stage_steps
@@ -164,8 +223,8 @@ def create_graph():
         .add_node("on_event", on_event)
         .add_node("on_trigger", on_trigger)
         .add_node("intro_stage", intro_stage.create_graph())
-        .add_node("track_stage_tasks", track_stage_tasks)
-        .add_node("track_stage_observations", track_stage_observations)
+        .add_node("track_stage_steps", track_stage_steps)
+        .add_node("track_stage_signals", track_stage_signals)
         # edges
         .add_conditional_edges(
             source=START,
@@ -183,10 +242,10 @@ def create_graph():
             path=select_stage,
             path_map=["intro_stage", END],
         )
-        .add_edge("intro_stage", "track_stage_tasks")
-        .add_edge("intro_stage", "track_stage_observations")
-        .add_edge("track_stage_tasks", END)
-        .add_edge("track_stage_observations", END)
+        .add_edge("intro_stage", "track_stage_steps")
+        .add_edge("intro_stage", "track_stage_signals")
+        .add_edge("track_stage_steps", END)
+        .add_edge("track_stage_signals", END)
         .compile(checkpointer=MemorySaver())
     )
 

@@ -51,7 +51,7 @@ prioritize finishing the step. You should proceed the following steps in that or
 4. Remember to praise interviewee on their achievement.
 5. Remember Interviewee's name.
 6. Based on interviewee's answer, ask good followup question, could be technical or behavior, at most ask 2-3 deep dive question.
-7. [Important] Your main goal is to perform all the tasks mentioned above, try to orient your question toward those task.
+7. [Important] Your main goal is to perform all the steps mentioned above, try to orient your question toward those step.
 
 ## Reminder
 You should kindly remind interviewee if he seems goes offline. For example,
@@ -85,15 +85,15 @@ The following are steps AI interviewer need to finish:
 {% endfor %}
 </steps>
 
-The following are tasks that you have already marked as completed:
+The following are steps that you have already marked as completed:
 
 <completed-steps>
-{% for step in completed_steps %}
-<step name="{{step.name}}" />
+{% for name in completed_steps %}
+<step name="{{name}}" />
 {% endfor %}
 </completed-steps>
 
-Now, analyze the conversation history and determine if there are any new task(s) that has been completed by AI interviewer.
+Now, analyze the conversation history and determine if there are any new step(s) that has been completed by AI interviewer.
 
 ## Important Rules
 
@@ -129,8 +129,8 @@ The following are all kinds of signals you need to collect:
 The following are signals you have already caught:
 
 <caught-signals>
-{% for signal in caught_signals %}
-<signal name="{{signal.name}}" />
+{% for name in caught_signals %}
+<signal name="{{name}}" />
 {% endfor %}
 </caught-signals>
 

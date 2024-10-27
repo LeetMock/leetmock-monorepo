@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Type, TypeVar, cast
 
-from langchain import hub
+from langchain import hub  # noqa: F401
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables.config import RunnableConfig
 from pydantic.v1 import BaseModel, Field
@@ -27,6 +27,10 @@ class AgentPromptTemplates(BaseModel):
         prompt = hub.pull(f"{self.prefix}_{prompt_name}")
         self.prompt_map[prompt_name] = prompt
         return prompt
+
+
+def merge_str_list(l1: List[str], l2: List[str]) -> List[str]:
+    return list(set(l1) | set(l2))
 
 
 def _validate_value(value: Any) -> bool:

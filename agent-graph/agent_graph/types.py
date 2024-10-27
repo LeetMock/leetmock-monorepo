@@ -35,12 +35,8 @@ class Signal(BaseModel):
 
     name: str = Field(..., description="Signal name")
 
-    description: str = Field(..., description="Observation description")
-
-    required: bool = Field(
-        default=False, description="Whether the observation is required"
-    )
+    description: str = Field(..., description="Signal description")
 
     @classmethod
-    def from_info(cls, name: str, desc: str, required: bool):
-        return cls(name=name, description=desc, required=required)
+    def from_info(cls, name: str, desc: str):
+        return cls(name=name, description=desc)
