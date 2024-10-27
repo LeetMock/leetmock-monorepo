@@ -13,7 +13,6 @@ from agent_graph.code_mock_staged_v1.constants import (
     get_next_stage,
 )
 from agent_graph.code_mock_staged_v1.prompts import (
-    INTRO_PROMPT,
     SIGNAL_TRACKING_PROMPT,
     STEP_TRACKING_PROMPT,
 )
@@ -93,7 +92,7 @@ class AgentConfig(BaseModel):
 
 
 # --------------------- agent graph nodes --------------------- #
-async def init_state(state: AgentState):
+async def init_state(_: AgentState):
     messages = [HumanMessage(content=JOIN_CALL_MESSAGE)]
 
     steps = {
@@ -102,7 +101,13 @@ async def init_state(state: AgentState):
         StageTypes.EVAL: EVAL_STEPS,
     }
 
-    return dict(initialized=True, messages=messages, steps=steps)
+    signals = {
+        StageTypes.INTRO: INTRO_SIGNALS,
+        StageTypes.CODING: CODING_SIGNALS,
+        StageTypes.EVAL: EVAL_SIGNALS,
+    }
+
+    return dict(initialized=True, messages=messages, steps=steps, signals=signals)
 
 
 async def on_event(state: AgentState):
