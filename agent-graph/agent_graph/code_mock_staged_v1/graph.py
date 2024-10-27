@@ -71,13 +71,13 @@ class AgentState(BaseModel):
         description="Signals for the agent",
     )
 
-    completed_steps: Dict[StageTypes, Set[str]] = Field(
-        default=lambda: defaultdict(set),
+    completed_steps: Dict[StageTypes, List[str]] = Field(
+        default=lambda: defaultdict(list),
         description="Completed steps for the agent",
     )
 
-    caught_signals: Dict[StageTypes, Set[str]] = Field(
-        default=lambda: defaultdict(set),
+    caught_signals: Dict[StageTypes, List[str]] = Field(
+        default=lambda: defaultdict(list),
         description="Caught signals for the agent",
     )
 
@@ -120,7 +120,7 @@ async def on_trigger(state: AgentState):
     return None
 
 
-# call LLM to see if there are any steps completed in the current stage
+# Call LLM to see if there are any steps completed in the current stage
 async def track_stage_steps(state: AgentState):
     prompt = ChatPromptTemplate.from_messages(
         [
@@ -144,13 +144,18 @@ async def track_stage_steps(state: AgentState):
     )
 
     valid_step_names = {step.name for step in state.steps[state.current_stage]}
-    new_completed_steps = [s for s in result.steps if s in valid_step_names]
+    new_completed_steps = [
+        s
+        for s in result.steps
+        if s in valid_step_names and s not in state.completed_steps[state.current_stage]
+    ]
     for s in new_completed_steps:
-        state.completed_steps[state.current_stage].add(s)
+        state.completed_steps[state.current_stage].append(s)
 
     return dict(completed_steps=state.completed_steps)
 
 
+# Call LLM to see if there are any signals caught in the current stage
 async def track_stage_signals(state: AgentState):
     prompt = ChatPromptTemplate.from_messages(
         [
@@ -165,14 +170,23 @@ async def track_stage_signals(state: AgentState):
     result = cast(
         TrackSignals,
         await chain.ainvoke(
-            {"messages": state.messages, "signals": state.signals[state.current_stage]}
+            {
+                "messages": state.messages,
+                "signals": state.signals[state.current_stage],
+                "caught_signals": state.caught_signals[state.current_stage],
+            }
         ),
     )
 
     valid_signal_names = {signal.name for signal in state.signals[state.current_stage]}
-    new_caught_signals = [s for s in result.signals if s in valid_signal_names]
+    new_caught_signals = [
+        s
+        for s in result.signals
+        if s in valid_signal_names
+        and s not in state.caught_signals[state.current_stage]
+    ]
     for s in new_caught_signals:
-        state.caught_signals[state.current_stage].add(s)
+        state.caught_signals[state.current_stage].append(s)
 
     return dict(caught_signals=state.caught_signals)
 
