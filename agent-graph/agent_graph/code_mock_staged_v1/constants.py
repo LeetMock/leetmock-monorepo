@@ -82,7 +82,7 @@ CODING_STEPS: List[Step] = [
     Step.from_info(
         name="monitor_coding",
         desc="Monitor the candidate's coding progress, respond accordingly if they need help, clarification, or if they are stuck and need hints.",
-        done_definition="Candidate has finished writing the complete code solution, not necessarily passed all test cases.",
+        done_definition="Monitoring step isn't done until candidate has finished writing the complete code solution (not necessarily passed all test cases).",
         required=True,
     ),
     Step.from_info(
@@ -108,11 +108,11 @@ CODING_STEPS: List[Step] = [
 CODING_SIGNALS: List[Signal] = [
     Signal.from_info(
         name="clarifying_questions",
-        desc="The candidate has asked clarifying questions about the problem.",
+        desc="The candidate asks clarifying questions about the problem.",
     ),
     Signal.from_info(
         name="thought_process",
-        desc="The candidate has finished explaining their high-level thought process for solving the problem.",
+        desc="The candidate explains their high-level thought process for solving the problem.",
     ),
     Signal.from_info(
         name="code_finished",
@@ -120,7 +120,7 @@ CODING_SIGNALS: List[Signal] = [
     ),
     Signal.from_info(
         name="passed_all_tests",
-        desc="The candidate has explained their code.",
+        desc="The candidate has passed all test cases.",
     ),
 ]
 
