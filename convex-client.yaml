@@ -572,37 +572,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
-  /api/run/codeSessionEvents/ackCodeSessionEvent:
-    post:
-      summary: Calls a mutation at the path codeSessionEvents.js:ackCodeSessionEvent
-      tags:
-        - mutation
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Request_codeSessionEvents.ackCodeSessionEvent"
-        required: true
-      responses:
-        "200":
-          description: Convex executed your request and returned a result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Response_codeSessionEvents.ackCodeSessionEvent"
-        "400":
-          description: Failed operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-        "500":
-          description: Convex Internal Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-
   /api/run/codeSessionEvents/commitCodeSessionEvent:
     post:
       summary: Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
@@ -634,16 +603,16 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
-  /api/run/codeSessionEvents/getNextContentChangeEvent:
+  /api/run/codeSessionEvents/getLatestContentChangeEvent:
     post:
-      summary: Calls a query at the path codeSessionEvents.js:getNextContentChangeEvent
+      summary: Calls a query at the path codeSessionEvents.js:getLatestContentChangeEvent
       tags:
         - query
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Request_codeSessionEvents.getNextContentChangeEvent"
+              $ref: "#/components/schemas/Request_codeSessionEvents.getLatestContentChangeEvent"
         required: true
       responses:
         "200":
@@ -651,7 +620,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Response_codeSessionEvents.getNextContentChangeEvent"
+                $ref: "#/components/schemas/Response_codeSessionEvents.getLatestContentChangeEvent"
         "400":
           description: Failed operation
           content:
@@ -1694,36 +1663,6 @@ components:
           type: object
         value: {}
 
-    Request_codeSessionEvents.ackCodeSessionEvent:
-      type: object
-      required:
-        - args
-      properties:
-        args:
-          type: object
-          required:
-            - eventId
-          properties:
-            eventId:
-              type: string
-              description: ID from table "codeSessionEvents"
-
-    Response_codeSessionEvents.ackCodeSessionEvent:
-      type: object
-      required:
-        - status
-      properties:
-        status:
-          type: string
-          enum:
-            - "success"
-            - "error"
-        errorMessage:
-          type: string
-        errorData:
-          type: object
-        value: {}
-
     Request_codeSessionEvents.commitCodeSessionEvent:
       type: object
       required:
@@ -1814,7 +1753,7 @@ components:
           type: object
         value: {}
 
-    Request_codeSessionEvents.getNextContentChangeEvent:
+    Request_codeSessionEvents.getLatestContentChangeEvent:
       type: object
       required:
         - args
@@ -1828,7 +1767,7 @@ components:
               type: string
               description: ID from table "codeSessionStates"
 
-    Response_codeSessionEvents.getNextContentChangeEvent:
+    Response_codeSessionEvents.getLatestContentChangeEvent:
       type: object
       required:
         - status
@@ -1845,13 +1784,10 @@ components:
         value:
           type: object
           required:
-            - acked
             - event
             - id
             - ts
           properties:
-            acked:
-              type: boolean
             event:
               type: object
               required:

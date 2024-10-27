@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.response_code_session_events_get_next_content_change_event_value import ResponseCodeSessionEventsGetNextContentChangeEventValue
+from convex_client.models.response_code_session_events_get_latest_content_change_event_value import ResponseCodeSessionEventsGetLatestContentChangeEventValue
 
-class TestResponseCodeSessionEventsGetNextContentChangeEventValue(unittest.TestCase):
-    """ResponseCodeSessionEventsGetNextContentChangeEventValue unit test stubs"""
+class TestResponseCodeSessionEventsGetLatestContentChangeEventValue(unittest.TestCase):
+    """ResponseCodeSessionEventsGetLatestContentChangeEventValue unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,17 +25,16 @@ class TestResponseCodeSessionEventsGetNextContentChangeEventValue(unittest.TestC
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> ResponseCodeSessionEventsGetNextContentChangeEventValue:
-        """Test ResponseCodeSessionEventsGetNextContentChangeEventValue
+    def make_instance(self, include_optional) -> ResponseCodeSessionEventsGetLatestContentChangeEventValue:
+        """Test ResponseCodeSessionEventsGetLatestContentChangeEventValue
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `ResponseCodeSessionEventsGetNextContentChangeEventValue`
+        # uncomment below to create an instance of `ResponseCodeSessionEventsGetLatestContentChangeEventValue`
         """
-        model = ResponseCodeSessionEventsGetNextContentChangeEventValue()
+        model = ResponseCodeSessionEventsGetLatestContentChangeEventValue()
         if include_optional:
-            return ResponseCodeSessionEventsGetNextContentChangeEventValue(
-                acked = True,
+            return ResponseCodeSessionEventsGetLatestContentChangeEventValue(
                 event = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf(
                     data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_data(
                         content = '', ), 
@@ -44,8 +43,7 @@ class TestResponseCodeSessionEventsGetNextContentChangeEventValue(unittest.TestC
                 ts = 1.337
             )
         else:
-            return ResponseCodeSessionEventsGetNextContentChangeEventValue(
-                acked = True,
+            return ResponseCodeSessionEventsGetLatestContentChangeEventValue(
                 event = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf(
                     data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_data(
                         content = '', ), 
@@ -55,8 +53,8 @@ class TestResponseCodeSessionEventsGetNextContentChangeEventValue(unittest.TestC
         )
         """
 
-    def testResponseCodeSessionEventsGetNextContentChangeEventValue(self):
-        """Test ResponseCodeSessionEventsGetNextContentChangeEventValue"""
+    def testResponseCodeSessionEventsGetLatestContentChangeEventValue(self):
+        """Test ResponseCodeSessionEventsGetLatestContentChangeEventValue"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

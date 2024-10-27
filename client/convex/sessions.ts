@@ -189,7 +189,6 @@ export const createCodeSession = userMutation({
           content: initialContent,
         },
       },
-      acked: false,
     });
 
     return sessionId;

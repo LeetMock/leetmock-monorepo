@@ -101,13 +101,12 @@ Class | Method | HTTP request | Description
 *ActionApi* | [**api_run_actions_run_tests_post**](docs/ActionApi.md#api_run_actions_run_tests_post) | **POST** /api/run/actions/runTests | Calls a action at the path actions.js:runTests
 *MutationApi* | [**api_run_admins_create_user_profile_post**](docs/MutationApi.md#api_run_admins_create_user_profile_post) | **POST** /api/run/admins/createUserProfile | Calls a mutation at the path admins.js:createUserProfile
 *MutationApi* | [**api_run_admins_patch_user_subscription_post**](docs/MutationApi.md#api_run_admins_patch_user_subscription_post) | **POST** /api/run/admins/patchUserSubscription | Calls a mutation at the path admins.js:patchUserSubscription
-*MutationApi* | [**api_run_code_session_events_ack_code_session_event_post**](docs/MutationApi.md#api_run_code_session_events_ack_code_session_event_post) | **POST** /api/run/codeSessionEvents/ackCodeSessionEvent | Calls a mutation at the path codeSessionEvents.js:ackCodeSessionEvent
 *MutationApi* | [**api_run_code_session_events_commit_code_session_event_post**](docs/MutationApi.md#api_run_code_session_events_commit_code_session_event_post) | **POST** /api/run/codeSessionEvents/commitCodeSessionEvent | Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
 *MutationApi* | [**api_run_invite_codes_apply_invite_code_post**](docs/MutationApi.md#api_run_invite_codes_apply_invite_code_post) | **POST** /api/run/inviteCodes/applyInviteCode | Calls a mutation at the path inviteCodes.js:applyInviteCode
 *MutationApi* | [**api_run_sessions_create_code_session_post**](docs/MutationApi.md#api_run_sessions_create_code_session_post) | **POST** /api/run/sessions/createCodeSession | Calls a mutation at the path sessions.js:createCodeSession
 *MutationApi* | [**api_run_sessions_end_session_post**](docs/MutationApi.md#api_run_sessions_end_session_post) | **POST** /api/run/sessions/endSession | Calls a mutation at the path sessions.js:endSession
 *MutationApi* | [**api_run_sessions_start_session_post**](docs/MutationApi.md#api_run_sessions_start_session_post) | **POST** /api/run/sessions/startSession | Calls a mutation at the path sessions.js:startSession
-*QueryApi* | [**api_run_code_session_events_get_next_content_change_event_post**](docs/QueryApi.md#api_run_code_session_events_get_next_content_change_event_post) | **POST** /api/run/codeSessionEvents/getNextContentChangeEvent | Calls a query at the path codeSessionEvents.js:getNextContentChangeEvent
+*QueryApi* | [**api_run_code_session_events_get_latest_content_change_event_post**](docs/QueryApi.md#api_run_code_session_events_get_latest_content_change_event_post) | **POST** /api/run/codeSessionEvents/getLatestContentChangeEvent | Calls a query at the path codeSessionEvents.js:getLatestContentChangeEvent
 *QueryApi* | [**api_run_code_session_states_get_editor_state_post**](docs/QueryApi.md#api_run_code_session_states_get_editor_state_post) | **POST** /api/run/codeSessionStates/getEditorState | Calls a query at the path codeSessionStates.js:getEditorState
 *QueryApi* | [**api_run_code_session_states_get_post**](docs/QueryApi.md#api_run_code_session_states_get_post) | **POST** /api/run/codeSessionStates/get | Calls a query at the path codeSessionStates.js:get
 *QueryApi* | [**api_run_code_session_states_get_session_state_by_session_id_post**](docs/QueryApi.md#api_run_code_session_states_get_session_state_by_session_id_post) | **POST** /api/run/codeSessionStates/getSessionStateBySessionId | Calls a query at the path codeSessionStates.js:getSessionStateBySessionId
@@ -135,8 +134,6 @@ Class | Method | HTTP request | Description
  - [RequestAdminsCreateUserProfileArgs](docs/RequestAdminsCreateUserProfileArgs.md)
  - [RequestAdminsPatchUserSubscription](docs/RequestAdminsPatchUserSubscription.md)
  - [RequestAdminsPatchUserSubscriptionArgs](docs/RequestAdminsPatchUserSubscriptionArgs.md)
- - [RequestCodeSessionEventsAckCodeSessionEvent](docs/RequestCodeSessionEventsAckCodeSessionEvent.md)
- - [RequestCodeSessionEventsAckCodeSessionEventArgs](docs/RequestCodeSessionEventsAckCodeSessionEventArgs.md)
  - [RequestCodeSessionEventsCommitCodeSessionEvent](docs/RequestCodeSessionEventsCommitCodeSessionEvent.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgs](docs/RequestCodeSessionEventsCommitCodeSessionEventArgs.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEvent](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEvent.md)
@@ -146,8 +143,8 @@ Class | Method | HTTP request | Description
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOfData](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOfData.md)
- - [RequestCodeSessionEventsGetNextContentChangeEvent](docs/RequestCodeSessionEventsGetNextContentChangeEvent.md)
- - [RequestCodeSessionEventsGetNextContentChangeEventArgs](docs/RequestCodeSessionEventsGetNextContentChangeEventArgs.md)
+ - [RequestCodeSessionEventsGetLatestContentChangeEvent](docs/RequestCodeSessionEventsGetLatestContentChangeEvent.md)
+ - [RequestCodeSessionEventsGetLatestContentChangeEventArgs](docs/RequestCodeSessionEventsGetLatestContentChangeEventArgs.md)
  - [RequestCodeSessionStatesGet](docs/RequestCodeSessionStatesGet.md)
  - [RequestCodeSessionStatesGetEditorState](docs/RequestCodeSessionStatesGetEditorState.md)
  - [RequestCodeSessionStatesGetSessionStateBySessionId](docs/RequestCodeSessionStatesGetSessionStateBySessionId.md)
@@ -194,10 +191,9 @@ Class | Method | HTTP request | Description
  - [ResponseActionsRunTests](docs/ResponseActionsRunTests.md)
  - [ResponseAdminsCreateUserProfile](docs/ResponseAdminsCreateUserProfile.md)
  - [ResponseAdminsPatchUserSubscription](docs/ResponseAdminsPatchUserSubscription.md)
- - [ResponseCodeSessionEventsAckCodeSessionEvent](docs/ResponseCodeSessionEventsAckCodeSessionEvent.md)
  - [ResponseCodeSessionEventsCommitCodeSessionEvent](docs/ResponseCodeSessionEventsCommitCodeSessionEvent.md)
- - [ResponseCodeSessionEventsGetNextContentChangeEvent](docs/ResponseCodeSessionEventsGetNextContentChangeEvent.md)
- - [ResponseCodeSessionEventsGetNextContentChangeEventValue](docs/ResponseCodeSessionEventsGetNextContentChangeEventValue.md)
+ - [ResponseCodeSessionEventsGetLatestContentChangeEvent](docs/ResponseCodeSessionEventsGetLatestContentChangeEvent.md)
+ - [ResponseCodeSessionEventsGetLatestContentChangeEventValue](docs/ResponseCodeSessionEventsGetLatestContentChangeEventValue.md)
  - [ResponseCodeSessionStatesGet](docs/ResponseCodeSessionStatesGet.md)
  - [ResponseCodeSessionStatesGetEditorState](docs/ResponseCodeSessionStatesGetEditorState.md)
  - [ResponseCodeSessionStatesGetSessionStateBySessionId](docs/ResponseCodeSessionStatesGetSessionStateBySessionId.md)

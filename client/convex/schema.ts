@@ -60,11 +60,10 @@ const schema = defineEntSchema({
     .edges("codeSessionEvents", { ref: true }),
   codeSessionEvents: defineEnt({
     event: codeSessionEventSchema,
-    acked: v.boolean(),
   })
     .deletion("soft")
     .edge("codeSessionState")
-    .index("by_session_id_and_acked_and_type", ["codeSessionStateId", "acked", "event.type"]),
+    .index("by_session_id_and_type", ["codeSessionStateId", "event.type"]),
   questions: defineEnt({
     category: v.array(v.string()),
     difficulty: v.number(),

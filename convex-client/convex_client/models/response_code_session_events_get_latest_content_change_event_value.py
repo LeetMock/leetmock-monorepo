@@ -17,28 +17,20 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional
-from convex_client.models.response_code_session_events_get_next_content_change_event_value import ResponseCodeSessionEventsGetNextContentChangeEventValue
+from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
+from typing import Any, ClassVar, Dict, List, Union
+from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf
 from typing import Optional, Set
 from typing_extensions import Self
 
-class ResponseCodeSessionEventsGetNextContentChangeEvent(BaseModel):
+class ResponseCodeSessionEventsGetLatestContentChangeEventValue(BaseModel):
     """
-    ResponseCodeSessionEventsGetNextContentChangeEvent
+    ResponseCodeSessionEventsGetLatestContentChangeEventValue
     """ # noqa: E501
-    status: StrictStr
-    error_message: Optional[StrictStr] = Field(default=None, alias="errorMessage")
-    error_data: Optional[Dict[str, Any]] = Field(default=None, alias="errorData")
-    value: Optional[ResponseCodeSessionEventsGetNextContentChangeEventValue] = None
-    __properties: ClassVar[List[str]] = ["status", "errorMessage", "errorData", "value"]
-
-    @field_validator('status')
-    def status_validate_enum(cls, value):
-        """Validates the enum"""
-        if value not in set(['success', 'error']):
-            raise ValueError("must be one of enum values ('success', 'error')")
-        return value
+    event: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf
+    id: StrictStr = Field(description="ID from table \"codeSessionEvents\"")
+    ts: Union[StrictFloat, StrictInt]
+    __properties: ClassVar[List[str]] = ["event", "id", "ts"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -58,7 +50,7 @@ class ResponseCodeSessionEventsGetNextContentChangeEvent(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of ResponseCodeSessionEventsGetNextContentChangeEvent from a JSON string"""
+        """Create an instance of ResponseCodeSessionEventsGetLatestContentChangeEventValue from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -79,19 +71,14 @@ class ResponseCodeSessionEventsGetNextContentChangeEvent(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of value
-        if self.value:
-            _dict['value'] = self.value.to_dict()
-        # set to None if value (nullable) is None
-        # and model_fields_set contains the field
-        if self.value is None and "value" in self.model_fields_set:
-            _dict['value'] = None
-
+        # override the default output from pydantic by calling `to_dict()` of event
+        if self.event:
+            _dict['event'] = self.event.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of ResponseCodeSessionEventsGetNextContentChangeEvent from a dict"""
+        """Create an instance of ResponseCodeSessionEventsGetLatestContentChangeEventValue from a dict"""
         if obj is None:
             return None
 
@@ -99,10 +86,9 @@ class ResponseCodeSessionEventsGetNextContentChangeEvent(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "status": obj.get("status"),
-            "errorMessage": obj.get("errorMessage"),
-            "errorData": obj.get("errorData"),
-            "value": ResponseCodeSessionEventsGetNextContentChangeEventValue.from_dict(obj["value"]) if obj.get("value") is not None else None
+            "event": RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf.from_dict(obj["event"]) if obj.get("event") is not None else None,
+            "id": obj.get("id"),
+            "ts": obj.get("ts")
         })
         return _obj
 
