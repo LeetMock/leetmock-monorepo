@@ -4,17 +4,17 @@ from typing import Annotated, Dict, List, Set
 
 from agent_graph.code_mock_staged_v1 import intro_stage
 from agent_graph.code_mock_staged_v1.constants import (
-    CODING_OBSERVATIONS,
-    CODING_TASKS,
-    EVAL_OBSERVATIONS,
-    EVAL_TASKS,
-    INTRO_OBSERVATIONS,
-    INTRO_TASKS,
+    CODING_SIGNALS,
+    CODING_STEPS,
+    EVAL_SIGNALS,
+    EVAL_STEPS,
+    INTRO_SIGNALS,
+    INTRO_STEPS,
     StageTypes,
     get_next_stage,
 )
 from agent_graph.constants import JOIN_CALL_MESSAGE
-from agent_graph.types import Observation, Task
+from agent_graph.types import Signal, Step
 from agent_graph.utils import AgentPromptTemplates
 from langchain_core.messages import AnyMessage, HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
@@ -50,12 +50,12 @@ class AgentState(BaseModel):
         description="Current stage of the agent",
     )
 
-    tasks: Dict[StageTypes, List[Task]] = Field(
+    steps: Dict[StageTypes, List[Step]] = Field(
         default=lambda: defaultdict(list),
-        description="Tasks for the agent",
+        description="Steps for the agent",
     )
 
-    observations: Dict[StageTypes, List[Observation]] = Field(
+    observations: Dict[StageTypes, List[Signal]] = Field(
         default=lambda: defaultdict(list),
         description="Observations for the agent",
     )
@@ -85,13 +85,13 @@ class AgentConfig(BaseModel):
 async def init_state(state: AgentState):
     messages = [HumanMessage(content=JOIN_CALL_MESSAGE)]
 
-    tasks = {
-        StageTypes.INTRO: INTRO_TASKS,
-        StageTypes.CODING: CODING_TASKS,
-        StageTypes.EVAL: EVAL_TASKS,
+    steps = {
+        StageTypes.INTRO: INTRO_STEPS,
+        StageTypes.CODING: CODING_STEPS,
+        StageTypes.EVAL: EVAL_STEPS,
     }
 
-    return dict(initialized=True, messages=messages, tasks=tasks)
+    return dict(initialized=True, messages=messages, steps=steps)
 
 
 async def on_event(state: AgentState):
@@ -119,14 +119,14 @@ async def track_stage_observations(state: AgentState):
 
 
 async def decide_next_stage(state: AgentState):
-    stage_tasks = state.tasks[state.current_stage]
-    required_task_names = set(task.name for task in stage_tasks if task.required)
-    completed_task_names = state.completed_tasks[state.current_stage]
+    stage_steps = state.steps[state.current_stage]
+    required_step_names = set(step.name for step in stage_steps if step.required)
+    completed_step_names = state.completed_tasks[state.current_stage]
 
-    completed_stage_tasks = len(required_task_names - completed_task_names) == 0
+    completed_stage_steps = len(required_step_names - completed_step_names) == 0
     next_stage = (
         get_next_stage(state.current_stage)
-        if completed_stage_tasks
+        if completed_stage_steps
         else state.current_stage
     )
 

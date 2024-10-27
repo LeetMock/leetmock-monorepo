@@ -1,18 +1,18 @@
 from pydantic.v1 import BaseModel, Field
 
 
-class Task(BaseModel):
-    """Agent task definition."""
+class Step(BaseModel):
+    """Agent step definition."""
 
-    name: str = Field(..., description="Task name")
+    name: str = Field(..., description="Step name")
 
-    description: str = Field(..., description="Task description")
+    description: str = Field(..., description="Step description")
 
     done_definition: str = Field(
-        ..., description="Definition of when the task is considered done"
+        ..., description="Definition of when the step is considered done"
     )
 
-    required: bool = Field(default=False, description="Whether the task is required")
+    required: bool = Field(default=False, description="Whether the step is required")
 
     @classmethod
     def from_info(
@@ -30,10 +30,10 @@ class Task(BaseModel):
         )
 
 
-class Observation(BaseModel):
-    """Agent observation definition."""
+class Signal(BaseModel):
+    """Candidate signal definition."""
 
-    name: str = Field(..., description="Observation name")
+    name: str = Field(..., description="Signal name")
 
     description: str = Field(..., description="Observation description")
 
