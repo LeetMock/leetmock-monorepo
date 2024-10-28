@@ -62,39 +62,6 @@ async def entrypoint(ctx: JobContext):
     convex_api = ConvexApi(convex_url=os.getenv("CONVEX_URL") or "")
     ctx_manager = AgentContextManager[CodeSession](ctx=ctx, api=convex_api)
 
-    reminder_task: asyncio.Task | None = None
-    reminder_delay = 24  # seconds
-    last_message_was_reminder = False
-    prevent_consecutive_reminders = True
-
-    async def debounced_send_reminder():
-        nonlocal reminder_task, last_message_was_reminder, prevent_consecutive_reminders
-        if reminder_task:
-            logger.info("Reminder task cancelled")
-            reminder_task.cancel()
-        if prevent_consecutive_reminders and last_message_was_reminder:
-            logger.info(
-                "Last message was a reminder. Skipping sending another reminder."
-            )
-            return  # Don't send another reminder if the last message was already a reminder
-
-        async def delayed_reminder():
-            nonlocal last_message_was_reminder
-            await asyncio.sleep(reminder_delay)
-            await send_reminder()
-            if prevent_consecutive_reminders:
-                last_message_was_reminder = True
-
-        reminder_task = asyncio.create_task(delayed_reminder())
-
-    async def send_reminder():
-        logger.info(f"Reminder sent")
-        await assistant.say(
-            invoke_agent(assistant.chat_ctx, "reminder_required"),
-            allow_interruptions=True,
-            add_to_chat_ctx=True,
-        )
-
     def invoke_agent(chat_ctx: llm.ChatContext, interaction_type: str) -> llm.LLMStream:
         code_session_state = ctx_manager.session.session_state
         code_session_metadata = ctx_manager.session.session_metadata
@@ -131,51 +98,11 @@ async def entrypoint(ctx: JobContext):
         llm=agent,
         tts=tts,
         chat_ctx=ctx_manager.chat_ctx,
+        preemptive_synthesis=True,
         interrupt_speech_duration=0.4,
+        min_endpointing_delay=0.2,
         before_llm_cb=before_llm_callback,
     )
-
-    @assistant.on("agent_speech_committed")
-    def update_message_state_for_agent(msg: llm.ChatMessage):
-        logger.info(f"agent_speech_committed: {msg}")
-
-        # Send a reminder event to the agent after 10 seconds of silence since the
-        # last agent speech committed
-        asyncio.create_task(debounced_send_reminder())
-
-    @assistant.on("user_speech_committed")
-    def update_message_state_for_user(msg: llm.ChatMessage):
-        nonlocal last_message_was_reminder, prevent_consecutive_reminders
-
-        logger.info(f"user_speech_committed: {msg}")
-        if prevent_consecutive_reminders:
-            last_message_was_reminder = False  # Reset the flag when user speaks
-
-        # Send a reminder event to the agent after 10 seconds of silence since the
-        # last agent speech committed
-        asyncio.create_task(debounced_send_reminder())
-
-    @assistant.on("user_started_speaking")
-    def on_user_started_speaking():
-        logger.info("user_started_speaking")
-        if reminder_task:
-            reminder_task.cancel()
-
-    @assistant.on("user_stopped_speaking")
-    def on_user_stopped_speaking():
-        logger.info("user_stopped_speaking")
-        asyncio.create_task(debounced_send_reminder())
-
-    @assistant.on("agent_started_speaking")
-    def on_agent_started_speaking():
-        logger.info("agent_started_speaking")
-        if reminder_task:
-            reminder_task.cancel()
-
-    @assistant.on("agent_stopped_speaking")
-    def on_agent_stopped_speaking():
-        logger.info("agent_stopped_speaking")
-        asyncio.create_task(debounced_send_reminder())
 
     await ctx_manager.start()
 

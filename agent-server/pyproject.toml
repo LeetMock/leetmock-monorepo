@@ -28,6 +28,7 @@ convex_client = { path = "../convex-client", develop = true }
 libs = { path = "../libs", develop = true }
 livekit-plugins-elevenlabs = ">=0.7.5"
 elevenlabs = "^1.9.0"
+python-debouncer = "^0.1.5"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.2"
