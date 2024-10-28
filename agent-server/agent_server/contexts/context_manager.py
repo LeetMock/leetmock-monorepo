@@ -3,7 +3,7 @@ from typing import Generic, List, TypeVar, cast
 
 from agent_server.contexts.session import BaseSession, CodeSession
 from agent_server.convex.api import ConvexApi
-from agent_server.livekit.chan_value import ChanConfig, ChanValue
+from agent_server.livekit.channel import ChanConfig, ChanValue
 from agent_server.livekit.validators import string_validator
 from agent_server.utils.logger import get_logger
 from livekit.agents import JobContext
