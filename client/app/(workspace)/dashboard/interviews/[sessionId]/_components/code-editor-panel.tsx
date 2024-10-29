@@ -2,7 +2,7 @@
 
 import { useAction, useMutation, useQuery } from "convex/react";
 import { Clock, Loader2, PlayIcon } from "lucide-react";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState, useEffect } from "react";
 
 import { editor as monacoEditor } from "monaco-editor";
 import { useTheme } from "next-themes";
@@ -56,6 +56,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   const runTests = useAction(api.actions.runTests);
   const editorState = useNonReactiveQuery(api.codeSessionStates.getEditorState, { sessionId });
   const terminalState = useQuery(api.codeSessionStates.getTerminalState, { sessionId });
+  const testCasesState = useNonReactiveQuery(api.codeSessionStates.getTestCasesState, { sessionId }) as Testcase[];
   const commitCodeSessionEvent = useMutation(api.codeSessionEvents.commitCodeSessionEvent);
 
   const [testResults, setTestResults] = useState<RunTestResult | null>(null);
@@ -73,8 +74,8 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   });
 
   const stateLoaded = useMemo(
-    () => isDefined(editorState) && isDefined(terminalState),
-    [editorState, terminalState]
+    () => isDefined(editorState) && isDefined(terminalState) && isDefined(testCasesState),
+    [editorState, terminalState, testCasesState]
   );
 
   const handleCommitEvent = useCallback(
@@ -99,19 +100,18 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
       return;
     }
 
-    const { language, content } = editorState;
-
     setIsRunning(true);
     setTestResults(null);
     setOutputView("testResults");
     setTestRunCounter((prev) => prev + 1);
 
     try {
-      const result = await runTests({ language, code: content, questionId: questionId });
+      const result = await runTests({ language, sessionId: sessionId, questionId: questionId });
       // const executionTime = result.executionTime;
       if (result.status === "success" && result.testResults) {
         const executionTime = result.executionTime;
         setTestResults(result.testResults);
+        console.log(result.testResults);
       } else {
         const errorMessage =
           result.stderr || result.exception || "Error running tests. Please try again.";
@@ -125,17 +125,14 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     setIsRunning(false);
   };
 
-  const [testcases, setTestcases] = useState<Testcase[]>([
-    { id: 'Case 1', input: { nums_list: '[2,7,11,15]', target_val: '9' } },
-  ]);
+  const [activeTestcaseTab, setActiveTestcaseTab] = useState<string>('1');
+  const [localTestcases, setLocalTestcases] = useState<Testcase[]>([]);
 
-  const inputKeys = ['nums_list', 'target_val']; // Define the keys expected in the input object
-
-  const handleTestcasesChange = (updatedTestcases: Testcase[]) => {
-    setTestcases(updatedTestcases);
-    // call convex to update the testcases
-    // updateTestcases({ sessionId, testcases: updatedTestcases });
-  };
+  useEffect(() => {
+    if (testCasesState) {
+      setLocalTestcases(testCasesState);
+    }
+  }, [testCasesState]);
 
   return (
     <div className={cn("h-full w-full flex flex-col", className)} {...props}>
@@ -238,21 +235,24 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
         </div>
         <div className="flex-grow overflow-auto px-2">
           <div className="h-full p-2 rounded-md bg-secondary/10 relative">
-            {outputView === "testResults" ? (
-              testResults ? (
-                <TestResultsBlock key={testRunCounter} results={testResults} />
-              ) : (
-                <div className="flex items-center justify-center h-full text-muted-foreground">
-                  Please run tests first to get results
-                </div>
-              )
-            ) : (
+            <div className={cn(outputView === "testResults" ? "block" : "hidden")}>
+              <TestResultsBlock key={testRunCounter} isRunning={isRunning} results={testResults ?? []} />
+            </div>
+            <div className={cn(outputView === "Testcase" ? "block" : "hidden")}>
               <TestcaseEditor
-                initialTestcases={testcases}
-                onTestcasesChange={handleTestcasesChange}
-                inputKeys={inputKeys}
+                testcases={localTestcases}
+                activeTab={activeTestcaseTab}
+                connectionState={connectionState}
+                onTestcasesChange={(testcases) => {
+                  setLocalTestcases(testcases);
+                  debouncedCommitEvent({
+                    type: "testcase_changed",
+                    data: { content: testcases }
+                  });
+                }}
+                onActiveTabChange={setActiveTestcaseTab}
               />
-            )}
+            </div>
           </div>
         </div>
         <div className="flex justify-end px-3 pb-2">

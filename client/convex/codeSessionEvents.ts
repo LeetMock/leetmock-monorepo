@@ -21,6 +21,8 @@ export const commitCodeSessionEvent = userMutation({
 
     if (event.type === "content_changed") {
       await handleContentChangeEvent(sessionState, event);
+    } else if (event.type === "testcase_changed") {
+      await handleTestcasesChangeEvent(sessionState, event);
     } else {
       // TODO: handle other event types
       throw new Error(`Unsupported event type: ${event.type}`);
@@ -47,6 +49,17 @@ async function handleContentChangeEvent(
       content,
       lastUpdated: Date.now(),
     },
+  });
+}
+
+async function handleTestcasesChangeEvent(
+  sessionState: EntWriter<"codeSessionStates">,
+  e: Extract<CodeSessionEvent, { type: "testcase_changed" }>
+) {
+  const { content } = e.data;
+
+  await sessionState.patch({
+    testcases: content,
   });
 }
 
@@ -89,11 +102,11 @@ async function getNextEventByType<T extends CodeSessionEventType>(
   eventType: T
 ): Promise<
   | {
-      id: Id<"codeSessionEvents">;
-      ts: number;
-      event: Extract<CodeSessionEvent, { type: T }>;
-      acked: boolean;
-    }
+    id: Id<"codeSessionEvents">;
+    ts: number;
+    event: Extract<CodeSessionEvent, { type: T }>;
+    acked: boolean;
+  }
   | undefined
 > {
   const event = await ctx

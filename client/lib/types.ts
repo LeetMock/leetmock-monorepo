@@ -19,17 +19,13 @@ export type RunTestResult = Array<{
   error: string | null;
 }>;
 
-export interface TestCase {
+export interface TestCaseResult {
   caseNumber: number;
   passed: boolean;
   input: Record<string, any>;
   expected: any;
   actual: any;
   error: string | null;
-}
-
-export interface TestResultsProps {
-  results: TestCase[];
 }
 
 export type CodeRunResult = {
@@ -51,6 +47,6 @@ export type DefinedObject<T> = {
 };
 
 export interface Testcase {
-  id: string;
   input: Record<string, any>;
+  expectedOutput?: any;
 }

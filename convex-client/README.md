@@ -112,6 +112,7 @@ Class | Method | HTTP request | Description
 *QueryApi* | [**api_run_code_session_states_get_post**](docs/QueryApi.md#api_run_code_session_states_get_post) | **POST** /api/run/codeSessionStates/get | Calls a query at the path codeSessionStates.js:get
 *QueryApi* | [**api_run_code_session_states_get_session_state_by_session_id_post**](docs/QueryApi.md#api_run_code_session_states_get_session_state_by_session_id_post) | **POST** /api/run/codeSessionStates/getSessionStateBySessionId | Calls a query at the path codeSessionStates.js:getSessionStateBySessionId
 *QueryApi* | [**api_run_code_session_states_get_terminal_state_post**](docs/QueryApi.md#api_run_code_session_states_get_terminal_state_post) | **POST** /api/run/codeSessionStates/getTerminalState | Calls a query at the path codeSessionStates.js:getTerminalState
+*QueryApi* | [**api_run_code_session_states_get_test_cases_state_post**](docs/QueryApi.md#api_run_code_session_states_get_test_cases_state_post) | **POST** /api/run/codeSessionStates/getTestCasesState | Calls a query at the path codeSessionStates.js:getTestCasesState
 *QueryApi* | [**api_run_questions_get_all_post**](docs/QueryApi.md#api_run_questions_get_all_post) | **POST** /api/run/questions/getAll | Calls a query at the path questions.js:getAll
 *QueryApi* | [**api_run_questions_get_by_id_post**](docs/QueryApi.md#api_run_questions_get_by_id_post) | **POST** /api/run/questions/getById | Calls a query at the path questions.js:getById
 *QueryApi* | [**api_run_sessions_exists_post**](docs/QueryApi.md#api_run_sessions_exists_post) | **POST** /api/run/sessions/exists | Calls a query at the path sessions.js:exists
@@ -147,13 +148,17 @@ Class | Method | HTTP request | Description
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOfData](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOfData.md)
  - [RequestCodeSessionEventsGetNextContentChangeEvent](docs/RequestCodeSessionEventsGetNextContentChangeEvent.md)
  - [RequestCodeSessionEventsGetNextContentChangeEventArgs](docs/RequestCodeSessionEventsGetNextContentChangeEventArgs.md)
  - [RequestCodeSessionStatesGet](docs/RequestCodeSessionStatesGet.md)
  - [RequestCodeSessionStatesGetEditorState](docs/RequestCodeSessionStatesGetEditorState.md)
+ - [RequestCodeSessionStatesGetEditorStateInternal](docs/RequestCodeSessionStatesGetEditorStateInternal.md)
  - [RequestCodeSessionStatesGetSessionStateBySessionId](docs/RequestCodeSessionStatesGetSessionStateBySessionId.md)
  - [RequestCodeSessionStatesGetTerminalState](docs/RequestCodeSessionStatesGetTerminalState.md)
+ - [RequestCodeSessionStatesGetTestCasesState](docs/RequestCodeSessionStatesGetTestCasesState.md)
+ - [RequestCodeSessionStatesGetTestCasesStateInternal](docs/RequestCodeSessionStatesGetTestCasesStateInternal.md)
  - [RequestInviteCodesApplyInviteCode](docs/RequestInviteCodesApplyInviteCode.md)
  - [RequestInviteCodesApplyInviteCodeArgs](docs/RequestInviteCodesApplyInviteCodeArgs.md)
  - [RequestInviteCodesCreateInviteCode](docs/RequestInviteCodesCreateInviteCode.md)
@@ -202,8 +207,11 @@ Class | Method | HTTP request | Description
  - [ResponseCodeSessionEventsGetNextContentChangeEventValue](docs/ResponseCodeSessionEventsGetNextContentChangeEventValue.md)
  - [ResponseCodeSessionStatesGet](docs/ResponseCodeSessionStatesGet.md)
  - [ResponseCodeSessionStatesGetEditorState](docs/ResponseCodeSessionStatesGetEditorState.md)
+ - [ResponseCodeSessionStatesGetEditorStateInternal](docs/ResponseCodeSessionStatesGetEditorStateInternal.md)
  - [ResponseCodeSessionStatesGetSessionStateBySessionId](docs/ResponseCodeSessionStatesGetSessionStateBySessionId.md)
  - [ResponseCodeSessionStatesGetTerminalState](docs/ResponseCodeSessionStatesGetTerminalState.md)
+ - [ResponseCodeSessionStatesGetTestCasesState](docs/ResponseCodeSessionStatesGetTestCasesState.md)
+ - [ResponseCodeSessionStatesGetTestCasesStateInternal](docs/ResponseCodeSessionStatesGetTestCasesStateInternal.md)
  - [ResponseCodeSessionStatesGetValue](docs/ResponseCodeSessionStatesGetValue.md)
  - [ResponseCodeSessionStatesGetValueEditor](docs/ResponseCodeSessionStatesGetValueEditor.md)
  - [ResponseCodeSessionStatesGetValueTerminal](docs/ResponseCodeSessionStatesGetValueTerminal.md)

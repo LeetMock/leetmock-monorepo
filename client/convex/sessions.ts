@@ -181,6 +181,13 @@ export const createCodeSession = userMutation({
       question.inputParameters["python"]
     );
 
+    const testCases = question.tests
+      .slice(0, 3) // Only take first 3 tests
+      .map((test) => ({
+        input: test.input,
+        expectedOutput: test.output,
+      }));
+
     const codeSessionStateId = await ctx.table("codeSessionStates").insert({
       sessionId,
       editor: {
@@ -193,6 +200,7 @@ export const createCodeSession = userMutation({
         isError: false,
       },
       displayQuestion: false,
+      testcases: testCases,
     });
 
     // Populate initial content changed event

@@ -21,6 +21,10 @@ export const codeSessionEventSchemas = {
     type: v.literal("testcase_added"),
     data: v.any(), // TODO: change this to the actual data type
   }),
+  testcase_changed: v.object({
+    type: v.literal("testcase_changed"),
+    data: v.any(), // TODO: change this to the actual data type
+  }),
   testcase_removed: v.object({
     type: v.literal("testcase_removed"),
     data: v.any(), // TODO: change this to the actual data type
@@ -36,7 +40,8 @@ export const codeSessionEventSchema = v.union(
   codeSessionEventSchemas.user_test_executed,
   codeSessionEventSchemas.testcase_added,
   codeSessionEventSchemas.testcase_removed,
-  codeSessionEventSchemas.question_displayed
+  codeSessionEventSchemas.question_displayed,
+  codeSessionEventSchemas.testcase_changed
 );
 
 export type QueryCtx = CustomCtx<typeof query>;

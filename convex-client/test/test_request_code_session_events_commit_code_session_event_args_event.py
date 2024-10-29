@@ -35,12 +35,12 @@ class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEvent(unittest.TestC
         model = RequestCodeSessionEventsCommitCodeSessionEventArgsEvent()
         if include_optional:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEvent(
-                data = True,
+                data = convex_client.models.data.data(),
                 type = 'content_changed'
             )
         else:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEvent(
-                data = True,
+                data = convex_client.models.data.data(),
                 type = 'content_changed',
         )
         """

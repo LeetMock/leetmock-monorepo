@@ -1,11 +1,26 @@
 import { Button } from "@/components/ui/button";
-import { TestCase, TestResultsProps } from "@/lib/types";
+import { TestCaseResult } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Fragment, useState } from "react";
 import { CheckCircleIcon, XCircleIcon } from "lucide-react";
 
-export const TestResultsBlock: React.FC<TestResultsProps> = ({ results }) => {
-  const [selectedCase, setSelectedCase] = useState<TestCase | null>(null);
+interface TestResultsProps {
+  isRunning?: boolean;
+  results: TestCaseResult[];
+}
+
+export const TestResultsBlock: React.FC<TestResultsProps> = ({ isRunning = false, results }) => {
+  const [selectedCase, setSelectedCase] = useState<TestCaseResult | null>(null);
+  console.log(results);
+
+  if (isRunning) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full space-y-4">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <p className="text-muted-foreground">Running tests...</p>
+      </div>
+    );
+  }
 
   if (!results || results.length === 0) {
     return (

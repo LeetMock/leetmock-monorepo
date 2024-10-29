@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**code** | **str** |  | 
 **language** | **str** |  | 
 **question_id** | **str** | ID from table \&quot;questions\&quot; | 
+**session_id** | **str** | ID from table \&quot;sessions\&quot; | 
 
 ## Example
 

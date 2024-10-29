@@ -789,6 +789,37 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/codeSessionStates/getTestCasesState:
+    post:
+      summary: Calls a query at the path codeSessionStates.js:getTestCasesState
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codeSessionStates.getTestCasesState"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codeSessionStates.getTestCasesState"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -1196,17 +1227,18 @@ components:
         args:
           type: object
           required:
-            - code
             - language
             - questionId
+            - sessionId
           properties:
-            code:
-              type: string
             language:
               type: string
             questionId:
               type: string
               description: ID from table "questions"
+            sessionId:
+              type: string
+              description: ID from table "sessions"
 
     Response_actions.runTests:
       type: object
@@ -1748,6 +1780,16 @@ components:
                       type: string
                       enum:
                         - "question_displayed"
+                - type: object
+                  required:
+                    - data
+                    - type
+                  properties:
+                    data: {}
+                    type:
+                      type: string
+                      enum:
+                        - "testcase_changed"
             sessionId:
               type: string
               description: ID from table "sessions"
@@ -2015,6 +2057,36 @@ components:
           type: object
         value: {}
 
+    Request_codeSessionStates.getEditorStateInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_codeSessionStates.getEditorStateInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
     Request_codeSessionStates.getSessionStateBySessionId:
       type: object
       required:
@@ -2060,6 +2132,66 @@ components:
               description: ID from table "sessions"
 
     Response_codeSessionStates.getTerminalState:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_codeSessionStates.getTestCasesState:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_codeSessionStates.getTestCasesState:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_codeSessionStates.getTestCasesStateInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_codeSessionStates.getTestCasesStateInternal:
       type: object
       required:
         - status

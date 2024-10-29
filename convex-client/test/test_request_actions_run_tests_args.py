@@ -35,15 +35,15 @@ class TestRequestActionsRunTestsArgs(unittest.TestCase):
         model = RequestActionsRunTestsArgs()
         if include_optional:
             return RequestActionsRunTestsArgs(
-                code = '',
                 language = '',
-                question_id = ''
+                question_id = '',
+                session_id = ''
             )
         else:
             return RequestActionsRunTestsArgs(
-                code = '',
                 language = '',
                 question_id = '',
+                session_id = '',
         )
         """
 

@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
 
-import { query, userQuery } from "./functions";
+import { query, userQuery, internalQuery } from "./functions";
 import { QueryCtx } from "./types";
 
 export const get = query({
@@ -49,6 +49,16 @@ export const getTerminalState = userQuery({
   },
 });
 
+export const getTestCasesState = userQuery({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  handler: async (ctx, { sessionId }) => {
+    const sessionState = await querySessionStateBySessionId(ctx, sessionId);
+    return sessionState?.testcases;
+  },
+});
+
 // Get latest code session state by session ID
 export const getSessionStateBySessionId = query({
   args: {
@@ -56,6 +66,26 @@ export const getSessionStateBySessionId = query({
   },
   handler: async (ctx, { sessionId }) => {
     return await querySessionStateBySessionId(ctx, sessionId);
+  },
+});
+
+export const getEditorStateInternal = internalQuery({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  handler: async (ctx, { sessionId }) => {
+    const sessionState = await querySessionStateBySessionId(ctx, sessionId);
+    return sessionState?.editor;
+  },
+});
+
+export const getTestCasesStateInternal = internalQuery({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  handler: async (ctx, { sessionId }) => {
+    const sessionState = await querySessionStateBySessionId(ctx, sessionId);
+    return sessionState?.testcases;
   },
 });
 
