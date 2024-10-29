@@ -1,0 +1,1131 @@
+[
+    {
+        "category": [
+            "Math",
+            "String"
+        ],
+        "difficulty": 1,
+        "evalMode": "exactMatch",
+        "question": "<p>For two strings <code>s</code> and <code>t</code>, we say &quot;<code>t</code> divides <code>s</code>&quot; if and only if <code>s = t + t + t + ... + t + t</code> (i.e., <code>t</code> is concatenated with itself one or more times).</p>\n\n<p>Given two strings <code>str1</code> and <code>str2</code>, return <em>the largest string </em><code>x</code><em> such that </em><code>x</code><em> divides both </em><code>str1</code><em> and </em><code>str2</code>.</p>\n\n<p>&nbsp;</p>\n<p><strong class=\"example\">Example 1:</strong></p>\n\n<pre>\n<strong>Input:</strong> str1 = &quot;ABCABC&quot;, str2 = &quot;ABC&quot;\n<strong>Output:</strong> &quot;ABC&quot;\n</pre>\n\n<p><strong class=\"example\">Example 2:</strong></p>\n\n<pre>\n<strong>Input:</strong> str1 = &quot;ABABAB&quot;, str2 = &quot;ABAB&quot;\n<strong>Output:</strong> &quot;AB&quot;\n</pre>\n\n<p><strong class=\"example\">Example 3:</strong></p>\n\n<pre>\n<strong>Input:</strong> str1 = &quot;LEET&quot;, str2 = &quot;CODE&quot;\n<strong>Output:</strong> &quot;&quot;\n</pre>\n\n<p>&nbsp;</p>\n<p><strong>Constraints:</strong></p>\n\n<ul>\n\t<li><code>1 &lt;= str1.length, str2.length &lt;= 1000</code></li>\n\t<li><code>str1</code> and <code>str2</code> consist of English uppercase letters.</li>\n</ul>\n",
+        "functionName": "findLargestCommonDivisorString",
+        "inputParameters": {
+            "cpp": [
+                "str1",
+                "string",
+                "str2",
+                "string"
+            ],
+            "java": [
+                "str1",
+                "String",
+                "str2",
+                "String"
+            ],
+            "javascript": [
+                "str1",
+                "string",
+                "str2",
+                "string"
+            ],
+            "python": [
+                "str1",
+                "str",
+                "str2",
+                "str"
+            ]
+        },
+        "tests": [
+            {
+                "input": {
+                    "str1": "ABCABC",
+                    "str2": "ABC"
+                },
+                "output": "ABC"
+            },
+            {
+                "input": {
+                    "str1": "ABABAB",
+                    "str2": "ABAB"
+                },
+                "output": "AB"
+            },
+            {
+                "input": {
+                    "str1": "LEET",
+                    "str2": "CODE"
+                },
+                "output": ""
+            },
+            {
+                "input": {
+                    "str1": "TAUXXTAUXXTAUXXTAUXXTAUXX",
+                    "str2": "TAUXXTAUXXTAUXXTAUXX"
+                },
+                "output": "TAUXX"
+            },
+            {
+                "input": {
+                    "str1": "ABCDEF",
+                    "str2": "ABC"
+                },
+                "output": ""
+            },
+            {
+                "input": {
+                    "str1": "AAAAAAAAA",
+                    "str2": "AAACCC"
+                },
+                "output": ""
+            },
+            {
+                "input": {
+                    "str1": "ABABABAB",
+                    "str2": "ABAB"
+                },
+                "output": "ABAB"
+            },
+            {
+                "input": {
+                    "str1": "X",
+                    "str2": "X"
+                },
+                "output": "X"
+            },
+            {
+                "input": {
+                    "str1": "XXXX",
+                    "str2": "XX"
+                },
+                "output": "XX"
+            },
+            {
+                "input": {
+                    "str1": "AAAAABBBBB",
+                    "str2": "ABABABAB"
+                },
+                "output": ""
+            }
+        ],
+        "title": "Greatest Common Divisor of Strings",
+        "metaData": {},
+        "solutions": {
+            "python": "class Solution:\n    def findLargestCommonDivisorString(self, str1: str, str2: str) -> str:\n        # Check if they have non-zero GCD string.\n        if str1 + str2 != str2 + str1:\n            return \"\"\n\n        # Get the GCD of the two lengths.\n        max_length = gcd(len(str1), len(str2))\n        return str1[:max_length]"
+        }
+    },
+    {
+        "category": [
+            "Two Pointers",
+            "String",
+            "Dynamic Programming"
+        ],
+        "difficulty": 1,
+        "evalMode": "exactMatch",
+        "question": "<p>Given two strings <code>s</code> and <code>t</code>, return <code>true</code><em> if </em><code>s</code><em> is a <strong>subsequence</strong> of </em><code>t</code><em>, or </em><code>false</code><em> otherwise</em>.</p>\n\n<p>A <strong>subsequence</strong> of a string is a new string that is formed from the original string by deleting some (can be none) of the characters without disturbing the relative positions of the remaining characters. (i.e., <code>&quot;ace&quot;</code> is a subsequence of <code>&quot;<u>a</u>b<u>c</u>d<u>e</u>&quot;</code> while <code>&quot;aec&quot;</code> is not).</p>\n\n<p>&nbsp;</p>\n<p><strong class=\"example\">Example 1:</strong></p>\n<pre><strong>Input:</strong> s = \"abc\", t = \"ahbgdc\"\n<strong>Output:</strong> true\n</pre><p><strong class=\"example\">Example 2:</strong></p>\n<pre><strong>Input:</strong> s = \"axc\", t = \"ahbgdc\"\n<strong>Output:</strong> false\n</pre>\n<p>&nbsp;</p>\n<p><strong>Constraints:</strong></p>\n\n<ul>\n\t<li><code>0 &lt;= s.length &lt;= 100</code></li>\n\t<li><code>0 &lt;= t.length &lt;= 10<sup>4</sup></code></li>\n\t<li><code>s</code> and <code>t</code> consist only of lowercase English letters.</li>\n</ul>\n\n<p>&nbsp;</p>\n<strong>Follow up:</strong> Suppose there are lots of incoming <code>s</code>, say <code>s<sub>1</sub>, s<sub>2</sub>, ..., s<sub>k</sub></code> where <code>k &gt;= 10<sup>9</sup></code>, and you want to check one by one to see if <code>t</code> has its subsequence. In this scenario, how would you change your code?",
+        "functionName": "isSubsequence",
+        "inputParameters": {
+            "cpp": [
+                "s",
+                "string",
+                "t",
+                "string"
+            ],
+            "java": [
+                "s",
+                "String",
+                "t",
+                "String"
+            ],
+            "javascript": [
+                "s",
+                "string",
+                "t",
+                "string"
+            ],
+            "python": [
+                "s",
+                "str",
+                "t",
+                "str"
+            ]
+        },
+        "tests": [
+            {
+                "input": {
+                    "s": "abc",
+                    "t": "ahbgdc"
+                },
+                "output": true
+            },
+            {
+                "input": {
+                    "s": "axc",
+                    "t": "ahbgdc"
+                },
+                "output": false
+            },
+            {
+                "input": {
+                    "s": "",
+                    "t": "ahbgdc"
+                },
+                "output": true
+            },
+            {
+                "input": {
+                    "s": "abc",
+                    "t": ""
+                },
+                "output": false
+            },
+            {
+                "input": {
+                    "s": "abc",
+                    "t": "abc"
+                },
+                "output": true
+            },
+            {
+                "input": {
+                    "s": "abcde",
+                    "t": "ace"
+                },
+                "output": false
+            },
+            {
+                "input": {
+                    "s": "aaaaaa",
+                    "t": "bbaaaa"
+                },
+                "output": false
+            },
+            {
+                "input": {
+                    "s": "leetcode",
+                    "t": "yleetcode"
+                },
+                "output": true
+            },
+            {
+                "input": {
+                    "s": "b",
+                    "t": "abc"
+                },
+                "output": true
+            },
+            {
+                "input": {
+                    "s": "aec",
+                    "t": "abcde"
+                },
+                "output": false
+            }
+        ],
+        "title": "Is Subsequence",
+        "metaData": {},
+        "solutions": {
+            "python": "class Solution:\n    def isSubsequence(self, s: str, t: str) -> bool:\n        if not s:\n            return True\n        s_ptr = 0\n\n        for char in t:\n            if char == s[s_ptr]:\n                s_ptr += 1\n                if s_ptr >= len(s):\n                    return True\n        return False"
+        }
+    },
+    {
+        "category": [
+            "Array",
+            "Binary Search"
+        ],
+        "difficulty": 2,
+        "evalMode": "exactMatch",
+        "question": "<p>Koko loves to eat bananas. There are <code>n</code> piles of bananas, the <code>i<sup>th</sup></code> pile has <code>piles[i]</code> bananas. The guards have gone and will come back in <code>h</code> hours.</p>\n\n<p>Koko can decide her bananas-per-hour eating speed of <code>k</code>. Each hour, she chooses some pile of bananas and eats <code>k</code> bananas from that pile. If the pile has less than <code>k</code> bananas, she eats all of them instead and will not eat any more bananas during this hour.</p>\n\n<p>Koko likes to eat slowly but still wants to finish eating all the bananas before the guards return.</p>\n\n<p>Return <em>the minimum integer</em> <code>k</code> <em>such that she can eat all the bananas within</em> <code>h</code> <em>hours</em>.</p>\n\n<p>&nbsp;</p>\n<p><strong class=\"example\">Example 1:</strong></p>\n\n<pre>\n<strong>Input:</strong> piles = [3,6,7,11], h = 8\n<strong>Output:</strong> 4\n</pre>\n\n<p><strong class=\"example\">Example 2:</strong></p>\n\n<pre>\n<strong>Input:</strong> piles = [30,11,23,4,20], h = 5\n<strong>Output:</strong> 30\n</pre>\n\n<p><strong class=\"example\">Example 3:</strong></p>\n\n<pre>\n<strong>Input:</strong> piles = [30,11,23,4,20], h = 6\n<strong>Output:</strong> 23\n</pre>\n\n<p>&nbsp;</p>\n<p><strong>Constraints:</strong></p>\n\n<ul>\n\t<li><code>1 &lt;= piles.length &lt;= 10<sup>4</sup></code></li>\n\t<li><code>piles.length &lt;= h &lt;= 10<sup>9</sup></code></li>\n\t<li><code>1 &lt;= piles[i] &lt;= 10<sup>9</sup></code></li>\n</ul>\n",
+        "functionName": "minEatingSpeed",
+        "inputParameters": {
+            "cpp": [
+                "piles",
+                "vector<int>",
+                "h",
+                "int"
+            ],
+            "java": [
+                "piles",
+                "int[]",
+                "h",
+                "int"
+            ],
+            "javascript": [
+                "piles",
+                "number[]",
+                "h",
+                "number"
+            ],
+            "python": [
+                "piles",
+                "List[int]",
+                "h",
+                "int"
+            ]
+        },
+        "tests": [
+            {
+                "input": {
+                    "piles": [
+                        3,
+                        6,
+                        7,
+                        11
+                    ],
+                    "h": 8
+                },
+                "output": 4
+            },
+            {
+                "input": {
+                    "piles": [
+                        30,
+                        11,
+                        23,
+                        4,
+                        20
+                    ],
+                    "h": 5
+                },
+                "output": 30
+            },
+            {
+                "input": {
+                    "piles": [
+                        30,
+                        11,
+                        23,
+                        4,
+                        20
+                    ],
+                    "h": 6
+                },
+                "output": 23
+            },
+            {
+                "input": {
+                    "piles": [
+                        1
+                    ],
+                    "h": 1
+                },
+                "output": 1
+            },
+            {
+                "input": {
+                    "piles": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                    ],
+                    "h": 5
+                },
+                "output": 5
+            },
+            {
+                "input": {
+                    "piles": [
+                        1000000000
+                    ],
+                    "h": 2
+                },
+                "output": 500000000
+            },
+            {
+                "input": {
+                    "piles": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ],
+                    "h": 8
+                },
+                "output": 1
+            },
+            {
+                "input": {
+                    "piles": [
+                        3,
+                        6,
+                        7,
+                        11
+                    ],
+                    "h": 6
+                },
+                "output": 5
+            },
+            {
+                "input": {
+                    "piles": [
+                        312884470
+                    ],
+                    "h": 968709470
+                },
+                "output": 1
+            },
+            {
+                "input": {
+                    "piles": [
+                        805306368,
+                        805306368,
+                        805306368
+                    ],
+                    "h": 1000000000
+                },
+                "output": 3
+            }
+        ],
+        "title": "Koko Eating Bananas",
+        "metaData": {},
+        "solutions": {
+            "python": "from typing import List, Any\nimport math\n\nclass Solution:\n    def minEatingSpeed(self, piles: List[int], h: int) -> int:\n        left = math.ceil(sum(piles) / h)\n        right = max(piles)\n        while left < right:\n            mid = (left + right) // 2\n            total_time = 0\n            for i in piles:\n                total_time += math.ceil(i / mid)\n                if total_time > h:\n                    break\n            if total_time <= h:\n                right = mid\n            else:\n                left = mid + 1\n        return right"
+        }
+    },
+    {
+        "category": [
+            "Array",
+            "Backtracking"
+        ],
+        "difficulty": 2,
+        "evalMode": "sortedMatch",
+        "question": "<p>Find all valid combinations of <code>k</code> numbers that sum up to <code>n</code> such that the following conditions are true:</p>\n\n<ul>\n\t<li>Only numbers <code>1</code> through <code>9</code> are used.</li>\n\t<li>Each number is used <strong>at most once</strong>.</li>\n</ul>\n\n<p>Return <em>a list of all possible valid combinations</em>. The list must not contain the same combination twice, and the combinations may be returned in any order.</p>\n\n<p>&nbsp;</p>\n<p><strong class=\"example\">Example 1:</strong></p>\n\n<pre>\n<strong>Input:</strong> k = 3, n = 7\n<strong>Output:</strong> [[1,2,4]]\n<strong>Explanation:</strong>\n1 + 2 + 4 = 7\nThere are no other valid combinations.</pre>\n\n<p><strong class=\"example\">Example 2:</strong></p>\n\n<pre>\n<strong>Input:</strong> k = 3, n = 9\n<strong>Output:</strong> [[1,2,6],[1,3,5],[2,3,4]]\n<strong>Explanation:</strong>\n1 + 2 + 6 = 9\n1 + 3 + 5 = 9\n2 + 3 + 4 = 9\nThere are no other valid combinations.\n</pre>\n\n<p><strong class=\"example\">Example 3:</strong></p>\n\n<pre>\n<strong>Input:</strong> k = 4, n = 1\n<strong>Output:</strong> []\n<strong>Explanation:</strong> There are no valid combinations.\nUsing 4 different numbers in the range [1,9], the smallest sum we can get is 1+2+3+4 = 10 and since 10 &gt; 1, there are no valid combination.\n</pre>\n\n<p>&nbsp;</p>\n<p><strong>Constraints:</strong></p>\n\n<ul>\n\t<li><code>2 &lt;= k &lt;= 9</code></li>\n\t<li><code>1 &lt;= n &lt;= 60</code></li>\n</ul>\n",
+        "functionName": "combinationSum3",
+        "inputParameters": {
+            "cpp": [
+                "k",
+                "int",
+                "n",
+                "int"
+            ],
+            "java": [
+                "k",
+                "int",
+                "n",
+                "int"
+            ],
+            "javascript": [
+                "k",
+                "number",
+                "n",
+                "number"
+            ],
+            "python": [
+                "k",
+                "int",
+                "n",
+                "int"
+            ]
+        },
+        "tests": [
+            {
+                "input": {
+                    "k": 3,
+                    "n": 7
+                },
+                "output": [
+                    [
+                        1,
+                        2,
+                        4
+                    ]
+                ]
+            },
+            {
+                "input": {
+                    "k": 3,
+                    "n": 9
+                },
+                "output": [
+                    [
+                        1,
+                        2,
+                        6
+                    ],
+                    [
+                        1,
+                        3,
+                        5
+                    ],
+                    [
+                        2,
+                        3,
+                        4
+                    ]
+                ]
+            },
+            {
+                "input": {
+                    "k": 4,
+                    "n": 1
+                },
+                "output": []
+            },
+            {
+                "input": {
+                    "k": 2,
+                    "n": 18
+                },
+                "output": [
+                    [
+                        9,
+                        9
+                    ]
+                ]
+            },
+            {
+                "input": {
+                    "k": 5,
+                    "n": 15
+                },
+                "output": [
+                    [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                    ]
+                ]
+            },
+            {
+                "input": {
+                    "k": 3,
+                    "n": 15
+                },
+                "output": [
+                    [
+                        1,
+                        5,
+                        9
+                    ],
+                    [
+                        1,
+                        6,
+                        8
+                    ],
+                    [
+                        2,
+                        4,
+                        9
+                    ],
+                    [
+                        2,
+                        5,
+                        8
+                    ],
+                    [
+                        2,
+                        6,
+                        7
+                    ],
+                    [
+                        3,
+                        4,
+                        8
+                    ],
+                    [
+                        3,
+                        5,
+                        7
+                    ],
+                    [
+                        4,
+                        5,
+                        6
+                    ]
+                ]
+            },
+            {
+                "input": {
+                    "k": 2,
+                    "n": 10
+                },
+                "output": [
+                    [
+                        1,
+                        9
+                    ],
+                    [
+                        2,
+                        8
+                    ],
+                    [
+                        3,
+                        7
+                    ],
+                    [
+                        4,
+                        6
+                    ]
+                ]
+            },
+            {
+                "input": {
+                    "k": 4,
+                    "n": 24
+                },
+                "output": [
+                    [
+                        1,
+                        6,
+                        8,
+                        9
+                    ],
+                    [
+                        2,
+                        5,
+                        8,
+                        9
+                    ],
+                    [
+                        2,
+                        6,
+                        7,
+                        9
+                    ],
+                    [
+                        3,
+                        4,
+                        8,
+                        9
+                    ],
+                    [
+                        3,
+                        5,
+                        7,
+                        9
+                    ],
+                    [
+                        3,
+                        6,
+                        7,
+                        8
+                    ],
+                    [
+                        4,
+                        5,
+                        6,
+                        9
+                    ],
+                    [
+                        4,
+                        5,
+                        7,
+                        8
+                    ]
+                ]
+            },
+            {
+                "input": {
+                    "k": 9,
+                    "n": 45
+                },
+                "output": [
+                    [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8,
+                        9
+                    ]
+                ]
+            },
+            {
+                "input": {
+                    "k": 3,
+                    "n": 25
+                },
+                "output": []
+            }
+        ],
+        "title": "Combination Sum III",
+        "metaData": {},
+        "solutions": {
+            "python": "from typing import List, Any\n\nclass Solution:\n    def combinationSum3(self, k: int, n: int) -> List[List[int]]:\n        res = []\n        \n        def backtrack(num, stack, target):\n            if len(stack) == k:\n                if target == 0:\n                    res.append(stack)\n                return\n            \n            for x in range(num + 1, 10):\n                if x <= target:\n                    backtrack(x, stack + [x], target - x)\n                else:\n                    return\n        \n        backtrack(0, [], n)\n        return res"
+        }
+    },
+    {
+        "category": [
+            "Array",
+            "Dynamic Programming"
+        ],
+        "difficulty": 1,
+        "evalMode": "exactMatch",
+        "question": "<p>You are given an integer array <code>cost</code> where <code>cost[i]</code> is the cost of <code>i<sup>th</sup></code> step on a staircase. Once you pay the cost, you can either climb one or two steps.</p>\n\n<p>You can either start from the step with index <code>0</code>, or the step with index <code>1</code>.</p>\n\n<p>Return <em>the minimum cost to reach the top of the floor</em>.</p>\n\n<p>&nbsp;</p>\n<p><strong class=\"example\">Example 1:</strong></p>\n\n<pre>\n<strong>Input:</strong> cost = [10,<u>15</u>,20]\n<strong>Output:</strong> 15\n<strong>Explanation:</strong> You will start at index 1.\n- Pay 15 and climb two steps to reach the top.\nThe total cost is 15.\n</pre>\n\n<p><strong class=\"example\">Example 2:</strong></p>\n\n<pre>\n<strong>Input:</strong> cost = [<u>1</u>,100,<u>1</u>,1,<u>1</u>,100,<u>1</u>,<u>1</u>,100,<u>1</u>]\n<strong>Output:</strong> 6\n<strong>Explanation:</strong> You will start at index 0.\n- Pay 1 and climb two steps to reach index 2.\n- Pay 1 and climb two steps to reach index 4.\n- Pay 1 and climb two steps to reach index 6.\n- Pay 1 and climb one step to reach index 7.\n- Pay 1 and climb two steps to reach index 9.\n- Pay 1 and climb one step to reach the top.\nThe total cost is 6.\n</pre>\n\n<p>&nbsp;</p>\n<p><strong>Constraints:</strong></p>\n\n<ul>\n\t<li><code>2 &lt;= cost.length &lt;= 1000</code></li>\n\t<li><code>0 &lt;= cost[i] &lt;= 999</code></li>\n</ul>\n",
+        "functionName": "minCostClimbingStairs",
+        "inputParameters": {
+            "cpp": [
+                "cost",
+                "vector<int>"
+            ],
+            "java": [
+                "cost",
+                "int[]"
+            ],
+            "javascript": [
+                "cost",
+                "number[]"
+            ],
+            "python": [
+                "cost",
+                "List[int]"
+            ]
+        },
+        "tests": [
+            {
+                "input": {
+                    "cost": [
+                        10,
+                        15,
+                        20
+                    ]
+                },
+                "output": 15
+            },
+            {
+                "input": {
+                    "cost": [
+                        1,
+                        100,
+                        1,
+                        1,
+                        1,
+                        100,
+                        1,
+                        1,
+                        100,
+                        1
+                    ]
+                },
+                "output": 6
+            },
+            {
+                "input": {
+                    "cost": [
+                        0,
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                "output": 0
+            },
+            {
+                "input": {
+                    "cost": [
+                        1,
+                        2
+                    ]
+                },
+                "output": 1
+            },
+            {
+                "input": {
+                    "cost": [
+                        10,
+                        15,
+                        20,
+                        25,
+                        30
+                    ]
+                },
+                "output": 40
+            },
+            {
+                "input": {
+                    "cost": [
+                        5,
+                        10,
+                        15,
+                        20,
+                        25,
+                        30
+                    ]
+                },
+                "output": 45
+            },
+            {
+                "input": {
+                    "cost": [
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1
+                    ]
+                },
+                "output": 5
+            },
+            {
+                "input": {
+                    "cost": [
+                        999,
+                        999,
+                        999,
+                        999
+                    ]
+                },
+                "output": 1998
+            },
+            {
+                "input": {
+                    "cost": [
+                        1,
+                        100,
+                        1,
+                        100,
+                        1,
+                        100,
+                        1,
+                        100,
+                        1
+                    ]
+                },
+                "output": 5
+            },
+            {
+                "input": {
+                    "cost": [
+                        10,
+                        20,
+                        30,
+                        40,
+                        50,
+                        60,
+                        70,
+                        80,
+                        90,
+                        100
+                    ]
+                },
+                "output": 260
+            }
+        ],
+        "title": "Min Cost Climbing Stairs",
+        "metaData": {},
+        "solutions": {
+            "python": "from typing import List, Any\n\nclass Solution:\n    def minCostClimbingStairs(self, cost: List[int]) -> int:\n        cost.append(0)\n        for i in range(len(cost)-3,-1,-1):\n            cost[i]=min(cost[i]+cost[i+1],cost[i]+cost[i+2])\n        return min(cost[0],cost[1])"
+        }
+    },
+    {
+        "category": [
+            "Array",
+            "Dynamic Programming"
+        ],
+        "difficulty": 2,
+        "evalMode": "exactMatch",
+        "question": "<p>You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected and <b>it will automatically contact the police if two adjacent houses were broken into on the same night</b>.</p>\n\n<p>Given an integer array <code>nums</code> representing the amount of money of each house, return <em>the maximum amount of money you can rob tonight <b>without alerting the police</b></em>.</p>\n\n<p>&nbsp;</p>\n<p><strong class=\"example\">Example 1:</strong></p>\n\n<pre>\n<strong>Input:</strong> nums = [1,2,3,1]\n<strong>Output:</strong> 4\n<strong>Explanation:</strong> Rob house 1 (money = 1) and then rob house 3 (money = 3).\nTotal amount you can rob = 1 + 3 = 4.\n</pre>\n\n<p><strong class=\"example\">Example 2:</strong></p>\n\n<pre>\n<strong>Input:</strong> nums = [2,7,9,3,1]\n<strong>Output:</strong> 12\n<strong>Explanation:</strong> Rob house 1 (money = 2), rob house 3 (money = 9) and rob house 5 (money = 1).\nTotal amount you can rob = 2 + 9 + 1 = 12.\n</pre>\n\n<p>&nbsp;</p>\n<p><strong>Constraints:</strong></p>\n\n<ul>\n\t<li><code>1 &lt;= nums.length &lt;= 100</code></li>\n\t<li><code>0 &lt;= nums[i] &lt;= 400</code></li>\n</ul>\n",
+        "functionName": "maxRobbery",
+        "inputParameters": {
+            "cpp": [
+                "nums",
+                "vector<int>"
+            ],
+            "java": [
+                "nums",
+                "int[]"
+            ],
+            "javascript": [
+                "nums",
+                "number[]"
+            ],
+            "python": [
+                "nums",
+                "List[int]"
+            ]
+        },
+        "tests": [
+            {
+                "input": {
+                    "nums": [
+                        1,
+                        2,
+                        3,
+                        1
+                    ]
+                },
+                "output": 4
+            },
+            {
+                "input": {
+                    "nums": [
+                        2,
+                        7,
+                        9,
+                        3,
+                        1
+                    ]
+                },
+                "output": 12
+            },
+            {
+                "input": {
+                    "nums": [
+                        1,
+                        1,
+                        1,
+                        1
+                    ]
+                },
+                "output": 2
+            },
+            {
+                "input": {
+                    "nums": [
+                        5,
+                        3,
+                        4,
+                        11,
+                        2
+                    ]
+                },
+                "output": 16
+            },
+            {
+                "input": {
+                    "nums": [
+                        1
+                    ]
+                },
+                "output": 1
+            },
+            {
+                "input": {
+                    "nums": [
+                        10,
+                        1,
+                        1,
+                        10
+                    ]
+                },
+                "output": 20
+            },
+            {
+                "input": {
+                    "nums": [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                "output": 0
+            },
+            {
+                "input": {
+                    "nums": [
+                        200,
+                        234,
+                        182,
+                        111,
+                        87,
+                        194,
+                        221,
+                        217,
+                        71,
+                        162
+                    ]
+                },
+                "output": 954
+            },
+            {
+                "input": {
+                    "nums": [
+                        4,
+                        1,
+                        2,
+                        7,
+                        5,
+                        3,
+                        1
+                    ]
+                },
+                "output": 14
+            },
+            {
+                "input": {
+                    "nums": [
+                        114,
+                        117,
+                        207,
+                        117,
+                        235,
+                        82,
+                        90,
+                        67,
+                        143,
+                        146,
+                        53,
+                        108,
+                        200,
+                        91,
+                        80,
+                        223,
+                        58,
+                        170,
+                        110,
+                        236,
+                        81,
+                        90,
+                        222,
+                        160,
+                        165,
+                        195,
+                        187,
+                        199,
+                        114,
+                        235,
+                        197,
+                        187,
+                        69,
+                        129,
+                        64,
+                        214,
+                        228,
+                        78,
+                        188,
+                        67,
+                        205,
+                        94,
+                        205,
+                        169,
+                        241,
+                        202,
+                        144,
+                        240
+                    ]
+                },
+                "output": 4173
+            }
+        ],
+        "title": "House Robber",
+        "metaData": {},
+        "solutions": {
+            "python": "from typing import List, Any\n\nclass Solution:\n    def maxRobbery(self, nums: List[int]) -> int:\n        # edge cases:\n        if len(nums) == 0: return 0\n        if len(nums) == 1: return nums[0]\n        if len(nums) == 2: return max(nums)\n        \n        # dynamic programming - decide each problem by its sub-problems:\n        dp = [0]*len(nums)\n        dp[0] = nums[0]\n        dp[1] = max(nums[0], nums[1])\n        for i in range(2, len(nums)):\n            dp[i] = max(dp[i-1], nums[i]+dp[i-2])\n        \n        return dp[-1]"
+        }
+    },
+    {
+        "category": [
+            "String",
+            "Dynamic Programming"
+        ],
+        "difficulty": 2,
+        "evalMode": "exactMatch",
+        "question": "<p>Given two strings <code>text1</code> and <code>text2</code>, return <em>the length of their longest <strong>common subsequence</strong>. </em>If there is no <strong>common subsequence</strong>, return <code>0</code>.</p>\n\n<p>A <strong>subsequence</strong> of a string is a new string generated from the original string with some characters (can be none) deleted without changing the relative order of the remaining characters.</p>\n\n<ul>\n\t<li>For example, <code>&quot;ace&quot;</code> is a subsequence of <code>&quot;abcde&quot;</code>.</li>\n</ul>\n\n<p>A <strong>common subsequence</strong> of two strings is a subsequence that is common to both strings.</p>\n\n<p>&nbsp;</p>\n<p><strong class=\"example\">Example 1:</strong></p>\n\n<pre>\n<strong>Input:</strong> text1 = &quot;abcde&quot;, text2 = &quot;ace&quot; \n<strong>Output:</strong> 3  \n<strong>Explanation:</strong> The longest common subsequence is &quot;ace&quot; and its length is 3.\n</pre>\n\n<p><strong class=\"example\">Example 2:</strong></p>\n\n<pre>\n<strong>Input:</strong> text1 = &quot;abc&quot;, text2 = &quot;abc&quot;\n<strong>Output:</strong> 3\n<strong>Explanation:</strong> The longest common subsequence is &quot;abc&quot; and its length is 3.\n</pre>\n\n<p><strong class=\"example\">Example 3:</strong></p>\n\n<pre>\n<strong>Input:</strong> text1 = &quot;abc&quot;, text2 = &quot;def&quot;\n<strong>Output:</strong> 0\n<strong>Explanation:</strong> There is no such common subsequence, so the result is 0.\n</pre>\n\n<p>&nbsp;</p>\n<p><strong>Constraints:</strong></p>\n\n<ul>\n\t<li><code>1 &lt;= text1.length, text2.length &lt;= 1000</code></li>\n\t<li><code>text1</code> and <code>text2</code> consist of only lowercase English characters.</li>\n</ul>\n",
+        "functionName": "longestCommonSubsequence",
+        "inputParameters": {
+            "cpp": [
+                "text1",
+                "string",
+                "text2",
+                "string"
+            ],
+            "java": [
+                "text1",
+                "String",
+                "text2",
+                "String"
+            ],
+            "javascript": [
+                "text1",
+                "string",
+                "text2",
+                "string"
+            ],
+            "python": [
+                "text1",
+                "str",
+                "text2",
+                "str"
+            ]
+        },
+        "tests": [
+            {
+                "input": {
+                    "text1": "abcde",
+                    "text2": "ace"
+                },
+                "output": 3
+            },
+            {
+                "input": {
+                    "text1": "abc",
+                    "text2": "abc"
+                },
+                "output": 3
+            },
+            {
+                "input": {
+                    "text1": "abc",
+                    "text2": "def"
+                },
+                "output": 0
+            },
+            {
+                "input": {
+                    "text1": "bsbininm",
+                    "text2": "jmjkbkjkv"
+                },
+                "output": 1
+            },
+            {
+                "input": {
+                    "text1": "oxcpqrsvwf",
+                    "text2": "shmtulqrypy"
+                },
+                "output": 2
+            },
+            {
+                "input": {
+                    "text1": "abcdefghij",
+                    "text2": "ecdgi"
+                },
+                "output": 4
+            },
+            {
+                "input": {
+                    "text1": "aaaaaa",
+                    "text2": "aaaaaaa"
+                },
+                "output": 6
+            },
+            {
+                "input": {
+                    "text1": "pqrstuvwxyz",
+                    "text2": "abcdefghij"
+                },
+                "output": 0
+            },
+            {
+                "input": {
+                    "text1": "mhunuzqrkzsnidwbun",
+                    "text2": "szulspmhwpazoxijwbq"
+                },
+                "output": 6
+            },
+            {
+                "input": {
+                    "text1": "a",
+                    "text2": "b"
+                },
+                "output": 0
+            }
+        ],
+        "title": "Longest Common Subsequence",
+        "metaData": {},
+        "solutions": {
+            "python": "class Solution:\n    def longestCommonSubsequence(self, text1: str, text2: str) -> int:\n        len_text1, len_text2 = len(text1), len(text2)\n\n        dp_matrix = [[0] * (len_text2 + 1) for _ in range(len_text1 + 1)]\n\n        for i in range(1, len_text1 + 1):\n            for j in range(1, len_text2 + 1):\n                if text1[i - 1] == text2[j - 1]:\n                    dp_matrix[i][j] = dp_matrix[i - 1][j - 1] + 1\n                else:\n                    dp_matrix[i][j] = max(dp_matrix[i - 1][j], dp_matrix[i][j - 1])\n\n        return dp_matrix[len_text1][len_text2]"
+        }
+    }
+]

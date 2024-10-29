@@ -63,6 +63,10 @@ const schema = defineEntSchema({
       isError: v.boolean(),
       executionTime: v.optional(v.number()),
     }),
+    testcases: v.array(v.object({
+      input: v.record(v.string(), v.any()),
+      expectedOutput: v.optional(v.any()),
+    })),
   })
     .deletion("soft")
     .edge("session")
@@ -78,7 +82,7 @@ const schema = defineEntSchema({
     category: v.array(v.string()),
     difficulty: v.number(),
     question: v.string(),
-    solutions: v.any(),
+    solutions: v.record(v.string(), v.string()),
     functionName: v.string(),
     inputParameters: v.record(v.string(), v.array(v.string())),
     evalMode: v.union(v.literal("exactMatch"), v.literal("listNodeIter"), v.literal("sortedMatch")),
