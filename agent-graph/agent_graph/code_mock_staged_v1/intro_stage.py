@@ -1,5 +1,7 @@
-from typing import Annotated, List
+from collections import defaultdict
+from typing import Annotated, Dict, List
 
+from agent_graph.code_mock_staged_v1.constants import StageTypes, Step
 from agent_graph.code_mock_staged_v1.prompts import INTRO_PROMPT
 from agent_graph.llms import get_model
 from langchain_core.messages import AnyMessage
@@ -10,11 +12,13 @@ from langchain_core.prompts import (
 )
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph, add_messages
-from pydantic.v1 import BaseModel
+from pydantic.v1 import BaseModel, Field
 
 
 class IntroStageState(BaseModel):
     """State for the intro stage of the agent."""
+
+    steps: Dict[StageTypes, List[Step]]
 
     messages: Annotated[List[AnyMessage], add_messages]
 
@@ -31,8 +35,14 @@ async def assistant(state: IntroStageState):
     )
 
     chain = prompt | get_model("gpt-4o-mini")
-    result = await chain.ainvoke({"messages": state.messages})
+    result = await chain.ainvoke(
+        {
+            "messages": state.messages,
+            "steps": state.steps[StageTypes.INTRO],
+        }
+    )
 
+    print(result)
     return dict(messages=[result])
 
 

@@ -136,6 +136,8 @@ async def track_stage_steps(state: AgentState):
     llm = get_model("gpt-4o", temperature=0.1)
     structured_llm = llm.with_structured_output(TrackSteps)
 
+    print("track_stage_steps")
+
     chain = prompt | structured_llm
     result = cast(
         TrackSteps,
@@ -171,6 +173,7 @@ async def track_stage_signals(state: AgentState):
     llm = get_model("gpt-4o", temperature=0.1)
     structured_llm = llm.with_structured_output(TrackSignals)
 
+    print("track_stage_signals")
     chain = prompt | structured_llm
     result = cast(
         TrackSignals,
@@ -233,7 +236,9 @@ async def should_trigger_event(state: AgentState):
 
 
 async def select_stage(state: AgentState):
-    return state.current_stage
+    if state.current_stage == StageTypes.END:
+        return END
+    return state.current_stage.value
 
 
 def create_graph():
@@ -243,9 +248,9 @@ def create_graph():
         .add_node("init_state", init_state)
         .add_node("on_event", on_event)
         .add_node("on_trigger", on_trigger)
-        .add_node("intro_stage", intro_stage.create_graph())
         .add_node("track_stage_steps", track_stage_steps)
         .add_node("track_stage_signals", track_stage_signals)
+        .add_node(StageTypes.INTRO, intro_stage.create_graph())
         # edges
         .add_conditional_edges(
             source=START,
@@ -261,10 +266,10 @@ def create_graph():
         .add_conditional_edges(
             source="on_trigger",
             path=select_stage,
-            path_map=["intro_stage", END],
+            path_map=[StageTypes.INTRO, END],
         )
-        .add_edge("intro_stage", "track_stage_steps")
-        .add_edge("intro_stage", "track_stage_signals")
+        .add_edge(StageTypes.INTRO, "track_stage_steps")
+        .add_edge(StageTypes.INTRO, "track_stage_signals")
         .add_edge("track_stage_steps", END)
         .add_edge("track_stage_signals", END)
         .compile(checkpointer=MemorySaver())
