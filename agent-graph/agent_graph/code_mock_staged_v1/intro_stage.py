@@ -42,7 +42,6 @@ async def assistant(state: IntroStageState):
         }
     )
 
-    print(result)
     return dict(messages=[result])
 
 

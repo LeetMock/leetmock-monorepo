@@ -61,22 +61,22 @@ class AgentState(BaseModel):
     )
 
     steps: Dict[StageTypes, List[Step]] = Field(
-        default=lambda: defaultdict(list),
+        default_factory=lambda: defaultdict(list),
         description="Steps for the agent",
     )
 
     signals: Dict[StageTypes, List[Signal]] = Field(
-        default=lambda: defaultdict(list),
+        default_factory=lambda: defaultdict(list),
         description="Signals for the agent",
     )
 
     completed_steps: Dict[StageTypes, List[str]] = Field(
-        default=lambda: defaultdict(list),
+        default_factory=lambda: defaultdict(list),
         description="Completed steps for the agent",
     )
 
     caught_signals: Dict[StageTypes, List[str]] = Field(
-        default=lambda: defaultdict(list),
+        default_factory=lambda: defaultdict(list),
         description="Caught signals for the agent",
     )
 
@@ -129,14 +129,14 @@ async def on_trigger(state: AgentState):
 async def track_stage_steps(state: AgentState):
     prompt = ChatPromptTemplate.from_messages(
         [
-            SystemMessagePromptTemplate.from_template(STEP_TRACKING_PROMPT),
+            SystemMessagePromptTemplate.from_template(
+                STEP_TRACKING_PROMPT, template_format="jinja2"
+            ),
             MessagesPlaceholder(variable_name="messages"),
         ]
     )
     llm = get_model("gpt-4o", temperature=0.1)
     structured_llm = llm.with_structured_output(TrackSteps)
-
-    print("track_stage_steps")
 
     chain = prompt | structured_llm
     result = cast(
@@ -166,14 +166,15 @@ async def track_stage_steps(state: AgentState):
 async def track_stage_signals(state: AgentState):
     prompt = ChatPromptTemplate.from_messages(
         [
-            SystemMessagePromptTemplate.from_template(SIGNAL_TRACKING_PROMPT),
+            SystemMessagePromptTemplate.from_template(
+                SIGNAL_TRACKING_PROMPT, template_format="jinja2"
+            ),
             MessagesPlaceholder(variable_name="messages"),
         ]
     )
     llm = get_model("gpt-4o", temperature=0.1)
     structured_llm = llm.with_structured_output(TrackSignals)
 
-    print("track_stage_signals")
     chain = prompt | structured_llm
     result = cast(
         TrackSignals,
