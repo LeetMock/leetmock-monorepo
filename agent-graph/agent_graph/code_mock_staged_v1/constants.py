@@ -56,7 +56,7 @@ def format_step_notification_messages(
     if step_name is None:
         message = "I have finished all the steps."
     else:
-        message = f"I have finished the step(s): {completed_names}. Now I will move on to the next step: {step_name.name}."
+        message = f"I have finished the step(s): {", ".join(completed_names)}. Now I will move on to the next step: {step_name.name}."
 
     return [AIMessage(content=wrap_xml("thinking", message))]
 
@@ -71,7 +71,7 @@ def format_signal_notification_messages(
     if signal_name is None:
         message = "All candidate signals have been caught."
     else:
-        message = f"I have caught the signal(s): {completed_names}."
+        message = f"I have caught the signal(s): {", ".join(completed_names)}."
 
     return [AIMessage(content=wrap_xml("thinking", message))]
 

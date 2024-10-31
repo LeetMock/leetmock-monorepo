@@ -1,7 +1,7 @@
 from collections import defaultdict
 from typing import Annotated, Dict, List
 
-from agent_graph.code_mock_staged_v1.constants import StageTypes, Step
+from agent_graph.code_mock_staged_v1.constants import Signal, StageTypes, Step
 from agent_graph.code_mock_staged_v1.prompts import INTRO_PROMPT
 from agent_graph.llms import get_model
 from langchain_core.messages import AnyMessage
@@ -24,6 +24,10 @@ class IntroStageState(BaseModel):
         default_factory=lambda: defaultdict(list)
     )
 
+    signals: Dict[StageTypes, List[Signal]] = Field(
+        default_factory=lambda: defaultdict(list)
+    )
+
 
 # --------------------- stage subgraph nodes --------------------- #
 async def assistant(state: IntroStageState):
@@ -41,6 +45,7 @@ async def assistant(state: IntroStageState):
         {
             "messages": state.messages,
             "steps": state.steps[StageTypes.INTRO],
+            "signals": state.signals[StageTypes.INTRO],
         }
     )
 
