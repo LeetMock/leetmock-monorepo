@@ -8,6 +8,10 @@ from langchain_core.messages import AIMessage
 TEntity = TypeVar("TEntity", bound=NamedEntity)
 
 
+class AgentTags(str, Enum):
+    INTRO_LLM = "intro-llm"
+
+
 class StageTypes(str, Enum):
     INTRO = "intro"
     CODING = "coding"

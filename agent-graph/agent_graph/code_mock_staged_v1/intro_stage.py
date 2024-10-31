@@ -1,7 +1,12 @@
 from collections import defaultdict
 from typing import Annotated, Dict, List
 
-from agent_graph.code_mock_staged_v1.constants import Signal, StageTypes, Step
+from agent_graph.code_mock_staged_v1.constants import (
+    AgentTags,
+    Signal,
+    StageTypes,
+    Step,
+)
 from agent_graph.code_mock_staged_v1.prompts import INTRO_PROMPT
 from agent_graph.llms import get_model
 from langchain_core.messages import AnyMessage
@@ -40,7 +45,10 @@ async def assistant(state: IntroStageState):
         ]
     )
 
-    chain = prompt | get_model("gpt-4o-mini")
+    chain = prompt | get_model("gpt-4o-mini").with_config(
+        {"tags": [AgentTags.INTRO_LLM]}
+    )
+
     result = await chain.ainvoke(
         {
             "messages": state.messages,
