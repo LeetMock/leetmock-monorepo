@@ -1,7 +1,11 @@
 from enum import Enum
-from typing import List
+from typing import List, TypeVar
 
-from agent_graph.types import Signal, Step
+from agent_graph.types import NamedEntity, Signal, Step
+from agent_graph.utils import wrap_xml
+from langchain_core.messages import AIMessage
+
+TEntity = TypeVar("TEntity", bound=NamedEntity)
 
 
 class StageTypes(str, Enum):
@@ -24,10 +28,58 @@ def get_next_stage(stage: StageTypes) -> StageTypes:
         raise ValueError(f"Invalid stage: {stage}")
 
 
+def get_new_entities(
+    entities: List[TEntity], seen_names: List[str], new_names: List[str]
+) -> List[str]:
+    valid_entity_names = {e.name for e in entities}
+    return [n for n in new_names if n in valid_entity_names and n not in seen_names]
+
+
+def get_first_unseen_entity(entities: List[TEntity], seen: List[str]) -> TEntity | None:
+    seen_names = set(seen)
+
+    for e in entities:
+        if e.name not in seen_names:
+            return e
+
+    return None
+
+
+def format_step_notification_messages(
+    entities: List[TEntity], seen_names: List[str], completed_names: List[str]
+) -> List[AIMessage]:
+    if len(completed_names) == 0:
+        return []
+
+    step_name = get_first_unseen_entity(entities=entities, seen=seen_names)
+
+    if step_name is None:
+        message = "I have finished all the steps."
+    else:
+        message = f"I have finished the step(s): {completed_names}. Now I will move on to the next step: {step_name.name}."
+
+    return [AIMessage(content=wrap_xml("thinking", message))]
+
+
+def format_signal_notification_messages(
+    entities: List[Signal], seen_names: List[str], completed_names: List[str]
+) -> List[AIMessage]:
+    if len(completed_names) == 0:
+        return []
+
+    signal_name = get_first_unseen_entity(entities=entities, seen=seen_names)
+    if signal_name is None:
+        message = "All candidate signals have been caught."
+    else:
+        message = f"I have caught the signal(s): {completed_names}."
+
+    return [AIMessage(content=wrap_xml("thinking", message))]
+
+
 INTRO_STEPS: List[Step] = [
     Step.from_info(
         name="introduce_self",
-        desc="Introduce yourself to the candidate.",
+        desc="Concisely introduce yourself, brief talk about your background (feel free to make things up about your background, just be consistent throughout the interview).",
         done_definition="Interviewer has finished introducing themselves.",
         required=True,
     ),
@@ -45,7 +97,7 @@ INTRO_STEPS: List[Step] = [
     ),
     Step.from_info(
         name="discuss_projects",
-        desc="Discuss the candidate's past projects and their role in them.",
+        desc="Discuss the candidate's past projects and their role in them. Remember to praise interviewee on their achievement.",
         done_definition="Interviewer has finished discussing the candidate's past projects and their role in them.",
         required=True,
     ),

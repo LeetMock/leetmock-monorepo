@@ -1,7 +1,12 @@
 from collections import defaultdict
 from typing import Annotated, Dict, List, cast
 
-from agent_graph.code_mock_staged_v1.constants import StageTypes
+from agent_graph.code_mock_staged_v1.constants import (
+    StageTypes,
+    format_signal_notification_messages,
+    format_step_notification_messages,
+    get_new_entities,
+)
 from agent_graph.code_mock_staged_v1.prompts import (
     SIGNAL_TRACKING_PROMPT,
     STEP_TRACKING_PROMPT,
@@ -70,16 +75,24 @@ async def track_stage_steps(state: StageTrackerState):
         ),
     )
 
-    valid_step_names = {step.name for step in state.steps[state.current_stage]}
-    new_completed_steps = [
-        s
-        for s in result.steps
-        if s in valid_step_names and s not in state.completed_steps[state.current_stage]
-    ]
-    for s in new_completed_steps:
+    new_steps = get_new_entities(
+        entities=state.steps[state.current_stage],
+        seen_names=state.completed_steps[state.current_stage],
+        new_names=result.steps,
+    )
+
+    for s in new_steps:
         state.completed_steps[state.current_stage].append(s)
 
-    return dict(completed_steps=state.completed_steps)
+    step_notification_message = format_step_notification_messages(
+        entities=state.steps[state.current_stage],
+        seen_names=state.completed_steps[state.current_stage],
+        completed_names=new_steps,
+    )
+
+    return dict(
+        completed_steps=state.completed_steps, messages=step_notification_message
+    )
 
 
 # Call LLM to see if there are any signals caught in the current stage
@@ -107,17 +120,24 @@ async def track_stage_signals(state: StageTrackerState):
         ),
     )
 
-    valid_signal_names = {signal.name for signal in state.signals[state.current_stage]}
-    new_caught_signals = [
-        s
-        for s in result.signals
-        if s in valid_signal_names
-        and s not in state.caught_signals[state.current_stage]
-    ]
+    new_caught_signals = get_new_entities(
+        entities=state.signals[state.current_stage],
+        seen_names=state.caught_signals[state.current_stage],
+        new_names=result.signals,
+    )
+
     for s in new_caught_signals:
         state.caught_signals[state.current_stage].append(s)
 
-    return dict(caught_signals=state.caught_signals)
+    signal_notification_message = format_signal_notification_messages(
+        entities=state.signals[state.current_stage],
+        seen_names=state.caught_signals[state.current_stage],
+        completed_names=new_caught_signals,
+    )
+
+    return dict(
+        caught_signals=state.caught_signals, messages=signal_notification_message
+    )
 
 
 def create_graph():

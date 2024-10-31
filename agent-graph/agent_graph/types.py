@@ -1,10 +1,14 @@
 from pydantic.v1 import BaseModel, Field
 
 
-class Step(BaseModel):
-    """Agent step definition."""
+class NamedEntity(BaseModel):
+    """Named entity."""
 
-    name: str = Field(..., description="Step name")
+    name: str = Field(..., description="Name")
+
+
+class Step(NamedEntity):
+    """Agent step definition."""
 
     description: str = Field(..., description="Step description")
 
@@ -30,7 +34,7 @@ class Step(BaseModel):
         )
 
 
-class Signal(BaseModel):
+class Signal(NamedEntity):
     """Candidate signal definition."""
 
     name: str = Field(..., description="Signal name")
