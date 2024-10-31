@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import Annotated, Dict, List, cast
 
 from agent_graph.code_mock_staged_v1.constants import StageTypes
@@ -16,7 +17,7 @@ from langchain_core.prompts import (
 )
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph, add_messages
-from pydantic.v1 import BaseModel
+from pydantic.v1 import BaseModel, Field
 
 
 class StageTrackerState(BaseModel):
@@ -26,13 +27,21 @@ class StageTrackerState(BaseModel):
 
     current_stage: StageTypes
 
-    steps: Dict[StageTypes, List[Step]]
+    steps: Dict[StageTypes, List[Step]] = Field(
+        default_factory=lambda: defaultdict(list)
+    )
 
-    signals: Dict[StageTypes, List[Signal]]
+    signals: Dict[StageTypes, List[Signal]] = Field(
+        default_factory=lambda: defaultdict(list)
+    )
 
-    completed_steps: Dict[StageTypes, List[str]]
+    completed_steps: Dict[StageTypes, List[str]] = Field(
+        default_factory=lambda: defaultdict(list)
+    )
 
-    caught_signals: Dict[StageTypes, List[str]]
+    caught_signals: Dict[StageTypes, List[str]] = Field(
+        default_factory=lambda: defaultdict(list)
+    )
 
 
 # --------------------- stage subgraph nodes --------------------- #

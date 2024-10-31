@@ -82,6 +82,7 @@ class AgentConfig(BaseModel):
 # --------------------- agent graph nodes --------------------- #
 async def init_state(_: AgentState):
     messages = [HumanMessage(content=JOIN_CALL_MESSAGE)]
+    stages = [StageTypes.INTRO, StageTypes.CODING, StageTypes.EVAL]
 
     steps = {
         StageTypes.INTRO: INTRO_STEPS,
@@ -95,7 +96,17 @@ async def init_state(_: AgentState):
         StageTypes.EVAL: EVAL_SIGNALS,
     }
 
-    return dict(initialized=True, messages=messages, steps=steps, signals=signals)
+    completed_steps = {stage: [] for stage in stages}
+    caught_signals = {stage: [] for stage in stages}
+
+    return dict(
+        initialized=True,
+        messages=messages,
+        steps=steps,
+        signals=signals,
+        completed_steps=completed_steps,
+        caught_signals=caught_signals,
+    )
 
 
 async def on_event(state: AgentState):

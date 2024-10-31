@@ -18,9 +18,11 @@ from pydantic.v1 import BaseModel, Field
 class IntroStageState(BaseModel):
     """State for the intro stage of the agent."""
 
-    steps: Dict[StageTypes, List[Step]]
-
     messages: Annotated[List[AnyMessage], add_messages]
+
+    steps: Dict[StageTypes, List[Step]] = Field(
+        default_factory=lambda: defaultdict(list)
+    )
 
 
 # --------------------- stage subgraph nodes --------------------- #
