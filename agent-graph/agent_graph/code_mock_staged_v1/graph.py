@@ -1,7 +1,7 @@
 from collections import defaultdict
-from typing import Annotated, Dict, List, Set, cast
+from typing import Annotated, Dict, List
 
-from agent_graph.code_mock_staged_v1 import intro_stage
+from agent_graph.code_mock_staged_v1 import intro_stage, stage_tracker
 from agent_graph.code_mock_staged_v1.constants import (
     CODING_SIGNALS,
     CODING_STEPS,
@@ -12,21 +12,9 @@ from agent_graph.code_mock_staged_v1.constants import (
     StageTypes,
     get_next_stage,
 )
-from agent_graph.code_mock_staged_v1.prompts import (
-    SIGNAL_TRACKING_PROMPT,
-    STEP_TRACKING_PROMPT,
-)
-from agent_graph.code_mock_staged_v1.schemas import TrackSignals, TrackSteps
 from agent_graph.constants import JOIN_CALL_MESSAGE
-from agent_graph.llms import get_model
 from agent_graph.types import Signal, Step
-from agent_graph.utils import AgentPromptTemplates
 from langchain_core.messages import AnyMessage, HumanMessage
-from langchain_core.prompts import (
-    ChatPromptTemplate,
-    MessagesPlaceholder,
-    SystemMessagePromptTemplate,
-)
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph, add_messages
 from pydantic.v1 import BaseModel, Field
@@ -125,81 +113,6 @@ async def on_trigger(state: AgentState):
     return None
 
 
-# Call LLM to see if there are any steps completed in the current stage
-async def track_stage_steps(state: AgentState):
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            SystemMessagePromptTemplate.from_template(
-                STEP_TRACKING_PROMPT, template_format="jinja2"
-            ),
-            MessagesPlaceholder(variable_name="messages"),
-        ]
-    )
-    llm = get_model("gpt-4o", temperature=0.1)
-    structured_llm = llm.with_structured_output(TrackSteps)
-
-    chain = prompt | structured_llm
-    result = cast(
-        TrackSteps,
-        await chain.ainvoke(
-            {
-                "messages": state.messages,
-                "steps": state.steps[state.current_stage],
-                "completed_steps": state.completed_steps[state.current_stage],
-            }
-        ),
-    )
-
-    valid_step_names = {step.name for step in state.steps[state.current_stage]}
-    new_completed_steps = [
-        s
-        for s in result.steps
-        if s in valid_step_names and s not in state.completed_steps[state.current_stage]
-    ]
-    for s in new_completed_steps:
-        state.completed_steps[state.current_stage].append(s)
-
-    return dict(completed_steps=state.completed_steps)
-
-
-# Call LLM to see if there are any signals caught in the current stage
-async def track_stage_signals(state: AgentState):
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            SystemMessagePromptTemplate.from_template(
-                SIGNAL_TRACKING_PROMPT, template_format="jinja2"
-            ),
-            MessagesPlaceholder(variable_name="messages"),
-        ]
-    )
-    llm = get_model("gpt-4o", temperature=0.1)
-    structured_llm = llm.with_structured_output(TrackSignals)
-
-    chain = prompt | structured_llm
-    result = cast(
-        TrackSignals,
-        await chain.ainvoke(
-            {
-                "messages": state.messages,
-                "signals": state.signals[state.current_stage],
-                "caught_signals": state.caught_signals[state.current_stage],
-            }
-        ),
-    )
-
-    valid_signal_names = {signal.name for signal in state.signals[state.current_stage]}
-    new_caught_signals = [
-        s
-        for s in result.signals
-        if s in valid_signal_names
-        and s not in state.caught_signals[state.current_stage]
-    ]
-    for s in new_caught_signals:
-        state.caught_signals[state.current_stage].append(s)
-
-    return dict(caught_signals=state.caught_signals)
-
-
 async def decide_next_stage(state: AgentState):
     stage_steps = state.steps[state.current_stage]
     required_step_names = [step.name for step in stage_steps if step.required]
@@ -249,8 +162,7 @@ def create_graph():
         .add_node("init_state", init_state)
         .add_node("on_event", on_event)
         .add_node("on_trigger", on_trigger)
-        .add_node("track_stage_steps", track_stage_steps)
-        .add_node("track_stage_signals", track_stage_signals)
+        .add_node("stage_tracker", stage_tracker.create_graph())
         .add_node(StageTypes.INTRO, intro_stage.create_graph())
         # edges
         .add_conditional_edges(
@@ -269,10 +181,8 @@ def create_graph():
             path=select_stage,
             path_map=[StageTypes.INTRO, END],
         )
-        .add_edge(StageTypes.INTRO, "track_stage_steps")
-        .add_edge(StageTypes.INTRO, "track_stage_signals")
-        .add_edge("track_stage_steps", END)
-        .add_edge("track_stage_signals", END)
+        .add_edge(StageTypes.INTRO, "stage_tracker")
+        .add_edge("stage_tracker", END)
         .compile(checkpointer=MemorySaver())
     )
 
