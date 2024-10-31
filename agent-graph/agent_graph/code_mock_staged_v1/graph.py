@@ -173,6 +173,7 @@ def create_graph():
         .add_node("init_state", init_state)
         .add_node("on_event", on_event)
         .add_node("on_trigger", on_trigger)
+        .add_node("select_stage", select_stage)
         .add_node("stage_tracker", stage_tracker.create_graph())
         .add_node(StageTypes.INTRO, intro_stage.create_graph())
         # edges
@@ -193,7 +194,8 @@ def create_graph():
             path_map=[StageTypes.INTRO, END],
         )
         .add_edge(StageTypes.INTRO, "stage_tracker")
-        .add_edge("stage_tracker", END)
+        .add_edge("stage_tracker", "select_stage")
+        .add_edge("select_stage", END)
         .compile(checkpointer=MemorySaver())
     )
 

@@ -16,6 +16,8 @@ class TrackSteps(BaseModel):
         description="List of step names that are completed, name should correspond to the step names",
     )
 
+    # TODO: conversation suggestion
+
 
 class TrackSignals(BaseModel):
     """Track which signal(s) are observed based on the conversation history"""
@@ -29,3 +31,5 @@ class TrackSignals(BaseModel):
         ...,
         description="List of signal names that are observed, name should correspond to the signal names",
     )
+
+    # TODO: conversation suggestion
