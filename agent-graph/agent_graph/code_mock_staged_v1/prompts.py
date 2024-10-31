@@ -76,7 +76,7 @@ The following are steps AI interviewer need to finish:
 {% for step in steps %}
 <step name="{{step.name}}" required="{{step.required}}">
 <description>
-{{step.desc}}
+{{step.description}}
 </description>
 <definition-of-done>
 {{step.done_definition}}
@@ -120,7 +120,7 @@ The following are all kinds of signals you need to collect:
 {% for signal in signals %}
 <signal name="{{signal.name}}" required="{{signal.required}}">
 <description>
-{{signal.desc}}
+{{signal.description}}
 </description>
 </signal>
 {% endfor %}
