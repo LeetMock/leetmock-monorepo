@@ -105,6 +105,8 @@ async def track_stage_signals(state: StageTrackerState):
             MessagesPlaceholder(variable_name="messages"),
         ]
     )
+
+    # TODO: use map-reduce for self-consistency
     llm = get_model("gpt-4o", temperature=0.1)
     structured_llm = llm.with_structured_output(TrackSignals)
 
