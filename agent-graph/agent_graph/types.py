@@ -1,10 +1,15 @@
-from pydantic.v1 import BaseModel, Field
+from langchain_core.load.serializable import Serializable
+from pydantic.v1 import Field
 
 
-class NamedEntity(BaseModel):
+class NamedEntity(Serializable):
     """Named entity."""
 
     name: str = Field(..., description="Name")
+
+    @classmethod
+    def is_lc_serializable(cls) -> bool:
+        return True
 
 
 class Step(NamedEntity):
