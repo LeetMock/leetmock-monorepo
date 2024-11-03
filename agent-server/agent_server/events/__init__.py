@@ -23,7 +23,7 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
         default_factory=list
     )
 
-    def on_event(self, callback: Callable[[TModel], None]):
+    def on_event(self, callback: Callable[[TModel], None | Coroutine[Any, Any, None]]):
         async def wrapped_callback(result: TModel) -> None:
             try:
                 if iscoroutinefunction(callback):
