@@ -1,4 +1,5 @@
 from collections import defaultdict
+from functools import reduce
 from typing import Annotated, Dict, List
 
 from agent_graph.code_mock_staged_v1.constants import (
@@ -9,6 +10,7 @@ from agent_graph.code_mock_staged_v1.constants import (
 )
 from agent_graph.code_mock_staged_v1.prompts import INTRO_PROMPT
 from agent_graph.llms import get_model
+from agent_graph.utils import custom_data
 from langchain_core.messages import AnyMessage
 from langchain_core.prompts import (
     ChatPromptTemplate,
@@ -17,6 +19,7 @@ from langchain_core.prompts import (
 )
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph, add_messages
+from langgraph.types import StreamWriter
 from pydantic.v1 import BaseModel, Field
 
 
@@ -35,7 +38,7 @@ class IntroStageState(BaseModel):
 
 
 # --------------------- stage subgraph nodes --------------------- #
-async def assistant(state: IntroStageState):
+async def assistant(state: IntroStageState, writer: StreamWriter):
     prompt = ChatPromptTemplate.from_messages(
         [
             SystemMessagePromptTemplate.from_template(
@@ -49,22 +52,25 @@ async def assistant(state: IntroStageState):
         {"tags": [AgentTags.INTRO_LLM]}
     )
 
-    result = await chain.ainvoke(
+    chunks = []
+    async for chunk in chain.astream(
         {
             "messages": state.messages,
             "steps": state.steps[StageTypes.INTRO],
             "signals": state.signals[StageTypes.INTRO],
         }
-    )
+    ):
+        writer(custom_data("assistant", chunk))
+        chunks.append(chunk)
 
-    return dict(messages=[result])
+    return dict(messages=reduce(lambda x, y: x + y, chunks))
 
 
 def create_graph():
     return (
         StateGraph(IntroStageState)
         # nodes
-        .add_node("assistant", assistant)
+        .add_node("assistant", assistant)  # type: ignore
         # edges
         .add_edge(START, "assistant").add_edge("assistant", END)
     )

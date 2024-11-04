@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Annotated, Dict, List
+from typing import Dict, List
 
 from agent_graph.code_mock_staged_v1 import intro_stage, stage_tracker
 from agent_graph.code_mock_staged_v1.constants import (
@@ -13,35 +13,19 @@ from agent_graph.code_mock_staged_v1.constants import (
     get_next_stage,
 )
 from agent_graph.constants import JOIN_CALL_MESSAGE
-from agent_graph.types import Signal, Step
-from langchain_core.messages import AnyMessage, HumanMessage
+from agent_graph.types import EventMessageState, Signal, Step
+from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph, add_messages
-from langgraph.types import StreamWriter
 from pydantic.v1 import BaseModel, Field
 
 
-class AgentState(BaseModel):
+class AgentState(EventMessageState):
     """State of the agent."""
-
-    messages: Annotated[List[AnyMessage], add_messages] = Field(
-        default_factory=list,
-        description="Messages to be sent to the model",
-    )
 
     initialized: bool = Field(
         default=False,
         description="Whether the agent is initialized",
-    )
-
-    event: str | None = Field(
-        default=None,
-        description="Event triggered by the user",
-    )
-
-    trigger: bool = Field(
-        default=False,
-        description="Whether the agent should be triggered",
     )
 
     current_stage: StageTypes = Field(
@@ -112,17 +96,11 @@ async def init_state(_: AgentState):
 
 async def on_event(
     state: AgentState,
-    writer: StreamWriter,
 ):
     trigger: bool = False
 
     if state.event == "user_message":
         trigger = True
-
-    nums = [1, 2, 3]
-    for num in nums:
-        writer({"messages": [num]})
-
     return dict(trigger=trigger, event=None)
 
 

@@ -6,7 +6,7 @@ from typing import Any, Callable, Coroutine, Generic, List, Self, Type, TypeVar
 
 from agent_server.contexts.session import BaseSession
 from livekit.agents.voice_assistant import VoiceAssistant
-from pydantic import BaseModel, Field, PrivateAttr
+from pydantic.v1 import BaseModel, PrivateAttr
 
 logger = logging.getLogger(__name__)
 

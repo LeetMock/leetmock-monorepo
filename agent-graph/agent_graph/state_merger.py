@@ -26,8 +26,12 @@ class StateMerger(BaseModel, Generic[TState]):
         return cls(state_type=state_type, state_graph=graph.compile())
 
     async def get_state(self):
+        state_dict = await self.get_state_dict()
+        return self.state_type(**state_dict)
+
+    async def get_state_dict(self) -> Dict[str, Any]:
         snapshot = await self.state_graph.aget_state(config=CONFIG)
-        return self.state_type(**snapshot.values)
+        return snapshot.values
 
     async def merge_state(self, state: TState | Dict[str, Any]):
         return await self.state_graph.ainvoke(state, config=CONFIG)

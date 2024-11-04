@@ -1,5 +1,32 @@
+from typing import Annotated, Any, List
+
 from langchain_core.load.serializable import Serializable
-from pydantic.v1 import Field
+from langchain_core.messages import AnyMessage
+from langgraph.graph import add_messages
+from pydantic.v1 import BaseModel, Field
+
+
+class EventMessageState(BaseModel):
+
+    messages: Annotated[List[AnyMessage], add_messages] = Field(
+        default_factory=list,
+        description="Messages to be sent to the agent",
+    )
+
+    event: str | None = Field(
+        default=None,
+        description="Event triggered by the user",
+    )
+
+    event_data: Any | None = Field(
+        default=None,
+        description="Data associated with the event",
+    )
+
+    trigger: bool = Field(
+        default=False,
+        description="Whether the agent should be triggered",
+    )
 
 
 class NamedEntity(Serializable):

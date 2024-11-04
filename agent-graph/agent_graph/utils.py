@@ -1,11 +1,14 @@
 from typing import Any, List, Type, TypeVar, cast
 
 from langchain_core.runnables.config import RunnableConfig
-from langgraph.graph import StateGraph
 from pydantic.v1 import BaseModel
 
 T = TypeVar("T")
 TState = TypeVar("TState", bound=BaseModel)
+
+
+def custom_data(id: str, data: Any):
+    return {"id": id, "data": data}
 
 
 def merge_str_list(l1: List[str], l2: List[str]) -> List[str]:

@@ -4,7 +4,7 @@ from typing import Any, List, Tuple
 
 from agent_server.agent_streams import AgentStream
 from agent_server.events import BaseEvent
-from pydantic import BaseModel, Field, PrivateAttr
+from pydantic.v1 import BaseModel, Field, PrivateAttr
 
 from libs.timestamp import Timestamp
 
@@ -49,7 +49,7 @@ class AgentTrigger(BaseModel):
 
     async def _trigger_task(self):
         self.interrupt()
-        await self.stream.trigger(self._timestamp)
+        await self.stream.trigger_agent(self._timestamp)
 
     async def _main_task(self):
         while True:

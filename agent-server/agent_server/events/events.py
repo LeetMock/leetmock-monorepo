@@ -9,7 +9,7 @@ from agent_server.events import BaseEvent
 from debouncer import debounce
 from httpx import stream
 from livekit.agents.voice_assistant import VoiceAssistant
-from pydantic import BaseModel, Field, PrivateAttr
+from pydantic.v1 import BaseModel, Field, PrivateAttr
 
 logger = logging.getLogger(__name__)
 
