@@ -11,6 +11,7 @@ libs = { path = "libs", develop = true }
 agent_graph = { path = "agent-graph", develop = true }
 convex-client = { path = "convex-client", develop = true }
 langgraph-cli = "^0.1.50"
+matplotlib = "^3.9.2"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"
