@@ -171,31 +171,33 @@ export const CodeQuestionViewer: React.FC<{
             ))}
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="overflow-x-auto rounded-lg border border-gray-700 dark:border-gray-800">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="bg-gray-50 dark:bg-gray-800">
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <tr className="bg-gray-100 dark:bg-gray-800/50">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-200 uppercase tracking-wider">
                     Title
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-200 uppercase tracking-wider">
                     Difficulty
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-200 uppercase tracking-wider">
                     Category
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="bg-white dark:bg-gray-900/50 divide-y divide-gray-200 dark:divide-gray-800">
                 {sortedQuestions.map(({ _id, title, difficulty, category }, index) => (
                   <tr
                     key={_id}
                     onClick={() => handleQuestionSelect(_id)}
                     className={cn(
-                      "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors",
-                      index % 2 === 0 ? "bg-white dark:bg-gray-900" : "bg-gray-50 dark:bg-gray-800",
+                      "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/70 transition-colors",
+                      index % 2 === 0
+                        ? "bg-white dark:bg-gray-900/30"
+                        : "bg-gray-50 dark:bg-gray-800/30",
                       _id === selectedQuestionId
-                        ? "bg-blue-50 dark:bg-blue-900 hover:bg-blue-100 dark:hover:bg-blue-800"
+                        ? "bg-blue-50 dark:bg-blue-900/50 hover:bg-blue-100 dark:hover:bg-blue-800/70"
                         : ""
                     )}
                   >

@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { PlusCircle, Trash2 } from 'lucide-react';
+import { PlusCircle, X, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { Testcase } from '@/lib/types';
+import { useEditorStore } from "@/hooks/use-editor-store";
+import { cn } from "@/lib/utils";
 
 interface TestcaseEditorProps {
     testcases: Testcase[];
@@ -12,6 +14,7 @@ interface TestcaseEditorProps {
     connectionState: string;
     onTestcasesChange: (testcases: Testcase[]) => void;
     onActiveTabChange: (tab: string) => void;
+    onSaveTestcases: () => void;
 }
 
 const getInputKeys = (testcases: Testcase[]): string[] => {
@@ -25,11 +28,13 @@ export const TestcaseEditor: React.FC<TestcaseEditorProps> = ({
     connectionState,
     onTestcasesChange,
     onActiveTabChange,
+    onSaveTestcases,
 }) => {
+    const { setHasTestcaseChanges, hasTestcaseChanges } = useEditorStore();
     const inputKeys = getInputKeys(testcases);
     const isConnected = connectionState === "connected";
 
-    const handleTestcaseChange = (index: number, key: string, value: any) => {
+    const handleTestcaseChange = (index: number, key: string, value: any, isExpectedOutput: boolean = false) => {
         if (!isConnected) {
             toast.error("You are not connected to the interview room.");
             return;
@@ -38,9 +43,11 @@ export const TestcaseEditor: React.FC<TestcaseEditorProps> = ({
         const updatedTestcases = testcases.map((testcase, i) =>
             i === index ? {
                 ...testcase,
-                input: { ...testcase.input, [key]: tryParseValue(value) }
+                input: isExpectedOutput ? testcase.input : { ...testcase.input, [key]: tryParseValue(value) },
+                expectedOutput: isExpectedOutput ? tryParseValue(value) : testcase.expectedOutput
             } : testcase
         );
+        setHasTestcaseChanges(true);
         onTestcasesChange(updatedTestcases);
     };
 
@@ -74,8 +81,10 @@ export const TestcaseEditor: React.FC<TestcaseEditorProps> = ({
         }
         const newTestcase: Testcase = {
             input: inputKeys.reduce((acc, key) => ({ ...acc, [key]: '' }), {}),
+            expectedOutput: '',
         };
         const updatedTestcases = [...testcases, newTestcase];
+        setHasTestcaseChanges(true);
         onTestcasesChange(updatedTestcases);
         onActiveTabChange((testcases.length + 1).toString());
     };
@@ -87,45 +96,69 @@ export const TestcaseEditor: React.FC<TestcaseEditorProps> = ({
         }
 
         const updatedTestcases = testcases.filter((_, index) => index !== indexToDelete);
+        setHasTestcaseChanges(true);
         onTestcasesChange(updatedTestcases);
-        onActiveTabChange("1"); // Reset to first tab after deletion
+        onActiveTabChange("1");
     };
 
     return (
         <Tabs value={activeTab} onValueChange={onActiveTabChange} className="w-full">
-            <TabsList className="bg-background/95 p-1">
-                {testcases.map((_, index) => (
-                    <div key={index + 1} className="flex items-center">
-                        <TabsTrigger
-                            value={(index + 1).toString()}
-                            className="px-3 py-1.5 text-sm font-medium"
-                            disabled={!isConnected}
-                        >
-                            Case {index + 1}
-                        </TabsTrigger>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                deleteTestcase(index);
-                            }}
-                            className="ml-1 p-1 h-7 w-7"
-                            disabled={!isConnected || testcases.length <= 1}
-                        >
-                            <Trash2 className="h-4 w-4 text-muted-foreground hover:text-red-500" />
-                        </Button>
-                    </div>
-                ))}
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={addTestcase}
-                    className="ml-2 p-1.5"
-                    disabled={!isConnected || testcases.length >= 5}
-                >
-                    <PlusCircle className="h-4 w-4" />
-                </Button>
+            <TabsList className="bg-background/95 p-1 flex items-center justify-between">
+                <div className="flex items-center flex-1">
+                    {testcases.map((_, index) => (
+                        <div key={index + 1} className="relative group">
+                            <TabsTrigger
+                                value={(index + 1).toString()}
+                                className="px-3 py-1.5 text-sm font-medium"
+                                disabled={!isConnected}
+                            >
+                                Case {index + 1}
+                            </TabsTrigger>
+                            {testcases.length > 1 && isConnected && (
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        deleteTestcase(index);
+                                    }}
+                                    className="absolute -top-2 -right-2 p-1 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    disabled={!isConnected}
+                                >
+                                    <X className="h-3 w-3 text-muted-foreground hover:text-red-500" />
+                                </Button>
+                            )}
+                        </div>
+                    ))}
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={addTestcase}
+                        className="ml-2 p-1.5"
+                        disabled={!isConnected || testcases.length >= 5}
+                    >
+                        <PlusCircle className="h-4 w-4" />
+                    </Button>
+                </div>
+                {hasTestcaseChanges && (
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                            onSaveTestcases();
+                        }}
+                        className={cn(
+                            "ml-2 transition-all duration-200 ease-in-out",
+                            "bg-blue-500/10 hover:bg-blue-500/20",
+                            "text-blue-500 hover:text-blue-600",
+                            "border-blue-500/20 hover:border-blue-500/30"
+                        )}
+                        disabled={!isConnected}
+                    >
+                        <Save className="h-4 w-4 mr-1.5" />
+                        Save Changes
+                    </Button>
+                )}
             </TabsList>
             {testcases.map((testcase, index) => (
                 <TabsContent key={index} value={(index + 1).toString()} className="mt-4 space-y-4">
@@ -145,6 +178,23 @@ export const TestcaseEditor: React.FC<TestcaseEditorProps> = ({
                             />
                         </div>
                     ))}
+
+                    <div>
+                        <label htmlFor={`expected-output-${index}`} className="block text-sm font-medium mb-1">
+                            Expected Output =
+                        </label>
+                        <Input
+                            id={`expected-output-${index}`}
+                            value={testcase.expectedOutput !== undefined
+                                ? (Array.isArray(testcase.expectedOutput)
+                                    ? JSON.stringify(testcase.expectedOutput)
+                                    : String(testcase.expectedOutput))
+                                : ''}
+                            onChange={(e) => handleTestcaseChange(index, '', e.target.value, true)}
+                            className="bg-secondary/50"
+                            disabled={!isConnected}
+                        />
+                    </div>
                 </TabsContent>
             ))}
         </Tabs>

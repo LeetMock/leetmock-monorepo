@@ -11,7 +11,6 @@ interface TestResultsProps {
 
 export const TestResultsBlock: React.FC<TestResultsProps> = ({ isRunning = false, results }) => {
   const [selectedCase, setSelectedCase] = useState<TestCaseResult | null>(null);
-  console.log(results);
 
   if (isRunning) {
     return (
@@ -116,7 +115,7 @@ const TestCaseDetail: React.FC<{ title: string; data: any }> = ({ title, data })
     <div className="mb-4">
       <h3 className="font-semibold mb-2">{title}:</h3>
       {title === "Input" ? (
-        <div className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-xs overflow-x-auto p-3 rounded">
+        <div className="bg-secondary text-gray-800 dark:text-gray-200 text-xs overflow-x-auto p-3 rounded">
           {Object.entries(data).map(([key, value], index) => (
             <div key={index} className="mb-1 font-mono">
               <span className="text-blue-600 dark:text-blue-400">{key}</span>
@@ -131,7 +130,7 @@ const TestCaseDetail: React.FC<{ title: string; data: any }> = ({ title, data })
             "text-xs overflow-x-auto p-3 rounded",
             title === "Error"
               ? "bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300"
-              : "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200"
+              : "bg-secondary text-gray-800 dark:text-gray-200"
           )}
         >
           {title === "Error" ? renderErrorMessage(data) : formatData(data)}

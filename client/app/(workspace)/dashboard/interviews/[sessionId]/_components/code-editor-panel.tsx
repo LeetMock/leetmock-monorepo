@@ -23,6 +23,7 @@ import { useWindowSize } from "usehooks-ts";
 import { TestResultsBlock } from "./test-results-block";
 import { TestcaseEditor } from './testcase-editor';
 import { Testcase } from "@/lib/types";
+import { useEditorStore } from "@/hooks/use-editor-store";
 
 
 const darkEditorTheme: monacoEditor.IStandaloneThemeData = {
@@ -52,17 +53,27 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   const editorContainerRef = useRef<HTMLDivElement>(null);
   const connectionState = useConnectionState();
 
+  // Zustand store
+  const {
+    testResults,
+    outputView,
+    testRunCounter,
+    isRunning,
+    localTestcases,
+    activeTestcaseTab,
+    hasTestcaseChanges,
+    setOutputView,
+    setLocalTestcases,
+    setActiveTestcaseTab,
+    handleRunTests,
+    setHasTestcaseChanges
+  } = useEditorStore();
+
   // Convex
-  const runTests = useAction(api.actions.runTests);
   const editorState = useNonReactiveQuery(api.codeSessionStates.getEditorState, { sessionId });
   const terminalState = useQuery(api.codeSessionStates.getTerminalState, { sessionId });
   const testCasesState = useNonReactiveQuery(api.codeSessionStates.getTestCasesState, { sessionId }) as Testcase[];
   const commitCodeSessionEvent = useMutation(api.codeSessionEvents.commitCodeSessionEvent);
-
-  const [testResults, setTestResults] = useState<RunTestResult | null>(null);
-  const [outputView, setOutputView] = useState<"Testcase" | "testResults">("Testcase");
-  const [testRunCounter, setTestRunCounter] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
 
   const { height } = useWindowSize();
   const { size, isResizing, resizeHandleProps } = useResizePanel({
@@ -82,57 +93,23 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     (event: CodeSessionEvent) => {
       if (connectionState !== "connected") return;
 
-      const promise = commitCodeSessionEvent({ sessionId, event });
-      toast.promise(promise, {
-        success: `Event ${event.type} committed`,
-        error: "Error committing event",
-      });
+      if (event.type === "testcase_changed") {
+        toast.success("Testcases updated");
+      }
+      commitCodeSessionEvent({ sessionId, event });
     },
     [sessionId, commitCodeSessionEvent, connectionState]
   );
 
   const debouncedCommitEvent = useDebounceCallback(handleCommitEvent, 500);
 
-  const handleRunTests = async () => {
-    if (!isDefined(editorState)) return;
-    if (connectionState !== "connected") {
-      toast.error(UNCONNECTED_MESSAGE);
-      return;
-    }
-
-    setIsRunning(true);
-    setTestResults(null);
-    setOutputView("testResults");
-    setTestRunCounter((prev) => prev + 1);
-
-    try {
-      const result = await runTests({ language, sessionId: sessionId, questionId: questionId });
-      // const executionTime = result.executionTime;
-      if (result.status === "success" && result.testResults) {
-        const executionTime = result.executionTime;
-        setTestResults(result.testResults);
-        console.log(result.testResults);
-      } else {
-        const errorMessage =
-          result.stderr || result.exception || "Error running tests. Please try again.";
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      console.error("Error running tests:", error);
-      toast.error("Error running tests. Please try again.");
-    }
-
-    setIsRunning(false);
-  };
-
-  const [activeTestcaseTab, setActiveTestcaseTab] = useState<string>('1');
-  const [localTestcases, setLocalTestcases] = useState<Testcase[]>([]);
-
   useEffect(() => {
     if (testCasesState) {
       setLocalTestcases(testCasesState);
     }
-  }, [testCasesState]);
+  }, [testCasesState, setLocalTestcases]);
+
+  const runTests = useAction(api.actions.runTests);
 
   return (
     <div className={cn("h-full w-full flex flex-col", className)} {...props}>
@@ -226,7 +203,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
               Test Results
             </Button>
           </div>
-          {!isRunning && outputView === "Testcase" && (
+          {!isRunning && outputView === "testResults" && (
             <div className="flex items-center text-sm text-gray-500">
               <Clock className="w-4 h-4 mr-1" />
               <span>{terminalState ? terminalState.executionTime : 0} ms</span>
@@ -245,12 +222,16 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
                 connectionState={connectionState}
                 onTestcasesChange={(testcases) => {
                   setLocalTestcases(testcases);
-                  debouncedCommitEvent({
-                    type: "testcase_changed",
-                    data: { content: testcases }
-                  });
+                  // console.log("hasTestcaseChanges", hasTestcaseChanges);
                 }}
                 onActiveTabChange={setActiveTestcaseTab}
+                onSaveTestcases={() => {
+                  debouncedCommitEvent({
+                    type: "testcase_changed",
+                    data: { content: localTestcases }
+                  });
+                  setHasTestcaseChanges(false);
+                }}
               />
             </div>
           </div>
@@ -259,7 +240,14 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
           <Button
             variant="outline-blue"
             className="h-9 min-w-24"
-            onClick={handleRunTests}
+            onClick={() => handleRunTests({
+              sessionId,
+              questionId,
+              language,
+              editorState,
+              runTests,
+              onCommitEvent: debouncedCommitEvent
+            })}
             disabled={isRunning}
           >
             {isRunning ? (

@@ -98,7 +98,7 @@ export const startSession = userMutation({
 
     if (session.sessionStatus === "not_started") {
       await ctx.scheduler.runAfter(
-        minutesToMilliseconds(15),
+        minutesToMilliseconds(session.timeLimit),
         internal.sessions.endSessionInternal,
         {
           sessionId,

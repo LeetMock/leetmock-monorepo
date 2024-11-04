@@ -168,11 +168,12 @@ export const runTests = action({
     const editorState = await ctx.runQuery(internal.codeSessionStates.getEditorStateInternal, { sessionId });
     const testCasesState = await ctx.runQuery(internal.codeSessionStates.getTestCasesStateInternal, { sessionId });
 
-    console.log(editorState, testCasesState);
+    console.log(testCasesState);
     if (!editorState || !testCasesState) {
       throw new Error("Failed to retrieve code or test cases");
     }
 
+    // check if testcase State has expectedOutput
     const question = await ctx.runQuery(api.questions.getById, { questionId });
     if (!question) {
       throw new Error("Question not found");
@@ -195,7 +196,6 @@ export const runTests = action({
 
     const testCode = generateTestCode(question, language, testCasesState);
 
-    console.log(testCode);
     const payload = {
       language,
       stdin: "",
@@ -216,13 +216,11 @@ export const runTests = action({
     };
 
     const result = await executeCode(payload);
-    console.log(result);
     if (result.status === "success" && result.stdout) {
       try {
         const jsonMatch = result.stdout.match(/START_RESULTS_JSON\n([\s\S]*?)\nEND_RESULTS_JSON/);
         if (jsonMatch && jsonMatch[1]) {
           const parsedResults: RunTestResult = JSON.parse(jsonMatch[1]);
-          console.log(parsedResults);
           return {
             ...result,
             testResults: parsedResults,

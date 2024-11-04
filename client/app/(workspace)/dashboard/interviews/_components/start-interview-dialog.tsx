@@ -207,9 +207,15 @@ export const StartInterviewDialog: React.FC = () => {
           className={cn("sm:max-w-[1200px] sm:w-[90vw] sm:min-h-[50rem]", "flex flex-col gap-6")}
         >
           <DialogHeader>
-            <DialogTitle className="text-2xl">Choose Interview Type</DialogTitle>
+            <DialogTitle className="text-2xl">
+              {currentStep === 0 && "Choose Interview Type"}
+              {currentStep === 1 && "Select Coding Question"}
+              {currentStep === 2 && "Configure Your Interview"}
+            </DialogTitle>
             <DialogDescription className="text-base">
-              Select the type of interview you&apos;d like to start.
+              {currentStep === 0 && "Select the type of interview you'd like to start."}
+              {currentStep === 1 && "Choose a coding problem that matches your preparation goals."}
+              {currentStep === 2 && "Customize your interview settings to match your preferences."}
             </DialogDescription>
           </DialogHeader>
 

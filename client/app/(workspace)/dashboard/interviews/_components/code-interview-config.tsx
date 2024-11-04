@@ -79,10 +79,7 @@ export const CodeInterviewConfig: React.FC<CodeInterviewConfigProps> = ({
     };
 
     return (
-        <div className="w-full max-w-5xl mx-auto overflow-y-auto max-h-[calc(100vh-100px)]">
-            <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 sticky top-0 z-10">
-                <h2 className="text-2xl font-bold">Interview Configuration</h2>
-            </div>
+        <div className="w-full max-w-[95%] mx-auto overflow-y-auto max-h-[calc(100vh-100px)] scrollbar-hide">
             <div className="space-y-8 p-6">
                 <div className="space-y-4">
                     <h3 className="text-lg font-semibold">Interview Flow</h3>
