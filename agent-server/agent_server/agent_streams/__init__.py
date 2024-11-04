@@ -1,9 +1,8 @@
 from typing import Any, Generic, Type, TypeVar
 
+from agent_graph.state_merger import StateMerger
 from langchain_core.runnables import RunnableConfig
-from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph
-from langgraph.graph.state import CompiledStateGraph
 from livekit.agents.voice_assistant import VoiceAssistant
 from pydantic import BaseModel, Field, PrivateAttr
 from pydantic.v1 import BaseModel as BaseModelV1
@@ -15,9 +14,6 @@ TState = TypeVar("TState", bound=BaseModelV1)
 
 def get_config(thread_id: int) -> RunnableConfig:
     return {"configurable": {"thread_id": str(thread_id)}}
-
-
-DEFAULT_CONFIG = get_config(1)
 
 
 class AgentStream(BaseModel, Generic[TState]):
@@ -34,27 +30,23 @@ class AgentStream(BaseModel, Generic[TState]):
         ..., description="The compiled state graph to trigger the agent"
     )
 
-    _event_graph: CompiledStateGraph = PrivateAttr()
-
-    _main_graph: CompiledStateGraph = PrivateAttr()
+    _state_merger: StateMerger = PrivateAttr(...)
 
     def __init__(
         self, state_cls: Type[TState], assistant: VoiceAssistant, graph: StateGraph
     ):
         super().__init__(state_cls=state_cls, assistant=assistant, graph=graph)
-        self._event_graph = self.graph.compile()
-        self._main_graph = self.graph.compile(checkpointer=MemorySaver())
-        self._fetch_and_sync_state()
+        self._state_merger = StateMerger.from_state(state_cls)
+        self._fetch_remote_state()
 
-    def get_state(self) -> TState:
-        state_values = self._main_graph.get_state(config=DEFAULT_CONFIG).values
-        return self.state_cls(**state_values)
+    async def get_state(self) -> TState:
+        return await self._state_merger.get_state()
 
-    def _fetch_and_sync_state(self):
+    def _fetch_remote_state(self):
         # TODO: fetch latest state from convex
         pass
 
-    def _update_state(self, state: TState):
+    def _update_remote_state(self, state: TState):
         # TODO: update state in convex
         pass
 

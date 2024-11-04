@@ -17,6 +17,7 @@ from agent_graph.types import Signal, Step
 from langchain_core.messages import AnyMessage, HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph, add_messages
+from langgraph.types import StreamWriter
 from pydantic.v1 import BaseModel, Field
 
 
@@ -74,7 +75,7 @@ class AgentConfig(BaseModel):
 
     session_id: str = Field(default="")
 
-    model_name: str = Field(default="gpt-4o")
+    llm_name: str = Field(default="gpt-4o")
 
     temperature: float = Field(default=0.9)
 
@@ -109,11 +110,18 @@ async def init_state(_: AgentState):
     )
 
 
-async def on_event(state: AgentState):
+async def on_event(
+    state: AgentState,
+    writer: StreamWriter,
+):
     trigger: bool = False
 
     if state.event == "user_message":
         trigger = True
+
+    nums = [1, 2, 3]
+    for num in nums:
+        writer({"messages": [num]})
 
     return dict(trigger=trigger, event=None)
 

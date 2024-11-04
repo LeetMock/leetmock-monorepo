@@ -1,32 +1,11 @@
-from typing import Any, Dict, List, Type, TypeVar, cast
+from typing import Any, List, Type, TypeVar, cast
 
-from langchain import hub  # noqa: F401
-from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables.config import RunnableConfig
-from pydantic.v1 import BaseModel, Field
+from langgraph.graph import StateGraph
+from pydantic.v1 import BaseModel
 
 T = TypeVar("T")
-
-
-class AgentPromptTemplates(BaseModel):
-    """Prompt templates for the agent."""
-
-    prefix: str = Field(..., description="Prefix for the prompt templates")
-    prompt_map: Dict[str, PromptTemplate] = Field(
-        default_factory=dict, description="Prompt templates"
-    )
-
-    def __getitem__(self, key: str) -> PromptTemplate:
-        return self.prompt_map[key]
-
-    @classmethod
-    def from_prefix(cls, prefix: str):
-        return cls(prefix=prefix)
-
-    def add_prompt_from_hub(self, prompt_name: str):
-        prompt = hub.pull(f"{self.prefix}_{prompt_name}")
-        self.prompt_map[prompt_name] = prompt
-        return prompt
+TState = TypeVar("TState", bound=BaseModel)
 
 
 def merge_str_list(l1: List[str], l2: List[str]) -> List[str]:
