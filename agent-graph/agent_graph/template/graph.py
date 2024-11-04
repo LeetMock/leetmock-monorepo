@@ -2,7 +2,9 @@ from enum import Enum
 from typing import Annotated, List
 
 from agent_graph.constants import JOIN_CALL_MESSAGE
-from agent_graph.template.stage_subgraph import create_graph as create_stage_subgraph
+from agent_graph.template.stage_subgraph import (
+    create_compiled_graph as create_stage_subgraph,
+)
 from langchain_core.messages import AnyMessage, HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph, add_messages
@@ -114,8 +116,11 @@ def create_graph():
         .add_edge("stage_2", "on_stage_end")
         .add_edge("stage_3", "on_stage_end")
         .add_edge("on_stage_end", END)
-        .compile(checkpointer=MemorySaver())
     )
 
 
-graph = create_graph()
+def create_compiled_graph():
+    return create_graph().compile(checkpointer=MemorySaver())
+
+
+graph = create_compiled_graph()

@@ -66,10 +66,12 @@ def create_graph():
         # nodes
         .add_node("assistant", assistant)
         # edges
-        .add_edge(START, "assistant")
-        .add_edge("assistant", END)
-        .compile(checkpointer=MemorySaver())
+        .add_edge(START, "assistant").add_edge("assistant", END)
     )
 
 
-stage_subgraph = create_graph()
+def create_compiled_graph():
+    return create_graph().compile(checkpointer=MemorySaver())
+
+
+stage_subgraph = create_compiled_graph()

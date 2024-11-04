@@ -174,8 +174,8 @@ def create_graph():
         .add_node("on_event", on_event)
         .add_node("on_trigger", on_trigger)
         .add_node("decide_next_stage", decide_next_stage)
-        .add_node("stage_tracker", stage_tracker.create_graph())
-        .add_node(StageTypes.INTRO, intro_stage.create_graph())
+        .add_node("stage_tracker", stage_tracker.create_compiled_graph())
+        .add_node(StageTypes.INTRO, intro_stage.create_compiled_graph())
         # edges
         .add_conditional_edges(
             source=START,
@@ -196,8 +196,11 @@ def create_graph():
         .add_edge(StageTypes.INTRO, "stage_tracker")
         .add_edge("stage_tracker", "decide_next_stage")
         .add_edge("decide_next_stage", END)
-        .compile(checkpointer=MemorySaver())
     )
 
 
-graph = create_graph()
+def create_compiled_graph():
+    return create_graph().compile(checkpointer=MemorySaver())
+
+
+graph = create_compiled_graph()

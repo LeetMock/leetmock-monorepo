@@ -50,7 +50,6 @@ class AgentTrigger(BaseModel):
     async def _trigger_task(self):
         self.interrupt()
         await self.stream.trigger(self._timestamp)
-        await self.stream.sync_state(self._timestamp)
 
     async def _main_task(self):
         while True:
@@ -66,4 +65,8 @@ class AgentTrigger(BaseModel):
             return
 
         self._started = True
+
+        for event in self._events:
+            event.start()
+
         asyncio.create_task(self._main_task())

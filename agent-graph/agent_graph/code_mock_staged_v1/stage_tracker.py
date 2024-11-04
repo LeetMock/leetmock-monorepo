@@ -153,8 +153,11 @@ def create_graph():
         .add_edge(START, "track_stage_signals")
         .add_edge("track_stage_steps", END)
         .add_edge("track_stage_signals", END)
-        .compile(checkpointer=MemorySaver())
     )
 
 
-stage_subgraph = create_graph()
+def create_compiled_graph():
+    return create_graph().compile(checkpointer=MemorySaver())
+
+
+stage_subgraph = create_compiled_graph()

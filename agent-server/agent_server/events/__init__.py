@@ -17,11 +17,14 @@ TSession = TypeVar("TSession", bound=BaseSession)
 
 class BaseEvent(BaseModel, Generic[TModel], ABC):
 
-    event_name: str = Field(..., description="The name of the event to listen to")
-
     _callbacks: List[Callable[[TModel], Coroutine[Any, Any, None]]] = PrivateAttr(
         default_factory=list
     )
+
+    @property
+    @abstractmethod
+    def event_name(self) -> str:
+        raise NotImplementedError
 
     def on_event(self, callback: Callable[[TModel], None | Coroutine[Any, Any, None]]):
         async def wrapped_callback(result: TModel) -> None:
@@ -45,21 +48,3 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
     @abstractmethod
     def start(self):
         raise NotImplementedError
-
-
-class SessionEvent(BaseEvent[TModel], Generic[TModel, TSession]):
-
-    session: TSession
-
-    @classmethod
-    def from_session(cls, event_name: str, session: TSession) -> Self:
-        return cls(event_name=event_name, session=session)
-
-
-class AssistantEvent(BaseEvent[TModel]):
-
-    assistant: VoiceAssistant
-
-    @classmethod
-    def from_assistant(cls, event_name: str, assistant: VoiceAssistant) -> Self:
-        return cls(event_name=event_name, assistant=assistant)
