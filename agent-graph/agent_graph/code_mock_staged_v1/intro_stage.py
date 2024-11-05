@@ -60,7 +60,7 @@ async def assistant(state: IntroStageState, writer: StreamWriter):
             "signals": state.signals[StageTypes.INTRO],
         }
     ):
-        writer(custom_data("assistant", chunk))
+        writer(custom_data("assistant", chunk.content))
         chunks.append(chunk)
 
     return dict(messages=reduce(lambda x, y: x + y, chunks))

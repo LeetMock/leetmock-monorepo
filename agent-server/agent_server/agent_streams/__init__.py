@@ -1,7 +1,10 @@
-from typing import Any, AsyncIterator, Generic, Tuple, Type, TypeVar
+import logging
+from typing import Any, AsyncIterator, Callable, Generic, Tuple, Type, TypeVar, cast
 
 from agent_graph.state_merger import StateMerger
 from agent_graph.types import EventMessageState
+from agent_server.utils.streams import to_async_iterable
+from langchain_core.messages import BaseMessageChunk
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import StateGraph
 from langgraph.types import StreamMode
@@ -9,6 +12,8 @@ from livekit.agents.voice_assistant import VoiceAssistant
 from pydantic.v1 import BaseModel, Field, PrivateAttr
 
 from libs.timestamp import Timestamp
+
+logger = logging.getLogger(__name__)
 
 TState = TypeVar("TState", bound=EventMessageState)
 
@@ -34,7 +39,10 @@ class AgentStream(BaseModel, Generic[TState]):
     _state_merger: StateMerger[TState] = PrivateAttr(...)
 
     def __init__(
-        self, state_cls: Type[TState], assistant: VoiceAssistant, graph: StateGraph
+        self,
+        state_cls: Type[TState],
+        assistant: VoiceAssistant,
+        graph: StateGraph,
     ):
         super().__init__(state_cls=state_cls, assistant=assistant, graph=graph)
         self._state_merger = StateMerger.from_state(state_cls)
@@ -47,7 +55,7 @@ class AgentStream(BaseModel, Generic[TState]):
         # TODO: fetch latest state from convex
         pass
 
-    def _update_remote_state(self, state: TState):
+    async def _update_remote_state(self, state: TState):
         # TODO: update state in convex
         pass
 
@@ -61,35 +69,54 @@ class AgentStream(BaseModel, Generic[TState]):
         state = await self._state_merger.get_state()
         state.event = event_name
         state.event_data = data
+        state.trigger = False
 
         # TODO: send event to langgraph, check if graph should be triggered
+        should_trigger = False
         async for mode, part in self._stateless_graph_stream(state):
-            if mode == "values":
-                await self._state_merger.merge_state(part)
+            if mode != "values":
+                continue
 
-        return True
+            snapshot = await self._state_merger.merge_state(part)
+            if snapshot.trigger:
+                should_trigger = True
 
-    async def trigger_agent(self, timestamp: Timestamp):
-        start_t = timestamp.t
+        return should_trigger
 
-        state = await self._state_merger.get_state()
-        state.event = None
-        state.event_data = None
-        state.trigger = True
-
+    async def assistant_text_stream(
+        self,
+        state: TState,
+        should_interrupt: Callable[[], bool],
+    ) -> AsyncIterator[str]:
         # TODO: run langgraph, stop when graph is done or interrupted
         async for mode, part in self._stateless_graph_stream(state):
-            if start_t != timestamp.t:
+            if should_interrupt():
+                logger.info("Interrupting graph stream")
                 break
 
             if mode == "values":
                 await self._state_merger.merge_state(part)
 
             if mode == "custom":
-                id, data = part["id"], part["data"]
+                id, chunk_text = part["id"], cast(str, part["data"])
                 if id != "assistant":
                     continue
 
-                print(data)
+                yield chunk_text
 
-        return True
+    async def trigger_agent(self, timestamp: Timestamp):
+        start_t = timestamp.t
+        should_interrupt = lambda: start_t != timestamp.t
+
+        state = await self._state_merger.get_state()
+        state.event = None
+        state.event_data = None
+        state.trigger = True
+
+        text_stream = self.assistant_text_stream(state, should_interrupt)
+        await self.assistant.say(
+            to_async_iterable(text_stream),
+            allow_interruptions=True,
+            add_to_chat_ctx=True,
+        )
+        await self._update_remote_state(state)

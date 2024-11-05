@@ -14,10 +14,10 @@ from tenacity import retry, wait_exponential
 load_dotenv(find_dotenv())
 
 
-URL = "https://leetmock-ts-fa225f46565756e7b0567441810f232f.default.us.langgraph.app"
+URL = "https://leetmock001-76a7d6889223553c93a96358909dd6e3.default.us.langgraph.app"
 
 DEFAULT_INPUT = {"messages": ["HI"], "event": "user_message"}
-ASSISTANT_ID = "code-mock-staged-v1"
+ASSISTANT_ID = "template"
 SAMPLE_SIZE = 500
 
 STATELESS_GRAPH = create_graph().compile()

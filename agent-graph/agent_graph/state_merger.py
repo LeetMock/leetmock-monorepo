@@ -34,4 +34,5 @@ class StateMerger(BaseModel, Generic[TState]):
         return snapshot.values
 
     async def merge_state(self, state: TState | Dict[str, Any]):
-        return await self.state_graph.ainvoke(state, config=CONFIG)
+        values = await self.state_graph.ainvoke(state, config=CONFIG)
+        return self.state_type(**values)
