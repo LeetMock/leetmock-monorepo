@@ -97,17 +97,26 @@ async def init_state(_: AgentState):
 async def on_event(
     state: AgentState,
 ):
-    trigger: bool = False
-
     if state.event == "user_message":
-        trigger = True
-    return dict(trigger=trigger, event=None)
+        messages = state.event_data.messages
+        return dict(trigger=True, messages=messages, event=None, event_data=None)
+
+    if state.event == "reminder":
+        messages = [
+            HumanMessage(
+                content="(Now the user has been slient in a while, you would say:)"
+            )
+        ]
+        return dict(trigger=True, messages=messages, event=None, event_data=None)
+
+    # TODO: add other events
+
+    return dict(trigger=False, event=None, event_data=None)
 
 
 async def on_trigger(state: AgentState):
-    # TODO: process and update state
     # e.g. update step status, etc.
-    return None
+    return dict(trigger=False)
 
 
 async def decide_next_stage(state: AgentState):

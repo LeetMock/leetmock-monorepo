@@ -21,6 +21,8 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
         default_factory=list
     )
 
+    _started: bool = PrivateAttr(default=False)
+
     class Config:
         arbitrary_types_allowed = True
 
@@ -48,6 +50,13 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
             return_exceptions=True,
         )
 
-    @abstractmethod
     def start(self):
+        if self._started:
+            raise RuntimeError("Event already started")
+
+        self._started = True
+        self.setup()
+
+    @abstractmethod
+    def setup(self):
         raise NotImplementedError

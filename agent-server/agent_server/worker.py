@@ -1,8 +1,12 @@
+import asyncio
+import hashlib
 import os
+import string
+from datetime import datetime
 
 import psutil
 from agent_graph.code_mock_staged_v1.graph import AgentState, create_graph
-from agent_server.agent import LangGraphLLM, NoOpLLMStream
+from agent_server.agent import LangGraphLLM
 from agent_server.agent_streams import AgentStream
 from agent_server.agent_triggers import AgentTrigger
 from agent_server.contexts.context_manager import AgentContextManager
@@ -12,15 +16,23 @@ from agent_server.events.events import (
     CodeSessionEvent,
     ReminderEvent,
     TestSubmissionEvent,
+    UserMessageEvent,
+    UserMessageEventData,
 )
+from agent_server.livekit.streams import NoOpLLM, NoOpLLMStream
 from agent_server.livekit.tts import create_elevenlabs_tts
 from agent_server.utils.logger import get_logger
+from agent_server.utils.messages import (
+    convert_chat_ctx_to_langchain_messages,
+    filter_langchain_messages,
+)
 from dotenv import find_dotenv, load_dotenv
+from langchain_core.messages import BaseMessage
 from livekit.agents import cli  # type: ignore
 from livekit.agents import JobContext, WorkerOptions, llm, utils
 from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.agents.worker import _DefaultLoadCalc
-from livekit.plugins import deepgram, silero
+from livekit.plugins import deepgram, openai, silero
 
 logger = get_logger(__name__)
 
@@ -70,29 +82,38 @@ async def entrypoint(ctx: JobContext):
     convex_api = ConvexApi(convex_url=os.getenv("CONVEX_URL") or "")
     session = CodeSession(api=convex_api)
 
+    user_message_event_q = asyncio.Queue[UserMessageEventData]()
+    unix_timestamp = int(datetime.now().timestamp())
+
     ctx_manager = AgentContextManager(ctx=ctx, api=convex_api, session=session)
     await ctx_manager.start()
 
-    def invoke_agent(chat_ctx: llm.ChatContext, interaction_type: str) -> llm.LLMStream:
-        code_session_state = ctx_manager.session.session_state
-        code_session_metadata = ctx_manager.session.session_metadata
-
-        agent.set_agent_session(code_session_metadata)
-        agent.set_agent_context(code_session_state, interaction_type)
-        return agent.chat(chat_ctx=chat_ctx)
-
     def before_llm_callback(
-        assistant: VoiceAssistant, chat_ctx: llm.ChatContext
+        _: VoiceAssistant, chat_ctx: llm.ChatContext
     ) -> llm.LLMStream:
-        logger.info("before_llm_callback")
-        # return NoOpLLMStream(chat_ctx=chat_ctx)
-        return invoke_agent(chat_ctx, "response_required")
+        print(f"Received raw messages")
+        for message in chat_ctx.messages:
+            print(message)
+        lc_messages = filter_langchain_messages(
+            convert_chat_ctx_to_langchain_messages(chat_ctx)
+        )
+
+        for i, message in enumerate(lc_messages):
+            key = f"{unix_timestamp}-{i}-{message.type}"
+            message.id = hashlib.md5(key.encode()).hexdigest()
+
+        print(f"Received messages")
+        for message in lc_messages:
+            print(message)
+
+        user_message_event_q.put_nowait(UserMessageEventData.from_messages(lc_messages))
+        return NoOpLLMStream(llm=NoOpLLM(), chat_ctx=chat_ctx)
 
     assistant = VoiceAssistant(
         vad=silero.VAD.load(),
         stt=deepgram.STT(),
         llm=agent,
-        tts=create_elevenlabs_tts(),
+        tts=openai.TTS(),
         chat_ctx=ctx_manager.chat_ctx,
         preemptive_synthesis=True,
         interrupt_speech_duration=0.4,
@@ -100,25 +121,25 @@ async def entrypoint(ctx: JobContext):
         before_llm_cb=before_llm_callback,
     )
 
-    # graph = create_graph()
-    # agent_stream = AgentStream(state_cls=AgentState, assistant=assistant, graph=graph)
-    # agent_trigger = AgentTrigger(
-    #     stream=agent_stream,
-    #     events=[
-    #         ReminderEvent(assistant=assistant),
-    #         CodeSessionEvent(event_type="content_changed", session=session),
-    #         TestSubmissionEvent(stream=agent_stream),
-    #     ],
-    # )
-
-    # agent_trigger.start()
-    assistant.start(ctx.room)
-    logger.info("Saying")
-    await assistant.say(
-        before_llm_callback(assistant, ctx_manager.chat_ctx),
-        allow_interruptions=True,
-        add_to_chat_ctx=True,
+    graph = create_graph()
+    agent_stream = AgentStream(state_cls=AgentState, assistant=assistant, graph=graph)
+    agent_trigger = AgentTrigger(
+        stream=agent_stream,
+        events=[
+            ReminderEvent(assistant=assistant),
+            CodeSessionEvent(event_type="content_changed", session=session),
+            TestSubmissionEvent(stream=agent_stream),
+            UserMessageEvent(event_q=user_message_event_q),
+        ],
     )
+
+    agent_trigger.start()
+    assistant.start(ctx.room)
+    # await assistant.say(
+    #     before_llm_callback(assistant, ctx_manager.chat_ctx),
+    #     allow_interruptions=True,
+    #     add_to_chat_ctx=True,
+    # )
 
 
 if __name__ == "__main__":

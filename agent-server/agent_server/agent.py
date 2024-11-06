@@ -88,38 +88,6 @@ class LangGraphLLM(llm.LLM):
         )
 
 
-class NoOpLLMStream(llm.LLMStream):
-
-    def __init__(
-        self,
-        *,
-        llm: llm.LLM,
-        chat_ctx: llm.ChatContext,
-        fnc_ctx: llm.FunctionContext | None = None,
-    ):
-        super().__init__(llm=llm, chat_ctx=chat_ctx, fnc_ctx=fnc_ctx)
-        self._stream = self._create_fake_stream()
-        self._request_id = str(uuid.uuid4())
-
-    def _create_llm_chunk(self, content: str) -> llm.ChatChunk:
-        choice = llm.Choice(
-            delta=llm.ChoiceDelta(content=content, role="assistant"),
-            index=0,
-        )
-        return llm.ChatChunk(request_id=self._request_id, choices=[choice])
-
-    async def _create_fake_stream(self) -> AsyncGenerator[llm.ChatChunk, None]:
-        for content in (
-            "I love you! I love you so much! Man! What can I say! gee ni tai may, baby"
-            * 100
-        ):
-            logger.info(f"Sending fake chunk: {content}")
-            yield self._create_llm_chunk(content)
-
-    async def __anext__(self) -> llm.ChatChunk:
-        return await anext(self._stream)
-
-
 class SimpleLLMStream(llm.LLMStream):
 
     def __init__(

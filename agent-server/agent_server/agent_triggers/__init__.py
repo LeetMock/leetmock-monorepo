@@ -8,6 +8,8 @@ from pydantic.v1 import BaseModel, Field, PrivateAttr
 
 from libs.timestamp import Timestamp
 
+logger = logging.getLogger(__name__)
+
 
 class AgentTrigger(BaseModel):
 
@@ -39,6 +41,7 @@ class AgentTrigger(BaseModel):
 
     def _create_event_handler(self, event: BaseEvent):
         async def handler(data: Any):
+            logger.info(f"Receiving event: {event.event_name} with data: {data}")
             await self._event_q.put((event.event_name, data))
 
         return handler
@@ -49,16 +52,19 @@ class AgentTrigger(BaseModel):
 
     async def _trigger_task(self):
         self.interrupt()
+        logger.info(f"Triggering agent with timestamp: {self._timestamp}")
         await self.stream.trigger_agent(self._timestamp)
 
     async def _main_task(self):
         while True:
             event, data = await self._event_q.get()
-            logging.info(f"Triggering event: {event} with data: {data}")
+            logger.info(f"Sending event: {event} with data: {data}")
 
             should_trigger = await self.stream.send_event(event, data)
             if should_trigger:
                 asyncio.create_task(self._trigger_task())
+            else:
+                logger.info(f"Failed to trigger agent for event: {event}")
 
     def start(self):
         if self._started:
@@ -67,6 +73,6 @@ class AgentTrigger(BaseModel):
         self._started = True
 
         for event in self._events:
-            event.start()
+            event.setup()
 
         asyncio.create_task(self._main_task())

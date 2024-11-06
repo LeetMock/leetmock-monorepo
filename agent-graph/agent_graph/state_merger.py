@@ -1,6 +1,7 @@
 from typing import Any, Dict, Generic, Type, TypeVar
 
 from langchain_core.runnables import RunnableConfig
+from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph.state import CompiledStateGraph, StateGraph
 from pydantic.v1 import BaseModel, Field
 
@@ -26,7 +27,10 @@ class StateMerger(BaseModel, Generic[TState]):
     @classmethod
     def from_state(cls, state_type: Type[TState]):
         graph = StateGraph(state_type)
-        return cls(state_type=state_type, state_graph=graph.compile())
+        return cls(
+            state_type=state_type,
+            state_graph=graph.compile(checkpointer=MemorySaver()),
+        )
 
     async def get_state(self):
         state_dict = await self.get_state_dict()

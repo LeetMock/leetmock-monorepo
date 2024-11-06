@@ -18,7 +18,7 @@ class EventMessageState(BaseModel):
         description="Event triggered by the user",
     )
 
-    event_data: Any | None = Field(
+    event_data: Any = Field(
         default=None,
         description="Data associated with the event",
     )
