@@ -21,6 +21,9 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
         default_factory=list
     )
 
+    class Config:
+        arbitrary_types_allowed = True
+
     @property
     @abstractmethod
     def event_name(self) -> str:

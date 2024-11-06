@@ -20,6 +20,9 @@ class StateMerger(BaseModel, Generic[TState]):
         ..., description="The compiled state graph to merge states"
     )
 
+    class Config:
+        arbitrary_types_allowed = True
+
     @classmethod
     def from_state(cls, state_type: Type[TState]):
         graph = StateGraph(state_type)

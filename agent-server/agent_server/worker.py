@@ -100,25 +100,25 @@ async def entrypoint(ctx: JobContext):
         before_llm_cb=before_llm_callback,
     )
 
-    graph = create_graph()
-    agent_stream = AgentStream(state_cls=AgentState, assistant=assistant, graph=graph)
-    agent_trigger = AgentTrigger(
-        stream=agent_stream,
-        events=[
-            ReminderEvent(assistant=assistant),
-            CodeSessionEvent(event_type="content_changed", session=session),
-            TestSubmissionEvent(stream=agent_stream),
-        ],
-    )
-
-    agent_trigger.start()
-    assistant.start(ctx.room)
-
-    # await assistant.say(
-    #     before_llm_callback(assistant, ctx_manager.chat_ctx),
-    #     allow_interruptions=True,
-    #     add_to_chat_ctx=True,
+    # graph = create_graph()
+    # agent_stream = AgentStream(state_cls=AgentState, assistant=assistant, graph=graph)
+    # agent_trigger = AgentTrigger(
+    #     stream=agent_stream,
+    #     events=[
+    #         ReminderEvent(assistant=assistant),
+    #         CodeSessionEvent(event_type="content_changed", session=session),
+    #         TestSubmissionEvent(stream=agent_stream),
+    #     ],
     # )
+
+    # agent_trigger.start()
+    assistant.start(ctx.room)
+    logger.info("Saying")
+    await assistant.say(
+        before_llm_callback(assistant, ctx_manager.chat_ctx),
+        allow_interruptions=True,
+        add_to_chat_ctx=True,
+    )
 
 
 if __name__ == "__main__":

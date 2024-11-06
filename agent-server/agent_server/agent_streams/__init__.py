@@ -38,6 +38,9 @@ class AgentStream(BaseModel, Generic[TState]):
 
     _state_merger: StateMerger[TState] = PrivateAttr(...)
 
+    class Config:
+        arbitrary_types_allowed = True
+
     def __init__(
         self,
         state_cls: Type[TState],
