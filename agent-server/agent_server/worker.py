@@ -137,11 +137,9 @@ async def entrypoint(ctx: JobContext):
 
     agent_trigger.start()
     assistant.start(ctx.room)
-    # await assistant.say(
-    #     before_llm_callback(assistant, ctx_manager.chat_ctx),
-    #     allow_interruptions=True,
-    #     add_to_chat_ctx=True,
-    # )
+
+    await asyncio.sleep(3)
+    await agent_trigger.trigger()
 
 
 if __name__ == "__main__":

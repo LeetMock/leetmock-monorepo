@@ -39,6 +39,9 @@ class AgentTrigger(BaseModel):
     def interrupt(self):
         self._timestamp.refresh()
 
+    async def trigger(self):
+        await self._event_q.put(("trigger", None))
+
     def _create_event_handler(self, event: BaseEvent):
         async def handler(data: Any):
             logger.info(f"Receiving event: {event.event_name} with data: {data}")
@@ -50,10 +53,10 @@ class AgentTrigger(BaseModel):
         for event in self._events:
             event.on_event(self._create_event_handler(event))
 
-    async def _trigger_task(self):
+    async def _trigger_task(self, is_user_message: bool):
         self.interrupt()
         logger.info(f"Triggering agent with timestamp: {self._timestamp}")
-        await self.stream.trigger_agent(self._timestamp)
+        await self.stream.trigger_agent(self._timestamp, is_user_message)
 
     async def _main_task(self):
         while True:
@@ -62,7 +65,8 @@ class AgentTrigger(BaseModel):
 
             should_trigger = await self.stream.notify_agent(event, data)
             if should_trigger:
-                asyncio.create_task(self._trigger_task())
+                is_user_message = event == "user_message"
+                asyncio.create_task(self._trigger_task(is_user_message))
             else:
                 logger.info(f"Failed to trigger agent for event: {event}")
 

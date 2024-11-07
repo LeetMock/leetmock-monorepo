@@ -88,10 +88,9 @@ class AgentStream(BaseModel, Generic[TState]):
             if snapshot.trigger:
                 should_trigger = True
 
-        asyncio.create_task(self._update_remote_state(state))
         return should_trigger
 
-    async def trigger_agent(self, timestamp: Timestamp):
+    async def trigger_agent(self, timestamp: Timestamp, is_user_message: bool):
         start_t = timestamp.t
         should_interrupt = lambda: start_t != timestamp.t
 
@@ -100,10 +99,17 @@ class AgentStream(BaseModel, Generic[TState]):
         state.event_data = None
         state.trigger = True
 
+        logger.info("Triggering agent")
         text_stream = self._assistant_text_stream(state, should_interrupt)
-        await self._message_q.put(text_stream)
 
-        asyncio.create_task(self._update_remote_state(state))
+        if is_user_message:
+            await self._message_q.put(text_stream)
+        else:
+            await self.assistant.say(
+                to_async_iterable(text_stream),
+                allow_interruptions=True,
+                add_to_chat_ctx=True,
+            )
 
     async def _assistant_text_stream(
         self,

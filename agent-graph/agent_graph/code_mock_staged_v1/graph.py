@@ -97,6 +97,9 @@ async def init_state(_: AgentState):
 async def on_event(
     state: AgentState,
 ):
+    if state.event == "trigger":
+        return dict(trigger=True, event=None, event_data=None)
+
     if state.event == "user_message":
         messages = state.event_data.messages
         return dict(trigger=True, messages=messages, event=None, event_data=None)
