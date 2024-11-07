@@ -1,6 +1,6 @@
 from collections import defaultdict
 from functools import reduce
-from typing import Annotated, Dict, List
+from typing import Annotated, Dict, List, cast
 
 from agent_graph.code_mock_staged_v1.constants import (
     AgentTags,
@@ -11,7 +11,7 @@ from agent_graph.code_mock_staged_v1.constants import (
 from agent_graph.code_mock_staged_v1.prompts import INTRO_PROMPT
 from agent_graph.llms import get_model
 from agent_graph.utils import custom_data
-from langchain_core.messages import AnyMessage
+from langchain_core.messages import AIMessage, AnyMessage
 from langchain_core.prompts import (
     ChatPromptTemplate,
     MessagesPlaceholder,
@@ -48,10 +48,11 @@ async def assistant(state: IntroStageState, writer: StreamWriter):
         ]
     )
 
-    chain = prompt | get_model("gpt-4o-mini").with_config(
-        {"tags": [AgentTags.INTRO_LLM]}
-    )
+    chain = prompt | get_model("gpt-4o-mini").bind(
+        stop=["SILENT", "<thinking>"]
+    ).with_config({"tags": [AgentTags.INTRO_LLM]})
 
+    content = ""
     async for chunk in chain.astream(
         {
             "messages": state.messages,
@@ -59,7 +60,12 @@ async def assistant(state: IntroStageState, writer: StreamWriter):
             "signals": state.signals[StageTypes.INTRO],
         }
     ):
+        content += cast(str, chunk.content)
         writer(custom_data("assistant", chunk.content))
+
+    # If the assistant doesn't say anything, we should return a SILENT message
+    if len(content.strip()) == 0:
+        return dict(messages=[AIMessage(content="SILENT")])
 
     return None
 
