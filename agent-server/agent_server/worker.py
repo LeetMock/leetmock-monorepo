@@ -87,9 +87,6 @@ async def entrypoint(ctx: JobContext):
     await ctx_manager.start()
 
     async def before_llm_callback(_: VoiceAssistant, chat_ctx: llm.ChatContext):
-        print(f"Received raw messages")
-        for message in chat_ctx.messages:
-            print(message)
         lc_messages = filter_langchain_messages(
             convert_chat_ctx_to_langchain_messages(chat_ctx)
         )
@@ -97,10 +94,6 @@ async def entrypoint(ctx: JobContext):
         for i, message in enumerate(lc_messages):
             key = f"{unix_timestamp}-{i}-{message.type}"
             message.id = hashlib.md5(key.encode()).hexdigest()
-
-        print(f"Received messages")
-        for message in lc_messages:
-            print(message)
 
         user_message_event_q.put_nowait(UserMessageEventData.from_messages(lc_messages))
         text_stream = await user_message_response_q.get()
