@@ -78,7 +78,7 @@ class CustomLoadCalc(_DefaultLoadCalc):
 
 
 async def entrypoint(ctx: JobContext):
-    agent = LangGraphLLM()
+    no_op_llm = NoOpLLM()
     convex_api = ConvexApi(convex_url=os.getenv("CONVEX_URL") or "")
     session = CodeSession(api=convex_api)
 
@@ -107,12 +107,12 @@ async def entrypoint(ctx: JobContext):
             print(message)
 
         user_message_event_q.put_nowait(UserMessageEventData.from_messages(lc_messages))
-        return NoOpLLMStream(llm=NoOpLLM(), chat_ctx=chat_ctx)
+        return NoOpLLMStream(llm=no_op_llm, chat_ctx=chat_ctx)
 
     assistant = VoiceAssistant(
         vad=silero.VAD.load(),
         stt=deepgram.STT(),
-        llm=agent,
+        llm=no_op_llm,
         tts=openai.TTS(),
         chat_ctx=ctx_manager.chat_ctx,
         preemptive_synthesis=True,
