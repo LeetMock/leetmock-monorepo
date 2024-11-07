@@ -3,7 +3,7 @@ from typing import Generic, List, TypeVar, cast
 
 from agent_server.contexts.session import BaseSession, CodeSession
 from agent_server.convex.api import ConvexApi
-from agent_server.livekit.chan_value import ChanConfig, ChanValue
+from agent_server.livekit.channel import ChanConfig, ChanValue
 from agent_server.livekit.validators import string_validator
 from agent_server.utils.logger import get_logger
 from livekit.agents import JobContext
@@ -29,13 +29,14 @@ class AgentContextManager(Generic[TSession]):
         self,
         ctx: JobContext,
         api: ConvexApi,
+        session: TSession,
     ):
         super().__init__()
 
         self.ctx = ctx
         self.api = api
 
-        self._session: TSession | None = None
+        self._session = session
         self._session_id_fut = asyncio.Future[str]()
         self._chat_ctx = ChatContext()
         self._snapshots: List[CodeSessionState] = []
@@ -73,8 +74,6 @@ class AgentContextManager(Generic[TSession]):
         self._session_id_fut.set_result(result)
 
         # Setup the session with the session id
-        # TODO: adjust this part for other session types
-        self._session = cast(TSession, CodeSession(self.api))
         await self._session.start(result)
 
     async def start(self):

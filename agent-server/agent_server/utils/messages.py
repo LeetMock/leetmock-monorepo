@@ -1,26 +1,39 @@
 from __future__ import annotations
 
-from typing import Any, List, cast, Any, Dict
-
 import hashlib
-from livekit.agents import llm
-from livekit.plugins.openai.utils import build_oai_message
+import string
+from typing import Any, Dict, List, cast
 
-from openai.types.chat import (
-    ChatCompletionMessageParam,
-    ChatCompletionToolMessageParam,
-    ChatCompletionUserMessageParam,
-    ChatCompletionSystemMessageParam,
-    ChatCompletionAssistantMessageParam,
-)
 from langchain_core.messages import (
-    BaseMessage,
-    HumanMessage,
     AIMessage,
+    BaseMessage,
+    FunctionMessage,
+    HumanMessage,
     SystemMessage,
     ToolMessage,
-    FunctionMessage,
 )
+from livekit.agents import llm
+from livekit.plugins.openai.utils import build_oai_message
+from openai.types.chat import (
+    ChatCompletionAssistantMessageParam,
+    ChatCompletionMessageParam,
+    ChatCompletionSystemMessageParam,
+    ChatCompletionToolMessageParam,
+    ChatCompletionUserMessageParam,
+)
+
+
+def remove_punctuation(text: str) -> str:
+    return text.translate(str.maketrans("", "", string.punctuation)).strip()
+
+
+def filter_langchain_messages(messages: List[BaseMessage]) -> List[BaseMessage]:
+    return [
+        message
+        for message in messages
+        if isinstance(message.content, str)
+        and len(remove_punctuation(message.content)) > 0
+    ]
 
 
 def convert_chat_ctx_to_oai_messages(

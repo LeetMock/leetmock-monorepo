@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from inspect import iscoroutinefunction
-from typing import Any, Callable, Coroutine, Dict, Generic, List, Type, TypeVar
+from typing import Any, Callable, Coroutine, Dict, Generic, List, Self, Type, TypeVar
 
 from agent_server.convex.api import ConvexApi
 from agent_server.convex.query_generator import AsyncQueryGenerator

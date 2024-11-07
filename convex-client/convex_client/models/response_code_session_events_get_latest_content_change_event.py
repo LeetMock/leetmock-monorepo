@@ -17,18 +17,28 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict
-from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_code_session_events_get_next_content_change_event_args import RequestCodeSessionEventsGetNextContentChangeEventArgs
+from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
+from typing import Any, ClassVar, Dict, List, Optional
+from convex_client.models.response_code_session_events_get_latest_content_change_event_value import ResponseCodeSessionEventsGetLatestContentChangeEventValue
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestCodeSessionEventsGetNextContentChangeEvent(BaseModel):
+class ResponseCodeSessionEventsGetLatestContentChangeEvent(BaseModel):
     """
-    RequestCodeSessionEventsGetNextContentChangeEvent
+    ResponseCodeSessionEventsGetLatestContentChangeEvent
     """ # noqa: E501
-    args: RequestCodeSessionEventsGetNextContentChangeEventArgs
-    __properties: ClassVar[List[str]] = ["args"]
+    status: StrictStr
+    error_message: Optional[StrictStr] = Field(default=None, alias="errorMessage")
+    error_data: Optional[Dict[str, Any]] = Field(default=None, alias="errorData")
+    value: Optional[ResponseCodeSessionEventsGetLatestContentChangeEventValue] = None
+    __properties: ClassVar[List[str]] = ["status", "errorMessage", "errorData", "value"]
+
+    @field_validator('status')
+    def status_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set(['success', 'error']):
+            raise ValueError("must be one of enum values ('success', 'error')")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -48,7 +58,7 @@ class RequestCodeSessionEventsGetNextContentChangeEvent(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsGetNextContentChangeEvent from a JSON string"""
+        """Create an instance of ResponseCodeSessionEventsGetLatestContentChangeEvent from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -69,14 +79,19 @@ class RequestCodeSessionEventsGetNextContentChangeEvent(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of args
-        if self.args:
-            _dict['args'] = self.args.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of value
+        if self.value:
+            _dict['value'] = self.value.to_dict()
+        # set to None if value (nullable) is None
+        # and model_fields_set contains the field
+        if self.value is None and "value" in self.model_fields_set:
+            _dict['value'] = None
+
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsGetNextContentChangeEvent from a dict"""
+        """Create an instance of ResponseCodeSessionEventsGetLatestContentChangeEvent from a dict"""
         if obj is None:
             return None
 
@@ -84,7 +99,10 @@ class RequestCodeSessionEventsGetNextContentChangeEvent(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "args": RequestCodeSessionEventsGetNextContentChangeEventArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
+            "status": obj.get("status"),
+            "errorMessage": obj.get("errorMessage"),
+            "errorData": obj.get("errorData"),
+            "value": ResponseCodeSessionEventsGetLatestContentChangeEventValue.from_dict(obj["value"]) if obj.get("value") is not None else None
         })
         return _obj
 

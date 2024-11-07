@@ -40,13 +40,6 @@ class TestMutationApi(unittest.TestCase):
         """
         pass
 
-    def test_api_run_code_session_events_ack_code_session_event_post(self) -> None:
-        """Test case for api_run_code_session_events_ack_code_session_event_post
-
-        Calls a mutation at the path codeSessionEvents.js:ackCodeSessionEvent
-        """
-        pass
-
     def test_api_run_code_session_events_commit_code_session_event_post(self) -> None:
         """Test case for api_run_code_session_events_commit_code_session_event_post
 

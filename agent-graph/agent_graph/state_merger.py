@@ -1,0 +1,45 @@
+from typing import Any, Dict, Generic, Type, TypeVar
+
+from langchain_core.runnables import RunnableConfig
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph.state import CompiledStateGraph, StateGraph
+from pydantic.v1 import BaseModel, Field
+
+TState = TypeVar("TState", bound=BaseModel)
+
+CONFIG = RunnableConfig(configurable={"thread_id": "1"})
+
+
+class StateMerger(BaseModel, Generic[TState]):
+    """A state merger is a class that keeps a persistent state and allows for merging with other states."""
+
+    state_type: Type[TState] = Field(
+        ..., description="The type of the state to be returned"
+    )
+
+    state_graph: CompiledStateGraph = Field(
+        ..., description="The compiled state graph to merge states"
+    )
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    @classmethod
+    def from_state(cls, state_type: Type[TState]):
+        graph = StateGraph(state_type)
+        return cls(
+            state_type=state_type,
+            state_graph=graph.compile(checkpointer=MemorySaver()),
+        )
+
+    async def get_state(self):
+        state_dict = await self.get_state_dict()
+        return self.state_type(**state_dict)
+
+    async def get_state_dict(self) -> Dict[str, Any]:
+        snapshot = await self.state_graph.aget_state(config=CONFIG)
+        return snapshot.values
+
+    async def merge_state(self, state: TState | Dict[str, Any]):
+        values = await self.state_graph.ainvoke(state, config=CONFIG)
+        return self.state_type(**values)

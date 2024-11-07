@@ -1,4 +1,5 @@
 import asyncio
+import time
 from abc import ABC, abstractmethod
 from typing import Literal, TypeVar
 
@@ -53,7 +54,7 @@ CodeSessionEventTypes = Literal["content_changed"]
 
 
 CODE_SESSION_STATE_QUERY = "codeSessionStates:get"
-CONTENT_CHANGED_QUERY = "codeSessionEvents:getNextContentChangeEvent"
+CONTENT_CHANGED_QUERY = "codeSessionEvents:getLatestContentChangeEvent"
 
 
 class CodeSession(BaseSession[CodeSessionEventTypes]):
@@ -61,6 +62,7 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
     def __init__(self, api: ConvexApi):
         super().__init__(api)
 
+        self._start_time_ms = int(time.time_ns() // 1_000_000)
         self._session_id: str | None = None
         self._session_metadata: SessionMetadata | None = None
         self._code_session_state: CodeSessionState | None = None
@@ -84,6 +86,13 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
             self._synced_future.set_result(True)
 
     def _handle_content_changed(self, event: CodeSessionContentChangedEvent):
+        if event.ts < self._start_time_ms:
+            logger.info(
+                "Code session content changed event is older than session start time."
+                "Ignoring event."
+            )
+            return
+
         logger.info(f"Code session content changed: {event}")
         self.emit("content_changed", event)
 

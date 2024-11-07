@@ -1,9 +1,22 @@
 from typing import Any, List, Type, TypeVar, cast
 
-from agent_graph.llms import ChatbotConfig
 from langchain_core.runnables.config import RunnableConfig
+from pydantic.v1 import BaseModel
 
 T = TypeVar("T")
+TState = TypeVar("TState", bound=BaseModel)
+
+
+def custom_data(id: str, data: Any):
+    return {"id": id, "data": data}
+
+
+def merge_str_list(l1: List[str], l2: List[str]) -> List[str]:
+    return list(set(l1) | set(l2))
+
+
+def wrap_xml(tag: str, content: str) -> str:
+    return f"<{tag}>\n{content}\n</{tag}>"
 
 
 def _validate_value(value: Any) -> bool:
