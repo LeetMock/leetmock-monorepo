@@ -60,7 +60,7 @@ class AgentTrigger(BaseModel):
             event, data = await self._event_q.get()
             logger.info(f"Sending event: {event} with data: {data}")
 
-            should_trigger = await self.stream.send_event(event, data)
+            should_trigger = await self.stream.notify_agent(event, data)
             if should_trigger:
                 asyncio.create_task(self._trigger_task())
             else:

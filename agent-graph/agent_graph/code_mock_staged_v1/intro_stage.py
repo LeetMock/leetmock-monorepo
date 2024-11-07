@@ -52,7 +52,6 @@ async def assistant(state: IntroStageState, writer: StreamWriter):
         {"tags": [AgentTags.INTRO_LLM]}
     )
 
-    chunks = []
     async for chunk in chain.astream(
         {
             "messages": state.messages,
@@ -61,9 +60,8 @@ async def assistant(state: IntroStageState, writer: StreamWriter):
         }
     ):
         writer(custom_data("assistant", chunk.content))
-        chunks.append(chunk)
 
-    return dict(messages=reduce(lambda x, y: x + y, chunks))
+    return None
 
 
 def create_graph():

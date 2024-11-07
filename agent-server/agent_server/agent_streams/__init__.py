@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from typing import Any, AsyncIterator, Callable, Generic, Tuple, Type, TypeVar, cast
 
@@ -36,6 +37,8 @@ class AgentStream(BaseModel, Generic[TState]):
         ..., description="The compiled state graph to trigger the agent"
     )
 
+    _message_q: asyncio.Queue[AsyncIterator[str]] = PrivateAttr(...)
+
     _state_merger: StateMerger[TState] = PrivateAttr(...)
 
     class Config:
@@ -46,8 +49,10 @@ class AgentStream(BaseModel, Generic[TState]):
         state_cls: Type[TState],
         assistant: VoiceAssistant,
         graph: StateGraph,
+        message_q: asyncio.Queue[AsyncIterator[str]],
     ):
         super().__init__(state_cls=state_cls, assistant=assistant, graph=graph)
+        self._message_q = message_q
         self._state_merger = StateMerger.from_state(state_cls)
         self._fetch_remote_state()
 
@@ -68,13 +73,12 @@ class AgentStream(BaseModel, Generic[TState]):
         graph = self.graph.compile()
         return graph.astream(initial_state, stream_mode=["values", "custom"])  # type: ignore
 
-    async def send_event(self, event_name: str, data: Any) -> bool:
+    async def notify_agent(self, event_name: str, data: Any) -> bool:
         state = await self._state_merger.get_state()
         state.event = event_name
         state.event_data = data
         state.trigger = False
 
-        # TODO: send event to langgraph, check if graph should be triggered
         should_trigger = False
         async for mode, part in self._stateless_graph_stream(state):
             if mode != "values":
@@ -84,14 +88,28 @@ class AgentStream(BaseModel, Generic[TState]):
             if snapshot.trigger:
                 should_trigger = True
 
+        asyncio.create_task(self._update_remote_state(state))
         return should_trigger
 
-    async def assistant_text_stream(
+    async def trigger_agent(self, timestamp: Timestamp):
+        start_t = timestamp.t
+        should_interrupt = lambda: start_t != timestamp.t
+
+        state = await self._state_merger.get_state()
+        state.event = None
+        state.event_data = None
+        state.trigger = True
+
+        text_stream = self._assistant_text_stream(state, should_interrupt)
+        await self._message_q.put(text_stream)
+
+        asyncio.create_task(self._update_remote_state(state))
+
+    async def _assistant_text_stream(
         self,
         state: TState,
         should_interrupt: Callable[[], bool],
     ) -> AsyncIterator[str]:
-        # TODO: run langgraph, stop when graph is done or interrupted
         async for mode, part in self._stateless_graph_stream(state):
             if should_interrupt():
                 logger.info("Interrupting graph stream")
@@ -106,20 +124,3 @@ class AgentStream(BaseModel, Generic[TState]):
                     continue
 
                 yield chunk_text
-
-    async def trigger_agent(self, timestamp: Timestamp):
-        start_t = timestamp.t
-        should_interrupt = lambda: start_t != timestamp.t
-
-        state = await self._state_merger.get_state()
-        state.event = None
-        state.event_data = None
-        state.trigger = True
-
-        text_stream = self.assistant_text_stream(state, should_interrupt)
-        await self.assistant.say(
-            to_async_iterable(text_stream),
-            allow_interruptions=True,
-            add_to_chat_ctx=True,
-        )
-        await self._update_remote_state(state)

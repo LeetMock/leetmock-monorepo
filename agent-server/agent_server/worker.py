@@ -1,12 +1,11 @@
 import asyncio
 import hashlib
 import os
-import string
 from datetime import datetime
+from typing import AsyncIterator
 
 import psutil
 from agent_graph.code_mock_staged_v1.graph import AgentState, create_graph
-from agent_server.agent import LangGraphLLM
 from agent_server.agent_streams import AgentStream
 from agent_server.agent_triggers import AgentTrigger
 from agent_server.contexts.context_manager import AgentContextManager
@@ -19,15 +18,13 @@ from agent_server.events.events import (
     UserMessageEvent,
     UserMessageEventData,
 )
-from agent_server.livekit.streams import NoOpLLM, NoOpLLMStream
-from agent_server.livekit.tts import create_elevenlabs_tts
+from agent_server.livekit.streams import NoOpLLM, SimpleLLMStream
 from agent_server.utils.logger import get_logger
 from agent_server.utils.messages import (
     convert_chat_ctx_to_langchain_messages,
     filter_langchain_messages,
 )
 from dotenv import find_dotenv, load_dotenv
-from langchain_core.messages import BaseMessage
 from livekit.agents import cli  # type: ignore
 from livekit.agents import JobContext, WorkerOptions, llm, utils
 from livekit.agents.voice_assistant import VoiceAssistant
@@ -83,14 +80,13 @@ async def entrypoint(ctx: JobContext):
     session = CodeSession(api=convex_api)
 
     user_message_event_q = asyncio.Queue[UserMessageEventData]()
+    user_message_response_q = asyncio.Queue[AsyncIterator[str]]()
     unix_timestamp = int(datetime.now().timestamp())
 
     ctx_manager = AgentContextManager(ctx=ctx, api=convex_api, session=session)
     await ctx_manager.start()
 
-    def before_llm_callback(
-        _: VoiceAssistant, chat_ctx: llm.ChatContext
-    ) -> llm.LLMStream:
+    async def before_llm_callback(_: VoiceAssistant, chat_ctx: llm.ChatContext):
         print(f"Received raw messages")
         for message in chat_ctx.messages:
             print(message)
@@ -107,7 +103,8 @@ async def entrypoint(ctx: JobContext):
             print(message)
 
         user_message_event_q.put_nowait(UserMessageEventData.from_messages(lc_messages))
-        return NoOpLLMStream(llm=no_op_llm, chat_ctx=chat_ctx)
+        text_stream = await user_message_response_q.get()
+        return SimpleLLMStream(text_stream=text_stream, chat_ctx=chat_ctx)
 
     assistant = VoiceAssistant(
         vad=silero.VAD.load(),
@@ -122,7 +119,12 @@ async def entrypoint(ctx: JobContext):
     )
 
     graph = create_graph()
-    agent_stream = AgentStream(state_cls=AgentState, assistant=assistant, graph=graph)
+    agent_stream = AgentStream(
+        state_cls=AgentState,
+        assistant=assistant,
+        graph=graph,
+        message_q=user_message_response_q,
+    )
     agent_trigger = AgentTrigger(
         stream=agent_stream,
         events=[
