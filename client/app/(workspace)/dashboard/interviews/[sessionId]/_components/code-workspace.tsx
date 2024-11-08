@@ -17,6 +17,7 @@ import { useWindowSize } from "usehooks-ts";
 import { CodeEditorPanel } from "./code-editor-panel";
 import { CodeQuestionPanel } from "./code-question-panel";
 import { WorkspaceToolbar } from "./workspace-toolbar";
+import { useEditorStore } from "@/hooks/use-editor-store";
 
 export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { disconnect } = useConnection();
@@ -63,6 +64,7 @@ export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ session
 
   if (session?.sessionStatus === "completed") {
     disconnect();
+    useEditorStore.getState().reset();
     toast.success("Congratulations! You've completed the interview. 🎉");
     return redirect("/dashboard/interviews");
   }

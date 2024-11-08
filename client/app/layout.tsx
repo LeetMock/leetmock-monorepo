@@ -30,7 +30,9 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange>
           <ConvexClientProvider>
             {children}
-            <Toaster />
+            <Toaster
+              duration={1500}  // 1.5 seconds
+            />
             <DevTool />
           </ConvexClientProvider>
         </ThemeProvider>

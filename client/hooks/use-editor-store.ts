@@ -30,6 +30,7 @@ interface EditorStore {
         onCommitEvent: (event: CodeSessionEvent) => void;
     }) => Promise<void>;
     setHasTestcaseChanges: (hasChanges: boolean) => void;
+    reset: () => void;
 }
 
 export const useEditorStore = create<EditorStore>((set, get) => ({
@@ -70,7 +71,16 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
             console.error("Error running tests:", error);
             toast.error("Error running tests. Please try again.");
         }
-
         store.setIsRunning(false);
-    }
+    },
+
+    reset: () => set({
+        testResults: null,
+        outputView: "Testcase",
+        testRunCounter: 0,
+        hasTestcaseChanges: false,
+        isRunning: false,
+        localTestcases: [],
+        activeTestcaseTab: "1"
+    }),
 })); 

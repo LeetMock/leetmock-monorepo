@@ -17,6 +17,7 @@ export type RunTestResult = Array<{
   expected: any;
   actual: any;
   error: string | null;
+  stdout: string | null;
 }>;
 
 export interface TestCaseResult {
@@ -26,6 +27,7 @@ export interface TestCaseResult {
   expected: any;
   actual: any;
   error: string | null;
+  stdout: string | null;
 }
 
 export type CodeRunResult = {

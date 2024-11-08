@@ -120,14 +120,14 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
         )}
         style={{ height: size }}
       >
-        <div className="flex justify-between items-center px-2.5 py-2 border-b">
+        <div className="flex justify-between items-center px-2.5 py-2 border-b shrink-0">
           <div className="flex items-center space-x-2">
             <span className="text-sm font-semibold mb-px">
               {language.charAt(0).toUpperCase() + language.slice(1)}
             </span>
           </div>
         </div>
-        <div className="h-full relative rounded-md pb-2" ref={editorContainerRef}>
+        <div className="flex-1 relative rounded-md pb-2 min-h-0" ref={editorContainerRef}>
           <Editor
             className="absolute inset-0"
             language={language}
@@ -140,7 +140,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
               scrollBeyondLastLine: false,
               readOnly: connectionState !== "connected" || !stateLoaded,
               readOnlyMessage: {
-                value: "You are not connected to the interview room.",
+                value: UNCONNECTED_MESSAGE,
                 isTrusted: true,
               },
               minimap: {
@@ -168,17 +168,17 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
         {...resizeHandleProps}
       >
         <div className="absolute inset-0 flex justify-center items-center">
-          <div className="w-9 h-[3px] rounded-full bg-muted-foreground/50"></div>
+          <div className="w-9 h-[3px] rounded-full bg-muted-foreground/50" />
         </div>
       </div>
       <div
         className={cn(
-          "flex flex-col space-y-2 w-full border overflow-hidden",
-          "bg-background rounded-md shadow-md"
+          "flex flex-col w-full border",
+          "bg-background rounded-md shadow-md min-h-0"
         )}
         style={{ height: `calc(100% - ${size}px - 2px)` }}
       >
-        <div className="flex justify-between items-center px-3 py-2">
+        <div className="flex justify-between items-center px-3 py-2 flex-shrink-0">
           <div className="flex space-x-2">
             <Button
               variant="ghost"
@@ -210,19 +210,32 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
             </div>
           )}
         </div>
-        <div className="flex-grow overflow-auto px-2">
-          <div className="h-full p-2 rounded-md bg-secondary/10 relative">
-            <div className={cn(outputView === "testResults" ? "block" : "hidden")}>
-              <TestResultsBlock key={testRunCounter} isRunning={isRunning} results={testResults ?? []} />
+        <div className="flex-1 min-h-0 px-2">
+          <div className="h-full p-2 rounded-md bg-secondary/10 overflow-hidden">
+            <div
+              className={cn(
+                "h-full overflow-auto",
+                outputView === "testResults" ? "block" : "hidden"
+              )}
+            >
+              <TestResultsBlock
+                key={testRunCounter}
+                isRunning={isRunning}
+                results={testResults ?? []}
+              />
             </div>
-            <div className={cn(outputView === "Testcase" ? "block" : "hidden")}>
+            <div
+              className={cn(
+                "h-full overflow-auto",
+                outputView === "Testcase" ? "block" : "hidden"
+              )}
+            >
               <TestcaseEditor
                 testcases={localTestcases}
                 activeTab={activeTestcaseTab}
                 connectionState={connectionState}
                 onTestcasesChange={(testcases) => {
                   setLocalTestcases(testcases);
-                  // console.log("hasTestcaseChanges", hasTestcaseChanges);
                 }}
                 onActiveTabChange={setActiveTestcaseTab}
                 onSaveTestcases={() => {
@@ -236,7 +249,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
             </div>
           </div>
         </div>
-        <div className="flex justify-end px-3 pb-2">
+        <div className="flex justify-end px-3 py-2 flex-shrink-0">
           <Button
             variant="outline-blue"
             className="h-9 min-w-24"
@@ -248,7 +261,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
               runTests,
               onCommitEvent: debouncedCommitEvent
             })}
-            disabled={isRunning}
+            disabled={isRunning || connectionState !== "connected"}
           >
             {isRunning ? (
               <Loader2 className="h-4 w-4 animate-spin" />

@@ -10,7 +10,7 @@ interface TestResultsProps {
 }
 
 export const TestResultsBlock: React.FC<TestResultsProps> = ({ isRunning = false, results }) => {
-  const [selectedCase, setSelectedCase] = useState<TestCaseResult | null>(null);
+  const [selectedCase, setSelectedCase] = useState<TestCaseResult | null>();
 
   if (isRunning) {
     return (
@@ -75,6 +75,9 @@ export const TestResultsBlock: React.FC<TestResultsProps> = ({ isRunning = false
             <div className="space-y-4">
               <TestCaseDetail title="Input" data={selectedCase.input} />
               <TestCaseDetail title="Your Output" data={selectedCase.actual} />
+              {selectedCase.stdout && selectedCase.stdout.trim() !== '' && (
+                <TestCaseDetail title="Stdout" data={selectedCase.stdout} />
+              )}
               <TestCaseDetail title="Expected Output" data={selectedCase.expected} />
               {selectedCase.error && <TestCaseDetail title="Error" data={selectedCase.error} />}
             </div>

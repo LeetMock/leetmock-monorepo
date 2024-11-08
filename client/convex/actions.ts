@@ -5,7 +5,7 @@ import type { VideoGrant } from "livekit-server-sdk";
 import { api, internal } from "./_generated/api";
 import { action } from "./_generated/server";
 
-import { DATA_STRUCTURES } from "@/lib/constants";
+import { DATA_STRUCTURES, CODE_PREFIX } from "@/lib/constants";
 import { CodeRunResult, RunCodeResult, RunTestResult, TokenResult } from "@/lib/types";
 import {
   createToken,
@@ -134,7 +134,7 @@ export const runCode = action({
       files: [
         {
           name: `solution.${getFileExtension(language)}`,
-          content: `from data_structure import *\n\n${code}`,
+          content: `${CODE_PREFIX[language]}\n${code}`,
         },
         {
           name: `data_structure.${getFileExtension(language)}`,
@@ -168,7 +168,6 @@ export const runTests = action({
     const editorState = await ctx.runQuery(internal.codeSessionStates.getEditorStateInternal, { sessionId });
     const testCasesState = await ctx.runQuery(internal.codeSessionStates.getTestCasesStateInternal, { sessionId });
 
-    console.log(testCasesState);
     if (!editorState || !testCasesState) {
       throw new Error("Failed to retrieve code or test cases");
     }
@@ -195,14 +194,13 @@ export const runTests = action({
     // }
 
     const testCode = generateTestCode(question, language, testCasesState);
-
     const payload = {
       language,
       stdin: "",
       files: [
         {
           name: `tests.${getFileExtension(language)}`,
-          content: `from data_structure import *\n\n${testCode}`,
+          content: `${CODE_PREFIX[language]}\n${testCode}`,
         },
         {
           name: `data_structure.${getFileExtension(language)}`,
@@ -210,7 +208,7 @@ export const runTests = action({
         },
         {
           name: `solution.${getFileExtension(language)}`,
-          content: `from data_structure import *\n\n${editorState.content}`,
+          content: `${CODE_PREFIX[language]}\n${editorState.content}`,
         },
       ],
     };

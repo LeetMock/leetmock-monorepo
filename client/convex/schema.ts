@@ -84,7 +84,8 @@ const schema = defineEntSchema({
     question: v.string(),
     solutions: v.record(v.string(), v.string()),
     functionName: v.string(),
-    inputParameters: v.record(v.string(), v.array(v.string())),
+    inputParameters: v.record(v.string(), v.record(v.string(), v.string())),
+    outputParameters: v.string(),
     evalMode: v.union(v.literal("exactMatch"), v.literal("listNodeIter"), v.literal("sortedMatch")),
     tests: v.array(
       v.object({
