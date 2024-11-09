@@ -138,18 +138,18 @@ INTRO_STEPS: List[Step] = [
         done_definition="Interviewer has finished asking about the candidate's background and experience.",
         required=True,
     ),
-    Step.from_info(
-        name="ask_goals",
-        desc="Ask the candidate about their career goals.",
-        done_definition="Interviewer has finished asking about the candidate's career goals.",
-        required=True,
-    ),
-    Step.from_info(
-        name="discuss_projects",
-        desc="Discuss the candidate's past projects and their role in them. Remember to praise interviewee on their achievement.",
-        done_definition="Interviewer has finished discussing the candidate's past projects and their role in them.",
-        required=True,
-    ),
+    # Step.from_info(
+    #     name="ask_goals",
+    #     desc="Ask the candidate about their career goals.",
+    #     done_definition="Interviewer has finished asking about the candidate's career goals.",
+    #     required=True,
+    # ),
+    # Step.from_info(
+    #     name="discuss_projects",
+    #     desc="Discuss the candidate's past projects and their role in them. Remember to praise interviewee on their achievement.",
+    #     done_definition="Interviewer has finished discussing the candidate's past projects and their role in them.",
+    #     required=True,
+    # ),
 ]
 
 INTRO_SIGNALS: List[Signal] = [
@@ -188,8 +188,8 @@ CODING_STEPS: List[Step] = [
     ),
     Step.from_info(
         name="prompt_explain_code",
-        desc="Let the candidate explain their code and the approach they took to solve the problem.",
-        done_definition="Interviewer has finished prompting the candidate to explain their code, or the candidate has finished explaining their code without prompting.",
+        desc="Let the candidate explain their finished code and the approach they took to solve the problem.",
+        done_definition="Code must be finished before performing this step. Interviewer has finished prompting the candidate to explain their code.",
         required=True,
     ),
     Step.from_info(
@@ -208,8 +208,8 @@ CODING_STEPS: List[Step] = [
 
 CODING_SIGNALS: List[Signal] = [
     Signal.from_info(
-        name="clarifying_questions",
-        desc="The candidate asks clarifying questions about the problem.",
+        name="ask_for_clarification",
+        desc="The candidate asks for clarification about the problem. The clarification questions MUST be directly related to the problem, such as asking for more details about the input/output, asking for constraints, etc.",
     ),
     Signal.from_info(
         name="thought_process",

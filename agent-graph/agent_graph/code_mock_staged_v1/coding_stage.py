@@ -56,10 +56,10 @@ class CodingStageState(EventMessageState):
 
 async def test_code_correctness(state: CodingStageState, config: RunnableConfig):
     agent_config = get_configurable(AgentConfig, config)
-    question_id = cast(SessionMetadata, state.session_metadata).question_id
+    question_id = SessionMetadata(**state.session_metadata).question_id
     request = create_test_code_correctness_request(
         language="python",
-        code=cast(CodeSessionState, state.session_state).editor.content,
+        code=CodeSessionState(**state.session_state).editor.content,
         question_id=question_id,
     )
 
@@ -90,22 +90,27 @@ async def assistant(state: CodingStageState, writer: StreamWriter):
             ),
             MessagesPlaceholder(variable_name="messages"),
             # Append the current code content to the prompt as a suffix to maximize the prefix caching
-            HumanMessagePromptTemplate.from_template(CODING_CONTEXT_SUFFIX_PROMPT),
+            HumanMessagePromptTemplate.from_template(
+                CODING_CONTEXT_SUFFIX_PROMPT, template_format="jinja2"
+            ),
         ]
     )
 
     chain = prompt | get_model("gpt-4o").bind(stop=["SILENT", "<thinking>"])
 
     content = ""
-    session_state = cast(CodeSessionState, state.session_state)
+    session_state = CodeSessionState(**state.session_state)
+    session_metadata = SessionMetadata(**state.session_metadata)
     async for chunk in chain.astream(
         {
             "events": state.events,
             "steps": state.steps[StageTypes.CODING],
+            "completed_steps": state.completed_steps[StageTypes.CODING],
             "signals": state.signals[StageTypes.CODING],
             "messages": state.messages,
             "content": session_state.editor.content,
             "language": session_state.editor.language,
+            "question": session_metadata.question_content,
         }
     ):
         content += cast(str, chunk.content)
@@ -124,8 +129,7 @@ async def decide_pre_generation_activities(
 ) -> List[Literal["assistant", "test_code_correctness", "interrupter"]]:
     edges = []
     time_diff = int(
-        time.time()
-        - cast(CodeSessionState, state.session_state).editor.last_updated / 1000
+        time.time() - CodeSessionState(**state.session_state).editor.last_updated / 1000
     )
 
     # If the user has not typed for 2 seconds, add a message indicating that the user is typing

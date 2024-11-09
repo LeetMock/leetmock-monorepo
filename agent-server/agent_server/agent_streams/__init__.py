@@ -1,6 +1,16 @@
 import asyncio
 import logging
-from typing import Any, AsyncIterator, Callable, Generic, Tuple, Type, TypeVar, cast
+from typing import (
+    Any,
+    AsyncIterator,
+    Callable,
+    Dict,
+    Generic,
+    Tuple,
+    Type,
+    TypeVar,
+    cast,
+)
 
 from agent_graph.state_merger import StateMerger
 from agent_graph.types import EventMessageState
@@ -24,11 +34,11 @@ def get_config(thread_id: int) -> RunnableConfig:
     return {"configurable": {"thread_id": str(thread_id)}}
 
 
-def make_config(configurable: BaseModel) -> RunnableConfig:
-    return {"configurable": configurable.dict()}
+def make_config(configurable: Dict[str, Any]) -> RunnableConfig:
+    return {"configurable": configurable}
 
 
-class AgentStream(BaseModel, Generic[TState, TConfig]):
+class AgentStream(BaseModel, Generic[TState]):
 
     state_cls: Type[TState] = Field(
         ..., description="The type of the state to be returned"
@@ -48,9 +58,7 @@ class AgentStream(BaseModel, Generic[TState, TConfig]):
 
     _state_merger: StateMerger[TState] = PrivateAttr(...)
 
-    _agent_config: TConfig = Field(
-        ..., description="The configuration for the agent stream"
-    )
+    _agent_config: Dict[str, Any] = PrivateAttr(...)
 
     class Config:
         arbitrary_types_allowed = True
@@ -58,7 +66,7 @@ class AgentStream(BaseModel, Generic[TState, TConfig]):
     def __init__(
         self,
         state_cls: Type[TState],
-        config: TConfig | Type[TConfig],
+        config: BaseModel,
         session: BaseSession,
         graph: StateGraph,
         assistant: VoiceAssistant,
@@ -70,7 +78,7 @@ class AgentStream(BaseModel, Generic[TState, TConfig]):
             graph=graph,
             session=session,
         )
-        self._agent_config = config() if isinstance(config, Type) else config
+        self._agent_config = config.dict()
         self._message_q = message_q
         self._state_merger = StateMerger.from_state(state_cls)
         self._fetch_remote_state()

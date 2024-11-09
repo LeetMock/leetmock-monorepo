@@ -144,7 +144,7 @@ async def decide_next_stage(state: AgentState):
         else state.current_stage
     )
 
-    return dict(current_stage=next_stage, trigger=False)
+    return dict(current_stage=StageTypes.CODING, trigger=False)
 
 
 # --------------------- agent graph edges --------------------- #

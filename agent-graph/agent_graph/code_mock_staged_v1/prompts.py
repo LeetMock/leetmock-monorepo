@@ -186,7 +186,7 @@ Below are the list of events you will receive, and their corresponding meanings:
 
 <system-events>
 {% for event in events %}
-<system-event name="{{event.name}}" >
+<system-event name="{{event.name.value}}" >
 <description>
 {{event.description}}
 </description>
@@ -199,7 +199,7 @@ Below are the list of events you will receive, and their corresponding meanings:
 Below is the coding question you will ask to the candidate during the interview:
 
 <coding-question>
-{question}
+{{question}}
 </coding-question>
 
 ## Important Rules
@@ -240,8 +240,15 @@ CODING_CONTEXT_SUFFIX_PROMPT = """\
 Below is the code inside the editor:
 
 <code-content>
-{content}
+{{content}}
 </code-content>
+
+Below are the steps that you have already completed:
+<completed-steps>
+{% for name in completed_steps %}
+<step name="{{name}}" />
+{% endfor %}
+</completed-steps>
 
 (Now, think about how you will respond to the candidate based on past events, test results, current code, etc. Whether you want to keep silent or say something:)
 """

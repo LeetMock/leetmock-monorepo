@@ -107,9 +107,6 @@ async def entrypoint(ctx: JobContext):
         llm=no_op_llm,
         tts=openai.TTS(),
         chat_ctx=ctx_manager.chat_ctx,
-        preemptive_synthesis=True,
-        interrupt_speech_duration=0.5,
-        min_endpointing_delay=0.4,
         before_llm_cb=before_llm_callback,
     )
 
