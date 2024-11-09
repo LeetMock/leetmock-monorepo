@@ -4,6 +4,7 @@ from typing import List, TypeVar
 from agent_graph.types import NamedEntity, Signal, Step
 from agent_graph.utils import wrap_xml
 from langchain_core.messages import AIMessage
+from pydantic.v1 import BaseModel, Field
 
 TEntity = TypeVar("TEntity", bound=NamedEntity)
 
@@ -17,6 +18,20 @@ class StageTypes(str, Enum):
     CODING = "coding"
     EVAL = "eval"
     END = "end"
+
+
+class AgentConfig(BaseModel):
+    """Config for the agent.
+
+    - Used for agent-specific configurations.
+    - Every single field should have a default value; otherwise, the agent will fail to start.
+    """
+
+    session_id: str = Field(default="")
+
+    llm_name: str = Field(default="gpt-4o")
+
+    temperature: float = Field(default=0.9)
 
 
 def get_next_stage(stage: StageTypes) -> StageTypes:

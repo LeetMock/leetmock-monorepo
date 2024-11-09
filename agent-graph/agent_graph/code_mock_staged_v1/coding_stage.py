@@ -2,7 +2,6 @@ from collections import defaultdict
 from typing import Annotated, Dict, List, cast
 
 from agent_graph.code_mock_staged_v1.constants import (
-    AgentConfig,
     AgentTags,
     Signal,
     StageTypes,
@@ -10,22 +9,21 @@ from agent_graph.code_mock_staged_v1.constants import (
 )
 from agent_graph.code_mock_staged_v1.prompts import INTRO_PROMPT
 from agent_graph.llms import get_model
-from agent_graph.utils import custom_data, get_configurable
+from agent_graph.utils import custom_data
 from langchain_core.messages import AIMessage, AnyMessage
 from langchain_core.prompts import (
     ChatPromptTemplate,
     MessagesPlaceholder,
     SystemMessagePromptTemplate,
 )
-from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph, add_messages
 from langgraph.types import StreamWriter
 from pydantic.v1 import BaseModel, Field
 
 
-class IntroStageState(BaseModel):
-    """State for the intro stage of the agent."""
+class CodingStageState(BaseModel):
+    """State for the coding stage of the agent."""
 
     messages: Annotated[List[AnyMessage], add_messages]
 
@@ -39,12 +37,7 @@ class IntroStageState(BaseModel):
 
 
 # --------------------- stage subgraph nodes --------------------- #
-async def assistant(
-    state: IntroStageState, config: RunnableConfig, writer: StreamWriter
-):
-    agent_config = get_configurable(AgentConfig, config)
-    print(agent_config)
-
+async def assistant(state: CodingStageState, writer: StreamWriter):
     prompt = ChatPromptTemplate.from_messages(
         [
             SystemMessagePromptTemplate.from_template(
@@ -78,7 +71,7 @@ async def assistant(
 
 def create_graph():
     return (
-        StateGraph(IntroStageState, AgentConfig)
+        StateGraph(CodingStageState)
         # nodes
         .add_node("assistant", assistant)  # type: ignore
         # edges

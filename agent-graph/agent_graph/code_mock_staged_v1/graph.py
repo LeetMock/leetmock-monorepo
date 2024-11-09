@@ -9,15 +9,18 @@ from agent_graph.code_mock_staged_v1.constants import (
     EVAL_STEPS,
     INTRO_SIGNALS,
     INTRO_STEPS,
+    AgentConfig,
     StageTypes,
     get_next_stage,
 )
 from agent_graph.constants import JOIN_CALL_MESSAGE
 from agent_graph.types import EventMessageState, Signal, Step
+from agent_graph.utils import get_configurable
 from langchain_core.messages import HumanMessage
+from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
-from langgraph.graph import END, START, StateGraph, add_messages
-from pydantic.v1 import BaseModel, Field
+from langgraph.graph import END, START, StateGraph
+from pydantic.v1 import Field
 
 
 class AgentState(EventMessageState):
@@ -54,18 +57,11 @@ class AgentState(EventMessageState):
     )
 
 
-class AgentConfig(BaseModel):
-    """Config for the agent."""
-
-    session_id: str = Field(default="")
-
-    llm_name: str = Field(default="gpt-4o")
-
-    temperature: float = Field(default=0.9)
-
-
 # --------------------- agent graph nodes --------------------- #
-async def init_state(_: AgentState):
+async def init_state(state: AgentState, config: RunnableConfig):
+    agent_config = get_configurable(AgentConfig, config)
+    print(agent_config)
+
     messages = [HumanMessage(content=JOIN_CALL_MESSAGE)]
     stages = [StageTypes.INTRO, StageTypes.CODING, StageTypes.EVAL]
 
