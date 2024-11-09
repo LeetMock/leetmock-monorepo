@@ -15,10 +15,10 @@ from agent_graph.code_mock_staged_v1.constants import (
     get_next_stage,
 )
 from agent_graph.constants import JOIN_CALL_MESSAGE
+from agent_graph.events import EVENT_DESCRIPTORS, EventDescriptor
 from agent_graph.types import EventMessageState, MessageWrapper, Signal, Step
-from agent_graph.utils import get_configurable, with_event_reset, with_trigger_reset
+from agent_graph.utils import with_event_reset, with_trigger_reset
 from langchain_core.messages import HumanMessage
-from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 from pydantic.v1 import Field
@@ -43,6 +43,11 @@ class AgentState(EventMessageState):
         description="Current stage of the agent",
     )
 
+    events: List[EventDescriptor] = Field(
+        default_factory=list,
+        description="Event descriptors for the agent",
+    )
+
     steps: Dict[StageTypes, List[Step]] = Field(
         default_factory=lambda: defaultdict(list),
         description="Steps for the agent",
@@ -63,24 +68,12 @@ class AgentState(EventMessageState):
         description="Caught signals for the agent",
     )
 
-    session_state: CodeSessionState = Field(
-        default=None,
-        description="Session state for the agent",
-    )
-
-    session_metadata: SessionMetadata = Field(
-        default=None,
-        description="Session metadata for the agent",
-    )
-
 
 # --------------------- agent graph nodes --------------------- #
-async def init_state(state: AgentState, config: RunnableConfig):
-    agent_config = get_configurable(AgentConfig, config)
-    print(agent_config)
-
+async def init_state(_: AgentState):
     messages = [HumanMessage(content=JOIN_CALL_MESSAGE)]
     stages = [StageTypes.INTRO, StageTypes.CODING, StageTypes.EVAL]
+    events = EVENT_DESCRIPTORS
 
     steps = {
         StageTypes.INTRO: INTRO_STEPS,
@@ -100,6 +93,7 @@ async def init_state(state: AgentState, config: RunnableConfig):
     return dict(
         initialized=True,
         messages=messages,
+        events=events,
         steps=steps,
         signals=signals,
         completed_steps=completed_steps,
@@ -132,7 +126,7 @@ async def on_event(
 
 
 async def on_trigger(state: AgentState):
-    # e.g. update step status, etc.
+    # Router node that redirect to the correct stage
     return with_trigger_reset()
 
 

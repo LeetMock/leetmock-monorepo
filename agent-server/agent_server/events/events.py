@@ -94,7 +94,7 @@ class CodeSessionEvent(BaseEvent[Any]):
 
 class TestSubmissionEvent(BaseEvent[Any]):
 
-    stream: AgentStream[AgentState]
+    stream: AgentStream[AgentState, Any]
 
     @property
     def event_name(self) -> str:

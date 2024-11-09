@@ -9,6 +9,7 @@ from agent_graph.code_mock_staged_v1.constants import (
 )
 from agent_graph.code_mock_staged_v1.prompts import INTRO_PROMPT
 from agent_graph.llms import get_model
+from agent_graph.types import EventMessageState
 from agent_graph.utils import custom_data, get_configurable
 from langchain_core.messages import AIMessage, AnyMessage
 from langchain_core.prompts import (
@@ -23,10 +24,8 @@ from langgraph.types import StreamWriter
 from pydantic.v1 import BaseModel, Field
 
 
-class IntroStageState(BaseModel):
+class IntroStageState(EventMessageState):
     """State for the intro stage of the agent."""
-
-    messages: Annotated[List[AnyMessage], add_messages]
 
     steps: Dict[StageTypes, List[Step]] = Field(
         default_factory=lambda: defaultdict(list)

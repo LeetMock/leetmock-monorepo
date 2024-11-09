@@ -33,6 +33,14 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
         self._has_started = False
         self._start_lock = asyncio.Lock()
 
+    @property
+    def session_state(self) -> BaseModel:
+        raise NotImplementedError
+
+    @property
+    def session_metadata(self) -> SessionMetadata:
+        raise NotImplementedError
+
     @abstractmethod
     async def setup(self, session_id: str):
         """Start the session."""

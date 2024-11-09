@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import AsyncIterator
 
 import psutil
+from agent_graph.code_mock_staged_v1.constants import AgentConfig
 from agent_graph.code_mock_staged_v1.graph import AgentState, create_graph
 from agent_server.agent_streams import AgentStream
 from agent_server.agent_triggers import AgentTrigger
@@ -112,11 +113,13 @@ async def entrypoint(ctx: JobContext):
         before_llm_cb=before_llm_callback,
     )
 
-    graph = create_graph()
+    agent_config = AgentConfig(convex_url=convex_api.convex_url)
     agent_stream = AgentStream(
         state_cls=AgentState,
+        config=agent_config,
+        session=session,
+        graph=create_graph(),
         assistant=assistant,
-        graph=graph,
         message_q=user_message_response_q,
     )
     agent_trigger = AgentTrigger(
@@ -132,7 +135,6 @@ async def entrypoint(ctx: JobContext):
     agent_trigger.start()
     assistant.start(ctx.room)
 
-    await asyncio.sleep(3)
     await agent_trigger.trigger()
 
 

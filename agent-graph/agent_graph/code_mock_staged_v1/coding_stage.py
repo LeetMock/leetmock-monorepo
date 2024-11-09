@@ -9,13 +9,19 @@ from agent_graph.code_mock_staged_v1.constants import (
     Step,
     format_test_code_correctness_notification_messages,
 )
-from agent_graph.code_mock_staged_v1.prompts import CODING_PROMPT
+from agent_graph.code_mock_staged_v1.prompts import (
+    CODING_CONTEXT_SUFFIX_PROMPT,
+    CODING_PROMPT,
+)
+from agent_graph.events import EventDescriptor
 from agent_graph.llms import get_model
 from agent_graph.prompts import format_test_context
+from agent_graph.types import EventMessageState
 from agent_graph.utils import custom_data, get_configurable
 from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
 from langchain_core.prompts import (
     ChatPromptTemplate,
+    HumanMessagePromptTemplate,
     MessagesPlaceholder,
     SystemMessagePromptTemplate,
 )
@@ -30,10 +36,10 @@ from libs.convex.convex_requests import create_test_code_correctness_request
 from libs.convex.convex_types import CodeSessionState, SessionMetadata
 
 
-class CodingStageState(BaseModel):
+class CodingStageState(EventMessageState):
     """State for the coding stage of the agent."""
 
-    messages: Annotated[List[AnyMessage], add_messages]
+    events: List[EventDescriptor] = Field(default_factory=list)
 
     steps: Dict[StageTypes, List[Step]] = Field(
         default_factory=lambda: defaultdict(list)
@@ -47,17 +53,13 @@ class CodingStageState(BaseModel):
         default_factory=lambda: defaultdict(list),
     )
 
-    session_state: CodeSessionState = Field(default=None)
-
-    session_metadata: SessionMetadata = Field(default=None)
-
 
 async def test_code_correctness(state: CodingStageState, config: RunnableConfig):
     agent_config = get_configurable(AgentConfig, config)
-    question_id = state.session_metadata.question_id
+    question_id = cast(SessionMetadata, state.session_metadata).question_id
     request = create_test_code_correctness_request(
         language="python",
-        code=state.session_state.editor.content,
+        code=cast(CodeSessionState, state.session_state).editor.content,
         question_id=question_id,
     )
 
@@ -87,17 +89,23 @@ async def assistant(state: CodingStageState, writer: StreamWriter):
                 CODING_PROMPT, template_format="jinja2"
             ),
             MessagesPlaceholder(variable_name="messages"),
+            # Append the current code content to the prompt as a suffix to maximize the prefix caching
+            HumanMessagePromptTemplate.from_template(CODING_CONTEXT_SUFFIX_PROMPT),
         ]
     )
 
     chain = prompt | get_model("gpt-4o").bind(stop=["SILENT", "<thinking>"])
 
     content = ""
+    session_state = cast(CodeSessionState, state.session_state)
     async for chunk in chain.astream(
         {
+            "events": state.events,
+            "steps": state.steps[StageTypes.CODING],
+            "signals": state.signals[StageTypes.CODING],
             "messages": state.messages,
-            "steps": state.steps[StageTypes.INTRO],
-            "signals": state.signals[StageTypes.INTRO],
+            "content": session_state.editor.content,
+            "language": session_state.editor.language,
         }
     ):
         content += cast(str, chunk.content)
@@ -111,18 +119,24 @@ async def assistant(state: CodingStageState, writer: StreamWriter):
 
 
 # --------------------- stage subgraph edges --------------------- #
-async def decide_pre_generation_action(
+async def decide_pre_generation_activities(
     state: CodingStageState,
 ) -> List[Literal["assistant", "test_code_correctness", "interrupter"]]:
     edges = []
-    time_diff = int(time.time() - state.session_state.editor.last_updated / 1000)
+    time_diff = int(
+        time.time()
+        - cast(CodeSessionState, state.session_state).editor.last_updated / 1000
+    )
 
+    # If the user has not typed for 2 seconds, add a message indicating that the user is typing
     if time_diff < 2:
         edges.append("interrupter")
 
+    # If the user has completed the prompt_explain_code step, start running ground truth tests
     if "prompt_explain_code" in state.completed_steps[StageTypes.CODING]:
         edges.append("test_code_correctness")
 
+    # If no other activities are needed, directly call the assistant
     if len(edges) == 0:
         edges.append("assistant")
 
@@ -139,7 +153,7 @@ def create_graph():
         # edges
         .add_conditional_edges(
             source=START,
-            path=decide_pre_generation_action,
+            path=decide_pre_generation_activities,
             path_map=["assistant", "test_code_correctness", "interrupter"],
         )
         .add_edge("test_code_correctness", "assistant")

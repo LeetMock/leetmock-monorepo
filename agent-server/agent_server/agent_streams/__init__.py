@@ -4,8 +4,8 @@ from typing import Any, AsyncIterator, Callable, Generic, Tuple, Type, TypeVar, 
 
 from agent_graph.state_merger import StateMerger
 from agent_graph.types import EventMessageState
+from agent_server.contexts.session import BaseSession
 from agent_server.utils.streams import to_async_iterable
-from langchain_core.messages import BaseMessageChunk
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import StateGraph
 from langgraph.types import StreamMode
@@ -17,13 +17,18 @@ from libs.timestamp import Timestamp
 logger = logging.getLogger(__name__)
 
 TState = TypeVar("TState", bound=EventMessageState)
+TConfig = TypeVar("TConfig", bound=BaseModel)
 
 
 def get_config(thread_id: int) -> RunnableConfig:
     return {"configurable": {"thread_id": str(thread_id)}}
 
 
-class AgentStream(BaseModel, Generic[TState]):
+def make_config(configurable: BaseModel) -> RunnableConfig:
+    return {"configurable": configurable.dict()}
+
+
+class AgentStream(BaseModel, Generic[TState, TConfig]):
 
     state_cls: Type[TState] = Field(
         ..., description="The type of the state to be returned"
@@ -33,6 +38,8 @@ class AgentStream(BaseModel, Generic[TState]):
         ..., description="The voice assistant to trigger the agent"
     )
 
+    session: BaseSession = Field(..., description="The session to trigger the agent")
+
     graph: StateGraph = Field(
         ..., description="The compiled state graph to trigger the agent"
     )
@@ -41,17 +48,29 @@ class AgentStream(BaseModel, Generic[TState]):
 
     _state_merger: StateMerger[TState] = PrivateAttr(...)
 
+    _agent_config: TConfig = Field(
+        ..., description="The configuration for the agent stream"
+    )
+
     class Config:
         arbitrary_types_allowed = True
 
     def __init__(
         self,
         state_cls: Type[TState],
-        assistant: VoiceAssistant,
+        config: TConfig | Type[TConfig],
+        session: BaseSession,
         graph: StateGraph,
+        assistant: VoiceAssistant,
         message_q: asyncio.Queue[AsyncIterator[str]],
     ):
-        super().__init__(state_cls=state_cls, assistant=assistant, graph=graph)
+        super().__init__(
+            state_cls=state_cls,
+            assistant=assistant,
+            graph=graph,
+            session=session,
+        )
+        self._agent_config = config() if isinstance(config, Type) else config
         self._message_q = message_q
         self._state_merger = StateMerger.from_state(state_cls)
         self._fetch_remote_state()
@@ -71,13 +90,16 @@ class AgentStream(BaseModel, Generic[TState]):
         self, initial_state: TState
     ) -> AsyncIterator[Tuple[StreamMode, Any]]:
         graph = self.graph.compile()
-        return graph.astream(initial_state, stream_mode=["values", "custom"])  # type: ignore
+        config = make_config(self._agent_config)
+        return graph.astream(input=initial_state, config=config, stream_mode=["values", "custom"])  # type: ignore
 
     async def notify_agent(self, event_name: str, data: Any) -> bool:
         state = await self._state_merger.get_state()
         state.event = event_name
         state.event_data = data
         state.trigger = False
+        state.session_metadata = self.session.session_metadata.dict()
+        state.session_state = self.session.session_state.dict()
 
         should_trigger = False
         async for mode, part in self._stateless_graph_stream(state):
@@ -98,6 +120,8 @@ class AgentStream(BaseModel, Generic[TState]):
         state.event = None
         state.event_data = None
         state.trigger = True
+        state.session_metadata = self.session.session_metadata.dict()
+        state.session_state = self.session.session_state.dict()
 
         logger.info("Triggering agent")
         text_stream = self._assistant_text_stream(state, should_interrupt)

@@ -1,9 +1,13 @@
-from typing import Annotated, Any, List
+from typing import Annotated, Any, Dict, List, TypeVar
 
 from langchain_core.load.serializable import Serializable
 from langchain_core.messages import AnyMessage
 from langgraph.graph import add_messages
+from pydantic import BaseModel as BaseModelV2
 from pydantic.v1 import BaseModel, Field
+
+TState = TypeVar("TState", bound=BaseModelV2)
+TMetadata = TypeVar("TMetadata", bound=BaseModelV2)
 
 
 class EventMessageState(BaseModel):
@@ -26,6 +30,16 @@ class EventMessageState(BaseModel):
     trigger: bool = Field(
         default=False,
         description="Whether the agent should be triggered",
+    )
+
+    session_state: Dict[str, Any] = Field(
+        default_factory=dict,
+        description="Session state",
+    )
+
+    session_metadata: Dict[str, Any] = Field(
+        default_factory=dict,
+        description="Session metadata",
     )
 
 
