@@ -38,12 +38,12 @@ async function handleContentChangeEvent(
   sessionState: EntWriter<"codeSessionStates">,
   e: Extract<CodeSessionEvent, { type: "content_changed" }>
 ) {
-  const { content } = e.data;
+  const { after } = e.data;
 
   await sessionState.patch({
     editor: {
       ...sessionState.editor,
-      content,
+      content: after,
       lastUpdated: Date.now(),
     },
   });

@@ -22,6 +22,8 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 from pydantic.v1 import Field
 
+from libs.convex_types import CodeSessionState, SessionMetadata
+
 
 class AgentState(EventMessageState):
     """State of the agent."""
@@ -54,6 +56,16 @@ class AgentState(EventMessageState):
     caught_signals: Dict[StageTypes, List[str]] = Field(
         default_factory=lambda: defaultdict(list),
         description="Caught signals for the agent",
+    )
+
+    session_state: CodeSessionState = Field(
+        default=None,
+        description="Session state for the agent",
+    )
+
+    session_metadata: SessionMetadata = Field(
+        default=None,
+        description="Session metadata for the agent",
     )
 
 

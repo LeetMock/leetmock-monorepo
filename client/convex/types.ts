@@ -10,7 +10,8 @@ export const codeSessionEventSchemas = {
   content_changed: v.object({
     type: v.literal("content_changed"),
     data: v.object({
-      content: v.string(),
+      before: v.string(),
+      after: v.string(),
     }),
   }),
   user_test_executed: v.object({

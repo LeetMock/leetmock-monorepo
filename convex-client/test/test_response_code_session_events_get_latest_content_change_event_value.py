@@ -37,7 +37,8 @@ class TestResponseCodeSessionEventsGetLatestContentChangeEventValue(unittest.Tes
             return ResponseCodeSessionEventsGetLatestContentChangeEventValue(
                 event = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf(
                     data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_data(
-                        content = '', ), 
+                        after = '', 
+                        before = '', ), 
                     type = 'content_changed', ),
                 id = '',
                 ts = 1.337
@@ -46,7 +47,8 @@ class TestResponseCodeSessionEventsGetLatestContentChangeEventValue(unittest.Tes
             return ResponseCodeSessionEventsGetLatestContentChangeEventValue(
                 event = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf(
                     data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_data(
-                        content = '', ), 
+                        after = '', 
+                        before = '', ), 
                     type = 'content_changed', ),
                 id = '',
                 ts = 1.337,

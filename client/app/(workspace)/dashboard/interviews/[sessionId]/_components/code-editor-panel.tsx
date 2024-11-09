@@ -153,7 +153,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
             className="absolute inset-0"
             language={language}
             theme={theme === "dark" ? "customDarkTheme" : "vs-light"}
-            value={editorState ? editorState.content : ""}
+            value={editorState?.content || ""}
             options={{
               fontSize: 14,
               lineNumbers: "on",
@@ -169,11 +169,16 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
               },
             }}
             onChange={(value) => {
+              // Check for undefined values
+              if (!isDefined(localEditorContent) || !isDefined(value)) return;
+              if (connectionState !== "connected") return;
+              if (localEditorContent === value) return;
+
               debouncedCommitEvent({
                 type: "content_changed",
-                data: { content: value || "" },
+                data: { before: localEditorContent, after: value },
               });
-              setLocalEditorContent(value || "");
+              setLocalEditorContent(value);
             }}
             beforeMount={(monaco) => {
               monaco.editor.defineTheme("customDarkTheme", darkEditorTheme);

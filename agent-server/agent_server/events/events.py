@@ -7,7 +7,6 @@ from agent_server.agent_streams import AgentStream
 from agent_server.contexts.session import CodeSession, CodeSessionEventTypes
 from agent_server.events import BaseEvent
 from debouncer import debounce
-from httpx import stream
 from langchain_core.messages import BaseMessage
 from livekit.agents.voice_assistant import VoiceAssistant
 from pydantic.v1 import BaseModel, Field, PrivateAttr

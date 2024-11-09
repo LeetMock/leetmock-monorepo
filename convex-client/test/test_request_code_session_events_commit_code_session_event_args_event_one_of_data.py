@@ -35,11 +35,13 @@ class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOfData(unitt
         model = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOfData()
         if include_optional:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOfData(
-                content = ''
+                after = '',
+                before = ''
             )
         else:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOfData(
-                content = '',
+                after = '',
+                before = '',
         )
         """
 

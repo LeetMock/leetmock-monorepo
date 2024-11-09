@@ -41,7 +41,8 @@ class TestResponseCodeSessionEventsGetLatestContentChangeEvent(unittest.TestCase
                 value = convex_client.models.response_code_session_events_get_latest_content_change_event_value.Response_codeSessionEvents_getLatestContentChangeEvent_value(
                     event = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf(
                         data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_data(
-                            content = '', ), 
+                            after = '', 
+                            before = '', ), 
                         type = 'content_changed', ), 
                     id = '', 
                     ts = 1.337, )

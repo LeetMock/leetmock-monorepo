@@ -26,8 +26,9 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOfData(BaseModel
     """
     RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOfData
     """ # noqa: E501
-    content: StrictStr
-    __properties: ClassVar[List[str]] = ["content"]
+    after: StrictStr
+    before: StrictStr
+    __properties: ClassVar[List[str]] = ["after", "before"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -80,7 +81,8 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOfData(BaseModel
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "content": obj.get("content")
+            "after": obj.get("after"),
+            "before": obj.get("before")
         })
         return _obj
 

@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.request_user_profiles_get_user_profile import RequestUserProfilesGetUserProfile
+from convex_client.models.request_admins_create_user_profile_args_subscription import RequestAdminsCreateUserProfileArgsSubscription
 
-class TestRequestUserProfilesGetUserProfile(unittest.TestCase):
-    """RequestUserProfilesGetUserProfile unit test stubs"""
+class TestRequestAdminsCreateUserProfileArgsSubscription(unittest.TestCase):
+    """RequestAdminsCreateUserProfileArgsSubscription unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,26 +25,24 @@ class TestRequestUserProfilesGetUserProfile(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> RequestUserProfilesGetUserProfile:
-        """Test RequestUserProfilesGetUserProfile
+    def make_instance(self, include_optional) -> RequestAdminsCreateUserProfileArgsSubscription:
+        """Test RequestAdminsCreateUserProfileArgsSubscription
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `RequestUserProfilesGetUserProfile`
+        # uncomment below to create an instance of `RequestAdminsCreateUserProfileArgsSubscription`
         """
-        model = RequestUserProfilesGetUserProfile()
+        model = RequestAdminsCreateUserProfileArgsSubscription()
         if include_optional:
-            return RequestUserProfilesGetUserProfile(
-                args = None
+            return RequestAdminsCreateUserProfileArgsSubscription(
             )
         else:
-            return RequestUserProfilesGetUserProfile(
-                args = None,
+            return RequestAdminsCreateUserProfileArgsSubscription(
         )
         """
 
-    def testRequestUserProfilesGetUserProfile(self):
-        """Test RequestUserProfilesGetUserProfile"""
+    def testRequestAdminsCreateUserProfileArgsSubscription(self):
+        """Test RequestAdminsCreateUserProfileArgsSubscription"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 
