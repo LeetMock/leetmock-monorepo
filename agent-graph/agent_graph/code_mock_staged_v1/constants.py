@@ -1,16 +1,16 @@
 from enum import Enum
 from typing import List, TypeVar
 
+from agent_graph.events import CodingEventType
 from agent_graph.types import NamedEntity, Signal, Step
 from agent_graph.utils import wrap_xml
-from langchain_core.messages import AIMessage
+from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
 from pydantic.v1 import BaseModel, Field
 
+from libs.convex.convex_types import CodeSessionContentChangedEvent
+from libs.diffs import get_unified_diff
+
 TEntity = TypeVar("TEntity", bound=NamedEntity)
-
-
-class AgentTags(str, Enum):
-    INTRO_LLM = "intro-llm"
 
 
 class StageTypes(str, Enum):
@@ -27,7 +27,7 @@ class AgentConfig(BaseModel):
     - Every single field should have a default value; otherwise, the agent will fail to start.
     """
 
-    session_id: str = Field(default="")
+    convex_url: str = Field(default="")
 
     llm_name: str = Field(default="gpt-4o")
 
@@ -66,7 +66,7 @@ def get_first_unseen_entity(entities: List[TEntity], seen: List[str]) -> TEntity
 
 def format_step_notification_messages(
     entities: List[TEntity], seen_names: List[str], completed_names: List[str]
-) -> List[AIMessage]:
+) -> List[AnyMessage]:
     if len(completed_names) == 0:
         return []
 
@@ -93,6 +93,36 @@ def format_signal_notification_messages(
         message = f"I have caught the signal(s): {", ".join(completed_names)}."
 
     return [AIMessage(content=wrap_xml("thinking", message))]
+
+
+def format_content_changed_notification_messages(
+    event_data: CodeSessionContentChangedEvent,
+) -> List[AnyMessage]:
+    before, after = event_data.event.data.before, event_data.event.data.after
+    diff = get_unified_diff(before, after)
+    return [
+        HumanMessage(
+            content=wrap_xml(
+                tag="system-event",
+                content=f"```diff\n{diff}\n```",
+                args={"name": CodingEventType.CODE_EDITOR_CONTENT_CHANGED},
+            )
+        )
+    ]
+
+
+def format_test_code_correctness_notification_messages(
+    test_context: str,
+) -> List[AnyMessage]:
+    return [
+        AIMessage(
+            content=wrap_xml(
+                "system-event",
+                test_context,
+                args={"name": CodingEventType.GROUND_TRUTH_TEST_CASE_EXECUTED},
+            )
+        )
+    ]
 
 
 INTRO_STEPS: List[Step] = [

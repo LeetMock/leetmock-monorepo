@@ -3,7 +3,6 @@ from typing import Annotated, Dict, List, cast
 
 from agent_graph.code_mock_staged_v1.constants import (
     AgentConfig,
-    AgentTags,
     Signal,
     StageTypes,
     Step,
@@ -54,9 +53,7 @@ async def assistant(
         ]
     )
 
-    chain = prompt | get_model("gpt-4o-mini").bind(
-        stop=["SILENT", "<thinking>"]
-    ).with_config({"tags": [AgentTags.INTRO_LLM]})
+    chain = prompt | get_model("gpt-4o-mini").bind(stop=["SILENT", "<thinking>"])
 
     content = ""
     async for chunk in chain.astream(

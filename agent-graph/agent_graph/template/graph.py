@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import Annotated, List
 
 from agent_graph.constants import JOIN_CALL_MESSAGE
@@ -8,15 +7,7 @@ from agent_graph.template.stage_subgraph import (
 from langchain_core.messages import AnyMessage, HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph, add_messages
-from langgraph.types import StreamWriter
 from pydantic.v1 import BaseModel, Field
-
-
-class Stages(str, Enum):
-    BACKGROUND = "background"
-    CODING = "coding"
-    EVAL = "eval"
-    END = END
 
 
 class AgentState(BaseModel):
@@ -51,7 +42,7 @@ async def on_event(state: AgentState):
     return dict(trigger=trigger, event=None)
 
 
-async def on_trigger(state: AgentState, writer: StreamWriter):
+async def on_trigger(state: AgentState):
     # TODO: process and update state
     # e.g. update task status, etc.
     return None

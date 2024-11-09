@@ -1,7 +1,7 @@
 from collections import defaultdict
-from typing import Dict, List
+from typing import Dict, List, cast
 
-from agent_graph.code_mock_staged_v1 import intro_stage, stage_tracker
+from agent_graph.code_mock_staged_v1 import coding_stage, intro_stage, stage_tracker
 from agent_graph.code_mock_staged_v1.constants import (
     CODING_SIGNALS,
     CODING_STEPS,
@@ -11,18 +11,23 @@ from agent_graph.code_mock_staged_v1.constants import (
     INTRO_STEPS,
     AgentConfig,
     StageTypes,
+    format_content_changed_notification_messages,
     get_next_stage,
 )
 from agent_graph.constants import JOIN_CALL_MESSAGE
-from agent_graph.types import EventMessageState, Signal, Step
-from agent_graph.utils import get_configurable
+from agent_graph.types import EventMessageState, MessageWrapper, Signal, Step
+from agent_graph.utils import get_configurable, with_event_reset, with_trigger_reset
 from langchain_core.messages import HumanMessage
 from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 from pydantic.v1 import Field
 
-from libs.convex_types import CodeSessionState, SessionMetadata
+from libs.convex.convex_types import (
+    CodeSessionContentChangedEvent,
+    CodeSessionState,
+    SessionMetadata,
+)
 
 
 class AgentState(EventMessageState):
@@ -106,28 +111,29 @@ async def on_event(
     state: AgentState,
 ):
     if state.event == "trigger":
-        return dict(trigger=True, event=None, event_data=None)
+        return with_event_reset(trigger=True)
 
     if state.event == "user_message":
-        messages = state.event_data.messages
-        return dict(trigger=True, messages=messages, event=None, event_data=None)
+        messages = cast(MessageWrapper, state.event_data).messages
+        return with_event_reset(trigger=True, messages=messages)
 
     if state.event == "reminder":
-        messages = [
-            HumanMessage(
-                content="(Now the user has been slient in a while, you would say:)"
-            )
-        ]
-        return dict(trigger=True, messages=messages, event=None, event_data=None)
+        messages = HumanMessage(
+            content="(Now the user has been slient in a while, you would say:)"
+        )
+        return with_event_reset(trigger=True, messages=messages)
 
-    # TODO: add other events
+    if state.event == "content_changed":
+        event_data = cast(CodeSessionContentChangedEvent, state.event_data)
+        messages = format_content_changed_notification_messages(event_data)
+        return with_event_reset(trigger=False, messages=messages)
 
-    return dict(trigger=False, event=None, event_data=None)
+    return with_event_reset(trigger=False)
 
 
 async def on_trigger(state: AgentState):
     # e.g. update step status, etc.
-    return dict(trigger=False)
+    return with_trigger_reset()
 
 
 async def decide_next_stage(state: AgentState):
@@ -182,6 +188,7 @@ def create_graph():
         .add_node("decide_next_stage", decide_next_stage)
         .add_node("stage_tracker", stage_tracker.create_compiled_graph())
         .add_node(StageTypes.INTRO, intro_stage.create_compiled_graph())
+        .add_node(StageTypes.CODING, coding_stage.create_compiled_graph())
         # edges
         .add_conditional_edges(
             source=START,
@@ -197,9 +204,10 @@ def create_graph():
         .add_conditional_edges(
             source="on_trigger",
             path=select_stage,
-            path_map=[StageTypes.INTRO, END],
+            path_map=[StageTypes.INTRO, StageTypes.CODING, END],
         )
         .add_edge(StageTypes.INTRO, "stage_tracker")
+        .add_edge(StageTypes.CODING, "stage_tracker")
         .add_edge("stage_tracker", "decide_next_stage")
         .add_edge("decide_next_stage", END)
     )

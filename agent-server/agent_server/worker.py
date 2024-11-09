@@ -10,7 +10,6 @@ from agent_server.agent_streams import AgentStream
 from agent_server.agent_triggers import AgentTrigger
 from agent_server.contexts.context_manager import AgentContextManager
 from agent_server.contexts.session import CodeSession
-from agent_server.convex.api import ConvexApi
 from agent_server.events.events import (
     CodeSessionEvent,
     ReminderEvent,
@@ -30,6 +29,8 @@ from livekit.agents import JobContext, WorkerOptions, llm, utils
 from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.agents.worker import _DefaultLoadCalc
 from livekit.plugins import deepgram, openai, silero
+
+from libs.convex.api import ConvexApi
 
 logger = get_logger(__name__)
 

@@ -29,6 +29,10 @@ class EventMessageState(BaseModel):
     )
 
 
+class MessageWrapper(BaseModel):
+    messages: List[AnyMessage]
+
+
 class NamedEntity(Serializable):
     """Named entity."""
 

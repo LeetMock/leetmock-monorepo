@@ -138,6 +138,7 @@ poetry.lock
 leetmock-001-private.json
 
 test.py
+test.ipynb
 
 # macOS system files
 .DS_Store

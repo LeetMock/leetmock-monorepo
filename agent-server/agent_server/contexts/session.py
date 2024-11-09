@@ -3,17 +3,17 @@ import time
 from abc import ABC, abstractmethod
 from typing import Literal, TypeVar
 
-from agent_server.convex.api import ConvexApi
 from agent_server.convex.query_watcher import QueryWatcher
 from agent_server.utils.logger import get_logger
 from livekit.agents.utils import EventEmitter
 from pydantic import BaseModel
 
-from libs.convex_types import (
+from libs.convex.api import ConvexApi
+from libs.convex.convex_requests import create_get_session_metadata_request
+from libs.convex.convex_types import (
     CodeSessionContentChangedEvent,
     CodeSessionState,
     SessionMetadata,
-    create_get_session_metadata_request,
 )
 
 logger = get_logger(__name__)
