@@ -58,10 +58,10 @@ COPY --chown=appuser:appuser agent-graph agent-graph
 WORKDIR /home/appuser/agent-server
 
 # Install project dependencies
-RUN poetry install --no-interaction --no-ansi
+RUN poetry install --no-interaction
 
 # Expose port 8081 for TCP
 EXPOSE 8081
 
 # Run the application
-ENTRYPOINT ["python", "-m", "agent_server.worker", "start"]
+ENTRYPOINT ["poetry", "run", "python", "-m", "agent_server.worker", "start"]
