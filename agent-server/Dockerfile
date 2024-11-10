@@ -44,19 +44,21 @@ RUN pip install poetry
 # Configure Poetry
 RUN poetry config virtualenvs.create false
 
-# Copy only requirements to cache them in docker layer
-COPY pyproject.toml ./
 
-COPY convex-client /convex-client
-
-# Install project dependencies
-RUN poetry install --no-interaction --no-ansi
 
 USER appuser
 WORKDIR /home/appuser
 
 # Copy project
-COPY --chown=appuser:appuser . .
+COPY --chown=appuser:appuser agent-server agent-server
+COPY --chown=appuser:appuser convex-client convex-client
+COPY --chown=appuser:appuser libs libs
+COPY --chown=appuser:appuser agent-graph agent-graph
+
+WORKDIR /home/appuser/agent-server
+
+# Install project dependencies
+RUN poetry install --no-interaction --no-ansi
 
 # Expose port 8081 for TCP
 EXPOSE 8081

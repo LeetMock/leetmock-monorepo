@@ -7,6 +7,7 @@
 
 ```bash
 # Build locally
+cd leetmock-monorepo
 podman build -t agent-server .
 
 # Run
