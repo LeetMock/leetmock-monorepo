@@ -110,7 +110,7 @@ class CodeSessionEditorContentChangedEvent(BaseEvent[Any]):
     assistant: VoiceAssistant
 
     delay: float = Field(
-        default=5,
+        default=2.5,
         description="The delay in seconds before emitting the event.",
     )
 
@@ -151,7 +151,7 @@ class CodeSessionEditorContentChangedEvent(BaseEvent[Any]):
 
         session = self.session
         session.on("content_changed", process_event)
-        self.assistant.on("user_speech_committed", lambda _: process_event())
+        # self.assistant.on("user_speech_committed", lambda _: process_event())
 
 
 class TestSubmissionEvent(BaseEvent[Any]):
@@ -180,7 +180,7 @@ class UserMessageEvent(BaseEvent[UserMessageEventData]):
     event_q: asyncio.Queue[UserMessageEventData]
 
     delay: float = Field(
-        default=0.3,
+        default=0.2,
         description="The delay in seconds before emitting the event.",
     )
 

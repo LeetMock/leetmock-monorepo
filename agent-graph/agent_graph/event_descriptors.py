@@ -11,7 +11,6 @@ class CodingEventType(str, Enum):
     CODE_EDITOR_CONTENT_CHANGED = "code_editor_content_changed"
     USER_DEFINED_TEST_CASE_SET_UPDATED = "user_defined_test_cases_changed"
     USER_DEFINED_TEST_CASE_EXECUTED = "user_defined_test_case_executed"
-    GROUND_TRUTH_TEST_CASE_EXECUTED = "ground_truth_test_case_executed"
 
 
 class EventDescriptor(BaseModel):
@@ -31,9 +30,5 @@ EVENT_DESCRIPTORS = [
     EventDescriptor(
         name=CodingEventType.USER_DEFINED_TEST_CASE_EXECUTED,
         description="The candidate has executed the user-defined test cases. Results will be shown in the console.",
-    ),
-    EventDescriptor(
-        name=CodingEventType.GROUND_TRUTH_TEST_CASE_EXECUTED,
-        description="The candidate has executed the ground truth test cases. Results will be shown in the console.",
     ),
 ]

@@ -7,7 +7,6 @@ from agent_graph.code_mock_staged_v1.constants import (
     Signal,
     StageTypes,
     Step,
-    format_test_code_correctness_notification_messages,
 )
 from agent_graph.code_mock_staged_v1.prompts import (
     CODING_CONTEXT_SUFFIX_PROMPT,
@@ -53,6 +52,10 @@ class CodingStageState(EventMessageState):
         default_factory=lambda: defaultdict(list),
     )
 
+    test_context: str | None = Field(
+        default=None,
+    )
+
 
 async def test_code_correctness(state: CodingStageState, config: RunnableConfig):
     agent_config = get_configurable(AgentConfig, config)
@@ -72,8 +75,7 @@ async def test_code_correctness(state: CodingStageState, config: RunnableConfig)
         return None
 
     test_context = format_test_context(result)
-    messages = format_test_code_correctness_notification_messages(test_context)
-    return dict(messages=messages)
+    return dict(test_context=test_context)
 
 
 async def interrupter(_: CodingStageState):
@@ -111,6 +113,7 @@ async def assistant(state: CodingStageState, writer: StreamWriter):
             "content": session_state.editor.content,
             "language": session_state.editor.language,
             "question": session_metadata.question_content,
+            "test_context": state.test_context,
         }
     ):
         content += cast(str, chunk.content)
@@ -120,7 +123,7 @@ async def assistant(state: CodingStageState, writer: StreamWriter):
     if len(content.strip()) == 0:
         return dict(messages=[AIMessage(content="SILENT")])
 
-    return None
+    return dict(test_context=None)
 
 
 # --------------------- stage subgraph edges --------------------- #

@@ -111,20 +111,6 @@ def format_content_changed_notification_messages(
     ]
 
 
-def format_test_code_correctness_notification_messages(
-    test_context: str,
-) -> List[AnyMessage]:
-    return [
-        AIMessage(
-            content=wrap_xml(
-                "system-event",
-                test_context,
-                args={"name": CodingEventType.GROUND_TRUTH_TEST_CASE_EXECUTED},
-            )
-        )
-    ]
-
-
 INTRO_STEPS: List[Step] = [
     Step.from_info(
         name="introduce_self",

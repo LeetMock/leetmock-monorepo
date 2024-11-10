@@ -68,6 +68,11 @@ class AgentState(EventMessageState):
         description="Caught signals for the agent",
     )
 
+    test_context: str | None = Field(
+        default=None,
+        description="Test context for the agent",
+    )
+
 
 # --------------------- agent graph nodes --------------------- #
 async def init_state(_: AgentState):
