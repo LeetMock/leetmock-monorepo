@@ -85,16 +85,29 @@ async def interrupter(_: CodingStageState):
 
 # --------------------- stage subgraph nodes --------------------- #
 async def assistant(state: CodingStageState, writer: StreamWriter):
+    messages = state.messages
+    last_human_message_idx = -1
+
+    # Find the last human message idx
+    for idx in reversed(range(len(messages))):
+        if messages[idx].type == "human":
+            last_human_message_idx = idx
+            break
+
+    history_messages = messages[:last_human_message_idx]
+    upcoming_messages = messages[last_human_message_idx:]
+
     prompt = ChatPromptTemplate.from_messages(
         [
             SystemMessagePromptTemplate.from_template(
                 CODING_PROMPT, template_format="jinja2"
             ),
-            MessagesPlaceholder(variable_name="messages"),
+            MessagesPlaceholder(variable_name="history_messages"),
             # Append the current code content to the prompt as a suffix to maximize the prefix caching
             HumanMessagePromptTemplate.from_template(
                 CODING_CONTEXT_SUFFIX_PROMPT, template_format="jinja2"
             ),
+            MessagesPlaceholder(variable_name="upcoming_messages"),
         ]
     )
 
@@ -109,11 +122,12 @@ async def assistant(state: CodingStageState, writer: StreamWriter):
             "steps": state.steps[StageTypes.CODING],
             "completed_steps": state.completed_steps[StageTypes.CODING],
             "signals": state.signals[StageTypes.CODING],
-            "messages": state.messages,
             "content": session_state.editor.content,
             "language": session_state.editor.language,
             "question": session_metadata.question_content,
             "test_context": state.test_context,
+            "history_messages": history_messages,
+            "upcoming_messages": upcoming_messages,
         }
     ):
         content += cast(str, chunk.content)
