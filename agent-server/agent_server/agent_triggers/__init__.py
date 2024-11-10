@@ -1,3 +1,30 @@
+"""Agent trigger system for managing event-driven agent interactions.
+
+This module provides the core functionality for triggering agent actions based on various events.
+It coordinates between the event system, agent streams, and manages the timing and execution
+of agent responses.
+
+Key Features:
+- Event queue management for handling multiple event types
+- Timestamp-based interruption handling
+- Coordination between events and agent streams
+- Automatic event handler attachment
+
+Example:
+    ```python
+    agent_trigger = AgentTrigger(
+        stream=agent_stream,
+        events=[
+            ReminderEvent(assistant=assistant),
+            CodeSessionEvent(event_type="content_changed", session=session),
+            UserMessageEvent(event_q=message_queue),
+        ]
+    )
+    agent_trigger.start()
+    await agent_trigger.trigger()
+    ```
+"""
+
 import asyncio
 import logging
 from typing import Any, List, Tuple
@@ -12,6 +39,18 @@ logger = logging.getLogger(__name__)
 
 
 class AgentTrigger(BaseModel):
+    """Manages event-driven triggers for agent interactions.
+
+    This class coordinates between events and agent streams, managing when and how
+    the agent should respond to different types of events.
+
+    Attributes:
+        stream (AgentStream): The agent stream to trigger
+        _events (List[BaseEvent]): List of events to monitor
+        _timestamp (Timestamp): Timestamp for managing interruptions
+        _event_q (asyncio.Queue): Queue for handling event processing
+        _started (bool): Flag indicating if the trigger has been started
+    """
 
     stream: AgentStream = Field(..., description="The agent stream to trigger")
 
@@ -37,12 +76,22 @@ class AgentTrigger(BaseModel):
         self._attach_event_handlers()
 
     def interrupt(self):
+        """Interrupts the current agent action by refreshing the timestamp."""
         self._timestamp.refresh()
 
     async def trigger(self):
+        """Triggers the agent manually by adding a trigger event to the queue."""
         await self._event_q.put(("trigger", None))
 
     def _create_event_handler(self, event: BaseEvent):
+        """Creates an event handler for a specific event type.
+
+        Args:
+            event: The event to create a handler for
+
+        Returns:
+            An async function that handles the event
+        """
         async def handler(data: Any):
             logger.info(f"Receiving event: {event.event_name} with data: {data}")
             await self._event_q.put((event.event_name, data))
@@ -50,18 +99,31 @@ class AgentTrigger(BaseModel):
         return handler
 
     def _attach_event_handlers(self):
+        """Attaches handlers to all registered events."""
         for event in self._events:
             event.on_event(self._create_event_handler(event))
 
     async def _trigger_task(self, is_user_message: bool):
+        """Executes the agent trigger task.
+
+        Args:
+            is_user_message: Whether the trigger was caused by a user message
+        """
         self.interrupt()
         logger.info(f"Triggering agent with timestamp: {self._timestamp}")
         await self.stream.trigger_agent(self._timestamp, is_user_message)
 
     async def _main_task(self):
+        """Main event processing loop.
+        
+        Continuously processes events from the queue and determines whether
+        to trigger the agent based on the event type and data.
+        """
+        
         # Setup the agent stream
         await self.stream.setup()
 
+        
         while True:
             event, data = await self._event_q.get()
             logger.info(f"Sending event: {event} with data: {data}")
@@ -74,6 +136,11 @@ class AgentTrigger(BaseModel):
                 logger.info(f"Failed to trigger agent for event: {event}")
 
     def start(self):
+        """Starts the agent trigger system.
+        
+        Initializes all events and starts the main event processing loop.
+        Can only be called once.
+        """
         if self._started:
             return
 

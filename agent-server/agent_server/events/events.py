@@ -1,3 +1,33 @@
+"""Event implementations for the agent server.
+
+This module provides concrete implementations of various event types used in the agent server.
+It includes events for handling reminders, code session changes, test submissions, and user messages.
+
+Key Components:
+- ReminderEvent: Manages timed reminders with debouncing
+- CodeSessionEvent: Handles code session state changes
+- TestSubmissionEvent: Manages test submission events
+- UserMessageEvent: Processes user message events
+
+Example:
+    ```python
+    # Create a reminder event
+    reminder = ReminderEvent(
+        assistant=voice_assistant,
+        delay=30,  # 30 seconds
+        repeated=True
+    )
+    reminder.start()
+    
+    # Create a code session event
+    code_event = CodeSessionEvent(
+        event_type="content_changed",
+        session=code_session
+    )
+    code_event.start()
+    ```
+"""
+
 import asyncio
 import logging
 from typing import Any, List
@@ -19,11 +49,23 @@ logger = logging.getLogger(__name__)
 
 
 class Reminder(BaseModel):
+    """Empty model representing a reminder event."""
     pass
 
 
 class ReminderEvent(BaseEvent[Reminder]):
-    """Reminder event that sends a reminder after a delay."""
+    """Event that sends a reminder after a specified delay.
+    
+    This event monitors speech events from the voice assistant and manages
+    reminder timing with debouncing. It can be configured to repeat reminders
+    and tracks human input after reminders.
+
+    Attributes:
+        assistant: Voice assistant to monitor for speech events
+        delay: Time in seconds to wait before sending reminder
+        repeated: Whether to send multiple reminders
+        _no_human_input_after_reminder: Tracks if there was human input after last reminder
+    """
 
     assistant: VoiceAssistant
 
@@ -82,6 +124,14 @@ class ReminderEvent(BaseEvent[Reminder]):
 
 
 class CodeSessionEvent(BaseEvent[Any]):
+    """Event for monitoring code session changes.
+    
+    Forwards events from the code session to registered callbacks.
+
+    Attributes:
+        event_type: Type of code session event to monitor
+        session: Code session to monitor
+    """
 
     event_type: CodeSessionEventTypes
 
@@ -152,6 +202,13 @@ class CodeSessionEditorContentChangedEvent(BaseEvent[Any]):
 
 
 class TestSubmissionEvent(BaseEvent[Any]):
+    """Event for handling test submissions.
+    
+    Manages events related to code test submissions.
+
+    Attributes:
+        stream: Agent stream for handling test submissions
+    """
 
     stream: AgentStream[AgentState]
 
@@ -165,14 +222,35 @@ class TestSubmissionEvent(BaseEvent[Any]):
 
 
 class UserMessageEventData(BaseModel):
+    """Data model for user message events.
+    
+    Attributes:
+        messages: List of chat messages from the user
+    """
+
     messages: List[BaseMessage]
 
     @classmethod
     def from_messages(cls, messages: List[BaseMessage]):
+        """Creates a UserMessageEventData instance from a list of messages.
+        
+        Args:
+            messages: List of BaseMessage objects to include
+            
+        Returns:
+            UserMessageEventData instance containing the messages
+        """
         return cls(messages=messages)
 
 
 class UserMessageEvent(BaseEvent[UserMessageEventData]):
+    """Event for handling user messages.
+    
+    Monitors a message queue and emits events when new messages arrive.
+
+    Attributes:
+        event_q: Queue containing incoming user messages
+    """
 
     event_q: asyncio.Queue[UserMessageEventData]
 
