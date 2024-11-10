@@ -12,6 +12,7 @@ from agent_server.agent_triggers import AgentTrigger
 from agent_server.contexts.context_manager import AgentContextManager
 from agent_server.contexts.session import CodeSession
 from agent_server.events.events import (
+    CodeSessionEditorContentChangedEvent,
     CodeSessionEvent,
     ReminderEvent,
     TestSubmissionEvent,
@@ -123,7 +124,7 @@ async def entrypoint(ctx: JobContext):
         stream=agent_stream,
         events=[
             ReminderEvent(assistant=assistant),
-            CodeSessionEvent(event_type="content_changed", session=session),
+            CodeSessionEditorContentChangedEvent(session=session, assistant=assistant),
             TestSubmissionEvent(stream=agent_stream),
             UserMessageEvent(event_q=user_message_event_q),
         ],

@@ -1,6 +1,7 @@
 import asyncio
 import logging
 from typing import Any, List
+from unittest.mock import Base
 
 from agent_graph.code_mock_staged_v1.graph import AgentState
 from agent_server.agent_streams import AgentStream
@@ -9,7 +10,10 @@ from agent_server.events import BaseEvent
 from debouncer import debounce
 from langchain_core.messages import BaseMessage
 from livekit.agents.voice_assistant import VoiceAssistant
+from pydantic import StrictStr
 from pydantic.v1 import BaseModel, Field, PrivateAttr
+
+from libs.convex.convex_types import CodeSessionContentChangedEvent
 
 logger = logging.getLogger(__name__)
 
@@ -92,6 +96,59 @@ class CodeSessionEvent(BaseEvent[Any]):
         session.on(self.event_type, lambda event: self.emit_event(event))
 
 
+class CodeSessionEditorContentChangedEvent(BaseEvent[Any]):
+    """Event that emits when the code editor content changes.
+
+    Emits a debounced event with the before and after content for diffing.
+    Event is emitted in following cases:
+    1. User speech is committed
+    2. User stopped typing (debounced)
+    """
+
+    session: CodeSession
+
+    assistant: VoiceAssistant
+
+    delay: float = Field(
+        default=2,
+        description="The delay in seconds before emitting the event.",
+    )
+
+    _before: StrictStr | None = PrivateAttr(default=None)
+
+    _after: StrictStr | None = PrivateAttr(default=None)
+
+    @property
+    def event_name(self) -> str:
+        return "content_changed"
+
+    def _reset_state(self):
+        self._before = None
+        self._after = None
+
+    def setup(self):
+
+        @debounce(wait=self.delay)
+        def emit_event_debounced(event: CodeSessionContentChangedEvent):
+            if self._before is None or self._after is None:
+                return
+
+            event.event.data.before = self._before
+            event.event.data.after = self._after
+            self._reset_state()
+            self.emit_event(event)
+
+        def process_event(event: CodeSessionContentChangedEvent):
+            if self._before is None:
+                self._before = event.event.data.before
+            self._after = event.event.data.after
+            asyncio.create_task(emit_event_debounced(event))
+
+        session = self.session
+        session.on("content_changed", process_event)
+        self.assistant.on("user_speech_committed", process_event)
+
+
 class TestSubmissionEvent(BaseEvent[Any]):
 
     stream: AgentStream[AgentState]
@@ -117,20 +174,23 @@ class UserMessageEvent(BaseEvent[UserMessageEventData]):
 
     event_q: asyncio.Queue[UserMessageEventData]
 
+    delay: float = Field(
+        default=0.3,
+        description="The delay in seconds before emitting the event.",
+    )
+
     @property
     def event_name(self) -> str:
         return "user_message"
 
     async def _observe_user_message_task(self):
+        @debounce(wait=self.delay)
+        def emit_event_debounced(event: UserMessageEventData):
+            self.emit_event(event)
+
         while True:
             user_message_event_data = await self.event_q.get()
-            last_message = (
-                user_message_event_data.messages[-1].content
-                if len(user_message_event_data.messages) > 0
-                else "No messages"
-            )
-            logger.info(f"Last user message: {last_message}")
-            self.emit_event(user_message_event_data)
+            await emit_event_debounced(user_message_event_data)
 
     def setup(self):
         asyncio.create_task(self._observe_user_message_task())

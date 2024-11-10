@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, TypeVar
 
-from agent_graph.events import CodingEventType
+from agent_graph.event_descriptors import CodingEventType
 from agent_graph.types import NamedEntity, Signal, Step
 from agent_graph.utils import wrap_xml
 from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
@@ -105,7 +105,7 @@ def format_content_changed_notification_messages(
             content=wrap_xml(
                 tag="system-event",
                 content=f"```diff\n{diff}\n```",
-                args={"name": CodingEventType.CODE_EDITOR_CONTENT_CHANGED},
+                args={"name": CodingEventType.CODE_EDITOR_CONTENT_CHANGED.value},
             )
         )
     ]

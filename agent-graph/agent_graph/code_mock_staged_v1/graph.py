@@ -15,7 +15,7 @@ from agent_graph.code_mock_staged_v1.constants import (
     get_next_stage,
 )
 from agent_graph.constants import JOIN_CALL_MESSAGE
-from agent_graph.events import EVENT_DESCRIPTORS, EventDescriptor
+from agent_graph.event_descriptors import EVENT_DESCRIPTORS, EventDescriptor
 from agent_graph.types import EventMessageState, MessageWrapper, Signal, Step
 from agent_graph.utils import with_event_reset, with_trigger_reset
 from langchain_core.messages import HumanMessage

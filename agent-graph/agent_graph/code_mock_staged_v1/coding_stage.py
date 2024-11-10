@@ -13,7 +13,7 @@ from agent_graph.code_mock_staged_v1.prompts import (
     CODING_CONTEXT_SUFFIX_PROMPT,
     CODING_PROMPT,
 )
-from agent_graph.events import EventDescriptor
+from agent_graph.event_descriptors import EventDescriptor
 from agent_graph.llms import get_model
 from agent_graph.prompts import format_test_context
 from agent_graph.types import EventMessageState
