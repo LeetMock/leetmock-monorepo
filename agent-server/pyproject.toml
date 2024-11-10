@@ -30,6 +30,7 @@ agent-graph = { path = "../agent-graph", develop = true }
 livekit-plugins-elevenlabs = ">=0.7.5"
 elevenlabs = "^1.9.0"
 python-debouncer = "^0.1.5"
+psutil = "5.9.8"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.2"
