@@ -148,6 +148,7 @@ class AgentStream(BaseModel, Generic[TState]):
         state: TState,
         should_interrupt: Callable[[], bool],
     ) -> AsyncIterator[str]:
+        chunks = []
         async for mode, part in self._stateless_graph_stream(state):
             if should_interrupt():
                 logger.info("Interrupting graph stream")
@@ -162,3 +163,6 @@ class AgentStream(BaseModel, Generic[TState]):
                     continue
 
                 yield chunk_text
+                chunks.append(chunk_text)
+
+        logger.info(f"Agent text stream: {''.join(chunks)}")

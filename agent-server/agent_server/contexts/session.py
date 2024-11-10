@@ -87,7 +87,6 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
         return self._code_session_state
 
     def _handle_code_session_state_changed(self, state: CodeSessionState):
-        logger.info(f"Code session state: {state}")
         self._code_session_state = state
 
         if not self._synced_future.done():
@@ -101,7 +100,6 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
             )
             return
 
-        logger.info(f"Code session content changed: {event}")
         self.emit("content_changed", event)
 
     async def setup(self, session_id: str):

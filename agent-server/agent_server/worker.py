@@ -20,6 +20,7 @@ from agent_server.events.events import (
     UserMessageEventData,
 )
 from agent_server.livekit.streams import NoOpLLM, SimpleLLMStream
+from agent_server.livekit.tts import create_elevenlabs_tts
 from agent_server.utils.logger import get_logger
 from agent_server.utils.messages import (
     convert_chat_ctx_to_langchain_messages,
@@ -106,7 +107,7 @@ async def entrypoint(ctx: JobContext):
         vad=silero.VAD.load(),
         stt=deepgram.STT(),
         llm=no_op_llm,
-        tts=openai.TTS(),
+        tts=create_elevenlabs_tts(),
         chat_ctx=ctx_manager.chat_ctx,
         before_llm_cb=before_llm_callback,
     )

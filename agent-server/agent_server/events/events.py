@@ -110,13 +110,15 @@ class CodeSessionEditorContentChangedEvent(BaseEvent[Any]):
     assistant: VoiceAssistant
 
     delay: float = Field(
-        default=2,
+        default=5,
         description="The delay in seconds before emitting the event.",
     )
 
     _before: StrictStr | None = PrivateAttr(default=None)
 
     _after: StrictStr | None = PrivateAttr(default=None)
+
+    _prev_event: CodeSessionContentChangedEvent | None = PrivateAttr(default=None)
 
     @property
     def event_name(self) -> str:
@@ -129,24 +131,27 @@ class CodeSessionEditorContentChangedEvent(BaseEvent[Any]):
     def setup(self):
 
         @debounce(wait=self.delay)
-        def emit_event_debounced(event: CodeSessionContentChangedEvent):
-            if self._before is None or self._after is None:
+        def emit_event_debounced():
+            if self._before is None or self._after is None or self._prev_event is None:
                 return
 
-            event.event.data.before = self._before
-            event.event.data.after = self._after
+            self._prev_event.event.data.before = self._before
+            self._prev_event.event.data.after = self._after
             self._reset_state()
-            self.emit_event(event)
+            self.emit_event(self._prev_event)
 
-        def process_event(event: CodeSessionContentChangedEvent):
-            if self._before is None:
-                self._before = event.event.data.before
-            self._after = event.event.data.after
-            asyncio.create_task(emit_event_debounced(event))
+        def process_event(event: CodeSessionContentChangedEvent | None = None):
+            if event is not None:
+                self._prev_event = event
+                if self._before is None:
+                    self._before = event.event.data.before
+                self._after = event.event.data.after
+
+            asyncio.create_task(emit_event_debounced())
 
         session = self.session
         session.on("content_changed", process_event)
-        self.assistant.on("user_speech_committed", process_event)
+        self.assistant.on("user_speech_committed", lambda _: process_event())
 
 
 class TestSubmissionEvent(BaseEvent[Any]):

@@ -70,7 +70,6 @@ class SimpleLLMStream(llm.LLMStream):
 
     async def _create_message_chunk_stream(self, text_stream: AsyncIterator[str]):
         async for text in text_stream:
-            logger.info(f"Generating text chunk: {text}")
             yield self._create_llm_chunk(text)
 
     async def __anext__(self) -> llm.ChatChunk:
