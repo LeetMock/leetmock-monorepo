@@ -124,18 +124,18 @@ INTRO_STEPS: List[Step] = [
         done_definition="Interviewer has finished asking about the candidate's background and experience.",
         required=True,
     ),
-    # Step.from_info(
-    #     name="ask_goals",
-    #     desc="Ask the candidate about their career goals.",
-    #     done_definition="Interviewer has finished asking about the candidate's career goals.",
-    #     required=True,
-    # ),
-    # Step.from_info(
-    #     name="discuss_projects",
-    #     desc="Discuss the candidate's past projects and their role in them. Remember to praise interviewee on their achievement.",
-    #     done_definition="Interviewer has finished discussing the candidate's past projects and their role in them.",
-    #     required=True,
-    # ),
+    Step.from_info(
+        name="ask_goals",
+        desc="Ask the candidate about their career goals.",
+        done_definition="Interviewer has finished asking about the candidate's career goals.",
+        required=True,
+    ),
+    Step.from_info(
+        name="discuss_projects",
+        desc="Discuss the candidate's past projects and their role in them. Remember to praise interviewee on their achievement.",
+        done_definition="Interviewer has finished discussing the candidate's past projects and their role in them.",
+        required=True,
+    ),
 ]
 
 INTRO_SIGNALS: List[Signal] = [

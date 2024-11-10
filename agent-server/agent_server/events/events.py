@@ -124,10 +124,6 @@ class CodeSessionEditorContentChangedEvent(BaseEvent[Any]):
     def event_name(self) -> str:
         return "content_changed"
 
-    def _reset_state(self):
-        self._before = None
-        self._after = None
-
     def setup(self):
 
         @debounce(wait=self.delay)
@@ -137,7 +133,8 @@ class CodeSessionEditorContentChangedEvent(BaseEvent[Any]):
 
             self._prev_event.event.data.before = self._before
             self._prev_event.event.data.after = self._after
-            self._reset_state()
+            self._before = self._after
+            self._after = None
             self.emit_event(self._prev_event)
 
         def process_event(event: CodeSessionContentChangedEvent | None = None):

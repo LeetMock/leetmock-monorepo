@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 from typing import (
     Any,
     AsyncIterator,
@@ -12,13 +13,16 @@ from typing import (
     cast,
 )
 
+import debouncer
 from agent_graph.state_merger import StateMerger
 from agent_graph.types import EventMessageState
 from agent_server.contexts.session import BaseSession
 from agent_server.utils.streams import to_async_iterable
+from debouncer import debounce
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import StateGraph
 from langgraph.types import StreamMode
+from langgraph_sdk import get_client
 from livekit.agents.voice_assistant import VoiceAssistant
 from pydantic.v1 import BaseModel, Field, PrivateAttr
 
@@ -28,6 +32,8 @@ logger = logging.getLogger(__name__)
 
 TState = TypeVar("TState", bound=EventMessageState)
 TConfig = TypeVar("TConfig", bound=BaseModel)
+
+LG_CLIENT = get_client(url=os.getenv("LANGGRAPH_API_URL"))
 
 
 def get_config(thread_id: int) -> RunnableConfig:
@@ -54,11 +60,15 @@ class AgentStream(BaseModel, Generic[TState]):
         ..., description="The compiled state graph to trigger the agent"
     )
 
+    _initialized: bool = PrivateAttr(default=False)
+
     _message_q: asyncio.Queue[AsyncIterator[str]] = PrivateAttr(...)
 
     _state_merger: StateMerger[TState] = PrivateAttr(...)
 
     _agent_config: Dict[str, Any] = PrivateAttr(...)
+
+    _update_remote_state_debounced = PrivateAttr(...)
 
     class Config:
         arbitrary_types_allowed = True
@@ -78,21 +88,40 @@ class AgentStream(BaseModel, Generic[TState]):
             graph=graph,
             session=session,
         )
+
+        @debounce(wait=1)
+        async def update_remote_state_debounced():
+            await self._update_remote_state()
+
         self._agent_config = config.dict()
         self._message_q = message_q
         self._state_merger = StateMerger.from_state(state_cls)
-        self._fetch_remote_state()
+        self._update_remote_state_debounced = update_remote_state_debounced
+
+    async def setup(self):
+        thread_id = self.session.session_metadata.agent_thread_id
+        state = await LG_CLIENT.threads.get_state(thread_id=thread_id)
+        values = state["values"]
+
+        logger.info(f"Initializing agent with state: {values}")
+        await self._state_merger.merge_state(values)  # type: ignore
+        self._initialized = True
 
     async def get_state(self) -> TState:
         return await self._state_merger.get_state()
 
-    def _fetch_remote_state(self):
-        # TODO: fetch latest state from convex
-        pass
+    async def _update_remote_state(self):
+        thread_id = self.session.session_metadata.agent_thread_id
+        assistant_id = self.session.session_metadata.assistant_id
+        state = await self._state_merger.get_state()
 
-    async def _update_remote_state(self, state: TState):
-        # TODO: update state in convex
-        pass
+        logger.info(f"Updating remote state: {state}")
+        await LG_CLIENT.runs.create(
+            thread_id=thread_id,
+            assistant_id=assistant_id,
+            input=state.dict(),
+            multitask_strategy="enqueue",
+        )
 
     def _stateless_graph_stream(
         self, initial_state: TState
@@ -165,4 +194,5 @@ class AgentStream(BaseModel, Generic[TState]):
                 yield chunk_text
                 chunks.append(chunk_text)
 
+        await self._update_remote_state_debounced()
         logger.info(f"Agent text stream: {''.join(chunks)}")

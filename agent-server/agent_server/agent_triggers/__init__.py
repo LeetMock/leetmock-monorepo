@@ -59,6 +59,9 @@ class AgentTrigger(BaseModel):
         await self.stream.trigger_agent(self._timestamp, is_user_message)
 
     async def _main_task(self):
+        # Setup the agent stream
+        await self.stream.setup()
+
         while True:
             event, data = await self._event_q.get()
             logger.info(f"Sending event: {event} with data: {data}")
