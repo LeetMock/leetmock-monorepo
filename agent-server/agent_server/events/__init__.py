@@ -13,19 +13,19 @@ Key Features:
 Example:
     ```python
     class MyEvent(BaseEvent[MyEventData]):
-        @property 
+        @property
         def event_name(self) -> str:
             return "my_event"
-            
+
         def setup(self):
             # Setup event handlers
             pass
-            
+
     # Using the event
     event = MyEvent()
-    event.on_event(my_callback)
+    event.subscribe(my_callback)
     event.start()
-    event.emit_event(my_event_data)
+    event.publish(my_event_data)
     ```
 """
 
@@ -71,8 +71,8 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
     def event_name(self) -> str:
         raise NotImplementedError
 
-    def on_event(self, callback: Callable[[TModel], None | Coroutine[Any, Any, None]]):
-        """Register a callback function to be called when the event is emitted.
+    def subscribe(self, callback: Callable[[TModel], None | Coroutine[Any, Any, None]]):
+        """Subscribe a callback function to be called when the event is published.
 
         Args:
             callback: A function that takes a TModel parameter and returns None or a Coroutine.
@@ -81,6 +81,7 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
         Returns:
             self: Returns the event instance for method chaining
         """
+
         async def wrapped_callback(result: TModel) -> None:
             try:
                 if iscoroutinefunction(callback):
@@ -93,8 +94,8 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
         self._callbacks.append(wrapped_callback)
         return self
 
-    def emit_event(self, event: TModel):
-        """Emit an event to all registered callbacks.
+    def publish(self, event: TModel):
+        """Publish an event to all registered callbacks.
 
         Executes all registered callbacks asynchronously with the provided event data.
         Any exceptions in callbacks are logged but do not stop other callbacks from executing.
@@ -125,7 +126,7 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
     @abstractmethod
     def setup(self):
         """Abstract method to be implemented by subclasses for event setup.
-        
+
         This method is called during start() and should contain any initialization
         logic needed for the specific event type.
         """

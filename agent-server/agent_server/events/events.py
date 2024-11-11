@@ -95,7 +95,7 @@ class ReminderEvent(BaseEvent[Reminder]):
                 logger.info("Reminder already sent. Skipping.")
                 return
 
-            self.emit_event(Reminder())
+            self.publish(Reminder())
             self._no_human_input_after_reminder = True
 
         def create_send_reminder_task(_: Any = None):
@@ -145,7 +145,7 @@ class CodeSessionEvent(BaseEvent[Any]):
 
     def setup(self):
         session = self.session
-        session.on(self.event_type, lambda event: self.emit_event(event))
+        session.on(self.event_type, lambda event: self.publish(event))
 
 
 class CodeSessionEditorContentChangedEvent(BaseEvent[Any]):
@@ -179,7 +179,7 @@ class CodeSessionEditorContentChangedEvent(BaseEvent[Any]):
     def setup(self):
 
         @debounce(wait=self.delay)
-        def emit_event_debounced():
+        def publish_debounced():
             if self._before is None or self._after is None or self._prev_event is None:
                 return
 
@@ -187,7 +187,7 @@ class CodeSessionEditorContentChangedEvent(BaseEvent[Any]):
             self._prev_event.event.data.after = self._after
             self._before = self._after
             self._after = None
-            self.emit_event(self._prev_event)
+            self.publish(self._prev_event)
 
         def process_event(event: CodeSessionContentChangedEvent | None = None):
             if event is not None:
@@ -196,7 +196,7 @@ class CodeSessionEditorContentChangedEvent(BaseEvent[Any]):
                     self._before = event.event.data.before
                 self._after = event.event.data.after
 
-            asyncio.create_task(emit_event_debounced())
+            asyncio.create_task(publish_debounced())
 
         session = self.session
         session.on("content_changed", process_event)
@@ -245,12 +245,12 @@ class UserMessageEvent(BaseEvent[MessageWrapper]):
 
     async def _observe_user_message_task(self):
         @debounce(wait=self.delay)
-        def emit_event_debounced(event: MessageWrapper):
-            self.emit_event(event)
+        def publish_debounced(event: MessageWrapper):
+            self.publish(event)
 
         while True:
             user_message_event_data = await self.event_q.get()
-            await emit_event_debounced(user_message_event_data)
+            await publish_debounced(user_message_event_data)
 
     def setup(self):
         asyncio.create_task(self._observe_user_message_task())
