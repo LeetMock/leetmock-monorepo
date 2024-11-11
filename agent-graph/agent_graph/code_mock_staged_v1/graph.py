@@ -14,7 +14,7 @@ from agent_graph.code_mock_staged_v1.constants import (
     format_content_changed_notification_messages,
     get_next_stage,
 )
-from agent_graph.constants import JOIN_CALL_MESSAGE
+from agent_graph.constants import JOIN_CALL_MESSAGE, RECONNECT_MESSAGE
 from agent_graph.event_descriptors import EVENT_DESCRIPTORS, EventDescriptor
 from agent_graph.types import EventMessageState, MessageWrapper, Signal, Step
 from agent_graph.utils import with_event_reset, with_trigger_reset
@@ -23,11 +23,7 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 from pydantic.v1 import Field
 
-from libs.convex.convex_types import (
-    CodeSessionContentChangedEvent,
-    CodeSessionState,
-    SessionMetadata,
-)
+from libs.convex.convex_types import CodeSessionContentChangedEvent
 
 
 class AgentState(EventMessageState):
@@ -110,7 +106,10 @@ async def on_event(
     state: AgentState,
 ):
     if state.event == "trigger":
-        return with_event_reset(trigger=True)
+        messages = (
+            [HumanMessage(content=RECONNECT_MESSAGE)] if state.initialized else []
+        )
+        return with_event_reset(trigger=True, messages=messages)
 
     if state.event == "user_message":
         messages = cast(MessageWrapper, state.event_data).messages
