@@ -130,3 +130,4 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
         This method is called during start() and should contain any initialization
         logic needed for the specific event type.
         """
+        raise NotImplementedError
