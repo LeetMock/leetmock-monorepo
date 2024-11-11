@@ -14,6 +14,7 @@ from agent_server.contexts.context_manager import AgentContextManager
 from agent_server.contexts.session import CodeSession
 from agent_server.events.events import (
     CodeEditorChangedEvent,
+    GroundTruthTestcaseExecutedEvent,
     ReminderEvent,
     UserMessageEvent,
     UserTestcaseExecutedEvent,
@@ -139,7 +140,8 @@ async def entrypoint(ctx: JobContext):
         events=[
             ReminderEvent(assistant=assistant),
             CodeEditorChangedEvent(session=session, assistant=assistant),
-            UserTestcaseExecutedEvent(),
+            UserTestcaseExecutedEvent(session=session),
+            GroundTruthTestcaseExecutedEvent(session=session),
             UserMessageEvent(event_q=user_message_event_q),
         ],
     )
