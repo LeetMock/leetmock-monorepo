@@ -186,10 +186,10 @@ export const createCodeSession = userMutation({
       event: {
         type: "content_changed",
         data: {
-          content: initialContent,
+          before: "",
+          after: initialContent,
         },
       },
-      acked: false,
     });
 
     return sessionId;

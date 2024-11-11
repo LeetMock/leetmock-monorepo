@@ -6,10 +6,11 @@
 
 
 ```bash
-# Build locally
-podman build -t agent-server .
+# Build locally for pre-production testing
+cd leetmock-monorepo
+podman build -t agent-server -f agent-server/Dockerfile .
 
-# Run
+# Run locally for pre-production testing
 podman run -it -p 8081:8081 agent-server
 ```
 

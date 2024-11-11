@@ -1,9 +1,28 @@
-from typing import Any, List, Type, TypeVar, cast
+from typing import Any, Dict, List, Type, TypeVar, cast
 
-from agent_graph.llms import ChatbotConfig
 from langchain_core.runnables.config import RunnableConfig
+from pydantic.v1 import BaseModel
 
 T = TypeVar("T")
+TState = TypeVar("TState", bound=BaseModel)
+TConfig = TypeVar("TConfig", bound=BaseModel)
+
+
+def custom_data(id: str, data: Any):
+    return {"id": id, "data": data}
+
+
+def merge_str_list(l1: List[str], l2: List[str]) -> List[str]:
+    return list(set(l1) | set(l2))
+
+
+def format_xml_args(args: Dict[str, Any]) -> str:
+    return "\n".join([f'{k}="{v}"' for k, v in args.items()])
+
+
+def wrap_xml(tag: str, content: str, args: Dict[str, Any] | None = None) -> str:
+    formatted_args = "" if args is None else f" {format_xml_args(args)}"
+    return f"<{tag}{formatted_args}>\n{content}\n</{tag}>"
 
 
 def _validate_value(value: Any) -> bool:
@@ -30,26 +49,29 @@ def get_default_state(type: Type[T], value: Any, default: Any) -> T:
     return with_default(type, value, default)
 
 
-def get_default_config(
-    type: Type[T], value: RunnableConfig, default: Any, config_key=None
-) -> T:
+def get_default_config(type: Type[T], config: RunnableConfig, default: Any) -> T:
+    value = config.get("configurable", {})
     return with_default(type, value, default)
-    # configurable = value.get("configurable", {})
 
-    # # Get the specific configuration based on the config_key
-    # specific_config = configurable.get(config_key, {})
 
-    # # Merge the specific configuration with the default
-    # merged_config = {**default, **specific_config}
+def get_configurable(type: Type[TConfig], config: RunnableConfig) -> TConfig:
+    default_values = type().dict()
+    value = config.get("configurable", {})
+    default_values.update(value)
+    return type(**default_values)
 
-    # if config_key:
-    # # Handle different config_key cases
-    #     if config_key in ChatbotConfig:
-    #         model_config = ChatbotConfig[config_key]
-    #         merged_config["model_name"] = model_config["model_name"]
-    #         merged_config["temperature"] = model_config["temperature"]
 
-    # return type(**merged_config)
+def with_event_reset(**kwargs: Any) -> Dict[str, Any]:
+    """Returns a new dictionary with the event and event_data reset to None."""
+    return {
+        **kwargs,
+        "event": None,
+        "event_data": None,
+    }
+
+
+def with_trigger_reset(**kwargs: Any) -> Dict[str, Any]:
+    return with_event_reset(**kwargs, trigger=False)
 
 
 def tasks_to_str(tasks: List[str]) -> str:

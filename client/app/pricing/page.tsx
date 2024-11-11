@@ -45,7 +45,7 @@ export const tiers: PricingTier[] = [
     href: "/dashboard/settings/subscription",
     price: { "1": "$29.99", "2": "$305.99" },
     discountPrice: { "1": "", "2": "" },
-    description: `Experience your first AI interview, on us.`,
+    description: `Experience your first well-designed AI interview, on us.`,
     features: [
       `600 interview minutes`,
       `All essential features`,

@@ -39,8 +39,11 @@ def create_graph():
         .add_edge(START, "add_stage_message")
         .add_edge("add_stage_message", "stage_runner")
         .add_edge("stage_runner", END)
-        .compile(checkpointer=MemorySaver())
     )
 
 
-stage_subgraph = create_graph()
+def create_compiled_graph():
+    return create_graph().compile(checkpointer=MemorySaver())
+
+
+stage_subgraph = create_compiled_graph()

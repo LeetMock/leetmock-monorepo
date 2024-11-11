@@ -7,7 +7,7 @@ app = 'agent-server-winter-snow-3785'
 primary_region = 'sjc'
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = "agent-server/Dockerfile"
 
 [http_service]
   internal_port = 8081

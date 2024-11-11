@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { Id } from "@/convex/_generated/dataModel";
-import { QuestionCard } from "./question-card";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Dice3, LayoutGrid, List } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
+import { Dice3, LayoutGrid, List } from "lucide-react";
+import { useState } from "react";
+import { QuestionCard } from "./question-card";
 
 interface Question {
   _id: Id<"questions">;
@@ -20,15 +20,17 @@ const DifficultyBubble: React.FC<{ difficulty: number }> = ({ difficulty }) => {
   const colors = {
     1: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
     2: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-    3: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+    3: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
   };
   const labels = {
     1: "Easy",
     2: "Medium",
-    3: "Hard"
+    3: "Hard",
   };
   return (
-    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${colors[difficulty]}`}>
+    <span
+      className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${colors[difficulty]}`}
+    >
       {labels[difficulty]}
     </span>
   );
@@ -46,10 +48,11 @@ export const CodeQuestionViewer: React.FC<{
 
   const filteredQuestions = questions.filter((question) => {
     const titleMatch = question.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const difficultyMatch = selectedDifficulties.length === 0 || selectedDifficulties.includes(question.difficulty);
-    const tagsMatch = searchTags === '' || question.category.some(tag =>
-      tag.toLowerCase().includes(searchTags.toLowerCase())
-    );
+    const difficultyMatch =
+      selectedDifficulties.length === 0 || selectedDifficulties.includes(question.difficulty);
+    const tagsMatch =
+      searchTags === "" ||
+      question.category.some((tag) => tag.toLowerCase().includes(searchTags.toLowerCase()));
 
     return titleMatch && difficultyMatch && tagsMatch;
   });
@@ -67,10 +70,8 @@ export const CodeQuestionViewer: React.FC<{
   };
 
   const handleDifficultyChange = (difficulty: number) => {
-    setSelectedDifficulties(prev =>
-      prev.includes(difficulty)
-        ? prev.filter(d => d !== difficulty)
-        : [...prev, difficulty]
+    setSelectedDifficulties((prev) =>
+      prev.includes(difficulty) ? prev.filter((d) => d !== difficulty) : [...prev, difficulty]
     );
   };
 
@@ -105,7 +106,7 @@ export const CodeQuestionViewer: React.FC<{
               <SelectValue placeholder="Select difficulty">
                 {selectedDifficulties.length > 0 ? (
                   <div className="flex flex-wrap gap-1">
-                    {selectedDifficulties.map(difficulty => (
+                    {selectedDifficulties.map((difficulty) => (
                       <DifficultyBubble key={difficulty} difficulty={difficulty} />
                     ))}
                   </div>
@@ -117,7 +118,7 @@ export const CodeQuestionViewer: React.FC<{
             <SelectContent>
               <div className="p-2">
                 <div className="space-y-2">
-                  {[1, 2, 3].map(difficulty => (
+                  {[1, 2, 3].map((difficulty) => (
                     <div key={difficulty} className="flex items-center space-x-2">
                       <Checkbox
                         id={`difficulty-${difficulty}`}
@@ -144,7 +145,6 @@ export const CodeQuestionViewer: React.FC<{
         <div className="col-span-1">
           <Button
             onClick={handleRandomSelect}
-
             className="w-full"
             disabled={filteredQuestions.length === 0}
           >
@@ -175,9 +175,15 @@ export const CodeQuestionViewer: React.FC<{
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-gray-50 dark:bg-gray-800">
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Title</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Difficulty</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Category</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    Title
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    Difficulty
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    Category
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
@@ -187,11 +193,15 @@ export const CodeQuestionViewer: React.FC<{
                     onClick={() => handleQuestionSelect(_id)}
                     className={cn(
                       "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors",
-                      index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-800',
-                      _id === selectedQuestionId ? 'bg-blue-50 dark:bg-blue-900 hover:bg-blue-100 dark:hover:bg-blue-800' : ''
+                      index % 2 === 0 ? "bg-white dark:bg-gray-900" : "bg-gray-50 dark:bg-gray-800",
+                      _id === selectedQuestionId
+                        ? "bg-blue-50 dark:bg-blue-900 hover:bg-blue-100 dark:hover:bg-blue-800"
+                        : ""
                     )}
                   >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">{title}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                      {title}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <DifficultyBubble difficulty={difficulty} />
                     </td>

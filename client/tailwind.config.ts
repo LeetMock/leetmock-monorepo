@@ -29,7 +29,7 @@ const config = {
         "blur-25": "blur(25px)",
       },
       brightness: {
-        150: "1.5",
+        "150": "1.5",
       },
       transitionTimingFunction: {
         "minor-spring": "cubic-bezier(0.18,0.89,0.82,1.04)",
@@ -70,19 +70,19 @@ const config = {
         },
         info: "#0C63E7",
         gray: {
-          50: "#FAFAFC",
-          100: "#E9E9EC",
-          200: "#C6C8CD",
-          300: "#ACAEB6",
-          400: "#92959F",
-          500: "#777C87",
-          600: "#5D6370",
-          700: "#434959",
-          800: "#293041",
-          900: "#0f172a",
+          "50": "#FAFAFC",
+          "100": "#E9E9EC",
+          "200": "#C6C8CD",
+          "300": "#ACAEB6",
+          "400": "#92959F",
+          "500": "#777C87",
+          "600": "#5D6370",
+          "700": "#434959",
+          "800": "#293041",
+          "900": "#0f172a",
         },
         orange: {
-          500: '#FF8C00', // You can adjust this hex code to your preferred shade of orange
+          "500": "#FF8C00",
         },
       },
       borderRadius: {
@@ -92,40 +92,80 @@ const config = {
       },
       keyframes: {
         "marquee-x": {
-          from: { transform: "translateX(0)" },
-          to: { transform: "translateX(calc(-100% - var(--gap)))" },
+          from: {
+            transform: "translateX(0)",
+          },
+          to: {
+            transform: "translateX(calc(-100% - var(--gap)))",
+          },
         },
         "marquee-y": {
-          from: { transform: "translateY(0)" },
-          to: { transform: "translateY(calc(-100% - var(--gap)))" },
+          from: {
+            transform: "translateY(0)",
+          },
+          to: {
+            transform: "translateY(calc(-100% - var(--gap)))",
+          },
         },
         "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
+          from: {
+            height: "0",
+          },
+          to: {
+            height: "var(--radix-accordion-content-height)",
+          },
         },
         "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
+          from: {
+            height: "var(--radix-accordion-content-height)",
+          },
+          to: {
+            height: "0",
+          },
         },
         shine: {
-          from: { backgroundPosition: "200% 0" },
-          to: { backgroundPosition: "-200% 0" },
+          from: {
+            backgroundPosition: "200% 0",
+          },
+          to: {
+            backgroundPosition: "-200% 0",
+          },
         },
         fadeIn: {
-          from: { opacity: "0" },
-          to: { opacity: "1" },
+          from: {
+            opacity: "0",
+          },
+          to: {
+            opacity: "1",
+          },
         },
         "reveal-up": {
-          "0%": { opacity: "0", transform: "translateY(80%)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
+          "0%": {
+            opacity: "0",
+            transform: "translateY(80%)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
         },
         "reveal-down": {
-          "0%": { opacity: "0", transform: "translateY(-80%)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
+          "0%": {
+            opacity: "0",
+            transform: "translateY(-80%)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
         },
         "content-blur": {
-          "0%": { filter: "blur(0.3rem)" },
-          "100%": { filter: "blur(0)" },
+          "0%": {
+            filter: "blur(0.3rem)",
+          },
+          "100%": {
+            filter: "blur(0)",
+          },
         },
       },
       animation: {
@@ -138,17 +178,14 @@ const config = {
       },
     },
     screens: {
-      sm: '640px',
-      md: '768px',
-      lg: '1024px',
-      xl: '1280px',
-      '2xl': '1536px',
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
     },
   },
-  plugins: [
-    require("tailwindcss-animate"),
-    require("@tailwindcss/aspect-ratio"),
-  ],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/aspect-ratio")],
 } satisfies Config;
 
 export default config;

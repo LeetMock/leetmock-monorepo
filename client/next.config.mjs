@@ -1,6 +1,5 @@
 //Voice-Pipeline needed:
 // const CopyPlugin = require("copy-webpack-plugin"); // CommonJS
-import CopyPlugin from "copy-webpack-plugin";
 
 // reload node_modules on change
 const watchNodeModules = false;
@@ -8,6 +7,10 @@ const watchNodeModules = false;
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+
+  images: {
+    domains: ["cdn-icons-png.flaticon.com", "i.pravatar.cc", "images.unsplash.com"],
+  },
 
   webpack: (config) => {
     config.resolve.alias = {
