@@ -1,6 +1,5 @@
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -10,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { CodeInterviewConfigState } from "@/hooks/use-session-create-modal";
 import { AVAILABLE_LANGUAGES, AVAILABLE_VOICES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
@@ -21,7 +21,33 @@ const stageNameMapping = {
   eval: "Evaluation",
 };
 
-export const CodeInterviewConfig: React.FC<{ selectedQuestion: any }> = ({ selectedQuestion }) => {
+const INTERVIEW_DURATIONS = [15, 30, 45, 60, 75, 90];
+
+interface CodeInterviewConfigProps {
+  onConfigUpdate: (params: CodeInterviewConfigState) => void;
+  selectedQuestion: any; // Replace 'any' with the actual type of selectedQuestion
+}
+
+export const CodeInterviewConfig: React.FC<CodeInterviewConfigProps> = ({
+  onConfigUpdate,
+  selectedQuestion,
+}) => {
+  const [config, setConfig] = useState<CodeInterviewConfigState>({
+    interviewFlow: ["coding"],
+    language: AVAILABLE_LANGUAGES[0],
+    voice: AVAILABLE_VOICES[0],
+    interviewTime: 30,
+    mode: "practice",
+  });
+
+  useEffect(() => {
+    onConfigUpdate(config);
+  }, [config, onConfigUpdate]);
+
+  const updateConfig = (updates: Partial<CodeInterviewConfigState>) => {
+    setConfig((prevConfig) => ({ ...prevConfig, ...updates }));
+  };
+
   const [stages, setStages] = useState({
     background_discussion: false,
     coding: true,
@@ -30,8 +56,21 @@ export const CodeInterviewConfig: React.FC<{ selectedQuestion: any }> = ({ selec
   const [language, setLanguage] = useState(AVAILABLE_LANGUAGES[0]);
   const [voice, setVoice] = useState(AVAILABLE_VOICES[0]);
   const [interviewTime, setInterviewTime] = useState(30);
-  const [interviewTimeError, setInterviewTimeError] = useState("");
-  const [mode, setMode] = useState("learning");
+  const [mode, setMode] = useState<"practice" | "strict">("practice");
+
+  useEffect(() => {
+    const interviewFlow = Object.entries(stages)
+      .filter(([_, isSelected]) => isSelected)
+      .map(([stage]) => stage);
+
+    updateConfig({
+      interviewFlow,
+      language,
+      voice,
+      interviewTime,
+      mode,
+    });
+  }, [stages, language, voice, interviewTime, mode]);
 
   const toggleStage = (stage: string) => {
     if (stage !== "coding") {
@@ -39,31 +78,8 @@ export const CodeInterviewConfig: React.FC<{ selectedQuestion: any }> = ({ selec
     }
   };
 
-  const validateInterviewTime = (value: number) => {
-    if (isNaN(value) || !Number.isInteger(value)) {
-      setInterviewTimeError("Please enter a valid integer.");
-    } else if (value < 10 || value > 70) {
-      setInterviewTimeError("Interview time must be between 10 and 70 minutes.");
-    } else {
-      setInterviewTimeError("");
-    }
-  };
-
-  const handleInterviewTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value, 10);
-    setInterviewTime(value);
-    validateInterviewTime(value);
-  };
-
-  useEffect(() => {
-    validateInterviewTime(interviewTime);
-  }, [interviewTime]);
-
   return (
-    <div className="w-full max-w-5xl mx-auto overflow-y-auto max-h-[calc(100vh-100px)]">
-      <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 sticky top-0 z-10">
-        <h2 className="text-2xl font-bold">Interview Configuration</h2>
-      </div>
+    <div className="w-full max-w-[95%] mx-auto overflow-y-auto max-h-[calc(100vh-100px)] scrollbar-hide">
       <div className="space-y-8 p-6">
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Interview Flow</h3>
@@ -142,21 +158,23 @@ export const CodeInterviewConfig: React.FC<{ selectedQuestion: any }> = ({ selec
 
         <div className="space-y-4">
           <Label htmlFor="interview-time" className="text-sm font-medium">
-            Interview Time (minutes)
+            Interview Duration (minutes)
           </Label>
-          <Input
-            id="interview-time"
-            type="number"
-            value={interviewTime}
-            onChange={handleInterviewTimeChange}
-            min={10}
-            max={70}
-            className={cn(
-              "w-full max-w-xs",
-              interviewTimeError && "border-red-500 focus:ring-red-500"
-            )}
-          />
-          {interviewTimeError && <p className="text-sm text-red-500 mt-1">{interviewTimeError}</p>}
+          <Select
+            value={interviewTime.toString()}
+            onValueChange={(value) => setInterviewTime(Number(value))}
+          >
+            <SelectTrigger id="interview-time" className="w-full max-w-xs">
+              <SelectValue placeholder="Select duration" />
+            </SelectTrigger>
+            <SelectContent>
+              {INTERVIEW_DURATIONS.map((duration) => (
+                <SelectItem key={duration} value={duration.toString()}>
+                  {duration} minutes
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <Separator />
@@ -166,13 +184,13 @@ export const CodeInterviewConfig: React.FC<{ selectedQuestion: any }> = ({ selec
           <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-2">
               <Checkbox
-                id="learning-mode"
-                checked={mode === "learning"}
-                onCheckedChange={() => setMode("learning")}
+                id="practice-mode"
+                checked={mode === "practice"}
+                onCheckedChange={() => setMode("practice")}
                 className="h-5 w-5"
               />
-              <label htmlFor="learning-mode" className="text-sm">
-                Learning Mode
+              <label htmlFor="practice-mode" className="text-sm">
+                Practice Mode
               </label>
             </div>
             <div className="flex items-center space-x-2">

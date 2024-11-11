@@ -12,15 +12,17 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { CodeSessionEvent } from "@/convex/types";
+import { useEditorStore } from "@/hooks/use-editor-store";
 import { useNonReactiveQuery } from "@/hooks/use-non-reactive-query";
 import { useResizePanel } from "@/hooks/use-resize-panel";
-import { RunTestResult } from "@/lib/types";
+import { Testcase } from "@/lib/types";
 import { cn, isDefined } from "@/lib/utils";
 import { useConnectionState } from "@livekit/components-react";
 import Editor from "@monaco-editor/react";
 import { toast } from "sonner";
 import { useWindowSize } from "usehooks-ts";
 import { TestResultsBlock } from "./test-results-block";
+import { TestcaseEditor } from "./testcase-editor";
 
 const darkEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -49,19 +51,33 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   const editorContainerRef = useRef<HTMLDivElement>(null);
   const connectionState = useConnectionState();
 
+  // Zustand store
+  const {
+    testResults,
+    outputView,
+    testRunCounter,
+    isRunning,
+    localTestcases,
+    activeTestcaseTab,
+    hasTestcaseChanges,
+    setOutputView,
+    setLocalTestcases,
+    setActiveTestcaseTab,
+    handleRunTests,
+    setHasTestcaseChanges,
+  } = useEditorStore();
+
   // Convex
-  const runTests = useAction(api.actions.runTests);
   const editorState = useNonReactiveQuery(api.codeSessionStates.getEditorState, { sessionId });
   const terminalState = useQuery(api.codeSessionStates.getTerminalState, { sessionId });
+  const testCasesState = useNonReactiveQuery(api.codeSessionStates.getTestCasesState, {
+    sessionId,
+  }) as Testcase[];
   const commitCodeSessionEvent = useMutation(api.codeSessionEvents.commitCodeSessionEvent);
 
-  const [testResults, setTestResults] = useState<RunTestResult | null>(null);
-  const [outputView, setOutputView] = useState<"output" | "testResults">("output");
-  const [testRunCounter, setTestRunCounter] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
+  const { height } = useWindowSize();
   const [localEditorContent, setLocalEditorContent] = useState<string | undefined>(undefined);
 
-  const { height = 300 } = useWindowSize();
   const { size, isResizing, resizeHandleProps } = useResizePanel({
     defaultSize: 400,
     minSize: 200,
@@ -76,61 +92,31 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   }, [editorState]);
 
   const stateLoaded = useMemo(
-    () => isDefined(editorState) && isDefined(terminalState),
-    [editorState, terminalState]
+    () => isDefined(editorState) && isDefined(terminalState) && isDefined(testCasesState),
+    [editorState, terminalState, testCasesState]
   );
 
   const handleCommitEvent = useCallback(
     (event: CodeSessionEvent) => {
       if (connectionState !== "connected") return;
 
-      const promise = commitCodeSessionEvent({ sessionId, event });
-      toast.promise(promise, {
-        success: `Event ${event.type} committed`,
-        error: "Error committing event",
-      });
+      if (event.type === "testcase_changed") {
+        toast.success("Testcases updated");
+      }
+      commitCodeSessionEvent({ sessionId, event });
     },
     [sessionId, commitCodeSessionEvent, connectionState]
   );
 
   const debouncedCommitEvent = useDebounceCallback(handleCommitEvent, 500);
 
-  const handleRunTests = async () => {
-    if (!isDefined(editorState)) return;
-    if (connectionState !== "connected") {
-      toast.error(UNCONNECTED_MESSAGE);
-      return;
+  useEffect(() => {
+    if (testCasesState) {
+      setLocalTestcases(testCasesState);
     }
+  }, [testCasesState, setLocalTestcases]);
 
-    const { language, content } = editorState;
-
-    setIsRunning(true);
-    setTestResults(null);
-    setOutputView("testResults");
-    setTestRunCounter((prev) => prev + 1);
-
-    try {
-      const result = await runTests({
-        language,
-        code: localEditorContent || content,
-        questionId: questionId,
-      });
-      // const executionTime = result.executionTime;
-      if (result.status === "success" && result.testResults) {
-        const executionTime = result.executionTime;
-        setTestResults(result.testResults);
-      } else {
-        const errorMessage =
-          result.stderr || result.exception || "Error running tests. Please try again.";
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      console.error("Error running tests:", error);
-      toast.error("Error running tests. Please try again.");
-    }
-
-    setIsRunning(false);
-  };
+  const runTests = useAction(api.actions.runTests);
 
   return (
     <div className={cn("h-full w-full flex flex-col", className)} {...props}>
@@ -141,14 +127,14 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
         )}
         style={{ height: size }}
       >
-        <div className="flex justify-between items-center px-2.5 py-2 border-b">
+        <div className="flex justify-between items-center px-2.5 py-2 border-b shrink-0">
           <div className="flex items-center space-x-2">
             <span className="text-sm font-semibold mb-px">
               {language.charAt(0).toUpperCase() + language.slice(1)}
             </span>
           </div>
         </div>
-        <div className="h-full relative rounded-md pb-2" ref={editorContainerRef}>
+        <div className="flex-1 relative rounded-md pb-2 min-h-0" ref={editorContainerRef}>
           <Editor
             className="absolute inset-0"
             language={language}
@@ -161,7 +147,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
               scrollBeyondLastLine: false,
               readOnly: connectionState !== "connected" || !stateLoaded,
               readOnlyMessage: {
-                value: "You are not connected to the interview room.",
+                value: UNCONNECTED_MESSAGE,
                 isTrusted: true,
               },
               minimap: {
@@ -195,27 +181,25 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
         {...resizeHandleProps}
       >
         <div className="absolute inset-0 flex justify-center items-center">
-          <div className="w-9 h-[3px] rounded-full bg-muted-foreground/50"></div>
+          <div className="w-9 h-[3px] rounded-full bg-muted-foreground/50" />
         </div>
       </div>
       <div
-        className={cn(
-          "flex px-3 py-2 flex-col space-y-2 h-full w-full border",
-          "bg-background rounded-md shadow-md"
-        )}
+        className={cn("flex flex-col w-full border", "bg-background rounded-md shadow-md min-h-0")}
+        style={{ height: `calc(100% - ${size}px - 2px)` }}
       >
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center px-3 py-2 flex-shrink-0">
           <div className="flex space-x-2">
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setOutputView("output")}
+              onClick={() => setOutputView("Testcase")}
               className={cn(
                 "text-sm font-medium",
-                outputView === "output" ? "bg-secondary" : "hover:bg-secondary/50"
+                outputView === "Testcase" ? "bg-secondary" : "hover:bg-secondary/50"
               )}
             >
-              Output
+              Testcase
             </Button>
             <Button
               variant="ghost"
@@ -229,33 +213,64 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
               Test Results
             </Button>
           </div>
-          {!isRunning && outputView === "output" && (
+          {!isRunning && outputView === "testResults" && (
             <div className="flex items-center text-sm text-gray-500">
               <Clock className="w-4 h-4 mr-1" />
               <span>{terminalState ? terminalState.executionTime : 0} ms</span>
             </div>
           )}
         </div>
-        <div className="p-2 rounded-md bg-secondary h-full overflow-auto relative">
-          {outputView === "testResults" && testResults ? (
-            <TestResultsBlock key={testRunCounter} results={testResults} />
-          ) : (
-            <pre
+        <div className="flex-1 min-h-0 px-2">
+          <div className="h-full p-2 rounded-md bg-secondary/10 overflow-hidden">
+            <div
               className={cn(
-                "text-sm rounded-md absolute inset-3",
-                terminalState?.isError ? "text-red-500" : "text-gray-800 dark:text-gray-200"
+                "h-full overflow-auto",
+                outputView === "testResults" ? "block" : "hidden"
               )}
             >
-              <code>{terminalState ? terminalState.output : ""}</code>
-            </pre>
-          )}
+              <TestResultsBlock
+                key={testRunCounter}
+                isRunning={isRunning}
+                results={testResults ?? []}
+              />
+            </div>
+            <div
+              className={cn("h-full overflow-auto", outputView === "Testcase" ? "block" : "hidden")}
+            >
+              <TestcaseEditor
+                testcases={localTestcases}
+                activeTab={activeTestcaseTab}
+                connectionState={connectionState}
+                onTestcasesChange={(testcases) => {
+                  setLocalTestcases(testcases);
+                }}
+                onActiveTabChange={setActiveTestcaseTab}
+                onSaveTestcases={() => {
+                  debouncedCommitEvent({
+                    type: "testcase_changed",
+                    data: { content: localTestcases },
+                  });
+                  setHasTestcaseChanges(false);
+                }}
+              />
+            </div>
+          </div>
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-end px-3 py-2 flex-shrink-0">
           <Button
             variant="outline-blue"
             className="h-9 min-w-24"
-            onClick={handleRunTests}
-            disabled={isRunning}
+            onClick={() =>
+              handleRunTests({
+                sessionId,
+                questionId,
+                language,
+                editorState,
+                runTests,
+                onCommitEvent: debouncedCommitEvent,
+              })
+            }
+            disabled={isRunning || connectionState !== "connected"}
           >
             {isRunning ? (
               <Loader2 className="h-4 w-4 animate-spin" />

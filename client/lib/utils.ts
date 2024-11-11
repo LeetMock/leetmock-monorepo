@@ -3,7 +3,7 @@ import type { AccessTokenOptions, VideoGrant } from "livekit-server-sdk";
 import { AccessToken } from "livekit-server-sdk";
 import { twMerge } from "tailwind-merge";
 import { BG_COLORS } from "./constants";
-import { type DefinedObject } from "./types";
+import { type DefinedObject, type Testcase } from "./types";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -105,12 +105,13 @@ interface Question {
   inputParameters: InputParameters;
   tests: TestCase[];
   evalMode: string;
+  outputParameters: string;
 }
 
-export function generateTestCode(question: any, language: string): string {
+export function generateTestCode(question: any, language: string, testCasesState: Testcase[]): string {
   switch (language) {
     case "python":
-      return generatePythonTestCode(question);
+      return generatePythonTestCode(question, testCasesState);
     case "java":
       return generateJavaTestCode(question);
     case "cpp":
@@ -122,34 +123,35 @@ export function generateTestCode(question: any, language: string): string {
   }
 }
 
-function generatePythonTestCode(question: Question): string {
-  const { functionName, inputParameters, tests, evalMode } = question;
+function toPythonBoolean(value: any): string {
+  if (typeof value === 'string') {
+    return value.toLowerCase() === 'true' ? 'True' : 'False';
+  }
+  return value ? 'True' : 'False';
+}
+
+function generatePythonTestCode(question: Question, testCasesState: Testcase[]): string {
+  const { functionName, inputParameters, evalMode, outputParameters } = question;
   const params = inputParameters["python"];
 
   let testCode = `
 import unittest
 import json
 import traceback
+import sys
+from io import StringIO
 
-class ListNode:
-    def __init__(self, val=0, next=None):
-        self.val = val
-        self.next = next
+class CaptureOutput:
+    def __init__(self):
+        self.stdout = StringIO()
+        self.original_stdout = sys.stdout
 
-def arrayToListNode(arr):
-    dummy = ListNode(0)
-    current = dummy
-    for val in arr:
-        current.next = ListNode(val)
-        current = current.next
-    return dummy.next
+    def __enter__(self):
+        sys.stdout = self.stdout
+        return self.stdout
 
-def listToArray(node):
-    result = []
-    while node:
-        result.append(node.val)
-        node = node.next
-    return result
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        sys.stdout = self.original_stdout
 
 class TestSolution(unittest.TestCase):
     @classmethod
@@ -163,11 +165,9 @@ class TestSolution(unittest.TestCase):
         print("END_RESULTS_JSON")
 `;
 
-  tests.slice(0, 5).forEach((test, index) => {
-    const inputArgs = params
-      .filter((_, i) => i % 2 === 0)
-      .map((param, i) => {
-        const paramType = params[i * 2 + 1];
+  testCasesState.forEach((test, index) => {
+    const inputArgs = Object.entries(params)
+      .map(([param, paramType]) => {
         if (paramType === "Optional[ListNode]" || paramType === "ListNode") {
           return `arrayToListNode(${JSON.stringify(test.input[param])})`;
         }
@@ -175,46 +175,57 @@ class TestSolution(unittest.TestCase):
       })
       .join(", ");
 
+    const expectedOutput = outputParameters === "boolean"
+      ? toPythonBoolean(test.expectedOutput)
+      : JSON.stringify(test.expectedOutput);
+
     let comparisonCode;
-    switch (evalMode) {
-      case "exactMatch":
-        comparisonCode = `passed = (result == expected)`;
-        break;
-      case "ListNodeIter":
-        comparisonCode = `passed = (listToArray(result) == expected)`;
-        break;
-      case "SortedMatch":
-        comparisonCode = `passed = (sorted(result) == sorted(expected))`;
-        break;
-      default:
-        comparisonCode = `passed = (result == expected)`;
+    if (outputParameters === "boolean") {
+      comparisonCode = `passed = (bool(result) == expected)`;
+    } else {
+      switch (evalMode) {
+        case "exactMatch":
+          comparisonCode = `passed = (result == expected)`;
+          break;
+        case "ListNodeIter":
+          comparisonCode = `passed = (listToArray(result) == expected)`;
+          break;
+        case "SortedMatch":
+          comparisonCode = `passed = (sorted(result) == sorted(expected))`;
+          break;
+        default:
+          comparisonCode = `passed = (result == expected)`;
+      }
     }
 
     testCode += `
     def test_case_${index + 1}(self):
-        try:
-            from solution import Solution
-            sol = Solution()
-            result = sol.${functionName}(${inputArgs})
-            expected = ${JSON.stringify(test.output)}
-            ${comparisonCode}
-            self.__class__.results.append({
-                "caseNumber": ${index + 1},
-                "passed": passed,
-                "input": ${JSON.stringify(test.input)},
-                "expected": expected,
-                "actual": listToArray(result) if isinstance(result, ListNode) else result,
-                "error": None
-            })
-        except Exception as e:
-            self.__class__.results.append({
-                "caseNumber": ${index + 1},
-                "passed": False,
-                "input": ${JSON.stringify(test.input)},
-                "expected": ${JSON.stringify(test.output)},
-                "actual": None,
-                "error": traceback.format_exc()
-            })
+        with CaptureOutput() as output:
+            try:
+                from solution import Solution
+                sol = Solution()
+                result = sol.${functionName}(${inputArgs})
+                expected = ${expectedOutput}
+                ${comparisonCode}
+                self.__class__.results.append({
+                    "caseNumber": ${index + 1},
+                    "passed": passed,
+                    "input": ${JSON.stringify(test.input)},
+                    "expected": expected,
+                    "actual": listToArray(result) if isinstance(result, ListNode) else result,
+                    "error": None,
+                    "stdout": output.getvalue()
+                })
+            except Exception as e:
+                self.__class__.results.append({
+                    "caseNumber": ${index + 1},
+                    "passed": False,
+                    "input": ${JSON.stringify(test.input)},
+                    "expected": ${JSON.stringify(test.expectedOutput)},
+                    "actual": None,
+                    "error": traceback.format_exc(),
+                    "stdout": output.getvalue()
+                })
 `;
   });
 

@@ -5,7 +5,7 @@ import type { VideoGrant } from "livekit-server-sdk";
 import { api, internal } from "./_generated/api";
 import { action } from "./_generated/server";
 
-import { DATA_STRUCTURES } from "@/lib/constants";
+import { DATA_STRUCTURES, CODE_PREFIX } from "@/lib/constants";
 import { CodeRunResult, RunCodeResult, RunTestResult, TokenResult } from "@/lib/types";
 import {
   createToken,
@@ -17,8 +17,8 @@ import {
 import { ConvexError, v } from "convex/values";
 
 import { retry } from "@lifeomic/attempt";
+import { getEditorState, getTestCasesState } from "./codeSessionStates";
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function executeCode(payload: any, maxRetries = 3): Promise<CodeRunResult> {
   const url = "https://onecompiler-apis.p.rapidapi.com/api/v1/run";
@@ -134,7 +134,7 @@ export const runCode = action({
       files: [
         {
           name: `solution.${getFileExtension(language)}`,
-          content: `from data_structure import *\n\n${code}`,
+          content: `${CODE_PREFIX[language]}\n${code}`,
         },
         {
           name: `data_structure.${getFileExtension(language)}`,
@@ -147,11 +147,11 @@ export const runCode = action({
 
     return result
       ? {
-          status: !result.isError, //true if API call was successful
-          executionTime: result.executionTime,
-          isError: !!result.stderr, //true if there's an error in the code
-          output: result.stderr || result.stdout || "",
-        }
+        status: !result.isError, //true if API call was successful
+        executionTime: result.executionTime,
+        isError: !!result.stderr, //true if there's an error in the code
+        output: result.stderr || result.stdout || "",
+      }
       : undefined;
   },
 });
@@ -159,24 +159,48 @@ export const runCode = action({
 export const runTests = action({
   args: {
     language: v.string(),
-    code: v.string(),
+    sessionId: v.id("sessions"),
     questionId: v.id("questions"),
   },
-  handler: async (ctx, { language, code, questionId }): Promise<CodeRunResult> => {
+  handler: async (ctx, { language, sessionId, questionId }): Promise<CodeRunResult> => {
+
+    // Retrieve editor state and test cases state using internal queries
+    const editorState = await ctx.runQuery(internal.codeSessionStates.getEditorStateInternal, { sessionId });
+    const testCasesState = await ctx.runQuery(internal.codeSessionStates.getTestCasesStateInternal, { sessionId });
+
+    if (!editorState || !testCasesState) {
+      throw new Error("Failed to retrieve code or test cases");
+    }
+
+    // check if testcase State has expectedOutput
     const question = await ctx.runQuery(api.questions.getById, { questionId });
     if (!question) {
       throw new Error("Question not found");
     }
 
-    const testCode = generateTestCode(question, language);
+    // const inputParameters = question.inputParameters[language];
+    // validate test cases state
+    // const validationResult = validateTestCasesState(testCasesState, inputParameters);
 
+    // if (!validationResult.isValid) {
+    //   return {
+    //     status: "testcases_invalid",
+    //     executionTime: 0,
+    //     stdout: undefined,
+    //     stderr: undefined,
+    //     isError: true,
+    //     exception: validationResult.errors.join(', '),
+    //   };
+    // }
+
+    const testCode = generateTestCode(question, language, testCasesState);
     const payload = {
       language,
       stdin: "",
       files: [
         {
           name: `tests.${getFileExtension(language)}`,
-          content: `from data_structure import *\n\n${testCode}`,
+          content: `${CODE_PREFIX[language]}\n${testCode}`,
         },
         {
           name: `data_structure.${getFileExtension(language)}`,
@@ -184,7 +208,7 @@ export const runTests = action({
         },
         {
           name: `solution.${getFileExtension(language)}`,
-          content: `from data_structure import *\n\n${code}`,
+          content: `${CODE_PREFIX[language]}\n${editorState.content}`,
         },
       ],
     };

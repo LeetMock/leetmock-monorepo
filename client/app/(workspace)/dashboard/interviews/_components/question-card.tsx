@@ -53,7 +53,7 @@ export const QuestionCard: React.FC<{
       onClick={() => onQuestionSelected(_id)}
     >
       <CardHeader className="flex flex-row items-start justify-between p-2">
-        <CardTitle className="font-medium text-xs mb-0 line-clamp-2 mr-2 flex-grow">
+        <CardTitle className="font-medium text-sm mb-0 line-clamp-2 mr-2 flex-grow">
           {title}
         </CardTitle>
         <Badge

@@ -165,3 +165,4 @@ class AgentStream(BaseModel, Generic[TState]):
                 chunks.append(chunk_text)
 
         logger.info(f"Agent text stream: {''.join(chunks)}")
+        self.state_merger.flush()

@@ -75,14 +75,24 @@ class StateMerger(BaseModel, Generic[TState]):
         snapshot = await self.state_graph.aget_state(config=CONFIG)
         return snapshot.values
 
-    async def merge_state(self, state: TState | Dict[str, Any], debounce: bool = True):
+    async def merge_state(self, state: TState | Dict[str, Any]):
         if isinstance(state, dict) and len(state) == 0:
             return await self.get_state()
 
         values = await self.state_graph.ainvoke(state, config=CONFIG)
-        if debounce:
-            asyncio.create_task(self._set_state_debounced(values))
-        else:
-            asyncio.create_task(self.storage.set_state(values))
 
         return self.state_type(**values)
+
+    async def aflush(self, debounce: bool = True):
+        """Flush the state to the storage"""
+
+        values = await self.get_state_dict()
+        if debounce:
+            await self._set_state_debounced(values)
+        else:
+            await self.storage.set_state(values)
+
+    def flush(self, debounce: bool = True):
+        """Flush the state to the storage"""
+
+        asyncio.create_task(self.aflush(debounce))

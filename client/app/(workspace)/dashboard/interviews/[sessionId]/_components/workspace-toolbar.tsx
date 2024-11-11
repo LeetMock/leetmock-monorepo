@@ -31,6 +31,7 @@ interface WorkspaceToolbarProps {
     sessionStatus: "not_started" | "in_progress" | "completed";
     questionId: Id<"questions">;
     sessionStartTime?: number;
+    timeLimit: number;
   };
 }
 
@@ -41,7 +42,7 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
   const startSession = useMutation(api.sessions.startSession);
   const endSession = useMutation(api.sessions.endSession);
 
-  const [timeLeft, setTimeLeft] = useState<number>(60 * 15);
+  const [timeLeft, setTimeLeft] = useState<number>(60 * session.timeLimit);
   const [isEndInterviewDialogOpen, setIsEndInterviewDialogOpen] = useState<boolean>(false);
 
   const { state } = useAgent(session.sessionId);
@@ -51,7 +52,7 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
       if (!isDefined(session?.sessionStartTime)) return;
 
       const currentTime = Date.now();
-      const endTime = session.sessionStartTime + minutesToMilliseconds(15);
+      const endTime = session.sessionStartTime + minutesToMilliseconds(session.timeLimit);
       const timeLeft = getTimeDurationSeconds(currentTime, endTime);
       setTimeLeft(Math.max(timeLeft, 0));
     }, 500);
@@ -129,9 +130,9 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
       </div>
       <div className="flex items-center space-x-2.5 h-full">
         <UserDropdown align="end">
-          <Button variant="ghost" size="icon" className="w-9 h-9 rounded-md">
+          <div className="w-9 h-9 rounded-md flex items-center justify-center hover:bg-muted cursor-pointer">
             <Settings className="w-[1.2rem] h-[1.2rem]" />
-          </Button>
+          </div>
         </UserDropdown>
         <AlertDialog open={isEndInterviewDialogOpen} onOpenChange={setIsEndInterviewDialogOpen}>
           <AlertDialogContent>

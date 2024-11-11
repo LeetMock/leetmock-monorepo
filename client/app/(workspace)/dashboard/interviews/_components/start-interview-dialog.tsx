@@ -148,8 +148,15 @@ export const InterviewTypeSelection: React.FC = () => {
 };
 
 export const StartInterviewDialog: React.FC = () => {
-  const { maxStep, codeInterview, hasConfiguredSession, updateCodeInterview, reset, setType } =
-    useSessionCreateModal();
+  const {
+    maxStep,
+    codeInterview,
+    codeInterviewConfig,
+    updateCodeInterview,
+    updateCodeInterviewConfig: updateConfig,
+    reset,
+    setType,
+  } = useSessionCreateModal();
   const router = useRouter();
   const questions = useQuery(api.questions.getAll);
   const createAgentThread = useAction(api.actions.createAgentThread);
@@ -163,14 +170,18 @@ export const StartInterviewDialog: React.FC = () => {
     const question = questions.find((q) => q._id === codeInterview.questionId);
     if (!question) return;
 
-    const { functionName, inputParameters } = question;
-
     const promise = createAgentThread({ graphId: "code-mock-staged-v1" })
       .then(({ threadId, assistantId }) => {
         return createSession({
           questionId: codeInterview.questionId!,
           agentThreadId: threadId,
           assistantId: assistantId,
+          interviewType: "coding",
+          interviewMode: codeInterviewConfig.mode!,
+          interviewFlow: codeInterviewConfig.interviewFlow!,
+          programmingLanguage: codeInterviewConfig.language!,
+          timeLimit: codeInterviewConfig.interviewTime!,
+          voice: codeInterviewConfig.voice!,
         });
       })
       .then((sessionId) => {
@@ -184,7 +195,15 @@ export const StartInterviewDialog: React.FC = () => {
       success: "Interview created",
       error: (error) => error.message,
     });
-  }, [questions, createAgentThread, codeInterview, createSession, router, reset]);
+  }, [
+    questions,
+    createAgentThread,
+    codeInterview,
+    codeInterviewConfig,
+    createSession,
+    router,
+    reset,
+  ]);
 
   return (
     <>
@@ -203,9 +222,15 @@ export const StartInterviewDialog: React.FC = () => {
           className={cn("sm:max-w-[1200px] sm:w-[90vw] sm:min-h-[50rem]", "flex flex-col gap-6")}
         >
           <DialogHeader>
-            <DialogTitle className="text-2xl">Choose Interview Type</DialogTitle>
+            <DialogTitle className="text-2xl">
+              {currentStep === 0 && "Choose Interview Type"}
+              {currentStep === 1 && "Select Coding Question"}
+              {currentStep === 2 && "Configure Your Interview"}
+            </DialogTitle>
             <DialogDescription className="text-base">
-              Select the type of interview you&apos;d like to start.
+              {currentStep === 0 && "Select the type of interview you'd like to start."}
+              {currentStep === 1 && "Choose a coding problem that matches your preparation goals."}
+              {currentStep === 2 && "Customize your interview settings to match your preferences."}
             </DialogDescription>
           </DialogHeader>
 
@@ -233,6 +258,7 @@ export const StartInterviewDialog: React.FC = () => {
           {currentStep === 2 && (
             <div className="flex flex-col h-[calc(100vh-20rem)]">
               <CodeInterviewConfig
+                onConfigUpdate={updateConfig}
                 selectedQuestion={questions?.find((q) => q._id === codeInterview.questionId)}
               />
             </div>

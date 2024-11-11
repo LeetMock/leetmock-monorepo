@@ -35,8 +35,15 @@ export const BG_COLORS = [
 ];
 
 interface CodeTemplate {
-  (functionName: string, params: string[]): string;
+  (functionName: string, params: Record<string, string>): string;
 }
+
+export const CODE_PREFIX: { [key: string]: string } = {
+  python: "from typing import List, Dict, Tuple, Optional, Union, Any\nimport math\nfrom data_structure import *\n",
+  javascript: "",
+  java: "",
+  cpp: "",
+};
 
 export const DATA_STRUCTURES: { [key: string]: string } = {
   python: `
@@ -113,10 +120,9 @@ export const CODE_TEMPLATES: { [key: string]: CodeTemplate } = {
 from typing import List, Any
 
 class Solution:
-    def ${functionName}(self, ${params
-      .filter((_, i) => i % 2 === 0)
-      .map((param, i) => `${param}: ${params[i * 2 + 1]}`)
-      .join(", ")}):
+    def ${functionName}(self, ${Object.entries(params)
+        .map(([param, type]) => `${param}: ${type}`)
+        .join(", ")}):
         # TODO: Write your Python code here
         pass
 `.trim(),
@@ -125,9 +131,9 @@ class Solution:
     `
 class Solution {
     /**
-     * @param {${params.filter((_, i) => i % 2 !== 0).join("} @param {")}
+     * @param {${Object.values(params).join("} @param {")}
      */
-    ${functionName}(${params.filter((_, i) => i % 2 === 0).join(", ")}) {
+    ${functionName}(${Object.keys(params).join(", ")}) {
         // TODO: Write your JavaScript code here
     }
 }
@@ -138,10 +144,9 @@ class Solution {
 import java.util.List;
 
 class Solution {
-    public Object ${functionName}(${params
-      .filter((_, i) => i % 2 === 0)
-      .map((param, i) => `${params[i * 2 + 1]} ${param}`)
-      .join(", ")}) {
+    public Object ${functionName}(${Object.entries(params)
+        .map(([param, type]) => `${type} ${param}`)
+        .join(", ")}) {
         // TODO: Write your Java code here
         return null;
     }
@@ -155,10 +160,9 @@ class Solution {
 
 class Solution {
 public:
-    int ${functionName}(${params
-      .filter((_, i) => i % 2 === 0)
-      .map((param, i) => `${params[i * 2 + 1]} ${param}`)
-      .join(", ")}) {
+    int ${functionName}(${Object.entries(params)
+        .map(([param, type]) => `${type} ${param}`)
+        .join(", ")}) {
         // TODO: Write your C++ code here
         return 0;
     }
