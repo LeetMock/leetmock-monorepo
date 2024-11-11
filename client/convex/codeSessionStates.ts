@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
 
-import { query, userQuery, internalQuery } from "./functions";
+import { internalQuery, query, userQuery } from "./functions";
 import { QueryCtx } from "./types";
 
 export const get = query({
@@ -23,6 +23,12 @@ export const get = query({
       isError: v.boolean(),
       executionTime: v.optional(v.number()),
     }),
+    testcases: v.array(
+      v.object({
+        input: v.record(v.string(), v.any()),
+        expectedOutput: v.optional(v.any()),
+      })
+    ),
   }),
   handler: async (ctx, { sessionId }) => {
     return await querySessionStateBySessionId(ctx, sessionId);
