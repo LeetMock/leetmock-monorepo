@@ -14,14 +14,11 @@ from agent_server.contexts.context_manager import AgentContextManager
 from agent_server.contexts.session import CodeSession
 from agent_server.events.events import (
     CodeSessionEditorContentChangedEvent,
-    CodeSessionEvent,
     ReminderEvent,
     TestSubmissionEvent,
     UserMessageEvent,
-    UserMessageEventData,
 )
-from agent_server.livekit.streams import NoOpLLM, SimpleLLMStream
-from agent_server.livekit.tts import create_elevenlabs_tts
+from agent_server.livekit.streams import EchoStream, NoopLLM
 from agent_server.storages.langgraph_cloud import LangGraphCloudStateStorage
 from agent_server.utils.logger import get_logger
 from agent_server.utils.messages import (
@@ -36,6 +33,7 @@ from livekit.agents.worker import _DefaultLoadCalc
 from livekit.plugins import deepgram, openai, silero
 
 from libs.convex.api import ConvexApi
+from libs.types import MessageWrapper
 
 logger = get_logger(__name__)
 
@@ -81,11 +79,11 @@ class CustomLoadCalc(_DefaultLoadCalc):
 
 
 async def entrypoint(ctx: JobContext):
-    no_op_llm = NoOpLLM()
+    no_op_llm = NoopLLM()
     convex_api = ConvexApi(convex_url=os.getenv("CONVEX_URL") or "")
     session = CodeSession(api=convex_api)
 
-    user_message_event_q = asyncio.Queue[UserMessageEventData]()
+    user_message_event_q = asyncio.Queue[MessageWrapper]()
     user_message_response_q = asyncio.Queue[AsyncIterator[str]]()
     unix_timestamp = int(datetime.now().timestamp())
 
@@ -101,9 +99,9 @@ async def entrypoint(ctx: JobContext):
             key = f"{unix_timestamp}-{i}-{message.type}"
             message.id = hashlib.md5(key.encode()).hexdigest()
 
-        user_message_event_q.put_nowait(UserMessageEventData.from_messages(lc_messages))
+        user_message_event_q.put_nowait(MessageWrapper.from_messages(lc_messages))
         text_stream = await user_message_response_q.get()
-        return SimpleLLMStream(text_stream=text_stream, chat_ctx=chat_ctx)
+        return EchoStream(text_stream=text_stream, chat_ctx=chat_ctx)
 
     assistant = VoiceAssistant(
         vad=silero.VAD.load(),

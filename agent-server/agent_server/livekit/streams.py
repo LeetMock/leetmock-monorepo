@@ -9,7 +9,7 @@ from livekit.agents import llm
 logger = get_logger(__name__)
 
 
-class NoOpLLM(llm.LLM):
+class NoopLLM(llm.LLM):
 
     def chat(
         self,
@@ -20,18 +20,19 @@ class NoOpLLM(llm.LLM):
         n: int | None = None,
         parallel_tool_calls: bool | None = None,
     ) -> llm.LLMStream:
-        return NoOpLLMStream(chat_ctx=chat_ctx)
+        return NoopStream(chat_ctx=chat_ctx)
 
 
-class NoOpLLMStream(llm.LLMStream):
+class NoopStream(llm.LLMStream):
+    """Noop stream that does nothing (stream empty string)"""
 
     def __init__(
         self,
         *,
         chat_ctx: llm.ChatContext,
     ):
-        super().__init__(llm=NoOpLLM(), chat_ctx=chat_ctx, fnc_ctx=None)
-        self._stream = self._create_fake_stream()
+        super().__init__(llm=NoopLLM(), chat_ctx=chat_ctx, fnc_ctx=None)
+        self._stream = self._create_noop_stream()
         self._request_id = str(uuid.uuid4())
 
     async def _main_task(self):
@@ -44,17 +45,18 @@ class NoOpLLMStream(llm.LLMStream):
         )
         return llm.ChatChunk(request_id=self._request_id, choices=[choice])
 
-    async def _create_fake_stream(self) -> AsyncIterator[llm.ChatChunk]:
+    async def _create_noop_stream(self) -> AsyncIterator[llm.ChatChunk]:
         yield self._create_llm_chunk("")
 
     async def __anext__(self) -> llm.ChatChunk:
         return await anext(self._stream)
 
 
-class SimpleLLMStream(llm.LLMStream):
+class EchoStream(llm.LLMStream):
+    """Echoes the text stream back to the user."""
 
     def __init__(self, *, text_stream: AsyncIterator[str], chat_ctx: llm.ChatContext):
-        super().__init__(llm=NoOpLLM(), chat_ctx=chat_ctx, fnc_ctx=None)
+        super().__init__(llm=NoopLLM(), chat_ctx=chat_ctx, fnc_ctx=None)
         self._chunk_stream = self._create_message_chunk_stream(text_stream)
         self._request_id = str(uuid.uuid4())
 

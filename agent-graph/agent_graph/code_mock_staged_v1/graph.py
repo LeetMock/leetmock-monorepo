@@ -16,7 +16,7 @@ from agent_graph.code_mock_staged_v1.constants import (
 )
 from agent_graph.constants import JOIN_CALL_MESSAGE, RECONNECT_MESSAGE
 from agent_graph.event_descriptors import EVENT_DESCRIPTORS, EventDescriptor
-from agent_graph.types import EventMessageState, MessageWrapper, Signal, Step
+from agent_graph.types import EventMessageState, Signal, Step
 from agent_graph.utils import with_event_reset, with_trigger_reset
 from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
@@ -24,6 +24,7 @@ from langgraph.graph import END, START, StateGraph
 from pydantic.v1 import Field
 
 from libs.convex.convex_types import CodeSessionContentChangedEvent
+from libs.types import MessageWrapper
 
 
 class AgentState(EventMessageState):
@@ -188,8 +189,8 @@ def create_graph():
         .add_node("on_trigger", on_trigger)
         .add_node("decide_next_stage", decide_next_stage)
         .add_node("stage_tracker", stage_tracker.create_compiled_graph())
-        .add_node(StageTypes.INTRO, intro_stage.create_compiled_graph())
-        .add_node(StageTypes.CODING, coding_stage.create_compiled_graph())
+        .add_node(StageTypes.INTRO.value, intro_stage.create_compiled_graph())
+        .add_node(StageTypes.CODING.value, coding_stage.create_compiled_graph())
         # edges
         .add_conditional_edges(
             source=START,
@@ -205,10 +206,9 @@ def create_graph():
         .add_conditional_edges(
             source="on_trigger",
             path=select_stage,
-            path_map=[StageTypes.INTRO, StageTypes.CODING, END],
+            path_map=[StageTypes.INTRO.value, StageTypes.CODING.value, END],
         )
-        .add_edge(StageTypes.INTRO, "stage_tracker")
-        .add_edge(StageTypes.CODING, "stage_tracker")
+        .add_edge([StageTypes.INTRO.value, StageTypes.CODING.value], "stage_tracker")
         .add_edge("stage_tracker", "decide_next_stage")
         .add_edge("decide_next_stage", END)
     )

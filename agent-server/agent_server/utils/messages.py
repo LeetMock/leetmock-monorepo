@@ -6,7 +6,7 @@ from typing import Any, Dict, List, cast
 
 from langchain_core.messages import (
     AIMessage,
-    BaseMessage,
+    AnyMessage,
     FunctionMessage,
     HumanMessage,
     SystemMessage,
@@ -27,7 +27,7 @@ def remove_punctuation(text: str) -> str:
     return text.translate(str.maketrans("", "", string.punctuation)).strip()
 
 
-def filter_langchain_messages(messages: List[BaseMessage]) -> List[BaseMessage]:
+def filter_langchain_messages(messages: List[AnyMessage]) -> List[AnyMessage]:
     return [
         message
         for message in messages
@@ -44,8 +44,8 @@ def convert_chat_ctx_to_oai_messages(
 
 def convert_oai_messages_to_langchain_messages(
     messages: List[ChatCompletionMessageParam],
-) -> List[BaseMessage]:
-    langchain_messages: List[BaseMessage] = []
+) -> List[AnyMessage]:
+    langchain_messages: List[AnyMessage] = []
 
     for message in messages:
         langchain_message = convert_oai_message_to_langchain_message(message)
@@ -57,7 +57,7 @@ def convert_oai_messages_to_langchain_messages(
 
 def convert_chat_ctx_to_langchain_messages(
     chat_ctx: llm.ChatContext, cache_key: Any = None
-) -> List[BaseMessage]:
+) -> List[AnyMessage]:
     return convert_oai_messages_to_langchain_messages(
         convert_chat_ctx_to_oai_messages(chat_ctx, cache_key)
     )
@@ -65,9 +65,9 @@ def convert_chat_ctx_to_langchain_messages(
 
 def convert_oai_message_to_langchain_message(
     message: ChatCompletionMessageParam,
-) -> BaseMessage | None:
+) -> AnyMessage | None:
     role = message["role"]
-    lc_message: BaseMessage | None = None
+    lc_message: AnyMessage | None = None
 
     if role == "user":
         message = cast(ChatCompletionUserMessageParam, message)
@@ -124,13 +124,13 @@ def convert_oai_message_to_langchain_message(
 
 
 def convert_langchain_messages_to_oai_messages(
-    messages: List[BaseMessage],
+    messages: List[AnyMessage],
 ) -> List[ChatCompletionMessageParam]:
     return [convert_langchain_message_to_oai_message(message) for message in messages]
 
 
 def convert_langchain_message_to_oai_message(
-    message: BaseMessage,
+    message: AnyMessage,
 ) -> ChatCompletionMessageParam:
     role = message.type
     oai_message: Dict[str, Any]
@@ -174,8 +174,8 @@ def hash_msg(msg: llm.ChatMessage) -> str:
 
 def convert_livekit_msgs_to_langchain_msgs(
     messages: list[llm.ChatMessage],
-) -> List[BaseMessage]:
-    lc_msgs: List[BaseMessage] = []
+) -> List[AnyMessage]:
+    lc_msgs: List[AnyMessage] = []
 
     for i, msg in enumerate(messages):
         id = hash_msg(msg)

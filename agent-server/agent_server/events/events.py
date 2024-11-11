@@ -18,7 +18,7 @@ Example:
         repeated=True
     )
     reminder.start()
-    
+
     # Create a code session event
     code_event = CodeSessionEvent(
         event_type="content_changed",
@@ -44,18 +44,20 @@ from pydantic import StrictStr
 from pydantic.v1 import BaseModel, Field, PrivateAttr
 
 from libs.convex.convex_types import CodeSessionContentChangedEvent
+from libs.types import MessageWrapper
 
 logger = logging.getLogger(__name__)
 
 
 class Reminder(BaseModel):
     """Empty model representing a reminder event."""
+
     pass
 
 
 class ReminderEvent(BaseEvent[Reminder]):
     """Event that sends a reminder after a specified delay.
-    
+
     This event monitors speech events from the voice assistant and manages
     reminder timing with debouncing. It can be configured to repeat reminders
     and tracks human input after reminders.
@@ -125,7 +127,7 @@ class ReminderEvent(BaseEvent[Reminder]):
 
 class CodeSessionEvent(BaseEvent[Any]):
     """Event for monitoring code session changes.
-    
+
     Forwards events from the code session to registered callbacks.
 
     Attributes:
@@ -203,7 +205,7 @@ class CodeSessionEditorContentChangedEvent(BaseEvent[Any]):
 
 class TestSubmissionEvent(BaseEvent[Any]):
     """Event for handling test submissions.
-    
+
     Manages events related to code test submissions.
 
     Attributes:
@@ -221,38 +223,16 @@ class TestSubmissionEvent(BaseEvent[Any]):
         pass
 
 
-class UserMessageEventData(BaseModel):
-    """Data model for user message events.
-    
-    Attributes:
-        messages: List of chat messages from the user
-    """
-
-    messages: List[BaseMessage]
-
-    @classmethod
-    def from_messages(cls, messages: List[BaseMessage]):
-        """Creates a UserMessageEventData instance from a list of messages.
-        
-        Args:
-            messages: List of BaseMessage objects to include
-            
-        Returns:
-            UserMessageEventData instance containing the messages
-        """
-        return cls(messages=messages)
-
-
-class UserMessageEvent(BaseEvent[UserMessageEventData]):
+class UserMessageEvent(BaseEvent[MessageWrapper]):
     """Event for handling user messages.
-    
+
     Monitors a message queue and emits events when new messages arrive.
 
     Attributes:
         event_q: Queue containing incoming user messages
     """
 
-    event_q: asyncio.Queue[UserMessageEventData]
+    event_q: asyncio.Queue[MessageWrapper]
 
     delay: float = Field(
         default=0.2,
@@ -265,7 +245,7 @@ class UserMessageEvent(BaseEvent[UserMessageEventData]):
 
     async def _observe_user_message_task(self):
         @debounce(wait=self.delay)
-        def emit_event_debounced(event: UserMessageEventData):
+        def emit_event_debounced(event: MessageWrapper):
             self.emit_event(event)
 
         while True:
