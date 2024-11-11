@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 import { useAction, useMutation, useQuery } from "convex/react";
 import { Code, Database, Lock, MoveRight, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { CodeInterviewConfig } from "./code-interview-config";
 import { CodeQuestionViewer } from "./code-question-viewer";
@@ -148,8 +148,15 @@ export const InterviewTypeSelection: React.FC = () => {
 };
 
 export const StartInterviewDialog: React.FC = () => {
-  const { maxStep, codeInterview, codeInterviewConfig, updateCodeInterview, updateCodeInterviewConfig: updateConfig, reset, setType } =
-    useSessionCreateModal();
+  const {
+    maxStep,
+    codeInterview,
+    codeInterviewConfig,
+    updateCodeInterview,
+    updateCodeInterviewConfig: updateConfig,
+    reset,
+    setType,
+  } = useSessionCreateModal();
   const router = useRouter();
   const questions = useQuery(api.questions.getAll);
   const createAgentThread = useAction(api.actions.createAgentThread);
@@ -163,7 +170,7 @@ export const StartInterviewDialog: React.FC = () => {
     const question = questions.find((q) => q._id === codeInterview.questionId);
     if (!question) return;
 
-    const promise = createAgentThread({ graphId: "code-mock-v1" })
+    const promise = createAgentThread({ graphId: "code-mock-staged-v1" })
       .then(({ threadId, assistantId }) => {
         return createSession({
           questionId: codeInterview.questionId!,
@@ -188,7 +195,15 @@ export const StartInterviewDialog: React.FC = () => {
       success: "Interview created",
       error: (error) => error.message,
     });
-  }, [questions, createAgentThread, codeInterview, codeInterviewConfig, createSession, router, reset]);
+  }, [
+    questions,
+    createAgentThread,
+    codeInterview,
+    codeInterviewConfig,
+    createSession,
+    router,
+    reset,
+  ]);
 
   return (
     <>

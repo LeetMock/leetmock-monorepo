@@ -2,7 +2,7 @@
 
 import { useAction, useMutation, useQuery } from "convex/react";
 import { Clock, Loader2, PlayIcon } from "lucide-react";
-import React, { useCallback, useMemo, useRef, useState, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { editor as monacoEditor } from "monaco-editor";
 import { useTheme } from "next-themes";
@@ -12,19 +12,17 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { CodeSessionEvent } from "@/convex/types";
+import { useEditorStore } from "@/hooks/use-editor-store";
 import { useNonReactiveQuery } from "@/hooks/use-non-reactive-query";
 import { useResizePanel } from "@/hooks/use-resize-panel";
-import { RunTestResult } from "@/lib/types";
+import { Testcase } from "@/lib/types";
 import { cn, isDefined } from "@/lib/utils";
 import { useConnectionState } from "@livekit/components-react";
 import Editor from "@monaco-editor/react";
 import { toast } from "sonner";
 import { useWindowSize } from "usehooks-ts";
 import { TestResultsBlock } from "./test-results-block";
-import { TestcaseEditor } from './testcase-editor';
-import { Testcase } from "@/lib/types";
-import { useEditorStore } from "@/hooks/use-editor-store";
-
+import { TestcaseEditor } from "./testcase-editor";
 
 const darkEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -66,16 +64,20 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     setLocalTestcases,
     setActiveTestcaseTab,
     handleRunTests,
-    setHasTestcaseChanges
+    setHasTestcaseChanges,
   } = useEditorStore();
 
   // Convex
   const editorState = useNonReactiveQuery(api.codeSessionStates.getEditorState, { sessionId });
   const terminalState = useQuery(api.codeSessionStates.getTerminalState, { sessionId });
-  const testCasesState = useNonReactiveQuery(api.codeSessionStates.getTestCasesState, { sessionId }) as Testcase[];
+  const testCasesState = useNonReactiveQuery(api.codeSessionStates.getTestCasesState, {
+    sessionId,
+  }) as Testcase[];
   const commitCodeSessionEvent = useMutation(api.codeSessionEvents.commitCodeSessionEvent);
 
   const { height } = useWindowSize();
+  const [localEditorContent, setLocalEditorContent] = useState<string | undefined>(undefined);
+
   const { size, isResizing, resizeHandleProps } = useResizePanel({
     defaultSize: 400,
     minSize: 200,
@@ -83,6 +85,11 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     direction: "vertical",
     storageId: "leetmock.workspace.code-editor",
   });
+
+  useEffect(() => {
+    if (!isDefined(editorState)) return;
+    setLocalEditorContent(editorState.content);
+  }, [editorState]);
 
   const stateLoaded = useMemo(
     () => isDefined(editorState) && isDefined(terminalState) && isDefined(testCasesState),
@@ -132,7 +139,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
             className="absolute inset-0"
             language={language}
             theme={theme === "dark" ? "customDarkTheme" : "vs-light"}
-            value={editorState ? editorState.content : ""}
+            value={editorState?.content || ""}
             options={{
               fontSize: 14,
               lineNumbers: "on",
@@ -147,12 +154,18 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
                 enabled: false,
               },
             }}
-            onChange={(value) =>
+            onChange={(value) => {
+              // Check for undefined values
+              if (!isDefined(localEditorContent) || !isDefined(value)) return;
+              if (connectionState !== "connected") return;
+              if (localEditorContent === value) return;
+
               debouncedCommitEvent({
                 type: "content_changed",
-                data: { content: value || "" },
-              })
-            }
+                data: { before: localEditorContent, after: value },
+              });
+              setLocalEditorContent(value);
+            }}
             beforeMount={(monaco) => {
               monaco.editor.defineTheme("customDarkTheme", darkEditorTheme);
               monaco.editor.setTheme("customDarkTheme");
@@ -172,10 +185,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
         </div>
       </div>
       <div
-        className={cn(
-          "flex flex-col w-full border",
-          "bg-background rounded-md shadow-md min-h-0"
-        )}
+        className={cn("flex flex-col w-full border", "bg-background rounded-md shadow-md min-h-0")}
         style={{ height: `calc(100% - ${size}px - 2px)` }}
       >
         <div className="flex justify-between items-center px-3 py-2 flex-shrink-0">
@@ -225,10 +235,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
               />
             </div>
             <div
-              className={cn(
-                "h-full overflow-auto",
-                outputView === "Testcase" ? "block" : "hidden"
-              )}
+              className={cn("h-full overflow-auto", outputView === "Testcase" ? "block" : "hidden")}
             >
               <TestcaseEditor
                 testcases={localTestcases}
@@ -241,7 +248,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
                 onSaveTestcases={() => {
                   debouncedCommitEvent({
                     type: "testcase_changed",
-                    data: { content: localTestcases }
+                    data: { content: localTestcases },
                   });
                   setHasTestcaseChanges(false);
                 }}
@@ -253,14 +260,16 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
           <Button
             variant="outline-blue"
             className="h-9 min-w-24"
-            onClick={() => handleRunTests({
-              sessionId,
-              questionId,
-              language,
-              editorState,
-              runTests,
-              onCommitEvent: debouncedCommitEvent
-            })}
+            onClick={() =>
+              handleRunTests({
+                sessionId,
+                questionId,
+                language,
+                editorState,
+                runTests,
+                onCommitEvent: debouncedCommitEvent,
+              })
+            }
             disabled={isRunning || connectionState !== "connected"}
           >
             {isRunning ? (

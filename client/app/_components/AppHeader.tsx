@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Container } from "./Container";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Container } from "./Container";
 
 const links = [
   {
@@ -52,8 +52,9 @@ export default function AppHeader() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-lg" : "bg-transparent"
-        }`}
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        isScrolled ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-lg" : "bg-transparent"
+      }`}
     >
       <nav className={`w-full transition-all duration-300 ${isScrolled ? "py-2" : "py-4"}`}>
         <Container>

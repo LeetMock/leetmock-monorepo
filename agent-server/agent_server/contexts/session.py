@@ -1,18 +1,19 @@
 import asyncio
+import time
 from abc import ABC, abstractmethod
 from typing import Literal, TypeVar
 
-from agent_server.convex.api import ConvexApi
 from agent_server.convex.query_watcher import QueryWatcher
 from agent_server.utils.logger import get_logger
 from livekit.agents.utils import EventEmitter
 from pydantic import BaseModel
 
-from libs.convex_types import (
+from libs.convex.api import ConvexApi
+from libs.convex.convex_requests import create_get_session_metadata_request
+from libs.convex.convex_types import (
     CodeSessionContentChangedEvent,
     CodeSessionState,
     SessionMetadata,
-    create_get_session_metadata_request,
 )
 
 logger = get_logger(__name__)
@@ -31,6 +32,14 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
         self._api = api
         self._has_started = False
         self._start_lock = asyncio.Lock()
+
+    @property
+    def session_state(self) -> BaseModel:
+        raise NotImplementedError
+
+    @property
+    def session_metadata(self) -> SessionMetadata:
+        raise NotImplementedError
 
     @abstractmethod
     async def setup(self, session_id: str):
@@ -53,7 +62,7 @@ CodeSessionEventTypes = Literal["content_changed"]
 
 
 CODE_SESSION_STATE_QUERY = "codeSessionStates:get"
-CONTENT_CHANGED_QUERY = "codeSessionEvents:getNextContentChangeEvent"
+CONTENT_CHANGED_QUERY = "codeSessionEvents:getLatestContentChangeEvent"
 
 
 class CodeSession(BaseSession[CodeSessionEventTypes]):
@@ -61,6 +70,7 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
     def __init__(self, api: ConvexApi):
         super().__init__(api)
 
+        self._start_time_ms = int(time.time_ns() // 1_000_000)
         self._session_id: str | None = None
         self._session_metadata: SessionMetadata | None = None
         self._code_session_state: CodeSessionState | None = None
@@ -77,14 +87,19 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
         return self._code_session_state
 
     def _handle_code_session_state_changed(self, state: CodeSessionState):
-        logger.info(f"Code session state: {state}")
         self._code_session_state = state
 
         if not self._synced_future.done():
             self._synced_future.set_result(True)
 
     def _handle_content_changed(self, event: CodeSessionContentChangedEvent):
-        logger.info(f"Code session content changed: {event}")
+        if event.ts < self._start_time_ms:
+            logger.info(
+                "Code session content changed event is older than session start time."
+                "Ignoring event."
+            )
+            return
+
         self.emit("content_changed", event)
 
     async def setup(self, session_id: str):

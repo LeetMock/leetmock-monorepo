@@ -1,18 +1,41 @@
 import asyncio
+import hashlib
 import os
+from datetime import datetime
+from typing import AsyncIterator
 
 import psutil
-from agent_server.agent import LangGraphLLM, NoOpLLMStream
+from agent_graph.code_mock_staged_v1.constants import AgentConfig
+from agent_graph.code_mock_staged_v1.graph import AgentState, create_graph
+from agent_graph.state_merger import StateMerger
+from agent_server.agent_streams import AgentStream
+from agent_server.agent_triggers import AgentTrigger
 from agent_server.contexts.context_manager import AgentContextManager
 from agent_server.contexts.session import CodeSession
-from agent_server.convex.api import ConvexApi
+from agent_server.events.events import (
+    CodeSessionEditorContentChangedEvent,
+    CodeSessionEvent,
+    ReminderEvent,
+    TestSubmissionEvent,
+    UserMessageEvent,
+    UserMessageEventData,
+)
+from agent_server.livekit.streams import NoOpLLM, SimpleLLMStream
+from agent_server.livekit.tts import create_elevenlabs_tts
+from agent_server.storages.langgraph_cloud import LangGraphCloudStateStorage
 from agent_server.utils.logger import get_logger
+from agent_server.utils.messages import (
+    convert_chat_ctx_to_langchain_messages,
+    filter_langchain_messages,
+)
 from dotenv import find_dotenv, load_dotenv
 from livekit.agents import cli  # type: ignore
 from livekit.agents import JobContext, WorkerOptions, llm, utils
 from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.agents.worker import _DefaultLoadCalc
-from livekit.plugins import deepgram, elevenlabs, openai, silero
+from livekit.plugins import deepgram, openai, silero
+
+from libs.convex.api import ConvexApi
 
 logger = get_logger(__name__)
 
@@ -58,134 +81,71 @@ class CustomLoadCalc(_DefaultLoadCalc):
 
 
 async def entrypoint(ctx: JobContext):
-    agent = LangGraphLLM()
+    no_op_llm = NoOpLLM()
     convex_api = ConvexApi(convex_url=os.getenv("CONVEX_URL") or "")
-    ctx_manager = AgentContextManager[CodeSession](ctx=ctx, api=convex_api)
+    session = CodeSession(api=convex_api)
 
-    reminder_task: asyncio.Task | None = None
-    reminder_delay = 24  # seconds
-    last_message_was_reminder = False
-    prevent_consecutive_reminders = True
+    user_message_event_q = asyncio.Queue[UserMessageEventData]()
+    user_message_response_q = asyncio.Queue[AsyncIterator[str]]()
+    unix_timestamp = int(datetime.now().timestamp())
 
-    async def debounced_send_reminder():
-        nonlocal reminder_task, last_message_was_reminder, prevent_consecutive_reminders
-        if reminder_task:
-            logger.info("Reminder task cancelled")
-            reminder_task.cancel()
-        if prevent_consecutive_reminders and last_message_was_reminder:
-            logger.info(
-                "Last message was a reminder. Skipping sending another reminder."
-            )
-            return  # Don't send another reminder if the last message was already a reminder
+    ctx_manager = AgentContextManager(ctx=ctx, api=convex_api, session=session)
+    await ctx_manager.start()
 
-        async def delayed_reminder():
-            nonlocal last_message_was_reminder
-            await asyncio.sleep(reminder_delay)
-            await send_reminder()
-            if prevent_consecutive_reminders:
-                last_message_was_reminder = True
-
-        reminder_task = asyncio.create_task(delayed_reminder())
-
-    async def send_reminder():
-        logger.info(f"Reminder sent")
-        await assistant.say(
-            invoke_agent(assistant.chat_ctx, "reminder_required"),
-            allow_interruptions=True,
-            add_to_chat_ctx=True,
+    async def before_llm_callback(_: VoiceAssistant, chat_ctx: llm.ChatContext):
+        lc_messages = filter_langchain_messages(
+            convert_chat_ctx_to_langchain_messages(chat_ctx)
         )
 
-    def invoke_agent(chat_ctx: llm.ChatContext, interaction_type: str) -> llm.LLMStream:
-        code_session_state = ctx_manager.session.session_state
-        code_session_metadata = ctx_manager.session.session_metadata
+        for i, message in enumerate(lc_messages):
+            key = f"{unix_timestamp}-{i}-{message.type}"
+            message.id = hashlib.md5(key.encode()).hexdigest()
 
-        agent.set_agent_session(code_session_metadata)
-        agent.set_agent_context(code_session_state, interaction_type)
-        return agent.chat(chat_ctx=chat_ctx)
-
-    def before_llm_callback(
-        assistant: VoiceAssistant, chat_ctx: llm.ChatContext
-    ) -> llm.LLMStream:
-        logger.info("before_llm_callback")
-        # return NoOpLLMStream(chat_ctx=chat_ctx)
-        return invoke_agent(chat_ctx, "response_required")
-
-    tts = elevenlabs.TTS(
-        model_id="eleven_multilingual_v2",
-        voice=elevenlabs.Voice(
-            id="DaWkexxdbjoJ99NpkRGF",
-            name="brian-optimized",
-            category="cloned",
-            settings=elevenlabs.VoiceSettings(
-                stability=0.3,
-                similarity_boost=0.5,
-                style=0.5,
-                use_speaker_boost=True,
-            ),
-        ),
-    )
+        user_message_event_q.put_nowait(UserMessageEventData.from_messages(lc_messages))
+        text_stream = await user_message_response_q.get()
+        return SimpleLLMStream(text_stream=text_stream, chat_ctx=chat_ctx)
 
     assistant = VoiceAssistant(
         vad=silero.VAD.load(),
         stt=deepgram.STT(),
-        llm=agent,
+        llm=no_op_llm,
         tts=openai.TTS(),
         chat_ctx=ctx_manager.chat_ctx,
-        interrupt_speech_duration=0.4,
         before_llm_cb=before_llm_callback,
     )
 
-    @assistant.on("agent_speech_committed")
-    def update_message_state_for_agent(msg: llm.ChatMessage):
-        logger.info(f"agent_speech_committed: {msg}")
+    state_merger = await StateMerger.from_state_and_storage(
+        state_type=AgentState,
+        storage=LangGraphCloudStateStorage(
+            thread_id=session.session_metadata.agent_thread_id,
+            assistant_id=session.session_metadata.assistant_id,
+        ),
+    )
 
-        # Send a reminder event to the agent after 10 seconds of silence since the
-        # last agent speech committed
-        asyncio.create_task(debounced_send_reminder())
+    agent_stream = AgentStream(
+        state_cls=AgentState,
+        config=AgentConfig(convex_url=convex_api.convex_url),
+        session=session,
+        graph=create_graph(),
+        assistant=assistant,
+        message_q=user_message_response_q,
+        state_merger=state_merger,
+    )
 
-    @assistant.on("user_speech_committed")
-    def update_message_state_for_user(msg: llm.ChatMessage):
-        nonlocal last_message_was_reminder, prevent_consecutive_reminders
+    agent_trigger = AgentTrigger(
+        stream=agent_stream,
+        events=[
+            ReminderEvent(assistant=assistant),
+            CodeSessionEditorContentChangedEvent(session=session, assistant=assistant),
+            TestSubmissionEvent(stream=agent_stream),
+            UserMessageEvent(event_q=user_message_event_q),
+        ],
+    )
 
-        logger.info(f"user_speech_committed: {msg}")
-        if prevent_consecutive_reminders:
-            last_message_was_reminder = False  # Reset the flag when user speaks
-
-        # Send a reminder event to the agent after 10 seconds of silence since the
-        # last agent speech committed
-        asyncio.create_task(debounced_send_reminder())
-
-    @assistant.on("user_started_speaking")
-    def on_user_started_speaking():
-        logger.info("user_started_speaking")
-        if reminder_task:
-            reminder_task.cancel()
-
-    @assistant.on("user_stopped_speaking")
-    def on_user_stopped_speaking():
-        logger.info("user_stopped_speaking")
-        asyncio.create_task(debounced_send_reminder())
-
-    @assistant.on("agent_started_speaking")
-    def on_agent_started_speaking():
-        logger.info("agent_started_speaking")
-        if reminder_task:
-            reminder_task.cancel()
-
-    @assistant.on("agent_stopped_speaking")
-    def on_agent_stopped_speaking():
-        logger.info("agent_stopped_speaking")
-        asyncio.create_task(debounced_send_reminder())
-
-    await ctx_manager.start()
-
+    agent_trigger.start()
     assistant.start(ctx.room)
 
-    await assistant.say(
-        before_llm_callback(assistant, ctx_manager.chat_ctx),
-        allow_interruptions=True,
-        add_to_chat_ctx=True,
-    )
+    await agent_trigger.trigger()
 
 
 if __name__ == "__main__":

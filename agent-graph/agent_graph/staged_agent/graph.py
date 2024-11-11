@@ -16,6 +16,7 @@ from convex_client.models.request_actions_run_tests_args import (
     RequestActionsRunTestsArgs,
 )
 from langchain import hub  # type: ignore
+from langchain_core.load.dump import dumpd
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables.config import RunnableConfig

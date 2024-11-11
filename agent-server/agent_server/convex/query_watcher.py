@@ -3,9 +3,10 @@ import logging
 from inspect import iscoroutinefunction
 from typing import Any, Callable, Coroutine, Dict, Generic, List, Type, TypeVar
 
-from agent_server.convex.api import ConvexApi
 from agent_server.convex.query_generator import AsyncQueryGenerator
 from pydantic import BaseModel, Field, PrivateAttr
+
+from libs.convex.api import ConvexApi
 
 TModel = TypeVar("TModel", bound=BaseModel)
 logger = logging.getLogger("convex")

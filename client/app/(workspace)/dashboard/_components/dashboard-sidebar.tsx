@@ -16,7 +16,7 @@ export const DashboardSidebar = () => {
       <div className="flex flex-col">
         <div className="flex h-14 items-center pl-1.5 pt-2">
           <Link href="/" className="flex items-center gap-3">
-            <Package2 className="h-5 w-5" />
+            <div className="h-5 w-5 bg-blue-400 rounded-arrow"></div>
             <span className="font-semibold text-xl">LeetMock</span>
           </Link>
         </div>
