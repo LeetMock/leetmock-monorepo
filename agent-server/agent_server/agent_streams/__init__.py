@@ -62,7 +62,7 @@ class AgentStream(BaseModel, Generic[TState]):
         ..., description="The state merger to merge the state"
     )
 
-    _message_q: asyncio.Queue[AsyncIterator[str]] = PrivateAttr(...)
+    _message_q: asyncio.Queue[AsyncIterator[str] | None] = PrivateAttr(...)
 
     _agent_config: Dict[str, Any] = PrivateAttr(...)
 
@@ -77,7 +77,7 @@ class AgentStream(BaseModel, Generic[TState]):
         graph: StateGraph,
         assistant: VoiceAssistant,
         state_merger: StateMerger[TState],
-        message_q: asyncio.Queue[AsyncIterator[str]],
+        message_q: asyncio.Queue[AsyncIterator[str] | None],
     ):
         super().__init__(
             state_cls=state_cls,

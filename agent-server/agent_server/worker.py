@@ -18,7 +18,7 @@ from agent_server.events.events import (
     TestSubmissionEvent,
     UserMessageEvent,
 )
-from agent_server.livekit.streams import EchoStream, NoopLLM
+from agent_server.livekit.streams import EchoStream, NoopLLM, NoopStream
 from agent_server.storages.langgraph_cloud import LangGraphCloudStateStorage
 from agent_server.utils.logger import get_logger
 from agent_server.utils.messages import (
@@ -84,7 +84,7 @@ async def entrypoint(ctx: JobContext):
     session = CodeSession(api=convex_api)
 
     user_message_event_q = asyncio.Queue[MessageWrapper]()
-    user_message_response_q = asyncio.Queue[AsyncIterator[str]]()
+    user_message_response_q = asyncio.Queue[AsyncIterator[str] | None]()
     unix_timestamp = int(datetime.now().timestamp())
 
     ctx_manager = AgentContextManager(ctx=ctx, api=convex_api, session=session)
@@ -101,7 +101,11 @@ async def entrypoint(ctx: JobContext):
 
         user_message_event_q.put_nowait(MessageWrapper.from_messages(lc_messages))
         text_stream = await user_message_response_q.get()
-        return EchoStream(text_stream=text_stream, chat_ctx=chat_ctx)
+
+        if text_stream is not None:
+            return EchoStream(text_stream=text_stream, chat_ctx=chat_ctx)
+        else:
+            return NoopStream(chat_ctx=chat_ctx)
 
     assistant = VoiceAssistant(
         vad=silero.VAD.load(),
