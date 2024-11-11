@@ -138,6 +138,7 @@ class AgentTrigger(BaseModel):
         Can only be called once.
         """
         if self._started:
+            logger.warning("Agent trigger already started")
             return
 
         self._started = True
