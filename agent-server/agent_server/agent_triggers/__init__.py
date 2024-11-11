@@ -94,7 +94,6 @@ class AgentTrigger(BaseModel):
         """
 
         async def handler(data: Any):
-            logger.info(f"Receiving event: {event.event_name} with data: {data}")
             await self._event_q.put((event.event_name, data))
 
         return handler
@@ -123,7 +122,7 @@ class AgentTrigger(BaseModel):
 
         while True:
             event, data = await self._event_q.get()
-            logger.info(f"Sending event: {event} with data: {data}")
+            logger.info(f"Receiving event: {event} with data: {data}")
 
             should_trigger = await self.stream.notify_agent(event, data)
             if should_trigger:
