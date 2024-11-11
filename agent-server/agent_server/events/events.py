@@ -148,7 +148,7 @@ class CodeSessionEvent(BaseEvent[Any]):
         session.on(self.event_type, lambda event: self.publish(event))
 
 
-class CodeSessionEditorContentChangedEvent(BaseEvent[Any]):
+class CodeEditorChangedEvent(BaseEvent[Any]):
     """Event that emits when the code editor content changes.
 
     Emits a debounced event with the before and after content for diffing.
@@ -203,20 +203,34 @@ class CodeSessionEditorContentChangedEvent(BaseEvent[Any]):
         # self.assistant.on("user_speech_committed", lambda _: process_event())
 
 
-class TestSubmissionEvent(BaseEvent[Any]):
-    """Event for handling test submissions.
+class UserTestcaseExecutedEvent(BaseEvent[Any]):
+    """Event for monitoring test executions.
 
-    Manages events related to code test submissions.
-
-    Attributes:
-        stream: Agent stream for handling test submissions
+    Triggered when user-defined testcases are executed (via the test editor).
     """
 
-    stream: AgentStream[AgentState]
+    session: CodeSession
 
     @property
     def event_name(self) -> str:
-        return "test_submission"
+        return "testcase_executed"
+
+    def setup(self):
+        # TODO: Implement
+        pass
+
+
+class GroundTruthTestcaseExecutedEvent(BaseEvent[Any]):
+    """Event for monitoring ground truth test executions.
+
+    Triggered when ground truth testcases are executed. Tests results should be published.
+    """
+
+    session: CodeSession
+
+    @property
+    def event_name(self) -> str:
+        return "ground_truth_testcase_executed"
 
     def setup(self):
         # TODO: Implement

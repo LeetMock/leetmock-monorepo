@@ -13,10 +13,10 @@ from agent_server.agent_triggers import AgentTrigger
 from agent_server.contexts.context_manager import AgentContextManager
 from agent_server.contexts.session import CodeSession
 from agent_server.events.events import (
-    CodeSessionEditorContentChangedEvent,
+    CodeEditorChangedEvent,
     ReminderEvent,
-    TestSubmissionEvent,
     UserMessageEvent,
+    UserTestcaseExecutedEvent,
 )
 from agent_server.livekit.streams import EchoStream, NoopLLM, NoopStream
 from agent_server.storages.langgraph_cloud import LangGraphCloudStateStorage
@@ -138,8 +138,8 @@ async def entrypoint(ctx: JobContext):
         stream=agent_stream,
         events=[
             ReminderEvent(assistant=assistant),
-            CodeSessionEditorContentChangedEvent(session=session, assistant=assistant),
-            TestSubmissionEvent(stream=agent_stream),
+            CodeEditorChangedEvent(session=session, assistant=assistant),
+            UserTestcaseExecutedEvent(),
             UserMessageEvent(event_q=user_message_event_q),
         ],
     )
