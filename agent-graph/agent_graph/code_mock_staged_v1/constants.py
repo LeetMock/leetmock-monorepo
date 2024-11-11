@@ -104,7 +104,7 @@ def format_content_changed_notification_messages(
         HumanMessage(
             content=wrap_xml(
                 tag="system-event",
-                content=f"```diff\n{diff}\n```",
+                content=diff,
                 args={"name": CodingEventType.CODE_EDITOR_CONTENT_CHANGED.value},
             )
         )

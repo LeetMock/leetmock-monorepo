@@ -94,6 +94,9 @@ async def assistant(state: CodingStageState, writer: StreamWriter):
             last_human_message_idx = idx
             break
 
+    # Split the messages into history and upcoming messages
+    # This action is necessary because we do not want to put coding context suffix at the very end of the prompt
+    # because model will attend to the code context more often and less care about the last human message
     history_messages = messages[:last_human_message_idx]
     upcoming_messages = messages[last_human_message_idx:]
 
@@ -103,7 +106,6 @@ async def assistant(state: CodingStageState, writer: StreamWriter):
                 CODING_PROMPT, template_format="jinja2"
             ),
             MessagesPlaceholder(variable_name="history_messages"),
-            # Append the current code content to the prompt as a suffix to maximize the prefix caching
             HumanMessagePromptTemplate.from_template(
                 CODING_CONTEXT_SUFFIX_PROMPT, template_format="jinja2"
             ),

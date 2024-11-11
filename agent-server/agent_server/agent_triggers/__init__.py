@@ -92,6 +92,7 @@ class AgentTrigger(BaseModel):
         Returns:
             An async function that handles the event
         """
+
         async def handler(data: Any):
             logger.info(f"Receiving event: {event.event_name} with data: {data}")
             await self._event_q.put((event.event_name, data))
@@ -115,15 +116,11 @@ class AgentTrigger(BaseModel):
 
     async def _main_task(self):
         """Main event processing loop.
-        
+
         Continuously processes events from the queue and determines whether
         to trigger the agent based on the event type and data.
         """
-        
-        # Setup the agent stream
-        await self.stream.setup()
 
-        
         while True:
             event, data = await self._event_q.get()
             logger.info(f"Sending event: {event} with data: {data}")
@@ -137,7 +134,7 @@ class AgentTrigger(BaseModel):
 
     def start(self):
         """Starts the agent trigger system.
-        
+
         Initializes all events and starts the main event processing loop.
         Can only be called once.
         """

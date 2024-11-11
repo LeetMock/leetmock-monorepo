@@ -7,6 +7,7 @@ from typing import AsyncIterator
 import psutil
 from agent_graph.code_mock_staged_v1.constants import AgentConfig
 from agent_graph.code_mock_staged_v1.graph import AgentState, create_graph
+from agent_graph.state_merger import StateMerger
 from agent_server.agent_streams import AgentStream
 from agent_server.agent_triggers import AgentTrigger
 from agent_server.contexts.context_manager import AgentContextManager
@@ -21,6 +22,7 @@ from agent_server.events.events import (
 )
 from agent_server.livekit.streams import NoOpLLM, SimpleLLMStream
 from agent_server.livekit.tts import create_elevenlabs_tts
+from agent_server.storages.langgraph_cloud import LangGraphCloudStateStorage
 from agent_server.utils.logger import get_logger
 from agent_server.utils.messages import (
     convert_chat_ctx_to_langchain_messages,
@@ -112,15 +114,24 @@ async def entrypoint(ctx: JobContext):
         before_llm_cb=before_llm_callback,
     )
 
-    agent_config = AgentConfig(convex_url=convex_api.convex_url)
+    state_merger = await StateMerger.from_state_and_storage(
+        state_type=AgentState,
+        storage=LangGraphCloudStateStorage(
+            thread_id=session.session_metadata.agent_thread_id,
+            assistant_id=session.session_metadata.assistant_id,
+        ),
+    )
+
     agent_stream = AgentStream(
         state_cls=AgentState,
-        config=agent_config,
+        config=AgentConfig(convex_url=convex_api.convex_url),
         session=session,
         graph=create_graph(),
         assistant=assistant,
         message_q=user_message_response_q,
+        state_merger=state_merger,
     )
+
     agent_trigger = AgentTrigger(
         stream=agent_stream,
         events=[
