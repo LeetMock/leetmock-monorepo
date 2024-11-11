@@ -185,58 +185,53 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
         </div>
       </div>
       <div
-        className={cn("flex flex-col w-full border", "bg-background rounded-md shadow-md min-h-0")}
-        style={{ height: `calc(100% - ${size}px - 2px)` }}
+        className={cn(
+          "w-full border flex-1 relative",
+          "bg-background rounded-md shadow-md min-h-0"
+        )}
       >
-        <div className="flex justify-between items-center px-3 py-2 flex-shrink-0">
-          <div className="flex space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setOutputView("Testcase")}
-              className={cn(
-                "text-sm font-medium",
-                outputView === "Testcase" ? "bg-secondary" : "hover:bg-secondary/50"
-              )}
-            >
-              Testcase
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setOutputView("testResults")}
-              className={cn(
-                "text-sm font-medium",
-                outputView === "testResults" ? "bg-secondary" : "hover:bg-secondary/50"
-              )}
-            >
-              Test Results
-            </Button>
-          </div>
-          {!isRunning && outputView === "testResults" && (
-            <div className="flex items-center text-sm text-gray-500">
-              <Clock className="w-4 h-4 mr-1" />
-              <span>{terminalState ? terminalState.executionTime : 0} ms</span>
+        <div className="flex flex-col absolute inset-0 overflow-auto">
+          <div className="flex justify-between items-center px-3 py-3">
+            <div className="flex space-x-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setOutputView("Testcase")}
+                className={cn(
+                  "text-sm font-medium",
+                  outputView === "Testcase" ? "bg-secondary" : "hover:bg-secondary/50"
+                )}
+              >
+                Testcase
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setOutputView("testResults")}
+                className={cn(
+                  "text-sm font-medium",
+                  outputView === "testResults" ? "bg-secondary" : "hover:bg-secondary/50"
+                )}
+              >
+                Test Results
+              </Button>
             </div>
-          )}
-        </div>
-        <div className="flex-1 min-h-0 px-2">
-          <div className="h-full p-2 rounded-md bg-secondary/10 overflow-hidden">
-            <div
-              className={cn(
-                "h-full overflow-auto",
-                outputView === "testResults" ? "block" : "hidden"
-              )}
-            >
+            {!isRunning && outputView === "testResults" && (
+              <div className="flex items-center text-sm text-gray-500">
+                <Clock className="w-4 h-4 mr-1" />
+                <span>{terminalState ? terminalState.executionTime : 0} ms</span>
+              </div>
+            )}
+          </div>
+          <div className="px-2">
+            <div className={cn(outputView === "testResults" ? "block" : "hidden")}>
               <TestResultsBlock
                 key={testRunCounter}
                 isRunning={isRunning}
                 results={testResults ?? []}
               />
             </div>
-            <div
-              className={cn("h-full overflow-auto", outputView === "Testcase" ? "block" : "hidden")}
-            >
+            <div className={cn(outputView === "Testcase" ? "block" : "hidden")}>
               <TestcaseEditor
                 testcases={localTestcases}
                 activeTab={activeTestcaseTab}
@@ -255,32 +250,32 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
               />
             </div>
           </div>
-        </div>
-        <div className="flex justify-end px-3 py-2 flex-shrink-0">
-          <Button
-            variant="outline-blue"
-            className="h-9 min-w-24"
-            onClick={() =>
-              handleRunTests({
-                sessionId,
-                questionId,
-                language,
-                editorState,
-                runTests,
-                onCommitEvent: debouncedCommitEvent,
-              })
-            }
-            disabled={isRunning || connectionState !== "connected"}
-          >
-            {isRunning ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <>
-                <PlayIcon className="h-3.5 w-3.5 mr-1" />
-                <span>Test</span>
-              </>
-            )}
-          </Button>
+          <div className="flex justify-end flex-1 p-3 items-end">
+            <Button
+              variant="outline-blue"
+              className="h-8 min-w-24"
+              onClick={() =>
+                handleRunTests({
+                  sessionId,
+                  questionId,
+                  language,
+                  editorState,
+                  runTests,
+                  onCommitEvent: debouncedCommitEvent,
+                })
+              }
+              disabled={isRunning || connectionState !== "connected"}
+            >
+              {isRunning ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  <PlayIcon className="h-3.5 w-3.5 mr-1" />
+                  <span>Test</span>
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

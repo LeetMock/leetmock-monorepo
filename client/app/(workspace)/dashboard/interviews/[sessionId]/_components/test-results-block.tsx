@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { TestCaseResult } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { Fragment, useState } from "react";
 import { CheckCircleIcon, XCircleIcon } from "lucide-react";
+import { Fragment, useState } from "react";
 
 interface TestResultsProps {
   isRunning?: boolean;
@@ -47,7 +47,9 @@ export const TestResultsBlock: React.FC<TestResultsProps> = ({ isRunning = false
         </div>
         <div className="flex items-center">
           <span className="text-muted-foreground mr-2">Passed:</span>
-          <span className="font-semibold">{passedCount} / {results.length}</span>
+          <span className="font-semibold">
+            {passedCount} / {results.length}
+          </span>
         </div>
       </div>
       {!allPassed && (
@@ -63,8 +65,7 @@ export const TestResultsBlock: React.FC<TestResultsProps> = ({ isRunning = false
                   result.passed
                     ? "border-green-500 text-green-500 hover:bg-green-100 dark:hover:bg-green-900 hover:text-green-600"
                     : "border-red-500 text-red-500 hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-600",
-                  selectedCase?.caseNumber === result.caseNumber &&
-                  "border-2 font-semibold"
+                  selectedCase?.caseNumber === result.caseNumber && "border-2 font-semibold"
                 )}
               >
                 Case {result.caseNumber}
@@ -75,7 +76,7 @@ export const TestResultsBlock: React.FC<TestResultsProps> = ({ isRunning = false
             <div className="space-y-4">
               <TestCaseDetail title="Input" data={selectedCase.input} />
               <TestCaseDetail title="Your Output" data={selectedCase.actual} />
-              {selectedCase.stdout && selectedCase.stdout.trim() !== '' && (
+              {selectedCase.stdout && selectedCase.stdout.trim() !== "" && (
                 <TestCaseDetail title="Stdout" data={selectedCase.stdout} />
               )}
               <TestCaseDetail title="Expected Output" data={selectedCase.expected} />
