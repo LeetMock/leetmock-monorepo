@@ -4,6 +4,7 @@ import { Wait } from "@/components/wait";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useConnection } from "@/hooks/use-connection";
+import { useEditorStore } from "@/hooks/use-editor-store";
 import { useResizePanel } from "@/hooks/use-resize-panel";
 import { cn, isDefined } from "@/lib/utils";
 import { useConnectionState, useLocalParticipant } from "@livekit/components-react";
@@ -17,7 +18,6 @@ import { useWindowSize } from "usehooks-ts";
 import { CodeEditorPanel } from "./code-editor-panel";
 import { CodeQuestionPanel } from "./code-question-panel";
 import { WorkspaceToolbar } from "./workspace-toolbar";
-import { useEditorStore } from "@/hooks/use-editor-store";
 
 export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { disconnect } = useConnection();

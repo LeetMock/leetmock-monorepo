@@ -1,9 +1,6 @@
-import { QuestionHolder } from "@/components/QuestionHolder";
 import { cn } from "@/lib/utils";
-import { LucideFileText } from "lucide-react";
-import TurndownService from 'turndown';
-import ReactMarkdown from 'react-markdown';
-
+import ReactMarkdown from "react-markdown";
+import TurndownService from "turndown";
 
 interface CodeQuestionPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   question: {
@@ -18,18 +15,18 @@ export const CodeQuestionPanel: React.FC<CodeQuestionPanelProps> = ({
   ...props
 }) => {
   const turndownService = new TurndownService({
-    headingStyle: 'atx',
-    codeBlockStyle: 'fenced',
-    br: '  \n'
+    headingStyle: "atx",
+    codeBlockStyle: "fenced",
+    br: "  \n",
   });
 
   let markdownContent = turndownService.turndown(question.content);
 
   // Post-processing
   markdownContent = markdownContent
-    .replace(/\n/g, '\n\n')  // Double space between paragraphs
-    .replace(/\n\n(\*\*(?:Input|Output|Explanation|Example):?\*\*)/g, '\n\n\n$1')  // New line before Input, Output, Explanation, Example
-    .replace(/\n{3,}/g, '\n\n');  // Remove excessive newlines
+    .replace(/\n/g, "\n\n") // Double space between paragraphs
+    .replace(/\n\n(\*\*(?:Input|Output|Explanation|Example):?\*\*)/g, "\n\n\n$1") // New line before Input, Output, Explanation, Example
+    .replace(/\n{3,}/g, "\n\n"); // Remove excessive newlines
 
   return (
     <div className={cn("h-full relative bg-background", className)} {...props}>
