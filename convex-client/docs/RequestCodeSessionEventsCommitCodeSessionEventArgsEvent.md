@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**data** | **bool** |  | 
+**data** | **object** |  | 
 **type** | **str** |  | 
 
 ## Example

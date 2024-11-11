@@ -19,6 +19,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
+from convex_client.models.response_actions_run_tests_value import ResponseActionsRunTestsValue
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -29,7 +30,7 @@ class ResponseActionsRunTests(BaseModel):
     status: StrictStr
     error_message: Optional[StrictStr] = Field(default=None, alias="errorMessage")
     error_data: Optional[Dict[str, Any]] = Field(default=None, alias="errorData")
-    value: Optional[Any] = None
+    value: Optional[ResponseActionsRunTestsValue] = None
     __properties: ClassVar[List[str]] = ["status", "errorMessage", "errorData", "value"]
 
     @field_validator('status')
@@ -78,11 +79,9 @@ class ResponseActionsRunTests(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # set to None if value (nullable) is None
-        # and model_fields_set contains the field
-        if self.value is None and "value" in self.model_fields_set:
-            _dict['value'] = None
-
+        # override the default output from pydantic by calling `to_dict()` of value
+        if self.value:
+            _dict['value'] = self.value.to_dict()
         return _dict
 
     @classmethod
@@ -98,7 +97,7 @@ class ResponseActionsRunTests(BaseModel):
             "status": obj.get("status"),
             "errorMessage": obj.get("errorMessage"),
             "errorData": obj.get("errorData"),
-            "value": obj.get("value")
+            "value": ResponseActionsRunTestsValue.from_dict(obj["value"]) if obj.get("value") is not None else None
         })
         return _obj
 

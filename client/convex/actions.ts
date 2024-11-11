@@ -5,7 +5,7 @@ import type { VideoGrant } from "livekit-server-sdk";
 import { api, internal } from "./_generated/api";
 import { action } from "./_generated/server";
 
-import { DATA_STRUCTURES, CODE_PREFIX } from "@/lib/constants";
+import { CODE_PREFIX, DATA_STRUCTURES } from "@/lib/constants";
 import { CodeRunResult, RunCodeResult, RunTestResult, TokenResult } from "@/lib/types";
 import {
   createToken,
@@ -17,8 +17,6 @@ import {
 import { ConvexError, v } from "convex/values";
 
 import { retry } from "@lifeomic/attempt";
-import { getEditorState, getTestCasesState } from "./codeSessionStates";
-
 
 async function executeCode(payload: any, maxRetries = 3): Promise<CodeRunResult> {
   const url = "https://onecompiler-apis.p.rapidapi.com/api/v1/run";
@@ -147,11 +145,11 @@ export const runCode = action({
 
     return result
       ? {
-        status: !result.isError, //true if API call was successful
-        executionTime: result.executionTime,
-        isError: !!result.stderr, //true if there's an error in the code
-        output: result.stderr || result.stdout || "",
-      }
+          status: !result.isError, //true if API call was successful
+          executionTime: result.executionTime,
+          isError: !!result.stderr, //true if there's an error in the code
+          output: result.stderr || result.stdout || "",
+        }
       : undefined;
   },
 });
@@ -162,11 +160,36 @@ export const runTests = action({
     sessionId: v.id("sessions"),
     questionId: v.id("questions"),
   },
-  handler: async (ctx, { language, sessionId, questionId }): Promise<CodeRunResult> => {
-
+  returns: v.object({
+    status: v.string(),
+    executionTime: v.optional(v.number()),
+    stdout: v.optional(v.string()),
+    stderr: v.optional(v.string()),
+    isError: v.boolean(),
+    exception: v.optional(v.string()),
+    testResults: v.optional(
+      v.array(
+        v.object({
+          caseNumber: v.number(),
+          passed: v.boolean(),
+          input: v.record(v.string(), v.any()),
+          expected: v.any(),
+          actual: v.any(),
+          error: v.union(v.string(), v.null()),
+          stdout: v.union(v.string(), v.null()),
+        })
+      )
+    ),
+  }),
+  handler: async (ctx, { language, sessionId, questionId }) => {
     // Retrieve editor state and test cases state using internal queries
-    const editorState = await ctx.runQuery(internal.codeSessionStates.getEditorStateInternal, { sessionId });
-    const testCasesState = await ctx.runQuery(internal.codeSessionStates.getTestCasesStateInternal, { sessionId });
+    const editorState = await ctx.runQuery(internal.codeSessionStates.getEditorStateInternal, {
+      sessionId,
+    });
+    const testCasesState = await ctx.runQuery(
+      internal.codeSessionStates.getTestCasesStateInternal,
+      { sessionId }
+    );
 
     if (!editorState || !testCasesState) {
       throw new Error("Failed to retrieve code or test cases");
@@ -177,21 +200,6 @@ export const runTests = action({
     if (!question) {
       throw new Error("Question not found");
     }
-
-    // const inputParameters = question.inputParameters[language];
-    // validate test cases state
-    // const validationResult = validateTestCasesState(testCasesState, inputParameters);
-
-    // if (!validationResult.isValid) {
-    //   return {
-    //     status: "testcases_invalid",
-    //     executionTime: 0,
-    //     stdout: undefined,
-    //     stderr: undefined,
-    //     isError: true,
-    //     exception: validationResult.errors.join(', '),
-    //   };
-    // }
 
     const testCode = generateTestCode(question, language, testCasesState);
     const payload = {
@@ -219,6 +227,10 @@ export const runTests = action({
         const jsonMatch = result.stdout.match(/START_RESULTS_JSON\n([\s\S]*?)\nEND_RESULTS_JSON/);
         if (jsonMatch && jsonMatch[1]) {
           const parsedResults: RunTestResult = JSON.parse(jsonMatch[1]);
+          console.log({
+            ...result,
+            testResults: parsedResults,
+          });
           return {
             ...result,
             testResults: parsedResults,
@@ -229,6 +241,7 @@ export const runTests = action({
       }
     }
 
+    console.log("result", result);
     return result;
   },
 });

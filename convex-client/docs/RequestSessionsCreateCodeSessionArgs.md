@@ -7,7 +7,13 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **agent_thread_id** | **str** |  | 
 **assistant_id** | **str** |  | 
+**interview_flow** | **List[str]** |  | 
+**interview_mode** | [**RequestSessionsCreateCodeSessionArgsInterviewMode**](RequestSessionsCreateCodeSessionArgsInterviewMode.md) |  | 
+**interview_type** | [**RequestSessionsCreateCodeSessionArgsInterviewType**](RequestSessionsCreateCodeSessionArgsInterviewType.md) |  | 
+**programming_language** | **str** |  | 
 **question_id** | **str** | ID from table \&quot;questions\&quot; | 
+**time_limit** | **float** |  | 
+**voice** | **str** |  | 
 
 ## Example
 

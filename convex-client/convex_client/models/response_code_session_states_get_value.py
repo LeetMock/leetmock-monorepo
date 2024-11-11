@@ -21,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, Stri
 from typing import Any, ClassVar, Dict, List, Union
 from convex_client.models.response_code_session_states_get_value_editor import ResponseCodeSessionStatesGetValueEditor
 from convex_client.models.response_code_session_states_get_value_terminal import ResponseCodeSessionStatesGetValueTerminal
+from convex_client.models.response_code_session_states_get_value_testcases_inner import ResponseCodeSessionStatesGetValueTestcasesInner
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -34,7 +35,8 @@ class ResponseCodeSessionStatesGetValue(BaseModel):
     editor: ResponseCodeSessionStatesGetValueEditor
     session_id: StrictStr = Field(description="ID from table \"sessions\"", alias="sessionId")
     terminal: ResponseCodeSessionStatesGetValueTerminal
-    __properties: ClassVar[List[str]] = ["_creationTime", "_id", "displayQuestion", "editor", "sessionId", "terminal"]
+    testcases: List[ResponseCodeSessionStatesGetValueTestcasesInner]
+    __properties: ClassVar[List[str]] = ["_creationTime", "_id", "displayQuestion", "editor", "sessionId", "terminal", "testcases"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -81,6 +83,13 @@ class ResponseCodeSessionStatesGetValue(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of terminal
         if self.terminal:
             _dict['terminal'] = self.terminal.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of each item in testcases (list)
+        _items = []
+        if self.testcases:
+            for _item_testcases in self.testcases:
+                if _item_testcases:
+                    _items.append(_item_testcases.to_dict())
+            _dict['testcases'] = _items
         return _dict
 
     @classmethod
@@ -98,7 +107,8 @@ class ResponseCodeSessionStatesGetValue(BaseModel):
             "displayQuestion": obj.get("displayQuestion"),
             "editor": ResponseCodeSessionStatesGetValueEditor.from_dict(obj["editor"]) if obj.get("editor") is not None else None,
             "sessionId": obj.get("sessionId"),
-            "terminal": ResponseCodeSessionStatesGetValueTerminal.from_dict(obj["terminal"]) if obj.get("terminal") is not None else None
+            "terminal": ResponseCodeSessionStatesGetValueTerminal.from_dict(obj["terminal"]) if obj.get("terminal") is not None else None,
+            "testcases": [ResponseCodeSessionStatesGetValueTestcasesInner.from_dict(_item) for _item in obj["testcases"]] if obj.get("testcases") is not None else None
         })
         return _obj
 

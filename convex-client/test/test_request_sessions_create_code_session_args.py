@@ -37,13 +37,29 @@ class TestRequestSessionsCreateCodeSessionArgs(unittest.TestCase):
             return RequestSessionsCreateCodeSessionArgs(
                 agent_thread_id = '',
                 assistant_id = '',
-                question_id = ''
+                interview_flow = [
+                    ''
+                    ],
+                interview_mode = None,
+                interview_type = None,
+                programming_language = '',
+                question_id = '',
+                time_limit = 1.337,
+                voice = ''
             )
         else:
             return RequestSessionsCreateCodeSessionArgs(
                 agent_thread_id = '',
                 assistant_id = '',
+                interview_flow = [
+                    ''
+                    ],
+                interview_mode = None,
+                interview_type = None,
+                programming_language = '',
                 question_id = '',
+                time_limit = 1.337,
+                voice = '',
         )
         """
 

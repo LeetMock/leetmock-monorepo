@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **editor** | [**ResponseCodeSessionStatesGetValueEditor**](ResponseCodeSessionStatesGetValueEditor.md) |  | 
 **session_id** | **str** | ID from table \&quot;sessions\&quot; | 
 **terminal** | [**ResponseCodeSessionStatesGetValueTerminal**](ResponseCodeSessionStatesGetValueTerminal.md) |  | 
+**testcases** | [**List[ResponseCodeSessionStatesGetValueTestcasesInner]**](ResponseCodeSessionStatesGetValueTestcasesInner.md) |  | 
 
 ## Example
 

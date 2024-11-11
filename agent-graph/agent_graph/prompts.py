@@ -2,6 +2,8 @@ from typing import Any, Dict, List
 
 from langchain_core.prompts import PromptTemplate
 
+from libs.convex.convex_types import TestcaseResult
+
 TESTCASE_INTERNAL_ERROR_PROMPT = """
 Below are the test results for the code candidate wrote.
 
@@ -44,21 +46,21 @@ Got:
 """
 
 
-def format_test_context(testcases: List[Dict[str, Any]]) -> str:
-    failed_tests = [test for test in testcases if not test["passed"]]
+def format_test_context(test_results: List[TestcaseResult]) -> str:
+    failed_tests = [test for test in test_results if not test.passed]
 
     if len(failed_tests) == 0:
         return TESTCASE_SUCCESS_PROMPT
 
-    num_tests, num_failed = len(testcases), len(failed_tests)
+    num_tests, num_failed = len(test_results), len(failed_tests)
     testcases = [
         {
             "index": i,
-            "input": test["input"],
-            "expected": test["expected"],
-            "actual": test["actual"],
-            "has_error": test["error"] is not None,
-            "error": test["error"],
+            "input": test.input,
+            "expected": test.expected,
+            "actual": test.actual,
+            "has_error": test.error is not None,
+            "error": test.error,
         }
         for i, test in enumerate(failed_tests)
     ]

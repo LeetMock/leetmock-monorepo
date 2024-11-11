@@ -36,16 +36,16 @@ class TestRequestActionsRunTests(unittest.TestCase):
         if include_optional:
             return RequestActionsRunTests(
                 args = convex_client.models.request_actions_run_tests_args.Request_actions_runTests_args(
-                    code = '', 
                     language = '', 
-                    question_id = '', )
+                    question_id = '', 
+                    session_id = '', )
             )
         else:
             return RequestActionsRunTests(
                 args = convex_client.models.request_actions_run_tests_args.Request_actions_runTests_args(
-                    code = '', 
                     language = '', 
-                    question_id = '', ),
+                    question_id = '', 
+                    session_id = '', ),
         )
         """
 

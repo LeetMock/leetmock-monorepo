@@ -9,6 +9,7 @@ Method | HTTP request | Description
 [**api_run_code_session_states_get_post**](QueryApi.md#api_run_code_session_states_get_post) | **POST** /api/run/codeSessionStates/get | Calls a query at the path codeSessionStates.js:get
 [**api_run_code_session_states_get_session_state_by_session_id_post**](QueryApi.md#api_run_code_session_states_get_session_state_by_session_id_post) | **POST** /api/run/codeSessionStates/getSessionStateBySessionId | Calls a query at the path codeSessionStates.js:getSessionStateBySessionId
 [**api_run_code_session_states_get_terminal_state_post**](QueryApi.md#api_run_code_session_states_get_terminal_state_post) | **POST** /api/run/codeSessionStates/getTerminalState | Calls a query at the path codeSessionStates.js:getTerminalState
+[**api_run_code_session_states_get_test_cases_state_post**](QueryApi.md#api_run_code_session_states_get_test_cases_state_post) | **POST** /api/run/codeSessionStates/getTestCasesState | Calls a query at the path codeSessionStates.js:getTestCasesState
 [**api_run_questions_get_all_post**](QueryApi.md#api_run_questions_get_all_post) | **POST** /api/run/questions/getAll | Calls a query at the path questions.js:getAll
 [**api_run_questions_get_by_id_post**](QueryApi.md#api_run_questions_get_by_id_post) | **POST** /api/run/questions/getById | Calls a query at the path questions.js:getById
 [**api_run_sessions_exists_post**](QueryApi.md#api_run_sessions_exists_post) | **POST** /api/run/sessions/exists | Calls a query at the path sessions.js:exists
@@ -392,6 +393,85 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**ResponseCodeSessionStatesGetTerminalState**](ResponseCodeSessionStatesGetTerminalState.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **api_run_code_session_states_get_test_cases_state_post**
+> ResponseCodeSessionStatesGetTestCasesState api_run_code_session_states_get_test_cases_state_post(request_code_session_states_get_test_cases_state)
+
+Calls a query at the path codeSessionStates.js:getTestCasesState
+
+### Example
+
+* Bearer Authentication (bearerAuth):
+
+```python
+import convex_client
+from convex_client.models.request_code_session_states_get_test_cases_state import RequestCodeSessionStatesGetTestCasesState
+from convex_client.models.response_code_session_states_get_test_cases_state import ResponseCodeSessionStatesGetTestCasesState
+from convex_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# See configuration.py for a list of all supported configuration parameters.
+configuration = convex_client.Configuration(
+    host = "https://posh-chihuahua-941.convex.cloud"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization: bearerAuth
+configuration = convex_client.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with convex_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = convex_client.QueryApi(api_client)
+    request_code_session_states_get_test_cases_state = convex_client.RequestCodeSessionStatesGetTestCasesState() # RequestCodeSessionStatesGetTestCasesState | 
+
+    try:
+        # Calls a query at the path codeSessionStates.js:getTestCasesState
+        api_response = api_instance.api_run_code_session_states_get_test_cases_state_post(request_code_session_states_get_test_cases_state)
+        print("The response of QueryApi->api_run_code_session_states_get_test_cases_state_post:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling QueryApi->api_run_code_session_states_get_test_cases_state_post: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_code_session_states_get_test_cases_state** | [**RequestCodeSessionStatesGetTestCasesState**](RequestCodeSessionStatesGetTestCasesState.md)|  | 
+
+### Return type
+
+[**ResponseCodeSessionStatesGetTestCasesState**](ResponseCodeSessionStatesGetTestCasesState.md)
 
 ### Authorization
 

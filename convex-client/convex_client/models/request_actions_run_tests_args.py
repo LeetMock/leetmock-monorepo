@@ -26,10 +26,10 @@ class RequestActionsRunTestsArgs(BaseModel):
     """
     RequestActionsRunTestsArgs
     """ # noqa: E501
-    code: StrictStr
     language: StrictStr
     question_id: StrictStr = Field(description="ID from table \"questions\"", alias="questionId")
-    __properties: ClassVar[List[str]] = ["code", "language", "questionId"]
+    session_id: StrictStr = Field(description="ID from table \"sessions\"", alias="sessionId")
+    __properties: ClassVar[List[str]] = ["language", "questionId", "sessionId"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -82,9 +82,9 @@ class RequestActionsRunTestsArgs(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "code": obj.get("code"),
             "language": obj.get("language"),
-            "questionId": obj.get("questionId")
+            "questionId": obj.get("questionId"),
+            "sessionId": obj.get("sessionId")
         })
         return _obj
 

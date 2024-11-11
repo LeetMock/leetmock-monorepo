@@ -14,9 +14,9 @@ def create_get_session_metadata_request(
 
 
 def create_test_code_correctness_request(
-    language: str, code: str, question_id: str
+    language: str, code: str, question_id: str, session_id: str
 ) -> RequestTestCodeCorrectness:
     args = RequestTestCodeCorrectnessArgs(
-        language=language, code=code, questionId=question_id
+        language=language, questionId=question_id, sessionId=session_id
     )
     return RequestTestCodeCorrectness(args=args)

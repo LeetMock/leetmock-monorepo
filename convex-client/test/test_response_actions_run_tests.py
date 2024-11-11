@@ -38,7 +38,23 @@ class TestResponseActionsRunTests(unittest.TestCase):
                 status = 'success',
                 error_message = '',
                 error_data = None,
-                value = None
+                value = convex_client.models.response_actions_run_tests_value.Response_actions_runTests_value(
+                    exception = '', 
+                    execution_time = 1.337, 
+                    is_error = True, 
+                    status = '', 
+                    stderr = '', 
+                    stdout = '', 
+                    test_results = [
+                        convex_client.models.response_actions_run_tests_value_test_results_inner.Response_actions_runTests_value_testResults_inner(
+                            actual = null, 
+                            case_number = 1.337, 
+                            error = '', 
+                            expected = null, 
+                            input = convex_client.models.input.input(), 
+                            passed = True, 
+                            stdout = '', )
+                        ], )
             )
         else:
             return ResponseActionsRunTests(

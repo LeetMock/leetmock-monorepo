@@ -64,17 +64,18 @@ async def test_code_correctness(state: CodingStageState, config: RunnableConfig)
         language="python",
         code=CodeSessionState(**state.session_state).editor.content,
         question_id=question_id,
+        session_id=SessionMetadata(**state.session_metadata).session_id,
     )
 
     try:
         api = ConvexApi(convex_url=agent_config.convex_url)
         response = api.action.api_run_actions_run_tests_post(request)
-        assert response.value is not None
-        result = response.value["testResults"]
+        assert response.value is not None and response.value.test_results is not None
+        testcase_results = response.value.test_results
     except Exception:
         return None
 
-    test_context = format_test_context(result)
+    test_context = format_test_context(testcase_results)
     return dict(test_context=test_context)
 
 

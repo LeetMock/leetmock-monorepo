@@ -5,7 +5,7 @@ export interface TokenResult {
 
 export type RunCodeResult = {
   status: boolean;
-  executionTime: number;
+  executionTime: number | undefined;
   isError: boolean;
   output: string;
 };
@@ -32,7 +32,7 @@ export interface TestCaseResult {
 
 export type CodeRunResult = {
   status: string;
-  executionTime: number;
+  executionTime: number | undefined;
   stdout: string | undefined;
   stderr: string | undefined;
   isError: boolean;
