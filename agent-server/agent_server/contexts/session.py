@@ -44,7 +44,6 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
     @abstractmethod
     async def setup(self, session_id: str):
         """Start the session."""
-
         raise NotImplementedError
 
     async def start(self, session_id: str):
