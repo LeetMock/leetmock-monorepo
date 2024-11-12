@@ -95,7 +95,7 @@ class ReminderEvent(BaseEvent[Reminder]):
                 logger.info("Reminder already sent. Skipping.")
                 return
 
-            self.publish(Reminder())
+            self.emit(Reminder())
             self._no_human_input_after_reminder = True
 
         def create_send_reminder_task(_: Any = None):
@@ -145,7 +145,7 @@ class CodeSessionEvent(BaseEvent[Any]):
 
     def setup(self):
         session = self.session
-        session.on(self.event_type, lambda event: self.publish(event))
+        session.on(self.event_type, lambda event: self.emit(event))
 
 
 class CodeEditorChangedEvent(BaseEvent[Any]):
@@ -187,7 +187,7 @@ class CodeEditorChangedEvent(BaseEvent[Any]):
             self._prev_event.event.data.after = self._after
             self._before = self._after
             self._after = None
-            self.publish(self._prev_event)
+            self.emit(self._prev_event)
 
         def process_event(event: CodeSessionContentChangedEvent | None = None):
             if event is not None:
@@ -260,7 +260,7 @@ class UserMessageEvent(BaseEvent[MessageWrapper]):
     async def _observe_user_message_task(self):
         @debounce(wait=self.delay)
         def publish_debounced(event: MessageWrapper):
-            self.publish(event)
+            self.emit(event)
 
         while True:
             user_message_event_data = await self.event_q.get()

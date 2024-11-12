@@ -101,7 +101,7 @@ class AgentTrigger(BaseModel):
     def _attach_event_handlers(self):
         """Attaches handlers to all registered events."""
         for event in self._events:
-            event.subscribe(self._create_event_handler(event))
+            event.on(self._create_event_handler(event))
 
     async def _trigger_task(self, is_user_message: bool):
         """Executes the agent trigger task.

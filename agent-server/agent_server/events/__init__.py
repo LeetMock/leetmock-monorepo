@@ -71,7 +71,7 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
     def event_name(self) -> str:
         raise NotImplementedError
 
-    def subscribe(self, callback: Callable[[TModel], None | Coroutine[Any, Any, None]]):
+    def on(self, callback: Callable[[TModel], None | Coroutine[Any, Any, None]]):
         """Subscribe a callback function to be called when the event is published.
 
         Args:
@@ -94,8 +94,8 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
         self._callbacks.append(wrapped_callback)
         return self
 
-    def publish(self, event: TModel):
-        """Publish an event to all registered callbacks.
+    def emit(self, event: TModel):
+        """Emit an event to all registered callbacks.
 
         Executes all registered callbacks asynchronously with the provided event data.
         Any exceptions in callbacks are logged but do not stop other callbacks from executing.

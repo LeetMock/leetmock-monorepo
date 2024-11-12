@@ -130,5 +130,7 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
             validator_cls=CodeSessionContentChangedEvent,
         )
 
+        # TODO: add more event types
+
         content_changed_watcher.on_update(self._handle_content_changed)
         content_changed_watcher.watch(self._api)
