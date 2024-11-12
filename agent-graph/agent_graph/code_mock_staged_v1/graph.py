@@ -189,8 +189,8 @@ def create_graph():
         .add_node("on_trigger", on_trigger)
         .add_node("decide_next_stage", decide_next_stage)
         .add_node("stage_tracker", stage_tracker.create_compiled_graph())
-        .add_node(StageTypes.INTRO.value, intro_stage.create_compiled_graph())
-        .add_node(StageTypes.CODING.value, coding_stage.create_compiled_graph())
+        .add_node(StageTypes.INTRO, intro_stage.create_compiled_graph())
+        .add_node(StageTypes.CODING, coding_stage.create_compiled_graph())
         # edges
         .add_conditional_edges(
             source=START,
@@ -206,9 +206,10 @@ def create_graph():
         .add_conditional_edges(
             source="on_trigger",
             path=select_stage,
-            path_map=[StageTypes.INTRO.value, StageTypes.CODING.value, END],
+            path_map=[StageTypes.INTRO, StageTypes.CODING, END],
         )
-        .add_edge([StageTypes.INTRO.value, StageTypes.CODING.value], "stage_tracker")
+        .add_edge(StageTypes.INTRO, "stage_tracker")
+        .add_edge(StageTypes.CODING, "stage_tracker")
         .add_edge("stage_tracker", "decide_next_stage")
         .add_edge("decide_next_stage", END)
     )
