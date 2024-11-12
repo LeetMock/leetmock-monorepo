@@ -41,7 +41,6 @@ async function handleContentChangeEvent(
   e: Extract<CodeSessionEvent, { type: "content_changed" }>
 ) {
   const { after } = e.data;
-
   await sessionState.patch({
     editor: {
       ...sessionState.editor,
