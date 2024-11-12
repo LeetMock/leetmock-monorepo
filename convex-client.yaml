@@ -448,6 +448,37 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/userProfiles/getUserProfile:
+    post:
+      summary: Calls a query at the path userProfiles.js:getUserProfile
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_userProfiles.getUserProfile"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_userProfiles.getUserProfile"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
   /api/run/inviteCodes/applyInviteCode:
     post:
       summary: Calls a mutation at the path inviteCodes.js:applyInviteCode
@@ -1374,6 +1405,207 @@ components:
               description: ID from table "sessions"
             session_status:
               type: string
+
+    Request_userProfiles.getByEmailInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          properties:
+            email:
+              type: string
+
+    Response_userProfiles.getByEmailInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.getUserProfile:
+      type: object
+      required:
+        - args
+      properties:
+        args: {}
+
+    Response_userProfiles.getUserProfile:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.getUserProfileInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - userId
+          properties:
+            userId:
+              type: string
+
+    Response_userProfiles.getUserProfileInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.refreshMinutesForYearlyPlansInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+
+    Response_userProfiles.refreshMinutesForYearlyPlansInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.updateSubscriptionByEmailInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - email
+          properties:
+            currentPeriodEnd:
+              type: number
+            currentPeriodStart:
+              type: number
+            email:
+              type: string
+            interval:
+              oneOf:
+                - type: string
+                  enum:
+                    - "month"
+                - type: string
+                  enum:
+                    - "year"
+                - type: string
+                  enum:
+                    - "day"
+                - type: string
+                  enum:
+                    - "week"
+            latestSubscriptionId:
+              type: string
+            minutesRemaining:
+              type: number
+            planName:
+              oneOf:
+                - type: string
+                  enum:
+                    - "free"
+                - type: string
+                  enum:
+                    - "basic"
+                - type: string
+                  enum:
+                    - "premium"
+                - type: string
+                  enum:
+                    - "enterprise"
+            refreshDate:
+              type: number
+            subscriptionStatus:
+              type: string
+
+    Response_userProfiles.updateSubscriptionByEmailInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.voidSubscriptionInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - email
+          properties:
+            email:
+              type: string
+
+    Response_userProfiles.voidSubscriptionInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
 
     Request_inviteCodes.applyInviteCode:
       type: object

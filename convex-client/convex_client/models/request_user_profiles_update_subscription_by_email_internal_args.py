@@ -19,18 +19,25 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional, Union
+from convex_client.models.request_user_profiles_update_subscription_by_email_internal_args_interval import RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval
 from convex_client.models.request_user_profiles_update_subscription_by_email_internal_args_plan_name import RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestAdminsPatchUserSubscriptionArgs(BaseModel):
+class RequestUserProfilesUpdateSubscriptionByEmailInternalArgs(BaseModel):
     """
-    RequestAdminsPatchUserSubscriptionArgs
+    RequestUserProfilesUpdateSubscriptionByEmailInternalArgs
     """ # noqa: E501
+    current_period_end: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="currentPeriodEnd")
+    current_period_start: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="currentPeriodStart")
+    email: StrictStr
+    interval: Optional[RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval] = None
+    latest_subscription_id: Optional[StrictStr] = Field(default=None, alias="latestSubscriptionId")
     minutes_remaining: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="minutesRemaining")
-    subscription: Optional[RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName] = None
-    user_id: StrictStr = Field(alias="userId")
-    __properties: ClassVar[List[str]] = ["minutesRemaining", "subscription", "userId"]
+    plan_name: Optional[RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName] = Field(default=None, alias="planName")
+    refresh_date: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="refreshDate")
+    subscription_status: Optional[StrictStr] = Field(default=None, alias="subscriptionStatus")
+    __properties: ClassVar[List[str]] = ["currentPeriodEnd", "currentPeriodStart", "email", "interval", "latestSubscriptionId", "minutesRemaining", "planName", "refreshDate", "subscriptionStatus"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -50,7 +57,7 @@ class RequestAdminsPatchUserSubscriptionArgs(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestAdminsPatchUserSubscriptionArgs from a JSON string"""
+        """Create an instance of RequestUserProfilesUpdateSubscriptionByEmailInternalArgs from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -71,14 +78,17 @@ class RequestAdminsPatchUserSubscriptionArgs(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of subscription
-        if self.subscription:
-            _dict['subscription'] = self.subscription.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of interval
+        if self.interval:
+            _dict['interval'] = self.interval.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of plan_name
+        if self.plan_name:
+            _dict['planName'] = self.plan_name.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestAdminsPatchUserSubscriptionArgs from a dict"""
+        """Create an instance of RequestUserProfilesUpdateSubscriptionByEmailInternalArgs from a dict"""
         if obj is None:
             return None
 
@@ -86,9 +96,15 @@ class RequestAdminsPatchUserSubscriptionArgs(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
+            "currentPeriodEnd": obj.get("currentPeriodEnd"),
+            "currentPeriodStart": obj.get("currentPeriodStart"),
+            "email": obj.get("email"),
+            "interval": RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval.from_dict(obj["interval"]) if obj.get("interval") is not None else None,
+            "latestSubscriptionId": obj.get("latestSubscriptionId"),
             "minutesRemaining": obj.get("minutesRemaining"),
-            "subscription": RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.from_dict(obj["subscription"]) if obj.get("subscription") is not None else None,
-            "userId": obj.get("userId")
+            "planName": RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.from_dict(obj["planName"]) if obj.get("planName") is not None else None,
+            "refreshDate": obj.get("refreshDate"),
+            "subscriptionStatus": obj.get("subscriptionStatus")
         })
         return _obj
 

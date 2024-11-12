@@ -17,23 +17,18 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional, Union
-from convex_client.models.request_invite_codes_create_invite_code_args_assigned_role import RequestInviteCodesCreateInviteCodeArgsAssignedRole
-from convex_client.models.request_user_profiles_update_subscription_by_email_internal_args_plan_name import RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName
+from pydantic import BaseModel, ConfigDict
+from typing import Any, ClassVar, Dict, List
+from convex_client.models.request_sessions_get_active_session_args import RequestSessionsGetActiveSessionArgs
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestAdminsCreateUserProfileArgs(BaseModel):
+class RequestUserProfilesGetUserProfileInternal(BaseModel):
     """
-    RequestAdminsCreateUserProfileArgs
+    RequestUserProfilesGetUserProfileInternal
     """ # noqa: E501
-    email: StrictStr
-    minutes_remaining: Union[StrictFloat, StrictInt] = Field(alias="minutesRemaining")
-    next_billing_date: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="nextBillingDate")
-    role: RequestInviteCodesCreateInviteCodeArgsAssignedRole
-    subscription: RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName
-    __properties: ClassVar[List[str]] = ["email", "minutesRemaining", "nextBillingDate", "role", "subscription"]
+    args: RequestSessionsGetActiveSessionArgs
+    __properties: ClassVar[List[str]] = ["args"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -53,7 +48,7 @@ class RequestAdminsCreateUserProfileArgs(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestAdminsCreateUserProfileArgs from a JSON string"""
+        """Create an instance of RequestUserProfilesGetUserProfileInternal from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -74,17 +69,14 @@ class RequestAdminsCreateUserProfileArgs(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of role
-        if self.role:
-            _dict['role'] = self.role.to_dict()
-        # override the default output from pydantic by calling `to_dict()` of subscription
-        if self.subscription:
-            _dict['subscription'] = self.subscription.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of args
+        if self.args:
+            _dict['args'] = self.args.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestAdminsCreateUserProfileArgs from a dict"""
+        """Create an instance of RequestUserProfilesGetUserProfileInternal from a dict"""
         if obj is None:
             return None
 
@@ -92,11 +84,7 @@ class RequestAdminsCreateUserProfileArgs(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "email": obj.get("email"),
-            "minutesRemaining": obj.get("minutesRemaining"),
-            "nextBillingDate": obj.get("nextBillingDate"),
-            "role": RequestInviteCodesCreateInviteCodeArgsAssignedRole.from_dict(obj["role"]) if obj.get("role") is not None else None,
-            "subscription": RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.from_dict(obj["subscription"]) if obj.get("subscription") is not None else None
+            "args": RequestSessionsGetActiveSessionArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
         })
         return _obj
 

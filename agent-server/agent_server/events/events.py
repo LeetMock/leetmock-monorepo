@@ -234,6 +234,9 @@ class GroundTruthTestcaseExecutedEvent(BaseEvent[Any]):
 
     def setup(self):
         # TODO: Implement
+        # USE LCEL: https://python.langchain.com/docs/introduction/
+        # model.with_structured_outputs(BaseModel)
+        # experiment with different LLMs openai gpt-4o gpt-o1-mini claude-35-sonnet (new)
         pass
 
 

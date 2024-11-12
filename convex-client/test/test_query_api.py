@@ -110,6 +110,13 @@ class TestQueryApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_user_profiles_get_user_profile_post(self) -> None:
+        """Test case for api_run_user_profiles_get_user_profile_post
+
+        Calls a query at the path userProfiles.js:getUserProfile
+        """
+        pass
+
 
 if __name__ == '__main__':
     unittest.main()

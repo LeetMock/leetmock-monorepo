@@ -118,6 +118,7 @@ Class | Method | HTTP request | Description
 *QueryApi* | [**api_run_sessions_get_active_session_post**](docs/QueryApi.md#api_run_sessions_get_active_session_post) | **POST** /api/run/sessions/getActiveSession | Calls a query at the path sessions.js:getActiveSession
 *QueryApi* | [**api_run_sessions_get_by_id_post**](docs/QueryApi.md#api_run_sessions_get_by_id_post) | **POST** /api/run/sessions/getById | Calls a query at the path sessions.js:getById
 *QueryApi* | [**api_run_sessions_get_by_user_id_post**](docs/QueryApi.md#api_run_sessions_get_by_user_id_post) | **POST** /api/run/sessions/getByUserId | Calls a query at the path sessions.js:getByUserId
+*QueryApi* | [**api_run_user_profiles_get_user_profile_post**](docs/QueryApi.md#api_run_user_profiles_get_user_profile_post) | **POST** /api/run/userProfiles/getUserProfile | Calls a query at the path userProfiles.js:getUserProfile
 
 
 ## Documentation For Models
@@ -132,7 +133,6 @@ Class | Method | HTTP request | Description
  - [RequestActionsRunTestsArgs](docs/RequestActionsRunTestsArgs.md)
  - [RequestAdminsCreateUserProfile](docs/RequestAdminsCreateUserProfile.md)
  - [RequestAdminsCreateUserProfileArgs](docs/RequestAdminsCreateUserProfileArgs.md)
- - [RequestAdminsCreateUserProfileArgsSubscription](docs/RequestAdminsCreateUserProfileArgsSubscription.md)
  - [RequestAdminsPatchUserSubscription](docs/RequestAdminsPatchUserSubscription.md)
  - [RequestAdminsPatchUserSubscriptionArgs](docs/RequestAdminsPatchUserSubscriptionArgs.md)
  - [RequestCodeSessionEventsCommitCodeSessionEvent](docs/RequestCodeSessionEventsCommitCodeSessionEvent.md)
@@ -179,6 +179,17 @@ Class | Method | HTTP request | Description
  - [RequestSessionsGetByIdInternal](docs/RequestSessionsGetByIdInternal.md)
  - [RequestSessionsGetByUserId](docs/RequestSessionsGetByUserId.md)
  - [RequestSessionsStartSession](docs/RequestSessionsStartSession.md)
+ - [RequestUserProfilesGetByEmailInternal](docs/RequestUserProfilesGetByEmailInternal.md)
+ - [RequestUserProfilesGetByEmailInternalArgs](docs/RequestUserProfilesGetByEmailInternalArgs.md)
+ - [RequestUserProfilesGetUserProfile](docs/RequestUserProfilesGetUserProfile.md)
+ - [RequestUserProfilesGetUserProfileInternal](docs/RequestUserProfilesGetUserProfileInternal.md)
+ - [RequestUserProfilesRefreshMinutesForYearlyPlansInternal](docs/RequestUserProfilesRefreshMinutesForYearlyPlansInternal.md)
+ - [RequestUserProfilesUpdateSubscriptionByEmailInternal](docs/RequestUserProfilesUpdateSubscriptionByEmailInternal.md)
+ - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgs](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgs.md)
+ - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval.md)
+ - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.md)
+ - [RequestUserProfilesVoidSubscriptionInternal](docs/RequestUserProfilesVoidSubscriptionInternal.md)
+ - [RequestUserProfilesVoidSubscriptionInternalArgs](docs/RequestUserProfilesVoidSubscriptionInternalArgs.md)
  - [ResponseActionsCreateAgentThread](docs/ResponseActionsCreateAgentThread.md)
  - [ResponseActionsGetSessionMetadata](docs/ResponseActionsGetSessionMetadata.md)
  - [ResponseActionsGetSessionMetadataValue](docs/ResponseActionsGetSessionMetadataValue.md)
@@ -217,6 +228,12 @@ Class | Method | HTTP request | Description
  - [ResponseSessionsGetByIdInternal](docs/ResponseSessionsGetByIdInternal.md)
  - [ResponseSessionsGetByUserId](docs/ResponseSessionsGetByUserId.md)
  - [ResponseSessionsStartSession](docs/ResponseSessionsStartSession.md)
+ - [ResponseUserProfilesGetByEmailInternal](docs/ResponseUserProfilesGetByEmailInternal.md)
+ - [ResponseUserProfilesGetUserProfile](docs/ResponseUserProfilesGetUserProfile.md)
+ - [ResponseUserProfilesGetUserProfileInternal](docs/ResponseUserProfilesGetUserProfileInternal.md)
+ - [ResponseUserProfilesRefreshMinutesForYearlyPlansInternal](docs/ResponseUserProfilesRefreshMinutesForYearlyPlansInternal.md)
+ - [ResponseUserProfilesUpdateSubscriptionByEmailInternal](docs/ResponseUserProfilesUpdateSubscriptionByEmailInternal.md)
+ - [ResponseUserProfilesVoidSubscriptionInternal](docs/ResponseUserProfilesVoidSubscriptionInternal.md)
 
 
 <a id="documentation-for-authorization"></a>
