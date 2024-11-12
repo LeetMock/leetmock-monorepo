@@ -3,3 +3,6 @@ test:
 
 test-watch:
     poetry run ptw -- --clear
+
+dev:
+    poetry run python3 agent_server/worker.py dev
