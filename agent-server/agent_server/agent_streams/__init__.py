@@ -44,6 +44,8 @@ def make_config(configurable: Dict[str, Any]) -> RunnableConfig:
 
 class AgentStream(BaseModel, Generic[TState]):
 
+    name: str = Field(..., description="The name of the agent stream")
+
     state_cls: Type[TState] = Field(
         ..., description="The type of the state to be returned"
     )
@@ -71,6 +73,7 @@ class AgentStream(BaseModel, Generic[TState]):
 
     def __init__(
         self,
+        name: str,
         state_cls: Type[TState],
         config: BaseModel,
         session: BaseSession,
@@ -80,6 +83,7 @@ class AgentStream(BaseModel, Generic[TState]):
         message_q: asyncio.Queue[AsyncIterator[str] | None],
     ):
         super().__init__(
+            name=name,
             state_cls=state_cls,
             assistant=assistant,
             graph=graph,
@@ -96,7 +100,7 @@ class AgentStream(BaseModel, Generic[TState]):
     def _stateless_graph_stream(
         self, initial_state: TState
     ) -> AsyncIterator[Tuple[StreamMode, Any]]:
-        graph = self.graph.compile()
+        graph = self.graph.compile().with_config({"run_name": self.name})
         config = make_config(self._agent_config)
         return graph.astream(input=initial_state, config=config, stream_mode=["values", "custom"])  # type: ignore
 

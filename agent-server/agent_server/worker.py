@@ -20,6 +20,7 @@ from agent_server.events.events import (
     UserTestcaseExecutedEvent,
 )
 from agent_server.livekit.streams import EchoStream, NoopLLM, NoopStream
+from agent_server.livekit.tts import create_elevenlabs_tts
 from agent_server.storages.langgraph_cloud import LangGraphCloudStateStorage
 from agent_server.utils.logger import get_logger
 from agent_server.utils.messages import (
@@ -112,12 +113,15 @@ async def entrypoint(ctx: JobContext):
         vad=silero.VAD.load(),
         stt=deepgram.STT(),
         llm=no_op_llm,
-        tts=openai.TTS(),
+        tts=create_elevenlabs_tts(),
         chat_ctx=ctx_manager.chat_ctx,
         before_llm_cb=before_llm_callback,
     )
 
+    agent_name = "code-mock-staged-v1"
+
     state_merger = await StateMerger.from_state_and_storage(
+        name=agent_name,
         state_type=AgentState,
         storage=LangGraphCloudStateStorage(
             thread_id=session.session_metadata.agent_thread_id,
@@ -126,6 +130,7 @@ async def entrypoint(ctx: JobContext):
     )
 
     agent_stream = AgentStream(
+        name=agent_name,
         state_cls=AgentState,
         config=AgentConfig(convex_url=convex_api.convex_url),
         session=session,

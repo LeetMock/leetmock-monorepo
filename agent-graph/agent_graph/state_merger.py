@@ -52,6 +52,7 @@ class StateMerger(BaseModel, Generic[TState]):
     @classmethod
     async def from_state_and_storage(
         cls,
+        name: str,
         state_type: Type[TState],
         storage: StateStorage,
     ):
@@ -59,7 +60,9 @@ class StateMerger(BaseModel, Generic[TState]):
 
         merger = cls(
             state_type=state_type,
-            state_graph=graph.compile(checkpointer=MemorySaver()),
+            state_graph=graph.compile(checkpointer=MemorySaver()).with_config(
+                {"run_name": f"{name}-state-merger"}
+            ),
             storage=storage,
         )
 
