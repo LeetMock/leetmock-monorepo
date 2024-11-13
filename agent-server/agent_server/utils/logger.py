@@ -4,6 +4,7 @@ import logging
 def get_logger(name: str) -> logging.Logger:
     # Configure the logger
     logger = logging.getLogger(name)
+    logger.setLevel(logging.INFO)
 
     # Remove existing handlers
     if logger.hasHandlers():
@@ -17,6 +18,5 @@ def get_logger(name: str) -> logging.Logger:
     )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    logger.setLevel(logging.INFO)
 
     return logger
