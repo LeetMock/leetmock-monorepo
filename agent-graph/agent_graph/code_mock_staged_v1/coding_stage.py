@@ -85,7 +85,11 @@ async def interrupter(_: CodingStageState):
 
 
 # --------------------- stage subgraph nodes --------------------- #
-async def assistant(state: CodingStageState, writer: StreamWriter):
+async def assistant(
+    state: CodingStageState, config: RunnableConfig, writer: StreamWriter
+):
+    agent_config = get_configurable(AgentConfig, config)
+
     messages = state.messages
     last_human_message_idx = -1
 
@@ -114,7 +118,10 @@ async def assistant(state: CodingStageState, writer: StreamWriter):
         ]
     )
 
-    chain = prompt | get_model("gpt-4o").bind(stop=["SILENT", "<thinking>"])
+    chain = prompt | get_model(
+        model_name=agent_config.smart_model,
+        temperature=agent_config.temperature,
+    ).bind(stop=["SILENT", "<thinking>"])
 
     content = ""
     session_state = CodeSessionState(**state.session_state)

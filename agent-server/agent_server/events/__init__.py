@@ -33,14 +33,14 @@ import asyncio
 import logging
 from abc import ABC, abstractmethod
 from inspect import iscoroutinefunction
-from typing import Any, Callable, Coroutine, Generic, List, Self, Type, TypeVar
+from typing import Any, Callable, Coroutine, Generic, List, Type, TypeVar
 
 from agent_server.contexts.session import BaseSession
-from livekit.agents.voice_assistant import VoiceAssistant
+from agent_server.utils.profiler import get_profiler
 from pydantic.v1 import BaseModel, PrivateAttr
 
 logger = logging.getLogger(__name__)
-
+pf = get_profiler()
 
 TModel = TypeVar("TModel", bound=BaseModel)
 TSession = TypeVar("TSession", bound=BaseSession)
@@ -103,6 +103,8 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
         Args:
             event: The event data of type TModel to pass to callbacks
         """
+        pf.track(context="BaseEvent.emit", name=self.event_name)
+
         asyncio.gather(
             *[callback(event) for callback in self._callbacks],
             return_exceptions=True,

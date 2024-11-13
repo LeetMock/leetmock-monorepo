@@ -31,11 +31,14 @@ from typing import Any, List, Tuple
 
 from agent_server.agent_streams import AgentStream
 from agent_server.events import BaseEvent
+from agent_server.utils.profiler import get_profiler
 from pydantic.v1 import BaseModel, Field, PrivateAttr
 
 from libs.timestamp import Timestamp
 
 logger = logging.getLogger(__name__)
+
+pf = get_profiler()
 
 
 class AgentTrigger(BaseModel):
@@ -122,9 +125,13 @@ class AgentTrigger(BaseModel):
 
         while True:
             event, data = await self._event_q.get()
+            pf.track("AgentTrigger._main_task", ["event_received", f"event_{event}"])
+
             logger.info(f"Receiving event: {event} with data: {data}")
 
-            should_trigger = await self.stream.notify_agent(event, data)
+            with pf.range("AgentTrigger._main_task", "notify_agent"):
+                should_trigger = await self.stream.notify_agent(event, data)
+
             if should_trigger:
                 is_user_message = event == "user_message"
                 asyncio.create_task(self._trigger_task(is_user_message))

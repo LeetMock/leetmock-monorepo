@@ -29,9 +29,11 @@ class AgentConfig(BaseModel):
 
     convex_url: str = Field(default="")
 
-    llm_name: str = Field(default="gpt-4o")
+    fast_model: str = Field(default="gpt-4o-mini")
 
-    temperature: float = Field(default=0.9)
+    smart_model: str = Field(default="gpt-4o")
+
+    temperature: float = Field(default=0.2)
 
 
 def get_next_stage(stage: StageTypes) -> StageTypes:

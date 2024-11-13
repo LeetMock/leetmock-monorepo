@@ -108,7 +108,7 @@ async def on_event(
 ):
     if state.event == "trigger":
         messages = (
-            [HumanMessage(content=RECONNECT_MESSAGE)] if state.initialized else []
+            [HumanMessage(content=RECONNECT_MESSAGE)] if len(state.messages) > 5 else []
         )
         return with_event_reset(trigger=True, messages=messages)
 

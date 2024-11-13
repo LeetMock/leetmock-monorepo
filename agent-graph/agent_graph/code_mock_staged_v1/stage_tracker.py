@@ -1,7 +1,8 @@
 from collections import defaultdict
-from typing import Annotated, Any, Dict, List, cast
+from typing import Annotated, Dict, List, cast
 
 from agent_graph.code_mock_staged_v1.constants import (
+    AgentConfig,
     StageTypes,
     format_signal_notification_messages,
     format_step_notification_messages,
@@ -14,12 +15,14 @@ from agent_graph.code_mock_staged_v1.prompts import (
 from agent_graph.code_mock_staged_v1.schemas import TrackSignals, TrackSteps
 from agent_graph.llms import get_model
 from agent_graph.types import Signal, Step
+from agent_graph.utils import get_configurable
 from langchain_core.messages import AnyMessage
 from langchain_core.prompts import (
     ChatPromptTemplate,
     MessagesPlaceholder,
     SystemMessagePromptTemplate,
 )
+from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph, add_messages
 from pydantic.v1 import BaseModel, Field
@@ -51,7 +54,9 @@ class StageTrackerState(BaseModel):
 
 # --------------------- stage subgraph nodes --------------------- #
 # Call LLM to see if there are any steps completed in the current stage
-async def track_stage_steps(state: StageTrackerState):
+async def track_stage_steps(state: StageTrackerState, config: RunnableConfig):
+    agent_config = get_configurable(AgentConfig, config)
+
     prompt = ChatPromptTemplate.from_messages(
         [
             SystemMessagePromptTemplate.from_template(
@@ -60,7 +65,12 @@ async def track_stage_steps(state: StageTrackerState):
             MessagesPlaceholder(variable_name="messages"),
         ]
     )
-    llm = get_model("gpt-4o", temperature=0.1)
+
+    llm = get_model(
+        model_name=agent_config.smart_model,
+        temperature=agent_config.temperature,
+    )
+
     structured_llm = llm.with_structured_output(TrackSteps)
 
     chain = prompt | structured_llm
@@ -96,7 +106,9 @@ async def track_stage_steps(state: StageTrackerState):
 
 
 # Call LLM to see if there are any signals caught in the current stage
-async def track_stage_signals(state: StageTrackerState):
+async def track_stage_signals(state: StageTrackerState, config: RunnableConfig):
+    agent_config = get_configurable(AgentConfig, config)
+
     prompt = ChatPromptTemplate.from_messages(
         [
             SystemMessagePromptTemplate.from_template(
@@ -107,7 +119,10 @@ async def track_stage_signals(state: StageTrackerState):
     )
 
     # TODO: use map-reduce for self-consistency
-    llm = get_model("gpt-4o", temperature=0.1)
+    llm = get_model(
+        model_name=agent_config.smart_model,
+        temperature=agent_config.temperature,
+    )
     structured_llm = llm.with_structured_output(TrackSignals)
 
     chain = prompt | structured_llm

@@ -1,6 +1,7 @@
 import asyncio
 import hashlib
 import os
+import time
 from datetime import datetime
 from typing import AsyncIterator
 
@@ -27,6 +28,7 @@ from agent_server.utils.messages import (
     convert_chat_ctx_to_langchain_messages,
     filter_langchain_messages,
 )
+from agent_server.utils.profiler import get_profiler, set_profiler_id
 from dotenv import find_dotenv, load_dotenv
 from livekit.agents import cli  # type: ignore
 from livekit.agents import JobContext, WorkerOptions, llm, utils
@@ -38,6 +40,7 @@ from libs.convex.api import ConvexApi
 from libs.types import MessageWrapper
 
 logger = get_logger(__name__)
+pf = get_profiler()
 
 load_dotenv(find_dotenv())
 
@@ -81,6 +84,8 @@ class CustomLoadCalc(_DefaultLoadCalc):
 
 
 async def entrypoint(ctx: JobContext):
+    pf.start()
+
     no_op_llm = NoopLLM()
     convex_api = ConvexApi(convex_url=os.getenv("CONVEX_URL") or "")
     session = CodeSession(api=convex_api)
@@ -92,6 +97,8 @@ async def entrypoint(ctx: JobContext):
     ctx_manager = AgentContextManager(ctx=ctx, api=convex_api, session=session)
     await ctx_manager.start()
 
+    set_profiler_id(ctx_manager.session_id)
+
     async def before_llm_callback(_: VoiceAssistant, chat_ctx: llm.ChatContext):
         lc_messages = filter_langchain_messages(
             convert_chat_ctx_to_langchain_messages(chat_ctx)
@@ -101,8 +108,9 @@ async def entrypoint(ctx: JobContext):
             key = f"{unix_timestamp}-{i}-{message.type}"
             message.id = hashlib.md5(key.encode()).hexdigest()
 
-        user_message_event_q.put_nowait(MessageWrapper.from_messages(lc_messages))
-        text_stream = await user_message_response_q.get()
+        with pf.range("entrypoint.before_llm_callback", "wait_for_text_stream"):
+            user_message_event_q.put_nowait(MessageWrapper.from_messages(lc_messages))
+            text_stream = await user_message_response_q.get()
 
         if text_stream is not None:
             return EchoStream(text_stream=text_stream, chat_ctx=chat_ctx)
@@ -120,19 +128,24 @@ async def entrypoint(ctx: JobContext):
 
     agent_name = "code-mock-staged-v1"
 
-    state_merger = await StateMerger.from_state_and_storage(
-        name=agent_name,
-        state_type=AgentState,
-        storage=LangGraphCloudStateStorage(
-            thread_id=session.session_metadata.agent_thread_id,
-            assistant_id=session.session_metadata.assistant_id,
-        ),
-    )
+    with pf.range("entrypoint", "state_merger_creation"):
+        state_merger = await StateMerger.from_state_and_storage(
+            name=agent_name,
+            state_type=AgentState,
+            storage=LangGraphCloudStateStorage(
+                thread_id=session.session_metadata.agent_thread_id,
+                assistant_id=session.session_metadata.assistant_id,
+            ),
+        )
 
     agent_stream = AgentStream(
         name=agent_name,
         state_cls=AgentState,
-        config=AgentConfig(convex_url=convex_api.convex_url),
+        config=AgentConfig(
+            # fast_model="claude-3-5-haiku-latest",
+            # smart_model="claude-3-5-sonnet-latest",
+            convex_url=convex_api.convex_url,
+        ),
         session=session,
         graph=create_graph(),
         assistant=assistant,
@@ -154,7 +167,8 @@ async def entrypoint(ctx: JobContext):
     agent_trigger.start()
     assistant.start(ctx.room)
 
-    await agent_trigger.trigger()
+    with pf.range("entrypoint", "agent_trigger_first_trigger"):
+        await agent_trigger.trigger()
 
 
 if __name__ == "__main__":

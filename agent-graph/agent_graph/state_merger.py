@@ -2,11 +2,14 @@ import asyncio
 from typing import Any, Dict, Generic, Type, TypeVar
 
 from agent_server.storages import StateStorage
+from agent_server.utils.profiler import get_profiler
 from debouncer import debounce
 from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph.state import CompiledStateGraph, StateGraph
 from pydantic.v1 import BaseModel, Field, PrivateAttr
+
+pf = get_profiler()
 
 TState = TypeVar("TState", bound=BaseModel)
 
@@ -79,12 +82,17 @@ class StateMerger(BaseModel, Generic[TState]):
         return snapshot.values
 
     async def merge_state(self, state: TState | Dict[str, Any]):
+        range_tracker = pf.range_tracker("StateMerger.merge_state", "merge_state")
+        range_tracker.start()
+
         if isinstance(state, dict) and len(state) == 0:
             return await self.get_state()
 
         values = await self.state_graph.ainvoke(state, config=CONFIG)
+        state = self.state_type(**values)
 
-        return self.state_type(**values)
+        range_tracker.end()
+        return state
 
     async def aflush(self, debounce: bool = True):
         """Flush the state to the storage"""

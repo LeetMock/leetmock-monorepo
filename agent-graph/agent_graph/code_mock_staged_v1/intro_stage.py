@@ -52,7 +52,10 @@ async def assistant(
         ]
     )
 
-    chain = prompt | get_model("gpt-4o-mini").bind(stop=["SILENT", "<thinking>"])
+    chain = prompt | get_model(
+        model_name=agent_config.fast_model,
+        temperature=agent_config.temperature,
+    ).bind(stop=["SILENT", "<thinking>"])
 
     content = ""
     async for chunk in chain.astream(

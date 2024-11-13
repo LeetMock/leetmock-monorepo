@@ -16,6 +16,7 @@ from typing import (
 from agent_graph.state_merger import StateMerger
 from agent_graph.types import EventMessageState
 from agent_server.contexts.session import BaseSession
+from agent_server.utils.profiler import get_profiler
 from agent_server.utils.streams import to_async_iterable
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import StateGraph
@@ -27,6 +28,7 @@ from pydantic.v1 import BaseModel, Field, PrivateAttr
 from libs.timestamp import Timestamp
 
 logger = logging.getLogger(__name__)
+pf = get_profiler()
 
 TState = TypeVar("TState", bound=EventMessageState)
 TConfig = TypeVar("TConfig", bound=BaseModel)
@@ -105,19 +107,24 @@ class AgentStream(BaseModel, Generic[TState]):
         return graph.astream(input=initial_state, config=config, stream_mode=["values", "custom"])  # type: ignore
 
     async def notify_agent(self, event_name: str, data: Any) -> bool:
-        state = await self.state_merger.get_state()
-        state.event = event_name
-        state.event_data = data
-        state.trigger = False
-        state.session_metadata = self.session.session_metadata.dict()
-        state.session_state = self.session.session_state.dict()
+        with pf.range("AgentStream.notify_agent", "prepare_state"):
+            state = await self.state_merger.get_state()
+            state.event = event_name
+            state.event_data = data
+            state.trigger = False
+            state.session_metadata = self.session.session_metadata.dict()
+            state.session_state = self.session.session_state.dict()
 
         should_trigger = False
         async for mode, part in self._stateless_graph_stream(state):
+            pf.track("AgentStream.notify_agent", "stream_part")
+
             if mode != "values":
                 continue
 
-            snapshot = await self.state_merger.merge_state(part)
+            with pf.range("AgentStream.notify_agent", "merge_state"):
+                snapshot = await self.state_merger.merge_state(part)
+
             if snapshot.trigger:
                 should_trigger = True
 
@@ -127,12 +134,13 @@ class AgentStream(BaseModel, Generic[TState]):
         start_t = timestamp.t
         should_interrupt = lambda: start_t != timestamp.t
 
-        state = await self.state_merger.get_state()
-        state.event = None
-        state.event_data = None
-        state.trigger = True
-        state.session_metadata = self.session.session_metadata.dict()
-        state.session_state = self.session.session_state.dict()
+        with pf.range("AgentStream.trigger_agent", "prepare_state"):
+            state = await self.state_merger.get_state()
+            state.event = None
+            state.event_data = None
+            state.trigger = True
+            state.session_metadata = self.session.session_metadata.dict()
+            state.session_state = self.session.session_state.dict()
 
         logger.info("Triggering agent")
         text_stream = self._assistant_text_stream(state, should_interrupt)
@@ -157,8 +165,13 @@ class AgentStream(BaseModel, Generic[TState]):
                 logger.info("Interrupting graph stream")
                 break
 
+            pf.track("AgentStream.trigger_agent._assistant_text_stream", "stream_part")
+
             if mode == "values":
-                await self.state_merger.merge_state(part)
+                with pf.range(
+                    "AgentStream.trigger_agent._assistant_text_stream", "merge_state"
+                ):
+                    await self.state_merger.merge_state(part)
 
             if mode == "custom":
                 id, chunk_text = part["id"], cast(str, part["data"])
@@ -166,7 +179,14 @@ class AgentStream(BaseModel, Generic[TState]):
                     continue
 
                 yield chunk_text
+                pf.track(
+                    "AgentStream.trigger_agent._assistant_text_stream", "chunk_text"
+                )
                 chunks.append(chunk_text)
 
         logger.info(f"Agent text stream: {''.join(chunks)}")
-        self.state_merger.flush()
+
+        with pf.range(
+            "AgentStream.trigger_agent._assistant_text_stream", "flush_state_merger"
+        ):
+            self.state_merger.flush()
