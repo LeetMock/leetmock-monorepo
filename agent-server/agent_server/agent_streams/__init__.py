@@ -107,7 +107,7 @@ class AgentStream(BaseModel, Generic[TState]):
         return graph.astream(input=initial_state, config=config, stream_mode=["values", "custom"])  # type: ignore
 
     async def notify_agent(self, event_name: str, data: Any) -> bool:
-        with pf.range("AgentStream.notify_agent", "prepare_state"):
+        with pf.range("agent_stream.notify_agent.prepare_state"):
             state = await self.state_merger.get_state()
             state.event = event_name
             state.event_data = data
@@ -117,12 +117,12 @@ class AgentStream(BaseModel, Generic[TState]):
 
         should_trigger = False
         async for mode, part in self._stateless_graph_stream(state):
-            pf.track("AgentStream.notify_agent", "stream_part")
+            pf.track("agent_stream.notify_agent.stream.part")
 
             if mode != "values":
                 continue
 
-            with pf.range("AgentStream.notify_agent", "merge_state"):
+            with pf.range("agent_stream.notify_agent.stream.merge_state"):
                 snapshot = await self.state_merger.merge_state(part)
 
             if snapshot.trigger:
@@ -134,7 +134,7 @@ class AgentStream(BaseModel, Generic[TState]):
         start_t = timestamp.t
         should_interrupt = lambda: start_t != timestamp.t
 
-        with pf.range("AgentStream.trigger_agent", "prepare_state"):
+        with pf.range("agent_stream.trigger_agent.prepare_state"):
             state = await self.state_merger.get_state()
             state.event = None
             state.event_data = None
@@ -165,12 +165,10 @@ class AgentStream(BaseModel, Generic[TState]):
                 logger.info("Interrupting graph stream")
                 break
 
-            pf.track("AgentStream.trigger_agent._assistant_text_stream", "stream_part")
+            pf.track("agent_stream.trigger_agent.stream.part")
 
             if mode == "values":
-                with pf.range(
-                    "AgentStream.trigger_agent._assistant_text_stream", "merge_state"
-                ):
+                with pf.range("agent_stream.trigger_agent.stream.merge_state"):
                     await self.state_merger.merge_state(part)
 
             if mode == "custom":
@@ -179,14 +177,10 @@ class AgentStream(BaseModel, Generic[TState]):
                     continue
 
                 yield chunk_text
-                pf.track(
-                    "AgentStream.trigger_agent._assistant_text_stream", "chunk_text"
-                )
+                pf.track("agent_stream.trigger_agent.stream.chunk_text")
                 chunks.append(chunk_text)
 
         logger.info(f"Agent text stream: {''.join(chunks)}")
 
-        with pf.range(
-            "AgentStream.trigger_agent._assistant_text_stream", "flush_state_merger"
-        ):
+        with pf.range("agent_stream.trigger_agent.flush_state_merger"):
             self.state_merger.flush()

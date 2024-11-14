@@ -125,11 +125,13 @@ class AgentTrigger(BaseModel):
 
         while True:
             event, data = await self._event_q.get()
-            pf.track("AgentTrigger._main_task", ["event_received", f"event_{event}"])
+            pf.track(
+                ["agent_trigger.main_task.event", f"agent_trigger.main_task.{event}"]
+            )
 
             logger.info(f"Receiving event: {event} with data: {data}")
 
-            with pf.range("AgentTrigger._main_task", "notify_agent"):
+            with pf.range(f"agent_trigger.main_task.notify_agent.{event}"):
                 should_trigger = await self.stream.notify_agent(event, data)
 
             if should_trigger:

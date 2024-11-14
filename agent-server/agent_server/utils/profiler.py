@@ -25,11 +25,9 @@ class Record(BaseModel):
 
     type: Literal["record"] = "record"
 
-    context: str = Field(description="The context of the record")
-
     name: str = Field(description="The name of the record")
 
-    time: float = Field(description="The time taken for the record")
+    time: float = Field(description="The time when record was created")
 
 
 class Range(BaseModel):
@@ -37,9 +35,9 @@ class Range(BaseModel):
 
     type: Literal["range"] = "range"
 
-    context: str = Field(description="The context of the range")
-
     name: str = Field(description="The name of the range")
+
+    time: float = Field(description="The time when range was created")
 
     start_time: float = Field(description="The start time of the range")
 
@@ -48,8 +46,6 @@ class Range(BaseModel):
 
 class RangeTracker(BaseModel):
     """A tracker for the range of a particular step."""
-
-    context: str = Field(description="The context of the range")
 
     name: str = Field(description="The name of the range")
 
@@ -76,8 +72,8 @@ class RangeTracker(BaseModel):
 
         self.profiler.records.append(
             Range(
-                context=self.context,
                 name=self.name,
+                time=self.start_time,
                 start_time=self.start_time,
                 end_time=self.end_time,
             )
@@ -100,26 +96,31 @@ class Profiler(BaseModel):
             await asyncio.sleep(5)
             self.flush()
 
-    def track(self, context: str, name: str | List[str]):
+    def track(self, name: str | List[str]):
         current_time = time.time()
 
         if isinstance(name, list):
             for n in name:
-                self.records.append(Record(context=context, name=n, time=current_time))
+                self.records.append(Record(name=n, time=current_time))
         else:
-            self.records.append(Record(context=context, name=name, time=current_time))
+            self.records.append(Record(name=name, time=current_time))
 
     @contextmanager
-    def range(self, context: str, name: str):
+    def range(self, name: str):
         start_time = time.time()
         yield
         end_time = time.time()
         self.records.append(
-            Range(context=context, name=name, start_time=start_time, end_time=end_time)
+            Range(
+                name=name,
+                time=start_time,
+                start_time=start_time,
+                end_time=end_time,
+            )
         )
 
-    def range_tracker(self, context: str, name: str):
-        tracker = RangeTracker(context=context, name=name, profiler=self)
+    def range_tracker(self, name: str):
+        tracker = RangeTracker(name=name, profiler=self)
         return tracker
 
     def flush(self):

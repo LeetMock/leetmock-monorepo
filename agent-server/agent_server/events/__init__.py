@@ -103,8 +103,8 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
         Args:
             event: The event data of type TModel to pass to callbacks
         """
-        pf.track(context="BaseEvent.emit", name=self.event_name)
 
+        pf.track(f"event.{self.event_name}.emit")
         asyncio.gather(
             *[callback(event) for callback in self._callbacks],
             return_exceptions=True,
