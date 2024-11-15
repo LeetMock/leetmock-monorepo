@@ -160,6 +160,8 @@ class AgentStream(BaseModel, Generic[TState]):
         should_interrupt: Callable[[], bool],
     ) -> AsyncIterator[str]:
         chunks = []
+
+        first_token_received = False
         async for mode, part in self._stateless_graph_stream(state):
             if should_interrupt():
                 logger.info("Interrupting graph stream")
@@ -176,8 +178,12 @@ class AgentStream(BaseModel, Generic[TState]):
                 if id != "assistant":
                     continue
 
-                yield chunk_text
+                if not first_token_received:
+                    first_token_received = True
+                    pf.point("agent_stream.trigger_agent.stream.first_token")
+
                 pf.point("agent_stream.trigger_agent.stream.chunk_text")
+                yield chunk_text
                 chunks.append(chunk_text)
 
         logger.info(f"Agent text stream: {''.join(chunks)}")

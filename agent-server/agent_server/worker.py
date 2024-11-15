@@ -126,6 +126,10 @@ async def entrypoint(ctx: JobContext):
         before_llm_cb=before_llm_callback,
     )
 
+    @assistant.on("metrics_collected")
+    def on_metrics_collected(metrics):
+        logger.info(f"[metrics_collected] {metrics}")
+
     agent_name = "code-mock-staged-v1"
 
     with pf.interval("entrypoint.init_state_merger"):
