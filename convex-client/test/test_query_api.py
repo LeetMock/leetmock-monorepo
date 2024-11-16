@@ -33,6 +33,20 @@ class TestQueryApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_code_session_events_get_latest_testcase_change_event_post(self) -> None:
+        """Test case for api_run_code_session_events_get_latest_testcase_change_event_post
+
+        Calls a query at the path codeSessionEvents.js:getLatestTestcaseChangeEvent
+        """
+        pass
+
+    def test_api_run_code_session_events_get_latest_user_testcase_executed_event_post(self) -> None:
+        """Test case for api_run_code_session_events_get_latest_user_testcase_executed_event_post
+
+        Calls a query at the path codeSessionEvents.js:getLatestUserTestcaseExecutedEvent
+        """
+        pass
+
     def test_api_run_code_session_states_get_editor_state_post(self) -> None:
         """Test case for api_run_code_session_states_get_editor_state_post
 

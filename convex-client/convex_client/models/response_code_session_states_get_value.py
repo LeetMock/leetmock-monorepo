@@ -19,9 +19,9 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Union
+from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of5_data_after_inner import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner
 from convex_client.models.response_code_session_states_get_value_editor import ResponseCodeSessionStatesGetValueEditor
 from convex_client.models.response_code_session_states_get_value_terminal import ResponseCodeSessionStatesGetValueTerminal
-from convex_client.models.response_code_session_states_get_value_testcases_inner import ResponseCodeSessionStatesGetValueTestcasesInner
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -35,7 +35,7 @@ class ResponseCodeSessionStatesGetValue(BaseModel):
     editor: ResponseCodeSessionStatesGetValueEditor
     session_id: StrictStr = Field(description="ID from table \"sessions\"", alias="sessionId")
     terminal: ResponseCodeSessionStatesGetValueTerminal
-    testcases: List[ResponseCodeSessionStatesGetValueTestcasesInner]
+    testcases: List[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner]
     __properties: ClassVar[List[str]] = ["_creationTime", "_id", "displayQuestion", "editor", "sessionId", "terminal", "testcases"]
 
     model_config = ConfigDict(
@@ -108,7 +108,7 @@ class ResponseCodeSessionStatesGetValue(BaseModel):
             "editor": ResponseCodeSessionStatesGetValueEditor.from_dict(obj["editor"]) if obj.get("editor") is not None else None,
             "sessionId": obj.get("sessionId"),
             "terminal": ResponseCodeSessionStatesGetValueTerminal.from_dict(obj["terminal"]) if obj.get("terminal") is not None else None,
-            "testcases": [ResponseCodeSessionStatesGetValueTestcasesInner.from_dict(_item) for _item in obj["testcases"]] if obj.get("testcases") is not None else None
+            "testcases": [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner.from_dict(_item) for _item in obj["testcases"]] if obj.get("testcases") is not None else None
         })
         return _obj
 

@@ -7,6 +7,8 @@ from convex_client.models import (
     ResponseActionsRunTestsValue,
     ResponseActionsRunTestsValueTestResultsInner,
     ResponseCodeSessionEventsGetLatestContentChangeEventValue,
+    ResponseCodeSessionEventsGetLatestTestcaseChangeEventValue,
+    ResponseCodeSessionEventsGetLatestUserTestcaseExecutedEventValue,
     ResponseCodeSessionStatesGetValue,
 )
 
@@ -14,6 +16,12 @@ SessionMetadata = ResponseActionsGetSessionMetadataValue
 CodeSessionState = ResponseCodeSessionStatesGetValue
 CodeSessionContentChangedEvent = (
     ResponseCodeSessionEventsGetLatestContentChangeEventValue
+)
+CodeSessionTestcaseChangedEvent = (
+    ResponseCodeSessionEventsGetLatestTestcaseChangeEventValue
+)
+CodeSessionUserTestcaseExecutedEvent = (
+    ResponseCodeSessionEventsGetLatestUserTestcaseExecutedEventValue
 )
 
 RunTestsResult = ResponseActionsRunTestsValue

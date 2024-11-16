@@ -55,10 +55,10 @@ import convex_client
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -90,7 +90,7 @@ with convex_client.ApiClient(configuration) as api_client:
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://posh-chihuahua-941.convex.cloud*
+All URIs are relative to *https://neat-warbler-689.convex.cloud*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
@@ -107,6 +107,8 @@ Class | Method | HTTP request | Description
 *MutationApi* | [**api_run_sessions_end_session_post**](docs/MutationApi.md#api_run_sessions_end_session_post) | **POST** /api/run/sessions/endSession | Calls a mutation at the path sessions.js:endSession
 *MutationApi* | [**api_run_sessions_start_session_post**](docs/MutationApi.md#api_run_sessions_start_session_post) | **POST** /api/run/sessions/startSession | Calls a mutation at the path sessions.js:startSession
 *QueryApi* | [**api_run_code_session_events_get_latest_content_change_event_post**](docs/QueryApi.md#api_run_code_session_events_get_latest_content_change_event_post) | **POST** /api/run/codeSessionEvents/getLatestContentChangeEvent | Calls a query at the path codeSessionEvents.js:getLatestContentChangeEvent
+*QueryApi* | [**api_run_code_session_events_get_latest_testcase_change_event_post**](docs/QueryApi.md#api_run_code_session_events_get_latest_testcase_change_event_post) | **POST** /api/run/codeSessionEvents/getLatestTestcaseChangeEvent | Calls a query at the path codeSessionEvents.js:getLatestTestcaseChangeEvent
+*QueryApi* | [**api_run_code_session_events_get_latest_user_testcase_executed_event_post**](docs/QueryApi.md#api_run_code_session_events_get_latest_user_testcase_executed_event_post) | **POST** /api/run/codeSessionEvents/getLatestUserTestcaseExecutedEvent | Calls a query at the path codeSessionEvents.js:getLatestUserTestcaseExecutedEvent
 *QueryApi* | [**api_run_code_session_states_get_editor_state_post**](docs/QueryApi.md#api_run_code_session_states_get_editor_state_post) | **POST** /api/run/codeSessionStates/getEditorState | Calls a query at the path codeSessionStates.js:getEditorState
 *QueryApi* | [**api_run_code_session_states_get_post**](docs/QueryApi.md#api_run_code_session_states_get_post) | **POST** /api/run/codeSessionStates/get | Calls a query at the path codeSessionStates.js:get
 *QueryApi* | [**api_run_code_session_states_get_session_state_by_session_id_post**](docs/QueryApi.md#api_run_code_session_states_get_session_state_by_session_id_post) | **POST** /api/run/codeSessionStates/getSessionStateBySessionId | Calls a query at the path codeSessionStates.js:getSessionStateBySessionId
@@ -133,6 +135,8 @@ Class | Method | HTTP request | Description
  - [RequestActionsRunTestsArgs](docs/RequestActionsRunTestsArgs.md)
  - [RequestAdminsCreateUserProfile](docs/RequestAdminsCreateUserProfile.md)
  - [RequestAdminsCreateUserProfileArgs](docs/RequestAdminsCreateUserProfileArgs.md)
+ - [RequestAdminsCreateUserProfileArgsRole](docs/RequestAdminsCreateUserProfileArgsRole.md)
+ - [RequestAdminsCreateUserProfileArgsSubscription](docs/RequestAdminsCreateUserProfileArgsSubscription.md)
  - [RequestAdminsPatchUserSubscription](docs/RequestAdminsPatchUserSubscription.md)
  - [RequestAdminsPatchUserSubscriptionArgs](docs/RequestAdminsPatchUserSubscriptionArgs.md)
  - [RequestCodeSessionEventsCommitCodeSessionEvent](docs/RequestCodeSessionEventsCommitCodeSessionEvent.md)
@@ -144,9 +148,15 @@ Class | Method | HTTP request | Description
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5Data](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5Data.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOfData](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOfData.md)
  - [RequestCodeSessionEventsGetLatestContentChangeEvent](docs/RequestCodeSessionEventsGetLatestContentChangeEvent.md)
  - [RequestCodeSessionEventsGetLatestContentChangeEventArgs](docs/RequestCodeSessionEventsGetLatestContentChangeEventArgs.md)
+ - [RequestCodeSessionEventsGetLatestTestcaseChangeEvent](docs/RequestCodeSessionEventsGetLatestTestcaseChangeEvent.md)
+ - [RequestCodeSessionEventsGetLatestUserTestcaseExecutedEvent](docs/RequestCodeSessionEventsGetLatestUserTestcaseExecutedEvent.md)
  - [RequestCodeSessionStatesGet](docs/RequestCodeSessionStatesGet.md)
  - [RequestCodeSessionStatesGetEditorState](docs/RequestCodeSessionStatesGetEditorState.md)
  - [RequestCodeSessionStatesGetEditorStateInternal](docs/RequestCodeSessionStatesGetEditorStateInternal.md)
@@ -158,7 +168,6 @@ Class | Method | HTTP request | Description
  - [RequestInviteCodesApplyInviteCodeArgs](docs/RequestInviteCodesApplyInviteCodeArgs.md)
  - [RequestInviteCodesCreateInviteCode](docs/RequestInviteCodesCreateInviteCode.md)
  - [RequestInviteCodesCreateInviteCodeArgs](docs/RequestInviteCodesCreateInviteCodeArgs.md)
- - [RequestInviteCodesCreateInviteCodeArgsAssignedRole](docs/RequestInviteCodesCreateInviteCodeArgsAssignedRole.md)
  - [RequestQuestionsGetAll](docs/RequestQuestionsGetAll.md)
  - [RequestQuestionsGetById](docs/RequestQuestionsGetById.md)
  - [RequestQuestionsGetByIdArgs](docs/RequestQuestionsGetByIdArgs.md)
@@ -187,7 +196,6 @@ Class | Method | HTTP request | Description
  - [RequestUserProfilesUpdateSubscriptionByEmailInternal](docs/RequestUserProfilesUpdateSubscriptionByEmailInternal.md)
  - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgs](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgs.md)
  - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval.md)
- - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.md)
  - [RequestUserProfilesVoidSubscriptionInternal](docs/RequestUserProfilesVoidSubscriptionInternal.md)
  - [RequestUserProfilesVoidSubscriptionInternalArgs](docs/RequestUserProfilesVoidSubscriptionInternalArgs.md)
  - [ResponseActionsCreateAgentThread](docs/ResponseActionsCreateAgentThread.md)
@@ -203,6 +211,10 @@ Class | Method | HTTP request | Description
  - [ResponseCodeSessionEventsCommitCodeSessionEvent](docs/ResponseCodeSessionEventsCommitCodeSessionEvent.md)
  - [ResponseCodeSessionEventsGetLatestContentChangeEvent](docs/ResponseCodeSessionEventsGetLatestContentChangeEvent.md)
  - [ResponseCodeSessionEventsGetLatestContentChangeEventValue](docs/ResponseCodeSessionEventsGetLatestContentChangeEventValue.md)
+ - [ResponseCodeSessionEventsGetLatestTestcaseChangeEvent](docs/ResponseCodeSessionEventsGetLatestTestcaseChangeEvent.md)
+ - [ResponseCodeSessionEventsGetLatestTestcaseChangeEventValue](docs/ResponseCodeSessionEventsGetLatestTestcaseChangeEventValue.md)
+ - [ResponseCodeSessionEventsGetLatestUserTestcaseExecutedEvent](docs/ResponseCodeSessionEventsGetLatestUserTestcaseExecutedEvent.md)
+ - [ResponseCodeSessionEventsGetLatestUserTestcaseExecutedEventValue](docs/ResponseCodeSessionEventsGetLatestUserTestcaseExecutedEventValue.md)
  - [ResponseCodeSessionStatesGet](docs/ResponseCodeSessionStatesGet.md)
  - [ResponseCodeSessionStatesGetEditorState](docs/ResponseCodeSessionStatesGetEditorState.md)
  - [ResponseCodeSessionStatesGetEditorStateInternal](docs/ResponseCodeSessionStatesGetEditorStateInternal.md)
@@ -213,7 +225,6 @@ Class | Method | HTTP request | Description
  - [ResponseCodeSessionStatesGetValue](docs/ResponseCodeSessionStatesGetValue.md)
  - [ResponseCodeSessionStatesGetValueEditor](docs/ResponseCodeSessionStatesGetValueEditor.md)
  - [ResponseCodeSessionStatesGetValueTerminal](docs/ResponseCodeSessionStatesGetValueTerminal.md)
- - [ResponseCodeSessionStatesGetValueTestcasesInner](docs/ResponseCodeSessionStatesGetValueTestcasesInner.md)
  - [ResponseInviteCodesApplyInviteCode](docs/ResponseInviteCodesApplyInviteCode.md)
  - [ResponseInviteCodesCreateInviteCode](docs/ResponseInviteCodesCreateInviteCode.md)
  - [ResponseQuestionsGetAll](docs/ResponseQuestionsGetAll.md)

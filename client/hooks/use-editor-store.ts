@@ -10,7 +10,8 @@ interface EditorStore {
     outputView: "Testcase" | "testResults";
     testRunCounter: number;
     isRunning: boolean;
-    localTestcases: Testcase[];
+    savedTestcases: Testcase[];
+    draftTestcases: Testcase[];
     activeTestcaseTab: string;
     hasTestcaseChanges: boolean;
 
@@ -19,7 +20,10 @@ interface EditorStore {
     setOutputView: (view: "Testcase" | "testResults") => void;
     incrementTestCounter: () => void;
     setIsRunning: (isRunning: boolean) => void;
-    setLocalTestcases: (testcases: Testcase[]) => void;
+    setTestcases: (testcases: Testcase[]) => void;
+    updateDraft: (testcases: Testcase[]) => void;
+    saveDraft: () => void;
+    discardDraft: () => void;
     setActiveTestcaseTab: (tab: string) => void;
     handleRunTests: (params: {
         sessionId: Id<"sessions">;
@@ -29,8 +33,8 @@ interface EditorStore {
         runTests: any;
         onCommitEvent: (event: CodeSessionEvent) => void;
     }) => Promise<void>;
-    setHasTestcaseChanges: (hasChanges: boolean) => void;
     reset: () => void;
+    setHasTestcaseChanges: (value: boolean) => void;
 }
 
 export const useEditorStore = create<EditorStore>((set, get) => ({
@@ -38,7 +42,8 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     outputView: "Testcase",
     testRunCounter: 0,
     isRunning: false,
-    localTestcases: [],
+    savedTestcases: [],
+    draftTestcases: [],
     activeTestcaseTab: "1",
     hasTestcaseChanges: false,
 
@@ -46,9 +51,23 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     setOutputView: (view) => set({ outputView: view }),
     incrementTestCounter: () => set((state) => ({ testRunCounter: state.testRunCounter + 1 })),
     setIsRunning: (isRunning) => set({ isRunning }),
-    setLocalTestcases: (testcases) => set({ localTestcases: testcases }),
+    setTestcases: (testcases) => set({
+        savedTestcases: testcases,
+        draftTestcases: testcases
+    }),
+    updateDraft: (testcases) => set({
+        draftTestcases: testcases,
+        hasTestcaseChanges: true
+    }),
+    saveDraft: () => set((state) => ({
+        savedTestcases: state.draftTestcases,
+        hasTestcaseChanges: false
+    })),
+    discardDraft: () => set((state) => ({
+        draftTestcases: state.savedTestcases,
+        hasTestcaseChanges: false
+    })),
     setActiveTestcaseTab: (tab) => set({ activeTestcaseTab: tab }),
-    setHasTestcaseChanges: (hasChanges) => set({ hasTestcaseChanges: hasChanges }),
 
     handleRunTests: async ({ sessionId, questionId, language, editorState, runTests, onCommitEvent }) => {
         const store = get();
@@ -63,6 +82,11 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
             const result = await runTests({ language, sessionId, questionId });
             if (result.status === "success" && result.testResults) {
                 store.setTestResults(result.testResults);
+                onCommitEvent({
+                    type: "user_testcase_executed",
+                    data: { testResults: result.testResults },
+                });
+                alert("test results committed");
             } else {
                 const errorMessage = result.stderr || result.exception || "Error running tests. Please try again.";
                 toast.error(errorMessage);
@@ -80,7 +104,10 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
         testRunCounter: 0,
         hasTestcaseChanges: false,
         isRunning: false,
-        localTestcases: [],
+        savedTestcases: [],
+        draftTestcases: [],
         activeTestcaseTab: "1"
     }),
+
+    setHasTestcaseChanges: (value) => set({ hasTestcaseChanges: value }),
 })); 
