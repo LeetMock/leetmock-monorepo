@@ -12,9 +12,9 @@ from libs.convex.api import ConvexApi
 from libs.convex.convex_requests import create_get_session_metadata_request
 from libs.convex.convex_types import (
     CodeSessionContentChangedEvent,
+    CodeSessionState,
     CodeSessionTestcaseChangedEvent,
     CodeSessionUserTestcaseExecutedEvent,
-    CodeSessionState,
     SessionMetadata,
 )
 
@@ -60,7 +60,9 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
             await self.setup(session_id)
 
 
-CodeSessionEventTypes = Literal["content_changed", "testcase_changed"]
+CodeSessionEventTypes = Literal[
+    "content_changed", "testcase_changed", "testcase_executed"
+]
 
 
 CODE_SESSION_STATE_QUERY = "codeSessionStates:get"
@@ -116,7 +118,9 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
 
         self.emit("testcase_changed", event)
 
-    def _handle_user_testcase_executed(self, event: CodeSessionUserTestcaseExecutedEvent):
+    def _handle_user_testcase_executed(
+        self, event: CodeSessionUserTestcaseExecutedEvent
+    ):
         if event.ts < self._start_time_ms:
             logger.info(
                 "Code session user testcase executed event is older than session start time."
@@ -124,7 +128,7 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
             )
             return
 
-        self.emit("user_testcase_executed", event)
+        self.emit("testcase_executed", event)
 
     async def setup(self, session_id: str):
         self._session_id = session_id

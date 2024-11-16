@@ -2,6 +2,7 @@ from convex_client.models import (
     RequestActionsGetSessionMetadata,
     RequestActionsRunTests,
     RequestActionsRunTestsArgs,
+    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner,
     RequestSessionsEndSessionArgs,
     ResponseActionsGetSessionMetadataValue,
     ResponseActionsRunTestsValue,
@@ -26,6 +27,7 @@ CodeSessionUserTestcaseExecutedEvent = (
 
 RunTestsResult = ResponseActionsRunTestsValue
 TestcaseResult = ResponseActionsRunTestsValueTestResultsInner
+Testcase = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner
 
 RequestGetSessionMetadata = RequestActionsGetSessionMetadata
 RequestGetSessionMetadataArgs = RequestSessionsEndSessionArgs

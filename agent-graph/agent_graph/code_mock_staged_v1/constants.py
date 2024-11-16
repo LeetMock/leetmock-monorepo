@@ -7,7 +7,13 @@ from agent_graph.utils import wrap_xml
 from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
 from pydantic.v1 import BaseModel, Field
 
-from libs.convex.convex_types import CodeSessionContentChangedEvent, CodeSessionTestcaseChangedEvent, CodeSessionUserTestcaseExecutedEvent
+from libs.convex.convex_types import (
+    CodeSessionContentChangedEvent,
+    CodeSessionTestcaseChangedEvent,
+    CodeSessionUserTestcaseExecutedEvent,
+    Testcase,
+    TestcaseResult,
+)
 from libs.diffs import get_unified_diff
 
 TEntity = TypeVar("TEntity", bound=NamedEntity)
@@ -112,24 +118,25 @@ def format_content_changed_notification_messages(
         )
     ]
 
+
 def format_testcase_changed_notification_messages(
     event_data: CodeSessionTestcaseChangedEvent,
 ) -> List[AnyMessage]:
     before, after = event_data.event.data.before, event_data.event.data.after
-    
-    def format_testcase(testcase):
+
+    def format_testcase(testcase: Testcase):
         input_str = ", ".join(f"{k}={v}" for k, v in testcase.input.items())
         return f"({input_str}) -> {testcase.expected_output}"
-    
+
     before_str = "; ".join(format_testcase(t) for t in before)
     after_str = "; ".join(format_testcase(t) for t in after)
-    
+
     content = (
         f"Testcases updated from {len(before)} to {len(after)} cases.\n"
         f"Before: {before_str}\n"
         f"After: {after_str}"
     )
-    
+
     return [
         HumanMessage(
             content=wrap_xml(
@@ -144,32 +151,34 @@ def format_testcase_changed_notification_messages(
 def format_user_testcase_executed_notification_messages(
     event_data: CodeSessionUserTestcaseExecutedEvent,
 ) -> List[AnyMessage]:
-    test_results = event_data.event.data.testResults
-    
-    def format_test_result(result):
-        input_str = ", ".join(f"{k}={v}" for k, v in result['input'].items())
-        status = "✅ PASS" if result['passed'] else "❌ FAIL"
-        
-        parts = [f"Case {result['caseNumber']}: ({input_str})"]
-        parts.append(f"Expected: {result['expected']}")
-        parts.append(f"Got: {result['actual']}")
-        
-        if result.get('error'):
-            parts.append(f"Error: {result['error']}")
-        
-        if result.get('stdout'):
-            parts.append(f"Output: {result['stdout']}")
-            
+    test_results = event_data.event.data.test_results
+
+    def format_test_result(result: TestcaseResult):
+        input_str = ", ".join(f"{k}={v}" for k, v in result.input.items())
+        status = "✅ PASS" if result.passed else "❌ FAIL"
+
+        parts = [f"Case {result.case_number}: ({input_str})"]
+        parts.append(f"Expected: {result.expected}")
+        parts.append(f"Got: {result.actual}")
+
+        if result.error:
+            parts.append(f"Error: {result.error}")
+
+        if result.stdout:
+            parts.append(f"Output: {result.stdout}")
+
         parts.append(status)
         return " | ".join(parts)
-    
-    content = "\n".join([
-        f"Test Results ({len(test_results)} cases):",
-        "=" * 40,
-        *[format_test_result(result) for result in test_results],
-        "=" * 40,
-        f"Summary: {sum(1 for r in test_results if r['passed'])} passed, {sum(1 for r in test_results if not r['passed'])} failed"
-    ])
+
+    content = "\n".join(
+        [
+            f"Test Results ({len(test_results)} cases):",
+            "=" * 40,
+            *[format_test_result(result) for result in test_results],
+            "=" * 40,
+            f"Summary: {sum(1 for r in test_results if r.passed)} passed, {sum(1 for r in test_results if not r.passed)} failed",
+        ]
+    )
 
     return [
         HumanMessage(
@@ -180,7 +189,7 @@ def format_user_testcase_executed_notification_messages(
             )
         )
     ]
-    
+
 
 INTRO_STEPS: List[Step] = [
     Step.from_info(

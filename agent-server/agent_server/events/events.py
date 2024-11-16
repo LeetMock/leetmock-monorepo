@@ -202,37 +202,37 @@ class CodeEditorChangedEvent(BaseEvent[Any]):
         session.on("content_changed", process_event)
         # self.assistant.on("user_speech_committed", lambda _: process_event())
 
+
 class TestcaseChangedEvent(BaseEvent[Any]):
     """Event for monitoring testcase changes.
-    
+
     This event is triggered when testcases are modified in the code editor.
     It handles the synchronization of testcase states between different components.
-    
+
     Attributes:
         session: Code session to monitor
         delay: Time in seconds to debounce the event (optional)
     """
-    
+
     session: CodeSession
-    
+
     delay: float = Field(
-        default=1.0,
-        description="The delay in seconds before emitting the event."
+        default=1.0, description="The delay in seconds before emitting the event."
     )
-    
+
     @property
     def event_name(self) -> str:
         return "testcase_changed"
-        
+
     def setup(self):
         session = self.session
-        
+
         async def emit_testcase_change(event: Any):
             self.emit(event)
-            
+
         def handle_testcase_change(event: Any):
             asyncio.create_task(emit_testcase_change(event))
-            
+
         session.on("testcase_changed", handle_testcase_change)
 
 
@@ -250,14 +250,14 @@ class UserTestcaseExecutedEvent(BaseEvent[Any]):
 
     def setup(self):
         session = self.session
-        
+
         async def emit_test_execution(event: Any):
             self.emit(event)
-            
+
         def handle_test_execution(event: Any):
             asyncio.create_task(emit_test_execution(event))
-            
-        session.on("user_testcase_executed", handle_test_execution)
+
+        session.on("testcase_executed", handle_test_execution)
 
 
 class GroundTruthTestcaseExecutedEvent(BaseEvent[Any]):
