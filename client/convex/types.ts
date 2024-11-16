@@ -53,6 +53,20 @@ export const codeSessionEventSchemas = {
       })),
     }),
   }),
+  groundtruth_testcase_executed: v.object({
+    type: v.literal("groundtruth_testcase_executed"),
+    data: v.object({
+      testResults: v.array(v.object({
+        caseNumber: v.number(),
+        passed: v.boolean(),
+        input: v.record(v.string(), v.any()),
+        expected: v.any(),
+        actual: v.any(),
+        error: v.union(v.string(), v.null()),
+        stdout: v.union(v.string(), v.null())
+      })),
+    }),
+  }),
   question_displayed: v.object({
     type: v.literal("question_displayed"),
     data: v.boolean(),
