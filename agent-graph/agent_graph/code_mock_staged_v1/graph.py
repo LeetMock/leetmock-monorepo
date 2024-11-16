@@ -14,7 +14,7 @@ from agent_graph.code_mock_staged_v1.constants import (
     format_content_changed_notification_messages,
     get_next_stage,
 )
-from agent_graph.constants import JOIN_CALL_MESSAGE, RECONNECT_MESSAGE
+from agent_graph.code_mock_staged_v1.prompts import JOIN_CALL_MESSAGE, RECONNECT_MESSAGE
 from agent_graph.event_descriptors import EVENT_DESCRIPTORS, EventDescriptor
 from agent_graph.types import EventMessageState, Signal, Step
 from agent_graph.utils import with_event_reset, with_trigger_reset
