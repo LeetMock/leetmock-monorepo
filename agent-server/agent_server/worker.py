@@ -109,7 +109,7 @@ async def entrypoint(ctx: JobContext):
             key = f"{unix_timestamp}-{i}-{message.type}"
             message.id = hashlib.md5(key.encode()).hexdigest()
 
-        with pf.range("entrypoint.before_llm_callback", "wait_for_text_stream"):
+        with pf.interval("before_llm_callback.user_message_q"):
             user_message_event_q.put_nowait(MessageWrapper.from_messages(lc_messages))
             text_stream = await user_message_response_q.get()
 
@@ -127,9 +127,13 @@ async def entrypoint(ctx: JobContext):
         before_llm_cb=before_llm_callback,
     )
 
+    @assistant.on("metrics_collected")
+    def on_metrics_collected(metrics):
+        logger.info(f"[metrics_collected] {metrics}")
+
     agent_name = "code-mock-staged-v1"
 
-    with pf.range("entrypoint", "state_merger_creation"):
+    with pf.interval("entrypoint.init_state_merger"):
         state_merger = await StateMerger.from_state_and_storage(
             name=agent_name,
             state_type=AgentState,
@@ -169,7 +173,7 @@ async def entrypoint(ctx: JobContext):
     agent_trigger.start()
     assistant.start(ctx.room)
 
-    with pf.range("entrypoint", "agent_trigger_first_trigger"):
+    with pf.interval("entrypoint.agent_trigger.trigger"):
         await agent_trigger.trigger()
 
 

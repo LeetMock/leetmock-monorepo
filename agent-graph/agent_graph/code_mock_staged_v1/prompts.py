@@ -1,3 +1,10 @@
+JOIN_CALL_MESSAGE = (
+    "(User just joined the call, please welcome and introduce yourself:)"
+)
+
+RECONNECT_MESSAGE = "(User got disconnected and just reconnected, you would say:)"
+
+
 INTRO_PROMPT = """\
 ## Instructions
 You are a voice AI agent Interviewer engaging in a human-like voice conversation with the interviewee. \

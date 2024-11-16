@@ -18,49 +18,45 @@ def create_profiler_file_path(profiler_id: str) -> Path:
     return Path("./logs") / f"profiler_{profiler_id}.jsonl"
 
 
-class Record(BaseModel):
+class Point(BaseModel):
     """
-    A record of the time taken for a particular step.
+    A point represents a time when a particular step was taken.
     """
 
-    type: Literal["record"] = "record"
+    type: Literal["point"] = "point"
 
-    context: str = Field(description="The context of the record")
+    name: str = Field(description="The name of the point")
 
-    name: str = Field(description="The name of the record")
-
-    time: float = Field(description="The time taken for the record")
+    time: float = Field(description="The time when point was created")
 
 
-class Range(BaseModel):
-    """A range represents start and end time of a particular step."""
+class Interval(BaseModel):
+    """A interval represents start and end time of a particular step."""
 
-    type: Literal["range"] = "range"
+    type: Literal["interval"] = "interval"
 
-    context: str = Field(description="The context of the range")
+    name: str = Field(description="The name of the interval")
 
-    name: str = Field(description="The name of the range")
+    time: float = Field(description="The time when interval was created")
 
-    start_time: float = Field(description="The start time of the range")
+    start_time: float = Field(description="The start time of the interval")
 
-    end_time: float = Field(description="The end time of the range")
+    end_time: float = Field(description="The end time of the interval")
 
 
-class RangeTracker(BaseModel):
+class IntervalTracker(BaseModel):
     """A tracker for the range of a particular step."""
 
-    context: str = Field(description="The context of the range")
+    name: str = Field(description="The name of the interval")
 
-    name: str = Field(description="The name of the range")
-
-    profiler: Profiler = Field(description="The profiler of the range")
+    profiler: Profiler = Field(description="The profiler of the interval")
 
     start_time: float | None = Field(
-        default=None, description="The start time of the range"
+        default=None, description="The start time of the interval"
     )
 
     end_time: float | None = Field(
-        default=None, description="The end time of the range"
+        default=None, description="The end time of the interval"
     )
 
     def start(self):
@@ -75,9 +71,9 @@ class RangeTracker(BaseModel):
         self.end_time = time.time()
 
         self.profiler.records.append(
-            Range(
-                context=self.context,
+            Interval(
                 name=self.name,
+                time=self.start_time,
                 start_time=self.start_time,
                 end_time=self.end_time,
             )
@@ -91,7 +87,7 @@ class Profiler(BaseModel):
 
     profiler_id: str | None = Field(default=None, description="The id of the profiler")
 
-    records: List[Record | Range] = Field(default_factory=list)
+    records: List[Point | Interval] = Field(default_factory=list)
 
     curr_record_idx: int = Field(default=0)
 
@@ -100,26 +96,31 @@ class Profiler(BaseModel):
             await asyncio.sleep(5)
             self.flush()
 
-    def track(self, context: str, name: str | List[str]):
+    def point(self, name: str | List[str]):
         current_time = time.time()
 
         if isinstance(name, list):
             for n in name:
-                self.records.append(Record(context=context, name=n, time=current_time))
+                self.records.append(Point(name=n, time=current_time))
         else:
-            self.records.append(Record(context=context, name=name, time=current_time))
+            self.records.append(Point(name=name, time=current_time))
 
     @contextmanager
-    def range(self, context: str, name: str):
+    def interval(self, name: str):
         start_time = time.time()
         yield
         end_time = time.time()
         self.records.append(
-            Range(context=context, name=name, start_time=start_time, end_time=end_time)
+            Interval(
+                name=name,
+                time=start_time,
+                start_time=start_time,
+                end_time=end_time,
+            )
         )
 
-    def range_tracker(self, context: str, name: str):
-        tracker = RangeTracker(context=context, name=name, profiler=self)
+    def interval_tracker(self, name: str):
+        tracker = IntervalTracker(name=name, profiler=self)
         return tracker
 
     def flush(self):
@@ -158,4 +159,4 @@ def get_profiler() -> Profiler:
 
 
 # After defining both RangeTracker and Profiler, update forward references
-RangeTracker.update_forward_refs()
+IntervalTracker.update_forward_refs()

@@ -82,7 +82,7 @@ class StateMerger(BaseModel, Generic[TState]):
         return snapshot.values
 
     async def merge_state(self, state: TState | Dict[str, Any]):
-        range_tracker = pf.range_tracker("StateMerger.merge_state", "merge_state")
+        range_tracker = pf.interval_tracker("state_merger.merge_state")
         range_tracker.start()
 
         if isinstance(state, dict) and len(state) == 0:
