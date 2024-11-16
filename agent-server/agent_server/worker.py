@@ -19,6 +19,7 @@ from agent_server.events.events import (
     ReminderEvent,
     UserMessageEvent,
     UserTestcaseExecutedEvent,
+    TestcaseChangedEvent,
 )
 from agent_server.livekit.streams import EchoStream, NoopLLM, NoopStream
 from agent_server.livekit.tts import create_elevenlabs_tts
@@ -165,6 +166,7 @@ async def entrypoint(ctx: JobContext):
             UserTestcaseExecutedEvent(session=session),
             GroundTruthTestcaseExecutedEvent(session=session),
             UserMessageEvent(event_q=user_message_event_q),
+            TestcaseChangedEvent(session=session),
         ],
     )
 

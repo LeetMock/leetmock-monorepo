@@ -57,14 +57,17 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     outputView,
     testRunCounter,
     isRunning,
-    localTestcases,
+    savedTestcases,
+    draftTestcases,
     activeTestcaseTab,
     hasTestcaseChanges,
     setOutputView,
-    setLocalTestcases,
-    setActiveTestcaseTab,
+    setTestcases,
+    updateDraft,
+    saveDraft,
+    discardDraft,
     handleRunTests,
-    setHasTestcaseChanges,
+    setActiveTestcaseTab,
   } = useEditorStore();
 
   // Convex
@@ -112,9 +115,9 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
 
   useEffect(() => {
     if (testCasesState) {
-      setLocalTestcases(testCasesState);
+      setTestcases(testCasesState);
     }
-  }, [testCasesState, setLocalTestcases]);
+  }, [testCasesState, setTestcases]);
 
   const runTests = useAction(api.actions.runTests);
 
@@ -233,19 +236,22 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
             </div>
             <div className={cn(outputView === "Testcase" ? "block" : "hidden")}>
               <TestcaseEditor
-                testcases={localTestcases}
+                testcases={draftTestcases}
                 activeTab={activeTestcaseTab}
                 connectionState={connectionState}
                 onTestcasesChange={(testcases) => {
-                  setLocalTestcases(testcases);
+                  updateDraft(testcases);
                 }}
                 onActiveTabChange={setActiveTestcaseTab}
                 onSaveTestcases={() => {
                   debouncedCommitEvent({
                     type: "testcase_changed",
-                    data: { content: localTestcases },
+                    data: {
+                      before: savedTestcases,
+                      after: draftTestcases
+                    },
                   });
-                  setHasTestcaseChanges(false);
+                  saveDraft();
                 }}
               />
             </div>

@@ -35,12 +35,32 @@ class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5(unittest
         model = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5()
         if include_optional:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5(
-                data = None,
+                data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data(
+                    after = [
+                        convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data_after_inner(
+                            expected_output = null, 
+                            input = convex_client.models.input.input(), )
+                        ], 
+                    before = [
+                        convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data_after_inner(
+                            expected_output = null, 
+                            input = convex_client.models.input.input(), )
+                        ], ),
                 type = 'testcase_changed'
             )
         else:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5(
-                data = None,
+                data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data(
+                    after = [
+                        convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data_after_inner(
+                            expected_output = null, 
+                            input = convex_client.models.input.input(), )
+                        ], 
+                    before = [
+                        convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data_after_inner(
+                            expected_output = null, 
+                            input = convex_client.models.input.input(), )
+                        ], ),
                 type = 'testcase_changed',
         )
         """

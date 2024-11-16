@@ -12,6 +12,8 @@ from agent_graph.code_mock_staged_v1.constants import (
     AgentConfig,
     StageTypes,
     format_content_changed_notification_messages,
+    format_testcase_changed_notification_messages,
+    format_user_testcase_executed_notification_messages,
     get_next_stage,
 )
 from agent_graph.code_mock_staged_v1.prompts import JOIN_CALL_MESSAGE, RECONNECT_MESSAGE
@@ -23,7 +25,7 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 from pydantic.v1 import Field
 
-from libs.convex.convex_types import CodeSessionContentChangedEvent
+from libs.convex.convex_types import CodeSessionContentChangedEvent, CodeSessionTestcaseChangedEvent, CodeSessionUserTestcaseExecutedEvent
 from libs.types import MessageWrapper
 
 
@@ -121,6 +123,16 @@ async def on_event(
             content="(Now the user has been slient in a while, you would say:)"
         )
         return with_event_reset(trigger=True, messages=messages)
+
+    if state.event == "testcase_changed":
+        event_data = cast(CodeSessionTestcaseChangedEvent, state.event_data)
+        messages = format_testcase_changed_notification_messages(event_data)
+        return with_event_reset(trigger=False, messages=messages)
+
+    if state.event == "user_testcase_executed":
+        event_data = cast(CodeSessionUserTestcaseExecutedEvent, state.event_data)
+        messages = format_user_testcase_executed_notification_messages(event_data)
+        return with_event_reset(trigger=False, messages=messages)
 
     if state.event == "content_changed":
         event_data = cast(CodeSessionContentChangedEvent, state.event_data)

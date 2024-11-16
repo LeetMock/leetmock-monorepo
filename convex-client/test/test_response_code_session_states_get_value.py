@@ -48,7 +48,7 @@ class TestResponseCodeSessionStatesGetValue(unittest.TestCase):
                     is_error = True, 
                     output = '', ),
                 testcases = [
-                    convex_client.models.response_code_session_states_get_value_testcases_inner.Response_codeSessionStates_get_value_testcases_inner(
+                    convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data_after_inner(
                         expected_output = null, 
                         input = convex_client.models.input.input(), )
                     ]
@@ -68,7 +68,7 @@ class TestResponseCodeSessionStatesGetValue(unittest.TestCase):
                     is_error = True, 
                     output = '', ),
                 testcases = [
-                    convex_client.models.response_code_session_states_get_value_testcases_inner.Response_codeSessionStates_get_value_testcases_inner(
+                    convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data_after_inner(
                         expected_output = null, 
                         input = convex_client.models.input.input(), )
                     ],

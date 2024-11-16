@@ -24,11 +24,34 @@ export const codeSessionEventSchemas = {
   }),
   testcase_changed: v.object({
     type: v.literal("testcase_changed"),
-    data: v.any(), // TODO: change this to the actual data type
+    data: v.object({
+      before: v.array(v.object({
+        input: v.record(v.string(), v.any()),
+        expectedOutput: v.optional(v.any()),
+      })),
+      after: v.array(v.object({
+        input: v.record(v.string(), v.any()),
+        expectedOutput: v.optional(v.any()),
+      })),
+    }),
   }),
   testcase_removed: v.object({
     type: v.literal("testcase_removed"),
     data: v.any(), // TODO: change this to the actual data type
+  }),
+  user_testcase_executed: v.object({
+    type: v.literal("user_testcase_executed"),
+    data: v.object({
+      testResults: v.array(v.object({
+        caseNumber: v.number(),
+        passed: v.boolean(),
+        input: v.record(v.string(), v.any()),
+        expected: v.any(),
+        actual: v.any(),
+        error: v.union(v.string(), v.null()),
+        stdout: v.union(v.string(), v.null())
+      })),
+    }),
   }),
   question_displayed: v.object({
     type: v.literal("question_displayed"),
@@ -42,7 +65,8 @@ export const codeSessionEventSchema = v.union(
   codeSessionEventSchemas.testcase_added,
   codeSessionEventSchemas.testcase_removed,
   codeSessionEventSchemas.question_displayed,
-  codeSessionEventSchemas.testcase_changed
+  codeSessionEventSchemas.testcase_changed,
+  codeSessionEventSchemas.user_testcase_executed
 );
 
 export type QueryCtx = CustomCtx<typeof query>;

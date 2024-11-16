@@ -21,20 +21,16 @@ from pydantic import StrictStr, Field
 from typing import Union, List, Set, Optional, Dict
 from typing_extensions import Literal, Self
 
-REQUESTUSERPROFILESUPDATESUBSCRIPTIONBYEMAILINTERNALARGSPLANNAME_ONE_OF_SCHEMAS = ["str"]
+REQUESTADMINSCREATEUSERPROFILEARGSROLE_ONE_OF_SCHEMAS = ["str"]
 
-class RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName(BaseModel):
+class RequestAdminsCreateUserProfileArgsRole(BaseModel):
     """
-    RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName
+    RequestAdminsCreateUserProfileArgsRole
     """
     # data type: str
     oneof_schema_1_validator: Optional[StrictStr] = None
     # data type: str
     oneof_schema_2_validator: Optional[StrictStr] = None
-    # data type: str
-    oneof_schema_3_validator: Optional[StrictStr] = None
-    # data type: str
-    oneof_schema_4_validator: Optional[StrictStr] = None
     actual_instance: Optional[Union[str]] = None
     one_of_schemas: Set[str] = { "str" }
 
@@ -56,7 +52,7 @@ class RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName(BaseModel
 
     @field_validator('actual_instance')
     def actual_instance_must_validate_oneof(cls, v):
-        instance = RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.model_construct()
+        instance = RequestAdminsCreateUserProfileArgsRole.model_construct()
         error_messages = []
         match = 0
         # validate data type: str
@@ -71,24 +67,12 @@ class RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName(BaseModel
             match += 1
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
-        # validate data type: str
-        try:
-            instance.oneof_schema_3_validator = v
-            match += 1
-        except (ValidationError, ValueError) as e:
-            error_messages.append(str(e))
-        # validate data type: str
-        try:
-            instance.oneof_schema_4_validator = v
-            match += 1
-        except (ValidationError, ValueError) as e:
-            error_messages.append(str(e))
         if match > 1:
             # more than 1 match
-            raise ValueError("Multiple matches found when setting `actual_instance` in RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName with oneOf schemas: str. Details: " + ", ".join(error_messages))
+            raise ValueError("Multiple matches found when setting `actual_instance` in RequestAdminsCreateUserProfileArgsRole with oneOf schemas: str. Details: " + ", ".join(error_messages))
         elif match == 0:
             # no match
-            raise ValueError("No match found when setting `actual_instance` in RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName with oneOf schemas: str. Details: " + ", ".join(error_messages))
+            raise ValueError("No match found when setting `actual_instance` in RequestAdminsCreateUserProfileArgsRole with oneOf schemas: str. Details: " + ", ".join(error_messages))
         else:
             return v
 
@@ -121,31 +105,13 @@ class RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName(BaseModel
             match += 1
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
-        # deserialize data into str
-        try:
-            # validation
-            instance.oneof_schema_3_validator = json.loads(json_str)
-            # assign value to actual_instance
-            instance.actual_instance = instance.oneof_schema_3_validator
-            match += 1
-        except (ValidationError, ValueError) as e:
-            error_messages.append(str(e))
-        # deserialize data into str
-        try:
-            # validation
-            instance.oneof_schema_4_validator = json.loads(json_str)
-            # assign value to actual_instance
-            instance.actual_instance = instance.oneof_schema_4_validator
-            match += 1
-        except (ValidationError, ValueError) as e:
-            error_messages.append(str(e))
 
         if match > 1:
             # more than 1 match
-            raise ValueError("Multiple matches found when deserializing the JSON string into RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName with oneOf schemas: str. Details: " + ", ".join(error_messages))
+            raise ValueError("Multiple matches found when deserializing the JSON string into RequestAdminsCreateUserProfileArgsRole with oneOf schemas: str. Details: " + ", ".join(error_messages))
         elif match == 0:
             # no match
-            raise ValueError("No match found when deserializing the JSON string into RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName with oneOf schemas: str. Details: " + ", ".join(error_messages))
+            raise ValueError("No match found when deserializing the JSON string into RequestAdminsCreateUserProfileArgsRole with oneOf schemas: str. Details: " + ", ".join(error_messages))
         else:
             return instance
 

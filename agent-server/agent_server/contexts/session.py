@@ -13,6 +13,8 @@ from libs.convex.convex_requests import create_get_session_metadata_request
 from libs.convex.convex_types import (
     CodeSessionContentChangedEvent,
     CodeSessionState,
+    CodeSessionTestcaseChangedEvent,
+    CodeSessionUserTestcaseExecutedEvent,
     SessionMetadata,
 )
 
@@ -58,11 +60,15 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
             await self.setup(session_id)
 
 
-CodeSessionEventTypes = Literal["content_changed"]
+CodeSessionEventTypes = Literal[
+    "content_changed", "testcase_changed", "testcase_executed"
+]
 
 
 CODE_SESSION_STATE_QUERY = "codeSessionStates:get"
 CONTENT_CHANGED_QUERY = "codeSessionEvents:getLatestContentChangeEvent"
+TESTCASE_CHANGED_QUERY = "codeSessionEvents:getLatestTestcaseChangeEvent"
+USER_TESTCASE_EXECUTED_QUERY = "codeSessionEvents:getLatestUserTestcaseExecutedEvent"
 
 
 class CodeSession(BaseSession[CodeSessionEventTypes]):
@@ -102,6 +108,28 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
 
         self.emit("content_changed", event)
 
+    def _handle_testcase_changed(self, event: CodeSessionTestcaseChangedEvent):
+        if event.ts < self._start_time_ms:
+            logger.info(
+                "Code session testcase changed event is older than session start time."
+                "Ignoring event."
+            )
+            return
+
+        self.emit("testcase_changed", event)
+
+    def _handle_user_testcase_executed(
+        self, event: CodeSessionUserTestcaseExecutedEvent
+    ):
+        if event.ts < self._start_time_ms:
+            logger.info(
+                "Code session user testcase executed event is older than session start time."
+                "Ignoring event."
+            )
+            return
+
+        self.emit("testcase_executed", event)
+
     async def setup(self, session_id: str):
         self._session_id = session_id
 
@@ -130,7 +158,25 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
             validator_cls=CodeSessionContentChangedEvent,
         )
 
+        testcase_changed_watcher = QueryWatcher.from_query(
+            query=TESTCASE_CHANGED_QUERY,
+            params={"codeSessionStateId": self.session_state.id},
+            validator_cls=CodeSessionTestcaseChangedEvent,
+        )
+
+        user_testcase_executed_watcher = QueryWatcher.from_query(
+            query=USER_TESTCASE_EXECUTED_QUERY,
+            params={"codeSessionStateId": self.session_state.id},
+            validator_cls=CodeSessionUserTestcaseExecutedEvent,
+        )
+
         # TODO: add more event types
 
         content_changed_watcher.on_update(self._handle_content_changed)
         content_changed_watcher.watch(self._api)
+
+        testcase_changed_watcher.on_update(self._handle_testcase_changed)
+        testcase_changed_watcher.watch(self._api)
+
+        user_testcase_executed_watcher.on_update(self._handle_user_testcase_executed)
+        user_testcase_executed_watcher.watch(self._api)

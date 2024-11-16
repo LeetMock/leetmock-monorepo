@@ -23,6 +23,8 @@ export const commitCodeSessionEvent = userMutation({
       await handleContentChangeEvent(sessionState, event);
     } else if (event.type === "testcase_changed") {
       await handleTestcasesChangeEvent(sessionState, event);
+    } else if (event.type === "user_testcase_executed") {
+      console.log("user testcase executed event");
     } else {
       // TODO: handle other event types
       throw new Error(`Unsupported event type: ${event.type}`);
@@ -49,15 +51,22 @@ async function handleContentChangeEvent(
     },
   });
 }
+// don't need to handle user testcase executed event for now
+// async function handleUserTestcaseExecutedEvent(
+//   sessionState: EntWriter<"codeSessionStates">,
+//   e: Extract<CodeSessionEvent, { type: "user_testcase_executed" }>
+// ) {
+//   const { testResults } = e.data;
+// }
 
 async function handleTestcasesChangeEvent(
   sessionState: EntWriter<"codeSessionStates">,
   e: Extract<CodeSessionEvent, { type: "testcase_changed" }>
 ) {
-  const { content } = e.data;
+  const { before, after } = e.data;
 
   await sessionState.patch({
-    testcases: content,
+    testcases: after,
   });
 }
 
@@ -80,6 +89,44 @@ export const getLatestContentChangeEvent = query({
   },
 });
 
+export const getLatestTestcaseChangeEvent = query({
+  args: {
+    codeSessionStateId: v.id("codeSessionStates"),
+  },
+  returns: v.union(
+    v.object({
+      id: v.id("codeSessionEvents"),
+      ts: v.number(),
+      event: codeSessionEventSchemas.testcase_changed,
+    }),
+    v.null()
+  ),
+  handler: async (ctx, { codeSessionStateId }) => {
+    const event = await getLatestEventByType(ctx, codeSessionStateId, "testcase_changed");
+    console.log("event", event);
+    return event;
+  },
+});
+
+export const getLatestUserTestcaseExecutedEvent = query({
+  args: {
+    codeSessionStateId: v.id("codeSessionStates"),
+  },
+  returns: v.union(
+    v.object({
+      id: v.id("codeSessionEvents"),
+      ts: v.number(),
+      event: codeSessionEventSchemas.user_testcase_executed,
+    }),
+    v.null()
+  ),
+  handler: async (ctx, { codeSessionStateId }) => {
+    const event = await getLatestEventByType(ctx, codeSessionStateId, "user_testcase_executed");
+    console.log("event", event);
+    return event;
+  },
+});
+
 // TODO: add other event queries here ...
 
 async function getLatestEventByType<T extends CodeSessionEventType>(
@@ -88,10 +135,10 @@ async function getLatestEventByType<T extends CodeSessionEventType>(
   eventType: T
 ): Promise<
   | {
-      id: Id<"codeSessionEvents">;
-      ts: number;
-      event: Extract<CodeSessionEvent, { type: T }>;
-    }
+    id: Id<"codeSessionEvents">;
+    ts: number;
+    event: Extract<CodeSessionEvent, { type: T }>;
+  }
   | undefined
 > {
   const event = await ctx
