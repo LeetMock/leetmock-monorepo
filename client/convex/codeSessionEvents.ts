@@ -127,6 +127,25 @@ export const getLatestUserTestcaseExecutedEvent = query({
   },
 });
 
+export const getLatestGroundTruthTestcaseExecutedEvent = query({
+  args: {
+    codeSessionStateId: v.id("codeSessionStates"),
+  },
+  returns: v.union(
+    v.object({
+      id: v.id("codeSessionEvents"),
+      ts: v.number(),
+      event: codeSessionEventSchemas.groundtruth_testcase_executed,
+    }),
+    v.null()
+  ),
+  handler: async (ctx, { codeSessionStateId }) => {
+    const event = await getLatestEventByType(ctx, codeSessionStateId, "groundtruth_testcase_executed");
+    console.log("event", event);
+    return event;
+  },
+});
+
 // TODO: add other event queries here ...
 
 async function getLatestEventByType<T extends CodeSessionEventType>(
