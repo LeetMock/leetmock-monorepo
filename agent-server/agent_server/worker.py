@@ -164,7 +164,7 @@ async def entrypoint(ctx: JobContext):
             CodeEditorChangedEvent(session=session, assistant=assistant),
             UserTestcaseExecutedEvent(session=session),
             GroundTruthTestcaseExecutedEvent(session=session),
-            UserMessageEvent(event_q=user_message_event_q),
+            UserMessageEvent(user_message_event_q=user_message_event_q),
             TestcaseChangedEvent(session=session),
         ],
     )

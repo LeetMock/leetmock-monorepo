@@ -272,10 +272,10 @@ class UserMessageEvent(BaseEvent[MessageWrapper]):
     Monitors a message queue and emits events when new messages arrive.
 
     Attributes:
-        event_q: Queue containing incoming user messages
+        user_message_event_q: Queue containing incoming user messages
     """
 
-    event_q: asyncio.Queue[MessageWrapper]
+    user_message_event_q: asyncio.Queue[MessageWrapper]
 
     delay: float = Field(
         default=0.2,
@@ -292,7 +292,7 @@ class UserMessageEvent(BaseEvent[MessageWrapper]):
             self.emit(event)
 
         while True:
-            user_message_event_data = await self.event_q.get()
+            user_message_event_data = await self.user_message_event_q.get()
             await publish_debounced(user_message_event_data)
 
     def setup(self):
