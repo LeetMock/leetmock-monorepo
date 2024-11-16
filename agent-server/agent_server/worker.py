@@ -1,7 +1,6 @@
 import asyncio
 import hashlib
 import os
-import time
 from datetime import datetime
 from typing import AsyncIterator
 
@@ -17,9 +16,9 @@ from agent_server.events.events import (
     CodeEditorChangedEvent,
     GroundTruthTestcaseExecutedEvent,
     ReminderEvent,
+    TestcaseChangedEvent,
     UserMessageEvent,
     UserTestcaseExecutedEvent,
-    TestcaseChangedEvent,
 )
 from agent_server.livekit.streams import EchoStream, NoopLLM, NoopStream
 from agent_server.livekit.tts import create_elevenlabs_tts
