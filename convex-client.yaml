@@ -634,6 +634,37 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/codeSessionEvents/getLatestGroundTruthTestcaseExecutedEvent:
+    post:
+      summary: Calls a query at the path codeSessionEvents.js:getLatestGroundTruthTestcaseExecutedEvent
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codeSessionEvents.getLatestGroundTruthTestcaseExecutedEvent"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codeSessionEvents.getLatestGroundTruthTestcaseExecutedEvent"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
   /api/run/codeSessionEvents/getLatestTestcaseChangeEvent:
     post:
       summary: Calls a query at the path codeSessionEvents.js:getLatestTestcaseChangeEvent
@@ -2060,6 +2091,90 @@ components:
                   type: string
                   enum:
                     - "content_changed"
+            id:
+              type: string
+              description: ID from table "codeSessionEvents"
+            ts:
+              type: number
+          nullable: true
+
+    Request_codeSessionEvents.getLatestGroundTruthTestcaseExecutedEvent:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - codeSessionStateId
+          properties:
+            codeSessionStateId:
+              type: string
+              description: ID from table "codeSessionStates"
+
+    Response_codeSessionEvents.getLatestGroundTruthTestcaseExecutedEvent:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value:
+          type: object
+          required:
+            - event
+            - id
+            - ts
+          properties:
+            event:
+              type: object
+              required:
+                - data
+                - type
+              properties:
+                data:
+                  type: object
+                  required:
+                    - testResults
+                  properties:
+                    testResults:
+                      type: array
+                      items:
+                        type: object
+                        required:
+                          - actual
+                          - caseNumber
+                          - error
+                          - expected
+                          - input
+                          - passed
+                          - stdout
+                        properties:
+                          actual: {}
+                          caseNumber:
+                            type: number
+                          error:
+                            type: string
+                            nullable: true
+                          expected: {}
+                          input:
+                            type: object
+                          passed:
+                            type: boolean
+                          stdout:
+                            type: string
+                            nullable: true
+                type:
+                  type: string
+                  enum:
+                    - "groundtruth_testcase_executed"
             id:
               type: string
               description: ID from table "codeSessionEvents"
