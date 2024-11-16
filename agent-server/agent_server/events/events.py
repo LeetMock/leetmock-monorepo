@@ -226,14 +226,7 @@ class TestcaseChangedEvent(BaseEvent[Any]):
 
     def setup(self):
         session = self.session
-
-        async def emit_testcase_change(event: Any):
-            self.emit(event)
-
-        def handle_testcase_change(event: Any):
-            asyncio.create_task(emit_testcase_change(event))
-
-        session.on("testcase_changed", handle_testcase_change)
+        session.on("testcase_changed", lambda e: self.emit(e))
 
 
 class UserTestcaseExecutedEvent(BaseEvent[Any]):
@@ -250,14 +243,7 @@ class UserTestcaseExecutedEvent(BaseEvent[Any]):
 
     def setup(self):
         session = self.session
-
-        async def emit_test_execution(event: Any):
-            self.emit(event)
-
-        def handle_test_execution(event: Any):
-            asyncio.create_task(emit_test_execution(event))
-
-        session.on("testcase_executed", handle_test_execution)
+        session.on("testcase_executed", lambda e: self.emit(e))
 
 
 class GroundTruthTestcaseExecutedEvent(BaseEvent[Any]):
