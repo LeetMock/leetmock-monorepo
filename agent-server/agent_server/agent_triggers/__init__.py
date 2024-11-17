@@ -27,14 +27,16 @@ Example:
 
 import asyncio
 import logging
-from typing import Any, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from agent_server.agent_streams import AgentStream
 from agent_server.events import BaseEvent
 from agent_server.utils.profiler import get_profiler
+from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
 from pydantic.v1 import BaseModel, Field, PrivateAttr
 
 from libs.timestamp import Timestamp
+from libs.types import MessageWrapper
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +59,10 @@ class AgentTrigger(BaseModel):
 
     stream: AgentStream = Field(..., description="The agent stream to trigger")
 
+    state_update_q: asyncio.Queue[Dict] = Field(
+        ..., description="The queue for updating state snapshots"
+    )
+
     _events: List[BaseEvent] = PrivateAttr()
 
     _timestamp: Timestamp = PrivateAttr()
@@ -68,8 +74,13 @@ class AgentTrigger(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
-    def __init__(self, stream: AgentStream, events: List[BaseEvent]):
-        super().__init__(stream=stream)
+    def __init__(
+        self,
+        stream: AgentStream,
+        events: List[BaseEvent],
+        state_update_q: asyncio.Queue[Dict],
+    ):
+        super().__init__(stream=stream, state_update_q=state_update_q)
 
         self._events = events
         self._timestamp = Timestamp()
@@ -85,6 +96,17 @@ class AgentTrigger(BaseModel):
     async def trigger(self):
         """Triggers the agent manually by adding a trigger event to the queue."""
         await self._event_q.put(("trigger", None))
+
+    async def add_messages(self, messages: List[AnyMessage]):
+        await self._event_q.put(("add_messages", MessageWrapper(messages=messages)))
+
+    async def add_human_message(self, message: str):
+        messages = [HumanMessage(content=message)]
+        await self.add_messages(messages)  # type: ignore
+
+    async def add_ai_message(self, message: str):
+        messages = [AIMessage(content=message)]
+        await self.add_messages(messages)  # type: ignore
 
     def _create_event_handler(self, event: BaseEvent):
         """Creates an event handler for a specific event type.
@@ -146,6 +168,12 @@ class AgentTrigger(BaseModel):
             else:
                 logger.info(f"Failed to trigger agent for event: {event}")
 
+    async def _process_state_snapshot(self):
+        while True:
+            state_snapshot = await self.state_update_q.get()
+            logger.info(f"Processing state snapshot: {state_snapshot}")
+            await self.stream.state_merger.merge_state(state_snapshot)
+
     def start(self):
         """Starts the agent trigger system.
 
@@ -161,4 +189,8 @@ class AgentTrigger(BaseModel):
         for event in self._events:
             event.setup()
 
-        asyncio.create_task(self._main_task())
+        asyncio.gather(
+            self._main_task(),
+            self._process_state_snapshot(),
+            return_exceptions=True,
+        )

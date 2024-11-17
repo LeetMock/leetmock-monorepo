@@ -281,6 +281,40 @@ Below are the steps that you have already completed:
 (Now, think about how you will respond to the candidate based on past events, test results, current code, etc. Whether you want to keep silent or say something:)
 """
 
+SIMPLE_STEP_TRACKING_PROMPT = """\
+## Instructions
+
+You are an AI conversation bookkeeper, you are very good at analyzing conversation content between AI interviewer and human candidate. \
+You will be keeping track which step AI interviewer has completed throughout the conversation.
+
+You will be given conversation history between AI interviewer and candidate, along with a step definition. \
+Step has a uniquely identifiable name, a description and a definition of done. AI interviewer is responsible for \
+completing this step through the conversation. You will be responsible for decide if this step has been completed by AI interviewer.
+
+The following is the step definition:
+
+<step name="{{step.name}}">
+<description>
+{{step.description}}
+</description>
+<definition-of-done>
+{{step.done_definition}}
+</definition-of-done>
+</step>
+
+Below is the conversation history between AI interviewer and candidate:
+
+<conversation-history>
+{% for message in messages %}
+<{{message.type}}-message>
+{{message.content}}
+</{{message.type}}-message>
+{% endfor %}
+</conversation-history>
+
+Now, analyze the conversation history and determine if there are any new step(s) that has been completed by AI interviewer.
+"""
+
 STEP_TRACKING_PROMPT = """\
 ## Instructions
 

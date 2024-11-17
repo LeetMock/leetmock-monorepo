@@ -1,7 +1,17 @@
 import asyncio
 import random
-from typing import Awaitable, Callable, List
+from ast import Call
+from typing import Awaitable, Callable, Dict, List
 
+from agent_graph.code_mock_staged_v1.prompts import SIMPLE_STEP_TRACKING_PROMPT
+from agent_graph.code_mock_staged_v1.schemas import TrackStep
+from agent_graph.state_merger import StateMerger
+from agent_graph.types import EventMessageState, Step
+from agent_graph.utils import wrap_xml
+from langchain_core.language_models import BaseChatModel
+from langchain_core.messages import AIMessage, AnyMessage
+from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
+from langchain_core.runnables import RunnableLambda
 from pydantic.v1 import BaseModel, Field, PrivateAttr
 
 Emit = Callable[[], Awaitable[None]]
@@ -83,6 +93,51 @@ class StepTracker(BaseModel):
             self._emit_track_signal_loop(),
             return_exceptions=True,
         )
+
+
+def create_llm_step_tracker_config(
+    step: Step,
+    state_merger: StateMerger[EventMessageState],
+    llm: BaseChatModel,
+    send_message: Callable[[AnyMessage], Awaitable[None]],
+    mark_event_completion: Callable[[], None],
+    signal_emitter: EmitSignal | List[EmitSignal],
+):
+    sys_prompt = SystemMessagePromptTemplate.from_template(SIMPLE_STEP_TRACKING_PROMPT)
+    chat_prompt = ChatPromptTemplate.from_messages([sys_prompt])
+
+    async def post_process(result: TrackStep):
+        message = wrap_xml("thinking", result.thinking)
+        await send_message(AIMessage(content=message))
+        return result.completed
+
+    chain = (
+        chat_prompt
+        | llm.with_structured_output(TrackStep)
+        | RunnableLambda(post_process)
+    ).with_config({"run_name": f"track_step_{step.name}"})
+
+    async def on_init():
+        message = wrap_xml("thinking", f"I'm started working on the step `{step.name}`")
+        await send_message(AIMessage(content=message))
+
+    async def on_track():
+        state = await state_merger.get_state()
+        return await chain.ainvoke({"step": step, "messages": state.messages})
+
+    async def on_finish():
+        message = wrap_xml(
+            "thinking", f"I'm finished working on the step `{step.name}`"
+        )
+        await send_message(AIMessage(content=message))
+        mark_event_completion()
+
+    return StepTrackerConfig(
+        on_init=on_init,
+        on_track=on_track,
+        on_finish=on_finish,
+        signal_emitter=signal_emitter,
+    )
 
 
 # --------------------- Set of common built-in emitter constructs --------------------- #

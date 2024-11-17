@@ -42,7 +42,7 @@ from pydantic.v1 import BaseModel, PrivateAttr
 logger = logging.getLogger(__name__)
 pf = get_profiler()
 
-TModel = TypeVar("TModel", bound=BaseModel)
+TModel = TypeVar("TModel")
 TSession = TypeVar("TSession", bound=BaseSession)
 
 
@@ -71,7 +71,9 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
     def event_name(self) -> str:
         raise NotImplementedError
 
-    def register_callback(self, callback: Callable[[TModel], None | Coroutine[Any, Any, None]]):
+    def register_callback(
+        self, callback: Callable[[TModel], None | Coroutine[Any, Any, None]]
+    ):
         """Register a callback function to be called when the event is published.
 
         Args:

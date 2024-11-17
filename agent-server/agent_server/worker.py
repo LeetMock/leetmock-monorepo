@@ -2,7 +2,7 @@ import asyncio
 import hashlib
 import os
 from datetime import datetime
-from typing import AsyncIterator
+from typing import AsyncIterator, Dict
 
 import psutil
 from agent_graph.code_mock_staged_v1.constants import AgentConfig
@@ -91,9 +91,13 @@ async def entrypoint(ctx: JobContext):
 
     # Initialize session
     session = CodeSession(api=convex_api)
-
+    # Queue for processing adhoc state snapshots updates
+    state_update_q = asyncio.Queue[Dict]()
+    # Queue for sending active user message events when agent is triggered by VAD -> STT
     user_message_event_q = asyncio.Queue[MessageWrapper]()
+    # Queue for sending user message response from agent stream
     user_message_response_q = asyncio.Queue[AsyncIterator[str] | None]()
+    # Unix timestamp for generating unique message ids
     unix_timestamp = int(datetime.now().timestamp())
 
     # Initialize context manager
@@ -103,10 +107,9 @@ async def entrypoint(ctx: JobContext):
 
     set_profiler_id(ctx_manager.session_id)
 
-
     async def before_llm_callback(_: VoiceAssistant, chat_ctx: llm.ChatContext):
         """This callback is executed before the LLM is called. In the actual implementation,
-        we use this callback to override the default behavior of LLM since we are using the customized 
+        we use this callback to override the default behavior of LLM since we are using the customized
         Event Based Agent.
 
         Args:
@@ -175,6 +178,7 @@ async def entrypoint(ctx: JobContext):
 
     agent_trigger = AgentTrigger(
         stream=agent_stream,
+        state_update_q=state_update_q,
         events=[
             ReminderEvent(assistant=assistant),
             CodeEditorChangedEvent(session=session, assistant=assistant),
