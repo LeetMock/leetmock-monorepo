@@ -95,15 +95,16 @@ class StepTracker(BaseModel):
         )
 
 
-def create_llm_step_tracker_config(
+def create_llm_step_tracker(
     step: Step,
     state_merger: StateMerger[EventMessageState],
     llm: BaseChatModel,
     send_message: Callable[[AnyMessage], Awaitable[None]],
     mark_event_completion: Callable[[], None],
     signal_emitter: EmitSignal | List[EmitSignal],
+    prompt: str = SIMPLE_STEP_TRACKING_PROMPT,
 ):
-    sys_prompt = SystemMessagePromptTemplate.from_template(SIMPLE_STEP_TRACKING_PROMPT)
+    sys_prompt = SystemMessagePromptTemplate.from_template(prompt)
     chat_prompt = ChatPromptTemplate.from_messages([sys_prompt])
 
     async def post_process(result: TrackStep):
@@ -132,12 +133,14 @@ def create_llm_step_tracker_config(
         await send_message(AIMessage(content=message))
         mark_event_completion()
 
-    return StepTrackerConfig(
+    config = StepTrackerConfig(
         on_init=on_init,
         on_track=on_track,
         on_finish=on_finish,
         signal_emitter=signal_emitter,
     )
+
+    return StepTracker.from_config(config)
 
 
 # --------------------- Set of common built-in emitter constructs --------------------- #
