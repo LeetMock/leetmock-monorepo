@@ -1,15 +1,13 @@
 import asyncio
-from typing import Generic, List, TypeVar, cast
+from typing import Generic, TypeVar
 
-from agent_server.contexts.session import BaseSession, CodeSession
+from agent_server.contexts.session import BaseSession
 from agent_server.livekit.channel import ChanConfig, ChanValue
 from agent_server.livekit.validators import string_validator
 from agent_server.utils.logger import get_logger
 from livekit.agents import JobContext
-from livekit.agents.llm import ChatContext
 
 from libs.convex.api import ConvexApi
-from libs.convex.convex_types import CodeSessionState
 
 logger = get_logger(__name__)
 
@@ -38,8 +36,6 @@ class AgentContextManager(Generic[TSession]):
 
         self._session = session
         self._session_id_fut = asyncio.Future[str]()
-        self._chat_ctx = ChatContext()
-        self._snapshots: List[CodeSessionState] = []
 
         self._has_started = False
         self._start_lock = asyncio.Lock()
@@ -48,10 +44,6 @@ class AgentContextManager(Generic[TSession]):
     def session(self) -> TSession:
         assert self._session is not None, "Session not set yet"
         return self._session
-
-    @property
-    def chat_ctx(self) -> ChatContext:
-        return self._chat_ctx
 
     @property
     def session_id(self) -> str:

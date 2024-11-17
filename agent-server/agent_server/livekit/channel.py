@@ -125,7 +125,7 @@ class ChanValue(Generic[T]):
             return_exceptions=True,
         )
 
-    def on_update(self, callback: Callable[[T], Coroutine[Any, Any, None] | None]):
+    def on(self, callback: Callable[[T], Coroutine[Any, Any, None] | None]):
         async def wrapped_callback(result: T) -> None:
             try:
                 if iscoroutinefunction(callback):
