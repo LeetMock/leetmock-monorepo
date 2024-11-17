@@ -122,7 +122,6 @@ async def entrypoint(ctx: JobContext):
         stt=deepgram.STT(),
         llm=no_op_llm,
         tts=create_elevenlabs_tts(),
-        chat_ctx=ctx_manager.chat_ctx,
         before_llm_cb=before_llm_callback,
     )
 
