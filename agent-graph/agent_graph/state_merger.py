@@ -75,7 +75,7 @@ class StateMerger(BaseModel, Generic[TState]):
 
         return merger
 
-    async def get_state(self):
+    async def get_state(self) -> TState:
         state_dict = await self.get_state_dict()
         return self.state_type(**state_dict)
 

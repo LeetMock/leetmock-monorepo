@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import asyncio
 import random
-from ast import Call
+from operator import itemgetter
 from typing import Awaitable, Callable, Dict, List
 
 from agent_graph.code_mock_staged_v1.prompts import SIMPLE_STEP_TRACKING_PROMPT
@@ -11,7 +13,7 @@ from agent_graph.utils import wrap_xml
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, AnyMessage
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
-from langchain_core.runnables import RunnableLambda
+from langchain_core.runnables import Runnable, RunnableLambda
 from pydantic.v1 import BaseModel, Field, PrivateAttr
 
 Emit = Callable[[], Awaitable[None]]
@@ -36,6 +38,24 @@ class StepTrackerConfig(BaseModel):
     signal_emitter: EmitSignal | List[EmitSignal] = Field(
         ..., description="Loop that emits track signal"
     )
+
+    @classmethod
+    def from_runnables(
+        cls,
+        on_init_chain: Runnable[None, None],
+        on_track_chain: Runnable[None, bool],
+        on_finish_chain: Runnable[None, None],
+        signal_emitter: EmitSignal | List[EmitSignal],
+    ):
+        return cls(
+            on_init=lambda: on_init_chain.ainvoke(input=None),
+            on_track=lambda: on_track_chain.ainvoke(input=None),
+            on_finish=lambda: on_finish_chain.ainvoke(input=None),
+            signal_emitter=signal_emitter,
+        )
+
+    def to_tracker(self) -> StepTracker:
+        return StepTracker.from_config(self)
 
 
 class StepTracker(BaseModel):
@@ -99,48 +119,73 @@ def create_llm_step_tracker(
     step: Step,
     state_merger: StateMerger[EventMessageState],
     llm: BaseChatModel,
-    send_message: Callable[[AnyMessage], Awaitable[None]],
-    mark_event_completion: Callable[[], None],
+    state_update_queue: asyncio.Queue[Dict],
+    mark_step_completion: Callable[[], None],
     signal_emitter: EmitSignal | List[EmitSignal],
     prompt: str = SIMPLE_STEP_TRACKING_PROMPT,
 ):
     sys_prompt = SystemMessagePromptTemplate.from_template(prompt)
     chat_prompt = ChatPromptTemplate.from_messages([sys_prompt])
 
-    async def post_process(result: TrackStep):
-        message = wrap_xml("thinking", result.thinking)
-        await send_message(AIMessage(content=message))
-        return result.completed
-
-    chain = (
-        chat_prompt
-        | llm.with_structured_output(TrackStep)
-        | RunnableLambda(post_process)
-    ).with_config({"run_name": f"track_step_{step.name}"})
-
-    async def on_init():
-        message = wrap_xml("thinking", f"I'm started working on the step `{step.name}`")
-        await send_message(AIMessage(content=message))
-
-    async def on_track():
-        state = await state_merger.get_state()
-        return await chain.ainvoke({"step": step, "messages": state.messages})
-
-    async def on_finish():
-        message = wrap_xml(
-            "thinking", f"I'm finished working on the step `{step.name}`"
-        )
-        await send_message(AIMessage(content=message))
-        mark_event_completion()
-
-    config = StepTrackerConfig(
-        on_init=on_init,
-        on_track=on_track,
-        on_finish=on_finish,
-        signal_emitter=signal_emitter,
+    step_start_message = wrap_xml(
+        "thinking", f"I'm started working on the step `{step.name}`"
+    )
+    step_finish_message = wrap_xml(
+        "thinking", f"I'm finished working on the step `{step.name}`"
     )
 
-    return StepTracker.from_config(config)
+    async def send_message_fn(message: AnyMessage):
+        """Send a message to the state update queue"""
+        await state_update_queue.put(dict(messages=[message]))
+
+    async def get_state_fn(_: None):
+        """Get the current state"""
+        return await state_merger.get_state_dict()
+
+    async def post_process(result: TrackStep):
+        """Post-process the step tracking result by sending a message and returning whether the step is completed"""
+        message = wrap_xml("thinking", result.thinking)
+        await send_message_fn(AIMessage(content=message))
+        return result.completed
+
+    on_init_chain = (
+        # Format the step start message
+        RunnableLambda(lambda _: AIMessage(content=step_start_message))
+        # Send the message
+        | RunnableLambda(send_message_fn)
+    ).with_config({"run_name": f"track_step_{step.name}:on_init"})
+
+    on_track_chain = (
+        # Get the current state
+        RunnableLambda(get_state_fn)
+        # Prepare prompt input variables
+        | {
+            "step": step,
+            "messages": itemgetter("messages"),
+        }
+        # Format the prompt
+        | chat_prompt
+        # Generate the step tracking result from LLM with function calling
+        | llm.with_structured_output(TrackStep)
+        # Post-process the result
+        | RunnableLambda(post_process)
+    ).with_config({"run_name": f"track_step_{step.name}:on_track"})
+
+    on_finish_chain = (
+        # Format the step finish message
+        RunnableLambda(lambda _: AIMessage(content=step_finish_message))
+        # Send the message
+        | RunnableLambda(send_message_fn)
+        # Mark the step as completed
+        | RunnableLambda(lambda _: mark_step_completion())
+    ).with_config({"run_name": f"track_step_{step.name}:on_finish"})
+
+    return StepTrackerConfig.from_runnables(
+        on_init_chain,
+        on_track_chain,
+        on_finish_chain,
+        signal_emitter,
+    ).to_tracker()
 
 
 # --------------------- Set of common built-in emitter constructs --------------------- #
