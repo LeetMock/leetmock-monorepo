@@ -298,3 +298,16 @@ class UserMessageEvent(BaseEvent[MessageWrapper]):
 
     def setup(self):
         asyncio.create_task(self._observe_user_message_task())
+
+
+"""
+SimpleStepGuider:
+    - on_init:
+        - ask to execute the step
+    - monitor_progression:
+        - (async) emit_examine_signal
+        - on_examine -> bool:
+            - ask to guide assistant back on track
+    - on_finish:
+        - <optional callback>
+"""
