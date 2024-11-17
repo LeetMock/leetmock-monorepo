@@ -75,7 +75,7 @@ class AgentTrigger(BaseModel):
         self._timestamp = Timestamp()
         self._event_q = asyncio.Queue()
 
-        # Attach event handlers
+        # Attach event handlers to all events
         self._attach_event_handlers()
 
     def interrupt(self):
@@ -88,6 +88,8 @@ class AgentTrigger(BaseModel):
 
     def _create_event_handler(self, event: BaseEvent):
         """Creates an event handler for a specific event type.
+        Specifically, this method takes an event and returns an async function
+        that puts the event and its data into the event queue.
 
         Args:
             event: The event to create a handler for
@@ -102,9 +104,13 @@ class AgentTrigger(BaseModel):
         return handler
 
     def _attach_event_handlers(self):
-        """Attaches handlers to all registered events."""
+        """Attaches handlers to all registered events.
+        This method iterates over all events and registers a handler to each one, which will be called at the time of event emission.
+        The event handler is responsible for putting the event and its data into the event queue,
+        which will be picked up by the main event processing loop by AgentTrigger.
+        """
         for event in self._events:
-            event.on(self._create_event_handler(event))
+            event.register(self._create_event_handler(event))
 
     async def _trigger_task(self, is_user_message: bool):
         """Executes the agent trigger task.

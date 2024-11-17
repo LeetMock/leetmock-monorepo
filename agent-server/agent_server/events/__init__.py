@@ -71,8 +71,8 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
     def event_name(self) -> str:
         raise NotImplementedError
 
-    def on(self, callback: Callable[[TModel], None | Coroutine[Any, Any, None]]):
-        """Subscribe a callback function to be called when the event is published.
+    def register(self, callback: Callable[[TModel], None | Coroutine[Any, Any, None]]):
+        """Register a callback function to be called when the event is published.
 
         Args:
             callback: A function that takes a TModel parameter and returns None or a Coroutine.

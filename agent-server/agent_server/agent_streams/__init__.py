@@ -45,6 +45,33 @@ def make_config(configurable: Dict[str, Any]) -> RunnableConfig:
 
 
 class AgentStream(BaseModel, Generic[TState]):
+    """A stream manager for handling agent interactions and state management.
+
+    AgentStream coordinates the execution of a state graph, manages message queues,
+    and handles the synchronization between the voice assistant and session state.
+
+    Attributes:
+        name (str): The unique identifier for this agent stream used in LangGraph
+        state_cls (Type[TState]): The class type for state management
+        assistant (VoiceAssistant): The voice assistant instance
+        session (BaseSession): The current session being managed
+        graph (StateGraph): The compiled state graph for agent logic
+        state_merger (StateMerger[TState]): Utility for merging state updates
+
+    Example:
+        ```python
+        stream = AgentStream(
+            name="coding_agent",
+            state_cls=CodingState,
+            config=agent_config,
+            session=code_session,
+            graph=agent_graph,
+            assistant=voice_assistant,
+            state_merger=state_merger,
+            message_q=message_queue
+        )
+        ```
+    """
 
     name: str = Field(..., description="The name of the agent stream")
 
@@ -84,6 +111,18 @@ class AgentStream(BaseModel, Generic[TState]):
         state_merger: StateMerger[TState],
         message_q: asyncio.Queue[AsyncIterator[str] | None],
     ):
+        """Initialize a new AgentStream instance.
+
+        Args:
+            name (str): Unique identifier for this stream
+            state_cls (Type[TState]): Class type for state management
+            config (BaseModel): Configuration for the agent
+            session (BaseSession): Current session instance
+            graph (StateGraph): Compiled state graph
+            assistant (VoiceAssistant): Voice assistant instance
+            state_merger (StateMerger[TState]): State merger utility
+            message_q (asyncio.Queue): Queue for message handling
+        """
         super().__init__(
             name=name,
             state_cls=state_cls,
@@ -97,16 +136,38 @@ class AgentStream(BaseModel, Generic[TState]):
         self._message_q = message_q
 
     async def get_state(self) -> TState:
+        """Retrieve the current state from the state merger.
+
+        Returns:
+            TState: Current state of the agent
+        """
         return await self.state_merger.get_state()
 
     def _stateless_graph_stream(
         self, initial_state: TState
     ) -> AsyncIterator[Tuple[StreamMode, Any]]:
+        """Create a stream from the state graph with the given initial state.
+
+        Args:
+            initial_state (TState): Initial state to start the graph execution
+
+        Returns:
+            AsyncIterator[Tuple[StreamMode, Any]]: Stream of state updates and custom events
+        """
         graph = self.graph.compile().with_config({"run_name": self.name})
         config = make_config(self._agent_config)
         return graph.astream(input=initial_state, config=config, stream_mode=["values", "custom"])  # type: ignore
 
     async def notify_agent(self, event_name: str, data: Any) -> bool:
+        """Notify the agent of an event and determine if it should trigger a response.
+
+        Args:
+            event_name (str): Name of the event that occurred
+            data (Any): Event-specific data
+
+        Returns:
+            bool: True if the agent should be triggered to respond
+        """
         with pf.interval("agent_stream.notify_agent.prepare_state"):
             state = await self.state_merger.get_state()
             state.event = event_name
@@ -131,6 +192,16 @@ class AgentStream(BaseModel, Generic[TState]):
         return should_trigger
 
     async def trigger_agent(self, timestamp: Timestamp, is_user_message: bool):
+        """Trigger the agent to generate and deliver a response. The entrypoint for interacting with the agent graph.
+
+        Args:
+            timestamp (Timestamp): Current timestamp for interruption checking
+            is_user_message (bool): Whether this is in response to a user message
+
+        Note:
+            If is_user_message is True, the response is queued for message handling.
+            Otherwise, it's sent directly to the voice assistant.
+        """
         start_t = timestamp.t
         should_interrupt = lambda: start_t != timestamp.t
 
@@ -146,8 +217,10 @@ class AgentStream(BaseModel, Generic[TState]):
         text_stream = self._assistant_text_stream(state, should_interrupt)
 
         if is_user_message:
+            # Case 1: The bot is responding to a user message
             await self._message_q.put(text_stream)
         else:
+            # Case 2: The bot is sending a message to the user spontaneously, e.g. reminder
             await self.assistant.say(
                 to_async_iterable(text_stream),
                 allow_interruptions=True,
@@ -159,6 +232,18 @@ class AgentStream(BaseModel, Generic[TState]):
         state: TState,
         should_interrupt: Callable[[], bool],
     ) -> AsyncIterator[str]:
+        """Generate a stream of text from the agent's response.
+
+        Args:
+            state (TState): Current state to generate response from
+            should_interrupt (Callable[[], bool]): Function to check for interruptions
+
+        Returns:
+            AsyncIterator[str]: Stream of text chunks from the agent's response
+
+        Note:
+            Monitors for interruptions and merges state updates during generation.
+        """
         chunks = []
 
         first_token_received = False

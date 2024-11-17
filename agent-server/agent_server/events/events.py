@@ -283,6 +283,11 @@ class UserMessageEvent(BaseEvent[MessageWrapper]):
         return "user_message"
 
     async def _observe_user_message_task(self):
+        """
+        This method is a task that continuously observes the user message event queue
+        and emits events to the agent trigger.
+        """
+
         @debounce(wait=self.delay)
         def publish_debounced(event: MessageWrapper):
             self.emit(event)

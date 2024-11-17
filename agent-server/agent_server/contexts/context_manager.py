@@ -21,14 +21,38 @@ TSession = TypeVar("TSession", bound=BaseSession)
 
 
 class AgentContextManager(Generic[TSession]):
-    """AgentContextManager is a context manager for the agent."""
+    """AgentContextManager coordinates the lifecycle and state management of an agent session.
+    
+    This class manages the connection between a LiveKit job context, Convex API, and a session instance.
+    It handles session initialization, chat context management, and state synchronization.
 
-    def __init__(
-        self,
-        ctx: JobContext,
-        api: ConvexApi,
-        session: TSession,
-    ):
+    Attributes:
+        ctx (JobContext): The LiveKit job context for managing room connections
+        api (ConvexApi): The Convex API client for backend communication
+        session (TSession): The managed session instance
+        chat_ctx (ChatContext): The current chat context
+        session_id (str): The unique identifier for the current session
+
+    Example:
+        ```python
+        ctx_manager = AgentContextManager(
+            ctx=job_context,
+            api=convex_api,
+            session=code_session
+        )
+        await ctx_manager.start()
+        ```
+    """
+
+    def __init__(self, ctx: JobContext, api: ConvexApi, session: TSession):
+        """Initialize the AgentContextManager.
+
+        Args:
+            ctx (JobContext): The LiveKit job context
+            api (ConvexApi): The Convex API client instance
+            session (TSession): The session instance to manage
+        """
+
         super().__init__()
 
         self.ctx = ctx
@@ -42,15 +66,38 @@ class AgentContextManager(Generic[TSession]):
 
     @property
     def session(self) -> TSession:
+        """Get the managed session instance.
+
+        Returns:
+            TSession: The current session instance
+
+        Raises:
+            AssertionError: If the session hasn't been initialized
+        """
         assert self._session is not None, "Session not set yet"
         return self._session
 
     @property
     def session_id(self) -> str:
+        """Get the current session ID.
+
+        Returns:
+            str: The unique identifier for the current session
+
+        Raises:
+            AssertionError: If the session ID hasn't been set yet
+        """
         assert self._session_id_fut.done(), "Session id not set yet"
         return self._session_id_fut.result()
 
     async def setup(self):
+        """Set up the session connection and initialization at the start of the interview.
+
+        This method:
+        1. Creates a data channel to receive the session ID
+        2. Waits for and stores the session ID from the client
+        3. Initializes the session with the received ID
+        """
         config = ChanConfig(
             topic=SESSION_ID_TOPIC,
             period=1.0,
@@ -69,6 +116,16 @@ class AgentContextManager(Generic[TSession]):
         await self._session.start(result)
 
     async def start(self):
+        """Start the context manager and initialize all components.
+
+        This method:
+        1. Ensures only one start operation runs at a time
+        2. Connects the LiveKit context
+        3. Runs the setup process
+
+        Note:
+            This method is idempotent - subsequent calls after the first will be ignored.
+        """
         async with self._start_lock:
             if self._has_started:
                 logger.warning(

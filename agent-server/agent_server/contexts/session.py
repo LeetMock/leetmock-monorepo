@@ -16,6 +16,7 @@ from libs.convex.convex_types import (
     CodeSessionTestcaseChangedEvent,
     CodeSessionUserTestcaseExecutedEvent,
     SessionMetadata,
+    CodeSessionGroundTruthTestcaseExecutedEvent
 )
 
 logger = get_logger(__name__)
@@ -26,7 +27,9 @@ TEvent = TypeVar("TEvent", bound=BaseModel)
 
 
 class BaseSession(EventEmitter[TEventTypes], ABC):
-    """BaseSession is a base class for managing session state & sync with convex."""
+    """BaseSession is a base class for managing session state & sync with convex.
+    It inherits from EventEmitter to allow for event-based communication.
+    """
 
     def __init__(self, api: ConvexApi):
         super().__init__()
@@ -45,10 +48,11 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
 
     @abstractmethod
     async def setup(self, session_id: str):
-        """Start the session."""
+        """Set up the session with the given session ID."""
         raise NotImplementedError
 
     async def start(self, session_id: str):
+        """Start the session with the given session ID."""
         async with self._start_lock:
             if self._has_started:
                 logger.warning(
@@ -60,20 +64,64 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
             await self.setup(session_id)
 
 
+# A list of events that the code session can emit
 CodeSessionEventTypes = Literal[
-    "content_changed", "testcase_changed", "testcase_executed"
+    "content_changed", "testcase_changed", "testcase_executed", "ground_truth_testcase_executed"
 ]
 
-
+# Queries to fetch the latest events from the convex backend
 CODE_SESSION_STATE_QUERY = "codeSessionStates:get"
 CONTENT_CHANGED_QUERY = "codeSessionEvents:getLatestContentChangeEvent"
 TESTCASE_CHANGED_QUERY = "codeSessionEvents:getLatestTestcaseChangeEvent"
 USER_TESTCASE_EXECUTED_QUERY = "codeSessionEvents:getLatestUserTestcaseExecutedEvent"
-
+GROUND_TRUTH_TESTCASE_EXECUTED_QUERY = "codeSessionEvents:getLatestGroundTruthTestcaseExecutedEvent"
 
 class CodeSession(BaseSession[CodeSessionEventTypes]):
+    """A session manager for the whole interview coding session.
+
+    CodeSession extends BaseSession to handle code-specific session events and state management.
+    It maintains real-time synchronization with the Convex backend for code editing sessions,
+    testcase execution, and related events.
+
+    Events:
+        content_changed: Emitted when code content changes
+        testcase_changed: Emitted when testcase definitions are modified
+        testcase_executed: Emitted when a testcase is executed
+        ground_truth_testcase_executed: Emitted when the ground truth testcase is executed
+        
+    Attributes:
+        session_metadata (SessionMetadata): Metadata about the current session
+        session_state (CodeSessionState): Current state of the code session
+
+    Example:
+        ```python
+        session = CodeSession(api=convex_api)
+        await session.start("session_123")
+
+        @session.on("content_changed")
+        def handle_content_change(event: CodeSessionContentChangedEvent):
+            print(f"Code changed: {event}")
+        ```
+
+    Note:
+        The session maintains timestamps to prevent processing of stale events that
+        occurred before the session started. All events are validated against their
+        respective Pydantic models before being emitted.
+    """
 
     def __init__(self, api: ConvexApi):
+        """Initialize a new CodeSession instance.
+
+        Args:
+            api (ConvexApi): The Convex API client for backend communication
+
+        Note:
+            Initializes internal state including:
+            - Start timestamp in milliseconds
+            - Session tracking variables
+            - Synchronization primitives
+        """
+
         super().__init__(api)
 
         self._start_time_ms = int(time.time_ns() // 1_000_000)
@@ -84,21 +132,55 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
 
     @property
     def session_metadata(self) -> SessionMetadata:
+        """Get the metadata for the current session.
+
+        Returns:
+            SessionMetadata: Metadata about the current session
+
+        Raises:
+            AssertionError: If session metadata hasn't been initialized
+        """
         assert self._session_metadata is not None
         return self._session_metadata
 
     @property
     def session_state(self) -> CodeSessionState:
+        """Get the current state of the code session.
+
+        Returns:
+            CodeSessionState: Current state of the code session
+
+        Raises:
+            AssertionError: If session state hasn't been initialized
+        """
         assert self._code_session_state is not None
         return self._code_session_state
 
     def _handle_code_session_state_changed(self, state: CodeSessionState):
+        """Handle updates to the code session state.
+
+        Updates the internal session state and completes the sync future
+        when the initial state is received.
+
+        Args:
+            state (CodeSessionState): The new session state from Convex
+        """
         self._code_session_state = state
 
         if not self._synced_future.done():
             self._synced_future.set_result(True)
 
     def _handle_content_changed(self, event: CodeSessionContentChangedEvent):
+        """Handle code content change events.
+
+        Emits a 'content_changed' event if the event is not stale.
+
+        Args:
+            event (CodeSessionContentChangedEvent): The content change event
+
+        Note:
+            Events with timestamps before session start are ignored
+        """
         if event.ts < self._start_time_ms:
             logger.info(
                 "Code session content changed event is older than session start time."
@@ -109,6 +191,16 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
         self.emit("content_changed", event)
 
     def _handle_testcase_changed(self, event: CodeSessionTestcaseChangedEvent):
+        """Handle testcase definition change events.
+
+        Emits a 'testcase_changed' event if the event is not stale.
+
+        Args:
+            event (CodeSessionTestcaseChangedEvent): The testcase change event
+
+        Note:
+            Events with timestamps before session start are ignored
+        """
         if event.ts < self._start_time_ms:
             logger.info(
                 "Code session testcase changed event is older than session start time."
@@ -121,6 +213,16 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
     def _handle_user_testcase_executed(
         self, event: CodeSessionUserTestcaseExecutedEvent
     ):
+        """Handle user testcase execution events.
+
+        Emits a 'testcase_executed' event if the event is not stale.
+
+        Args:
+            event (CodeSessionUserTestcaseExecutedEvent): The testcase execution event
+
+        Note:
+            Events with timestamps before session start are ignored
+        """
         if event.ts < self._start_time_ms:
             logger.info(
                 "Code session user testcase executed event is older than session start time."
@@ -130,7 +232,39 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
 
         self.emit("testcase_executed", event)
 
+    def _handle_ground_truth_testcase_executed(self, event: CodeSessionGroundTruthTestcaseExecutedEvent):
+        """Handle ground truth testcase execution events.
+
+        Emits a 'ground_truth_testcase_executed' event if the event is not stale.
+
+        Args:
+            event (CodeSessionGroundTruthTestcaseExecutedEvent): The testcase execution event
+
+        Note:
+            Events with timestamps before session start are ignored
+        """
+        self.emit("ground_truth_testcase_executed", event)
+
     async def setup(self, session_id: str):
+        """Set up the code session with the given session ID.
+
+        This method:
+        1. Fetches session metadata from Convex
+        2. Sets up watchers for various session events:
+            - Session state changes
+            - Code content changes
+            - Testcase changes
+            - Testcase execution results
+
+        Args:
+            session_id (str): The unique identifier for this session
+
+        Raises:
+            Exception: If there's an error fetching session metadata
+
+        Note:
+            All watchers are configured with appropriate validators and handlers
+        """
         self._session_id = session_id
 
         # Get session metadata
@@ -170,6 +304,12 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
             validator_cls=CodeSessionUserTestcaseExecutedEvent,
         )
 
+        ground_truth_testcase_executed_watcher = QueryWatcher.from_query(
+            query=GROUND_TRUTH_TESTCASE_EXECUTED_QUERY,
+            params={"codeSessionStateId": self.session_state.id},
+            validator_cls=CodeSessionGroundTruthTestcaseExecutedEvent,
+        )
+
         # TODO: add more event types
 
         content_changed_watcher.on_update(self._handle_content_changed)
@@ -180,3 +320,6 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
 
         user_testcase_executed_watcher.on_update(self._handle_user_testcase_executed)
         user_testcase_executed_watcher.watch(self._api)
+
+        ground_truth_testcase_executed_watcher.on_update(self._handle_ground_truth_testcase_executed)
+        ground_truth_testcase_executed_watcher.watch(self._api)

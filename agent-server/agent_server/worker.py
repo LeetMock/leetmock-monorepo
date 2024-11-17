@@ -88,18 +88,34 @@ async def entrypoint(ctx: JobContext):
 
     no_op_llm = NoopLLM()
     convex_api = ConvexApi(convex_url=os.getenv("CONVEX_URL") or "")
+
+    # Initialize session
     session = CodeSession(api=convex_api)
 
     user_message_event_q = asyncio.Queue[MessageWrapper]()
     user_message_response_q = asyncio.Queue[AsyncIterator[str] | None]()
     unix_timestamp = int(datetime.now().timestamp())
 
+    # Initialize context manager
     ctx_manager = AgentContextManager(ctx=ctx, api=convex_api, session=session)
+    # Start the context manager, which will initialize the code session
     await ctx_manager.start()
 
     set_profiler_id(ctx_manager.session_id)
 
+
     async def before_llm_callback(_: VoiceAssistant, chat_ctx: llm.ChatContext):
+        """This callback is executed before the LLM is called. In the actual implementation,
+        we use this callback to override the default behavior of LLM since we are using the customized 
+        Event Based Agent.
+
+        Args:
+            _ (VoiceAssistant): The voice assistant instance
+            chat_ctx (llm.ChatContext): The chat context
+
+        Returns:
+            EchoStream: The stream to be used for the LLM response
+        """
         lc_messages = filter_langchain_messages(
             convert_chat_ctx_to_langchain_messages(chat_ctx)
         )
@@ -109,7 +125,9 @@ async def entrypoint(ctx: JobContext):
             message.id = hashlib.md5(key.encode()).hexdigest()
 
         with pf.interval("before_llm_callback.user_message_q"):
+            # Put the messages into the message event queue so that UserMessageEvent can pick it up
             user_message_event_q.put_nowait(MessageWrapper.from_messages(lc_messages))
+            # Get the text stream from the message response queue so that we can return it to the voice assistant
             text_stream = await user_message_response_q.get()
 
         if text_stream is not None:
