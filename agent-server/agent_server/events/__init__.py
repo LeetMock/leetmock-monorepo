@@ -71,7 +71,7 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
     def event_name(self) -> str:
         raise NotImplementedError
 
-    def register(self, callback: Callable[[TModel], None | Coroutine[Any, Any, None]]):
+    def register_callback(self, callback: Callable[[TModel], None | Coroutine[Any, Any, None]]):
         """Register a callback function to be called when the event is published.
 
         Args:

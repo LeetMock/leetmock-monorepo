@@ -110,7 +110,7 @@ class AgentTrigger(BaseModel):
         which will be picked up by the main event processing loop by AgentTrigger.
         """
         for event in self._events:
-            event.register(self._create_event_handler(event))
+            event.register_callback(self._create_event_handler(event))
 
     async def _trigger_task(self, is_user_message: bool):
         """Executes the agent trigger task.
