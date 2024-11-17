@@ -1,5 +1,6 @@
 import { Package2 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 import { ProfileItem } from "@/components/profile-item";
 import { UserDropdown } from "@/components/user-dropdown";
@@ -16,7 +17,15 @@ export const DashboardSidebar = () => {
       <div className="flex flex-col">
         <div className="flex h-14 items-center pl-1.5 pt-2">
           <Link href="/" className="flex items-center gap-3">
-            <div className="h-5 w-5 bg-blue-400 rounded-arrow"></div>
+            <div aria-hidden="true" className="flex items-center">
+              <Image
+                src="/logo.png"
+                alt="LeetMock.AI Logo"
+                width={32}
+                height={32}
+                className="h-6 w-auto"
+              />
+            </div>
             <span className="font-semibold text-xl">LeetMock</span>
           </Link>
         </div>
