@@ -69,8 +69,10 @@ class StateMerger(BaseModel, Generic[TState]):
             storage=storage,
         )
 
-        initial_state = await storage.get_state()
-        await merger.merge_state(initial_state)
+        with pf.interval("state_merger.from_state_and_storage.fetch_initial_state"):
+            initial_state = await storage.get_state()
+            await merger.merge_state(initial_state)
+
         return merger
 
     async def get_state(self):

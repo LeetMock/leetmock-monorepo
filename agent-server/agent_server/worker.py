@@ -132,15 +132,14 @@ async def entrypoint(ctx: JobContext):
 
     agent_name = "code-mock-staged-v1"
 
-    with pf.interval("entrypoint.init_state_merger"):
-        state_merger = await StateMerger.from_state_and_storage(
-            name=agent_name,
-            state_type=AgentState,
-            storage=LangGraphCloudStateStorage(
-                thread_id=session.session_metadata.agent_thread_id,
-                assistant_id=session.session_metadata.assistant_id,
-            ),
-        )
+    state_merger = await StateMerger.from_state_and_storage(
+        name=agent_name,
+        state_type=AgentState,
+        storage=LangGraphCloudStateStorage(
+            thread_id=session.session_metadata.agent_thread_id,
+            assistant_id=session.session_metadata.assistant_id,
+        ),
+    )
 
     agent_stream = AgentStream(
         name=agent_name,
