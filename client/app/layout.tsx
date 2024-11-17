@@ -16,6 +16,15 @@ const fontSans = FontSans({
 export const metadata: Metadata = {
   title: "LeetMock",
   description: "Mock Interview like Ever Before",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/logo.png", type: "image/png" },
+    ],
+    apple: [
+      { url: "/logo.png" }
+    ]
+  }
 };
 
 export default function RootLayout({

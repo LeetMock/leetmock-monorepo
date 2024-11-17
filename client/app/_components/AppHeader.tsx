@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Container } from "./Container";
 
@@ -52,17 +53,22 @@ export default function AppHeader() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-lg" : "bg-transparent"
-      }`}
+      className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-lg" : "bg-transparent"
+        }`}
     >
       <nav className={`w-full transition-all duration-300 ${isScrolled ? "py-2" : "py-4"}`}>
         <Container>
           <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 md:gap-0 md:py-4">
             <div className="relative z-20 flex w-full justify-between md:px-0 lg:w-max">
               <Link href="/#home" aria-label="logo" className="flex items-center space-x-2">
-                <div aria-hidden="true" className="flex space-x-1">
-                  <div className="h-5 w-5 bg-blue-400 rounded-arrow"></div>
+                <div aria-hidden="true" className="flex items-center">
+                  <Image
+                    src="/logo.png"
+                    alt="LeetMock.AI Logo"
+                    width={40}
+                    height={40}
+                    className="h-10 w-auto"
+                  />
                 </div>
                 <span className="text-2xl font-bold text-gray-900 dark:text-white">
                   LeetMock.AI
