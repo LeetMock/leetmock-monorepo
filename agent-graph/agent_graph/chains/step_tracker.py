@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import asyncio
-import random
+from enum import Enum
 from operator import itemgetter
-from typing import Any, Awaitable, Callable, Coroutine, Dict, List, NoReturn, Optional
+from typing import Any, Awaitable, Callable, Coroutine, Dict, List, NoReturn
 
+from agent_graph.chains.emitters import SignalEmitter, SignalType
 from agent_graph.code_mock_staged_v1.graph import AgentState
 from agent_graph.code_mock_staged_v1.prompts import SIMPLE_STEP_TRACKING_PROMPT
 from agent_graph.code_mock_staged_v1.schemas import TrackStep
@@ -19,9 +20,6 @@ from langchain_core.runnables import Runnable, RunnableLambda
 from pydantic.v1 import BaseModel, Field, PrivateAttr
 
 logger = get_logger(__name__)
-
-Emit = Callable[[bool], None]
-SignalEmitter = Callable[[Emit], Coroutine[Any, Any, NoReturn | None]]
 
 
 class StepTrackerConfig(BaseModel):
@@ -86,12 +84,11 @@ class StepTracker(BaseModel):
         if finished and not self._step_completion_fut.done():
             self._step_completion_fut.set_result(True)
 
-    def _emit(self, stop: bool):
+    def _emit(self, signal_type: SignalType):
         if self._step_completion_fut.done():
-            logger.info("Step tracker already completed")
-            return
+            raise RuntimeError("Step tracker already completed")
 
-        if stop:
+        if signal_type == SignalType.STOP:
             logger.info("Step tracker stopping")
             self._step_completion_fut.set_result(True)
             return
@@ -103,7 +100,7 @@ class StepTracker(BaseModel):
         await self._step_completion_fut
         await self.tracker_config.on_finish()
 
-    async def _create_signal_emitter_task(self):
+    def _create_signal_emitter_task(self):
         if isinstance(self.tracker_config.signal_emitter, list):
             return asyncio.gather(
                 *[
@@ -115,13 +112,8 @@ class StepTracker(BaseModel):
         else:
             return asyncio.create_task(self.tracker_config.signal_emitter(self._emit))
 
-    async def _emit_track_signal_loop(self):
-        task = await self._create_signal_emitter_task()
-        await self._step_completion_fut
-        task.cancel()
-
     async def wait(self):
-        asyncio.create_task(self._emit_track_signal_loop())
+        self._create_signal_emitter_task()
         await self._main_task()
 
 
@@ -196,88 +188,3 @@ def create_llm_step_tracker(
         on_finish_chain,
         signal_emitter,
     ).to_tracker()
-
-
-# --------------------- Set of common built-in emitter constructs --------------------- #
-def emit_interval_fixed(interval: float):
-    """Emit a signal at a fixed interval"""
-
-    logger.info(f"Step tracker emitting at interval: {interval}")
-
-    async def emit_signal(emit: Emit):
-        while True:
-            logger.info("Step tracker sleeping")
-            await asyncio.sleep(interval)
-            logger.info("Step tracker emitting")
-            emit(False)
-
-    return emit_signal
-
-
-def emit_interval_random(min_interval: float, max_interval: float):
-    """Emit a signal at a random interval between min and max"""
-
-    async def emit_signal(emit: Emit):
-        while True:
-            await asyncio.sleep(random.uniform(min_interval, max_interval))
-            emit(False)
-
-    return emit_signal
-
-
-def emit_interval_linear(multiplier: float, min_interval: float, max_interval: float):
-    """Emit a signal at interval of x * multiplier between each, starting from min, then up to max"""
-
-    assert multiplier > 0, "Multiplier must be positive"
-    assert min_interval > 0, "Min interval must be positive"
-    assert max_interval > 0, "Max interval must be positive"
-    assert min_interval < max_interval, "Min interval must be less than max interval"
-
-    async def emit_signal(emit: Emit):
-        x = 0
-        wait_time = min(max_interval, max(x * multiplier, min_interval))
-
-        while True:
-            await asyncio.sleep(wait_time)
-            emit(False)
-
-            if x * multiplier < max_interval:
-                x += 1
-                wait_time = min(max_interval, max(x * multiplier, min_interval))
-
-    return emit_signal
-
-
-def emit_interval_exponential(
-    multiplier: float, min_interval: float, max_interval: float
-):
-    """Emit a signal at interval of 2^x * multiplier between each, starting from min, then up to max"""
-
-    assert multiplier > 0, "Multiplier must be positive"
-    assert min_interval > 0, "Min interval must be positive"
-    assert max_interval > 0, "Max interval must be positive"
-    assert min_interval < max_interval, "Min interval must be less than max interval"
-
-    async def emit_signal(emit: Emit):
-        x = 0
-        wait_time = min(max_interval, max(2**x * multiplier, min_interval))
-
-        while True:
-            await asyncio.sleep(wait_time)
-            emit(False)
-
-            if 2**x * multiplier < max_interval:
-                x += 1
-                wait_time = min(max_interval, max(2**x * multiplier, min_interval))
-
-    return emit_signal
-
-
-def emit_stop_after(duration: float):
-    """Emit a signal after a given duration"""
-
-    async def emit_signal(emit: Emit):
-        await asyncio.sleep(duration)
-        emit(True)
-
-    return emit_signal

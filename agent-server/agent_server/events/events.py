@@ -30,19 +30,14 @@ Example:
 
 import asyncio
 import logging
-from typing import Any, Dict, List, OrderedDict, Set
+from typing import Any, Dict, List, Set
 
-from agent_graph.chains.step_tracker import (
-    SignalEmitter,
-    create_llm_step_tracker,
-    emit_interval_fixed,
-    emit_stop_after,
-)
-from agent_graph.code_mock_staged_v1.constants import StageTypes
+from agent_graph.chains.emitters import emit_interval_fixed, emit_stop_after
+from agent_graph.chains.step_tracker import SignalEmitter, create_llm_step_tracker
 from agent_graph.code_mock_staged_v1.graph import AgentState
 from agent_graph.llms import get_model
 from agent_graph.state_merger import StateMerger
-from agent_graph.types import EventMessageState, Step
+from agent_graph.types import Step
 from agent_server.contexts.session import CodeSession, CodeSessionEventTypes
 from agent_server.events import BaseEvent
 from debouncer import debounce
@@ -341,8 +336,11 @@ class StepTrackingEvent(BaseEvent[str]):
         )
 
     def _try_queue_next_steps(self, state: AgentState):
+        logger.info("Try queueing next steps")
         curr_stage = state.current_stage
         curr_steps = state.steps.get(curr_stage, [])
+        logger.info(f"Current stage: {curr_stage}")
+        logger.info(f"Current steps: {curr_steps}")
 
         for step in curr_steps:
             if step.name in state.completed_steps:
@@ -356,13 +354,20 @@ class StepTrackingEvent(BaseEvent[str]):
             self._step_queue.put_nowait(step)
             return
 
+        logger.info("No steps to queue")
+
     async def _track_agent_steps_task(self):
         while True:
             step = await self._step_queue.get()
             tracker = self._get_llm_step_tracker(step)
 
-            await tracker.wait()
-            self.emit(step.name)
+            try:
+                await tracker.wait()
+                self.emit(step.name)
+            except Exception as e:
+                logger.error(f"Error tracking step: {e}")
+                await asyncio.sleep(1)
+                self._step_queue.put_nowait(step)
 
     def setup(self):
         self.state_merger.on("state_changed", self._try_queue_next_steps)

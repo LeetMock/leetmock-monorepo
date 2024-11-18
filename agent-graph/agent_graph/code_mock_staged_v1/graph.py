@@ -94,7 +94,7 @@ async def on_event(
 
     if state.event == "reminder":
         messages = HumanMessage(
-            content="(Now the user has been slient in a while, you would say:)"
+            content="(Now the user has been silent in a while, ask them if they are doing well.)"
         )
         return with_event_reset(trigger=True, messages=messages)
 
