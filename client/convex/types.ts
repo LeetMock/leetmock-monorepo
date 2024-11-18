@@ -25,14 +25,18 @@ export const codeSessionEventSchemas = {
   testcase_changed: v.object({
     type: v.literal("testcase_changed"),
     data: v.object({
-      before: v.array(v.object({
-        input: v.record(v.string(), v.any()),
-        expectedOutput: v.optional(v.any()),
-      })),
-      after: v.array(v.object({
-        input: v.record(v.string(), v.any()),
-        expectedOutput: v.optional(v.any()),
-      })),
+      before: v.array(
+        v.object({
+          input: v.record(v.string(), v.any()),
+          expectedOutput: v.optional(v.any()),
+        })
+      ),
+      after: v.array(
+        v.object({
+          input: v.record(v.string(), v.any()),
+          expectedOutput: v.optional(v.any()),
+        })
+      ),
     }),
   }),
   testcase_removed: v.object({
@@ -42,29 +46,33 @@ export const codeSessionEventSchemas = {
   user_testcase_executed: v.object({
     type: v.literal("user_testcase_executed"),
     data: v.object({
-      testResults: v.array(v.object({
-        caseNumber: v.number(),
-        passed: v.boolean(),
-        input: v.record(v.string(), v.any()),
-        expected: v.any(),
-        actual: v.any(),
-        error: v.union(v.string(), v.null()),
-        stdout: v.union(v.string(), v.null())
-      })),
+      testResults: v.array(
+        v.object({
+          caseNumber: v.number(),
+          passed: v.boolean(),
+          input: v.record(v.string(), v.any()),
+          expected: v.any(),
+          actual: v.any(),
+          error: v.union(v.string(), v.null()),
+          stdout: v.union(v.string(), v.null()),
+        })
+      ),
     }),
   }),
   groundtruth_testcase_executed: v.object({
     type: v.literal("groundtruth_testcase_executed"),
     data: v.object({
-      testResults: v.array(v.object({
-        caseNumber: v.number(),
-        passed: v.boolean(),
-        input: v.record(v.string(), v.any()),
-        expected: v.any(),
-        actual: v.any(),
-        error: v.union(v.string(), v.null()),
-        stdout: v.union(v.string(), v.null())
-      })),
+      testResults: v.array(
+        v.object({
+          caseNumber: v.number(),
+          passed: v.boolean(),
+          input: v.record(v.string(), v.any()),
+          expected: v.any(),
+          actual: v.any(),
+          error: v.union(v.string(), v.null()),
+          stdout: v.union(v.string(), v.null()),
+        })
+      ),
     }),
   }),
   question_displayed: v.object({
@@ -80,7 +88,8 @@ export const codeSessionEventSchema = v.union(
   codeSessionEventSchemas.testcase_removed,
   codeSessionEventSchemas.question_displayed,
   codeSessionEventSchemas.testcase_changed,
-  codeSessionEventSchemas.user_testcase_executed
+  codeSessionEventSchemas.user_testcase_executed,
+  codeSessionEventSchemas.groundtruth_testcase_executed
 );
 
 export type QueryCtx = CustomCtx<typeof query>;
@@ -108,3 +117,9 @@ export type CodeSessionTestcaseRemoved =
 
 export type CodeSessionQuestionDisplayed =
   (typeof codeSessionEventSchemas)["question_displayed"]["type"];
+
+export type CodeSessionUserTestcaseExecuted =
+  (typeof codeSessionEventSchemas)["user_testcase_executed"]["type"];
+
+export type CodeSessionGroundtruthTestcaseExecuted =
+  (typeof codeSessionEventSchemas)["groundtruth_testcase_executed"]["type"];
