@@ -170,7 +170,7 @@ export const StartInterviewDialog: React.FC = () => {
     const question = questions.find((q) => q._id === codeInterview.questionId);
     if (!question) return;
 
-    const promise = createAgentThread({ graphId: "code-mock-staged-v1" })
+    const promise = createAgentThread({ graphId: "code-mock-staged-v1-db" })
       .then(({ threadId, assistantId }) => {
         return createSession({
           questionId: codeInterview.questionId!,
