@@ -336,17 +336,15 @@ class StepTrackingEvent(BaseEvent[str]):
         )
 
     def _try_queue_next_steps(self, state: AgentState):
-        logger.info("Try queueing next steps")
         curr_stage = state.current_stage
         curr_steps = state.steps.get(curr_stage, [])
-        logger.info(f"Current stage: {curr_stage}")
-        logger.info(f"Current steps: {curr_steps}")
 
         for step in curr_steps:
             if step.name in state.completed_steps:
                 continue
 
             if step.name in self._seen_steps:
+                logger.info(f"Already seen step: {step.name}")
                 return
 
             logger.info(f"Queueing step: {step.name}")
