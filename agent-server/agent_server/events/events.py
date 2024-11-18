@@ -30,7 +30,7 @@ Example:
 
 import asyncio
 import logging
-from typing import Any, Dict, List, OrderedDict
+from typing import Any, Dict, List, OrderedDict, Set
 
 from agent_graph.chains.step_tracker import (
     SignalEmitter,
@@ -320,6 +320,8 @@ class StepTrackingEvent(BaseEvent[str]):
 
     _step_queue: asyncio.Queue[Step] = PrivateAttr(default_factory=asyncio.Queue)
 
+    _seen_steps: Set[str] = PrivateAttr(default_factory=set)
+
     @property
     def event_name(self) -> str:
         return "step_tracking"
@@ -345,7 +347,14 @@ class StepTrackingEvent(BaseEvent[str]):
         for step in curr_steps:
             if step.name in state.completed_steps:
                 continue
+
+            if step.name in self._seen_steps:
+                return
+
+            logger.info(f"Queueing step: {step.name}")
+            self._seen_steps.add(step.name)
             self._step_queue.put_nowait(step)
+            return
 
     async def _track_agent_steps_task(self):
         while True:

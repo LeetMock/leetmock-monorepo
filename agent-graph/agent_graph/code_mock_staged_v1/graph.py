@@ -6,6 +6,7 @@ from agent_graph.code_mock_staged_v1.constants import (
     AgentConfig,
     StageTypes,
     format_content_changed_notification_messages,
+    format_stage_transition_messages,
     format_testcase_changed_notification_messages,
     format_user_testcase_executed_notification_messages,
     get_next_stage,
@@ -132,7 +133,13 @@ async def decide_next_stage(state: AgentState):
     if next_stage == StageTypes.EVAL:
         next_stage = StageTypes.CODING
 
-    return dict(current_stage=next_stage, trigger=False)
+    messages = (
+        format_stage_transition_messages(state.current_stage, next_stage)
+        if state.current_stage != next_stage
+        else []
+    )
+
+    return dict(current_stage=next_stage, trigger=False, messages=messages)
 
 
 # --------------------- agent graph edges --------------------- #

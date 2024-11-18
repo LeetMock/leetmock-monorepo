@@ -156,7 +156,8 @@ def create_llm_step_tracker(
     def post_process_fn(result: TrackStep):
         """Post-process the step tracking result"""
         if result.completed:
-            send_message_fn(AIMessage(content=result.thinking))
+            message = wrap_xml("thinking", result.thinking)
+            send_message_fn(AIMessage(content=message))
         return result.completed
 
     on_init_chain = (

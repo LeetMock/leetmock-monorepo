@@ -72,6 +72,19 @@ def get_first_unseen_entity(entities: List[TEntity], seen: List[str]) -> TEntity
     return None
 
 
+def format_stage_transition_messages(prev_stage: StageTypes, next_stage: StageTypes):
+    message = (
+        f"Now I have finished all the steps in stage {prev_stage}. I will move on to the next stage: {next_stage}. "
+        "But first, I need to something natual to kick off the conversation of current stage."
+    )
+
+    return [
+        AIMessage(
+            content=wrap_xml("thinking", message),
+        )
+    ]
+
+
 def format_step_notification_messages(
     entities: List[TEntity], seen_names: List[str], completed_names: List[str]
 ) -> List[AnyMessage]:
