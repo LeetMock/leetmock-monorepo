@@ -74,7 +74,7 @@ class ReminderEvent(BaseEvent[Reminder]):
     assistant: VoiceAssistant
 
     delay: float = Field(
-        default=24, description="The delay in seconds before sending the reminder."
+        default=20, description="The delay in seconds before sending the reminder."
     )
 
     repeated: bool = Field(

@@ -159,7 +159,7 @@ class AgentStream(BaseModel, Generic[TState]):
         Returns:
             AsyncIterator[Tuple[StreamMode, Any]]: Stream of state updates and custom events
         """
-        graph = self.graph.compile().with_config({"run_name": self.name})
+        graph = self.graph.compile().with_config({"run_name": f"{self.name}:graph"})
         config = make_config(self._agent_config)
         return graph.astream(input=initial_state, config=config, stream_mode=["values", "custom"])  # type: ignore
 

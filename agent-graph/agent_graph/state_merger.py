@@ -52,7 +52,7 @@ class StateMerger(EventEmitter[EventTypes], Generic[TState]):
         merger = cls(
             state_type=state_type,
             state_graph=graph.compile(checkpointer=MemorySaver()).with_config(
-                {"run_name": f"{name}-state-merger"}
+                {"run_name": f"{name}:state-merger"}
             ),
             storage=storage,
         )
