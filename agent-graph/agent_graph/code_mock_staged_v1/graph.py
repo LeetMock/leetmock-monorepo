@@ -127,10 +127,8 @@ async def on_trigger(state: AgentState):
 
 
 async def decide_next_stage(state: AgentState):
-    stage_steps = state.steps[state.current_stage]
-    required_steps = set([step.name for step in stage_steps if step.required])
-
-    completed_stage_steps = len(required_steps - state.completed_steps) == 0
+    stage_steps = set([step.name for step in state.steps[state.current_stage]])
+    completed_stage_steps = len(stage_steps - state.completed_steps) == 0
     next_stage = (
         get_next_stage(state.current_stage)
         if completed_stage_steps
