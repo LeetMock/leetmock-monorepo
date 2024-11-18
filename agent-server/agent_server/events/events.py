@@ -30,8 +30,13 @@ Example:
 
 import asyncio
 import logging
-from typing import Any
+from typing import Any, Dict, List, OrderedDict
 
+from agent_graph.chains.step_tracker import create_llm_step_tracker, emit_interval_fixed
+from agent_graph.code_mock_staged_v1.constants import StageTypes
+from agent_graph.llms import get_model
+from agent_graph.state_merger import StateMerger
+from agent_graph.types import EventMessageState, Step
 from agent_server.contexts.session import CodeSession, CodeSessionEventTypes
 from agent_server.events import BaseEvent
 from debouncer import debounce
@@ -300,14 +305,36 @@ class UserMessageEvent(BaseEvent[MessageWrapper]):
         asyncio.create_task(self._observe_user_message_task())
 
 
-"""
-SimpleStepGuider:
-    - on_init:
-        - ask to execute the step
-    - monitor_progression:
-        - (async) emit_examine_signal
-        - on_examine -> bool:
-            - ask to guide assistant back on track
-    - on_finish:
-        - <optional callback>
-"""
+class StepTrackingEvent(BaseEvent[str]):
+    """Event for monitoring step tracking."""
+
+    state_merger: StateMerger[EventMessageState]
+
+    state_update_queue: asyncio.Queue[Dict]
+
+    step_map: OrderedDict[StageTypes, List[Step]]
+
+    @property
+    def event_name(self) -> str:
+        return "step_tracking"
+
+    def _get_llm_step_tracker(self, step: Step):
+        return create_llm_step_tracker(
+            step=step,
+            state_merger=self.state_merger,
+            llm=get_model("gpt-4o", temperature=0.1),
+            state_update_queue=self.state_update_queue,
+            signal_emitter=emit_interval_fixed(interval=10),
+        )
+
+    async def _track_agent_steps_task(self):
+        for steps in self.step_map.values():
+            for step in steps:
+                logger.info(f"Tracking step: {step.name}")
+                tracker = self._get_llm_step_tracker(step)
+                await tracker.wait()
+                self.emit(step.name)
+                logger.info(f"Step completed: {step.name}")
+
+    def setup(self):
+        asyncio.create_task(self._track_agent_steps_task())

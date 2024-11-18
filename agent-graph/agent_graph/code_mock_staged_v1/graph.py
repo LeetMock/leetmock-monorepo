@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Dict, List, cast
+from typing import Dict, List, OrderedDict, cast
 
 from agent_graph.code_mock_staged_v1 import coding_stage, intro_stage, stage_tracker
 from agent_graph.code_mock_staged_v1.constants import (
@@ -15,6 +15,7 @@ from agent_graph.code_mock_staged_v1.constants import (
     format_testcase_changed_notification_messages,
     format_user_testcase_executed_notification_messages,
     get_next_stage,
+    get_step_map,
 )
 from agent_graph.code_mock_staged_v1.prompts import JOIN_CALL_MESSAGE, RECONNECT_MESSAGE
 from agent_graph.event_descriptors import EVENT_DESCRIPTORS, EventDescriptor
@@ -25,7 +26,11 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 from pydantic.v1 import Field
 
-from libs.convex.convex_types import CodeSessionContentChangedEvent, CodeSessionTestcaseChangedEvent, CodeSessionUserTestcaseExecutedEvent
+from libs.convex.convex_types import (
+    CodeSessionContentChangedEvent,
+    CodeSessionTestcaseChangedEvent,
+    CodeSessionUserTestcaseExecutedEvent,
+)
 from libs.types import MessageWrapper
 
 
@@ -47,7 +52,7 @@ class AgentState(EventMessageState):
         description="Event descriptors for the agent",
     )
 
-    steps: Dict[StageTypes, List[Step]] = Field(
+    steps: OrderedDict[StageTypes, List[Step]] = Field(
         default_factory=lambda: defaultdict(list),
         description="Steps for the agent",
     )
@@ -79,11 +84,7 @@ async def init_state(_: AgentState):
     stages = [StageTypes.INTRO, StageTypes.CODING, StageTypes.EVAL]
     events = EVENT_DESCRIPTORS
 
-    steps = {
-        StageTypes.INTRO: INTRO_STEPS,
-        StageTypes.CODING: CODING_STEPS,
-        StageTypes.EVAL: EVAL_STEPS,
-    }
+    steps = get_step_map()
 
     signals = {
         StageTypes.INTRO: INTRO_SIGNALS,

@@ -31,10 +31,10 @@ from typing import Any, Dict, List, Tuple
 
 from agent_server.agent_streams import AgentStream
 from agent_server.events import BaseEvent
-from agent_server.utils.profiler import get_profiler
 from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
 from pydantic.v1 import BaseModel, Field, PrivateAttr
 
+from libs.profiler import get_profiler
 from libs.timestamp import Timestamp
 from libs.types import MessageWrapper
 

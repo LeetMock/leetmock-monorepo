@@ -1,13 +1,14 @@
 import asyncio
 from typing import Any, Dict, Generic, Type, TypeVar
 
-from agent_server.storages import StateStorage
-from agent_server.utils.profiler import get_profiler
+from agent_graph.storages import StateStorage
 from debouncer import debounce
 from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph.state import CompiledStateGraph, StateGraph
 from pydantic.v1 import BaseModel, Field, PrivateAttr
+
+from libs.profiler import get_profiler
 
 pf = get_profiler()
 
@@ -46,7 +47,7 @@ class StateMerger(BaseModel, Generic[TState]):
             state_type=state_type, state_graph=state_graph, storage=storage
         )
 
-        @debounce(wait=1)
+        @debounce(wait=4)
         async def set_state_debounced(state: Dict[str, Any]):
             await self.storage.set_state(state)
 
@@ -84,28 +85,19 @@ class StateMerger(BaseModel, Generic[TState]):
         return snapshot.values
 
     async def merge_state(self, state: TState | Dict[str, Any]):
-        range_tracker = pf.interval_tracker("state_merger.merge_state")
-        range_tracker.start()
+        with pf.interval("state_merger.merge_state"):
+            if isinstance(state, dict) and len(state) == 0:
+                return await self.get_state()
 
-        if isinstance(state, dict) and len(state) == 0:
-            return await self.get_state()
+            with pf.interval("state_merger.merge_state.invoke"):
+                values = await self.state_graph.ainvoke(state, config=CONFIG)
+                state = self.state_type(**values)
 
-        values = await self.state_graph.ainvoke(state, config=CONFIG)
-        state = self.state_type(**values)
+            with pf.interval("state_merger.merge_state.flush"):
+                self.flush(values)
 
-        range_tracker.end()
         return state
 
-    async def aflush(self, debounce: bool = True):
+    def flush(self, values: Dict[str, Any]):
         """Flush the state to the storage"""
-
-        values = await self.get_state_dict()
-        if debounce:
-            await self._set_state_debounced(values)
-        else:
-            await self.storage.set_state(values)
-
-    def flush(self, debounce: bool = True):
-        """Flush the state to the storage"""
-
-        asyncio.create_task(self.aflush(debounce))
+        asyncio.create_task(self._set_state_debounced(values))

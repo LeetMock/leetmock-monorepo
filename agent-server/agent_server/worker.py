@@ -5,9 +5,10 @@ from datetime import datetime
 from typing import AsyncIterator, Dict
 
 import psutil
-from agent_graph.code_mock_staged_v1.constants import AgentConfig
+from agent_graph.code_mock_staged_v1.constants import AgentConfig, get_step_map
 from agent_graph.code_mock_staged_v1.graph import AgentState, create_graph
 from agent_graph.state_merger import StateMerger
+from agent_graph.storages.langgraph_cloud import LangGraphCloudStateStorage
 from agent_server.agent_streams import AgentStream
 from agent_server.agent_triggers import AgentTrigger
 from agent_server.contexts.context_manager import AgentContextManager
@@ -16,19 +17,18 @@ from agent_server.events.events import (
     CodeEditorChangedEvent,
     GroundTruthTestcaseExecutedEvent,
     ReminderEvent,
+    StepTrackingEvent,
     TestcaseChangedEvent,
     UserMessageEvent,
     UserTestcaseExecutedEvent,
 )
 from agent_server.livekit.streams import EchoStream, NoopLLM, NoopStream
 from agent_server.livekit.tts import create_elevenlabs_tts
-from agent_server.storages.langgraph_cloud import LangGraphCloudStateStorage
 from agent_server.utils.logger import get_logger
 from agent_server.utils.messages import (
     convert_chat_ctx_to_langchain_messages,
     filter_langchain_messages,
 )
-from agent_server.utils.profiler import get_profiler, set_profiler_id
 from dotenv import find_dotenv, load_dotenv
 from livekit.agents import cli  # type: ignore
 from livekit.agents import JobContext, WorkerOptions, llm, utils
@@ -37,6 +37,7 @@ from livekit.agents.worker import _DefaultLoadCalc
 from livekit.plugins import deepgram, openai, silero
 
 from libs.convex.api import ConvexApi
+from libs.profiler import get_profiler, set_profiler_id
 from libs.types import MessageWrapper
 
 logger = get_logger(__name__)
@@ -186,6 +187,11 @@ async def entrypoint(ctx: JobContext):
             GroundTruthTestcaseExecutedEvent(session=session),
             UserMessageEvent(user_message_event_q=user_message_event_q),
             TestcaseChangedEvent(session=session),
+            StepTrackingEvent(
+                state_merger=state_merger,
+                state_update_queue=state_update_q,
+                step_map=get_step_map(),
+            ),
         ],
     )
 

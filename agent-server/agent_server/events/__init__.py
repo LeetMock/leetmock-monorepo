@@ -36,8 +36,9 @@ from inspect import iscoroutinefunction
 from typing import Any, Callable, Coroutine, Generic, List, Type, TypeVar
 
 from agent_server.contexts.session import BaseSession
-from agent_server.utils.profiler import get_profiler
 from pydantic.v1 import BaseModel, PrivateAttr
+
+from libs.profiler import get_profiler
 
 logger = logging.getLogger(__name__)
 pf = get_profiler()

@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import random
 from operator import itemgetter
-from typing import Awaitable, Callable, Dict, List
+from typing import Any, Awaitable, Callable, Coroutine, Dict, List
 
 from agent_graph.code_mock_staged_v1.prompts import SIMPLE_STEP_TRACKING_PROMPT
 from agent_graph.code_mock_staged_v1.schemas import TrackStep
@@ -16,8 +16,8 @@ from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTempla
 from langchain_core.runnables import Runnable, RunnableLambda
 from pydantic.v1 import BaseModel, Field, PrivateAttr
 
-Emit = Callable[[], Awaitable[None]]
-EmitSignal = Callable[[Emit], Awaitable[None]]
+Emit = Callable[[], None]
+SignalEmitter = Callable[[Emit], Coroutine[Any, Any, None]]
 
 
 class StepTrackerConfig(BaseModel):
@@ -35,7 +35,7 @@ class StepTrackerConfig(BaseModel):
         ..., description="Callback on step completion"
     )
 
-    signal_emitter: EmitSignal | List[EmitSignal] = Field(
+    signal_emitter: SignalEmitter | List[SignalEmitter] = Field(
         ..., description="Loop that emits track signal"
     )
 
@@ -45,7 +45,7 @@ class StepTrackerConfig(BaseModel):
         on_init_chain: Runnable[None, None],
         on_track_chain: Runnable[None, bool],
         on_finish_chain: Runnable[None, None],
-        signal_emitter: EmitSignal | List[EmitSignal],
+        signal_emitter: SignalEmitter | List[SignalEmitter],
     ):
         return cls(
             on_init=lambda: on_init_chain.ainvoke(input=None),
@@ -65,35 +65,36 @@ class StepTracker(BaseModel):
         ..., description="Configuration for the step tracker"
     )
 
-    _signal_queue: asyncio.Queue[bool] = PrivateAttr(default_factory=asyncio.Queue)
-
-    _started: bool = PrivateAttr(default=False)
+    _step_completion_fut: asyncio.Future[bool] = PrivateAttr(
+        default_factory=asyncio.Future
+    )
 
     def __init__(self, tracker_config: StepTrackerConfig):
         super().__init__(tracker_config=tracker_config)
+        self._track_ack_event = asyncio.Event()
 
     @classmethod
     def from_config(cls, config: StepTrackerConfig):
         return cls(tracker_config=config)
 
-    async def _emit(self):
-        await self._signal_queue.put(True)
+    async def _track_step_completion(self):
+        finished = await self.tracker_config.on_track()
+        if finished and not self._step_completion_fut.done():
+            self._step_completion_fut.set_result(True)
+
+    def _emit(self):
+        if self._step_completion_fut.done():
+            return
+        asyncio.create_task(self._track_step_completion())
 
     async def _main_task(self):
         await self.tracker_config.on_init()
-
-        while True:
-            await self._signal_queue.get()
-            finished = await self.tracker_config.on_track()
-
-            if finished:
-                break
-
+        await self._step_completion_fut
         await self.tracker_config.on_finish()
 
-    async def _emit_track_signal_loop(self):
+    async def _create_signal_emitter_task(self):
         if isinstance(self.tracker_config.signal_emitter, list):
-            await asyncio.gather(
+            return asyncio.gather(
                 *[
                     emit_signal(self._emit)
                     for emit_signal in self.tracker_config.signal_emitter
@@ -101,18 +102,16 @@ class StepTracker(BaseModel):
                 return_exceptions=True,
             )
         else:
-            await self.tracker_config.signal_emitter(self._emit)
+            return asyncio.create_task(self.tracker_config.signal_emitter(self._emit))
 
-    def start(self):
-        if self._started:
-            raise RuntimeError("Step tracker already started")
+    async def _emit_track_signal_loop(self):
+        task = await self._create_signal_emitter_task()
+        await self._step_completion_fut
+        task.cancel()
 
-        self._started = True
-        asyncio.gather(
-            self._main_task(),
-            self._emit_track_signal_loop(),
-            return_exceptions=True,
-        )
+    async def wait(self):
+        asyncio.create_task(self._emit_track_signal_loop())
+        await self._main_task()
 
 
 def create_llm_step_tracker(
@@ -120,8 +119,7 @@ def create_llm_step_tracker(
     state_merger: StateMerger[EventMessageState],
     llm: BaseChatModel,
     state_update_queue: asyncio.Queue[Dict],
-    mark_step_completion: Callable[[], None],
-    signal_emitter: EmitSignal | List[EmitSignal],
+    signal_emitter: SignalEmitter | List[SignalEmitter],
     prompt: str = SIMPLE_STEP_TRACKING_PROMPT,
 ):
     sys_prompt = SystemMessagePromptTemplate.from_template(prompt)
@@ -134,18 +132,18 @@ def create_llm_step_tracker(
         "thinking", f"I'm finished working on the step `{step.name}`"
     )
 
-    async def send_message_fn(message: AnyMessage):
-        """Send a message to the state update queue"""
-        await state_update_queue.put(dict(messages=[message]))
-
     async def get_state_fn(_: None):
         """Get the current state"""
         return await state_merger.get_state_dict()
 
-    async def post_process(result: TrackStep):
+    def send_message_fn(message: AnyMessage):
+        """Send a message to the state update queue"""
+        state_update_queue.put_nowait(dict(messages=[message]))
+
+    def post_process(result: TrackStep):
         """Post-process the step tracking result by sending a message and returning whether the step is completed"""
         message = wrap_xml("thinking", result.thinking)
-        await send_message_fn(AIMessage(content=message))
+        send_message_fn(AIMessage(content=message))
         return result.completed
 
     on_init_chain = (
@@ -176,8 +174,6 @@ def create_llm_step_tracker(
         RunnableLambda(lambda _: AIMessage(content=step_finish_message))
         # Send the message
         | RunnableLambda(send_message_fn)
-        # Mark the step as completed
-        | RunnableLambda(lambda _: mark_step_completion())
     ).with_config({"run_name": f"track_step_{step.name}:on_finish"})
 
     return StepTrackerConfig.from_runnables(
@@ -195,7 +191,7 @@ def emit_interval_fixed(interval: float):
     async def emit_signal(emit: Emit):
         while True:
             await asyncio.sleep(interval)
-            await emit()
+            emit()
 
     return emit_signal
 
@@ -206,7 +202,7 @@ def emit_interval_random(min_interval: float, max_interval: float):
     async def emit_signal(emit: Emit):
         while True:
             await asyncio.sleep(random.uniform(min_interval, max_interval))
-            await emit()
+            emit()
 
     return emit_signal
 
@@ -225,7 +221,7 @@ def emit_interval_linear(multiplier: float, min_interval: float, max_interval: f
 
         while True:
             await asyncio.sleep(wait_time)
-            await emit()
+            emit()
 
             if x * multiplier < max_interval:
                 x += 1
@@ -250,7 +246,7 @@ def emit_interval_exponential(
 
         while True:
             await asyncio.sleep(wait_time)
-            await emit()
+            emit()
 
             if 2**x * multiplier < max_interval:
                 x += 1
