@@ -208,13 +208,13 @@ INTRO_STEPS: List[Step] = [
         name="ask_goals",
         desc="Ask the candidate about their career goals.",
         done_definition="Interviewer has finished asking about the candidate's career goals.",
-        required=True,
+        required=False,
     ),
     Step.from_info(
         name="discuss_projects",
         desc="Discuss the candidate's past projects and their role in them. Remember to praise interviewee on their achievement.",
-        done_definition="Interviewer has finished discussing the candidate's past projects and their role in them.",
-        required=True,
+        done_definition="Interviewer has finished asking the questions about the candidate's past projects and their role in them.",
+        required=False,
     ),
 ]
 

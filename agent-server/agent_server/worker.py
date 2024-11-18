@@ -1,5 +1,6 @@
 import asyncio
 import hashlib
+import logging
 import os
 from datetime import datetime
 from typing import AsyncIterator, Dict
@@ -40,7 +41,9 @@ from libs.convex.api import ConvexApi
 from libs.profiler import get_profiler, set_profiler_id
 from libs.types import MessageWrapper
 
+logging.getLogger("openai._base_client").setLevel(logging.INFO)
 logger = get_logger(__name__)
+
 pf = get_profiler()
 
 load_dotenv(find_dotenv())
@@ -188,9 +191,7 @@ async def entrypoint(ctx: JobContext):
             UserMessageEvent(user_message_event_q=user_message_event_q),
             TestcaseChangedEvent(session=session),
             StepTrackingEvent(
-                state_merger=state_merger,
-                state_update_queue=state_update_q,
-                step_map=get_step_map(),
+                state_merger=state_merger, state_update_queue=state_update_q
             ),
         ],
     )

@@ -1,11 +1,12 @@
 import asyncio
-from typing import Any, Dict, Generic, Type, TypeVar
+from typing import Any, Dict, Generic, Literal, Type, TypeVar
 
 from agent_graph.storages import StateStorage
 from debouncer import debounce
 from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph.state import CompiledStateGraph, StateGraph
+from livekit.agents.utils import EventEmitter
 from pydantic.v1 import BaseModel, Field, PrivateAttr
 
 from libs.profiler import get_profiler
@@ -13,29 +14,13 @@ from libs.profiler import get_profiler
 pf = get_profiler()
 
 TState = TypeVar("TState", bound=BaseModel)
+EventTypes = Literal["state_changed"]
 
 CONFIG = RunnableConfig(configurable={"thread_id": "1"})
 
 
-class StateMerger(BaseModel, Generic[TState]):
+class StateMerger(EventEmitter[EventTypes], Generic[TState]):
     """A state merger is a class that keeps a persistent state and allows for merging with other states."""
-
-    state_type: Type[TState] = Field(
-        ..., description="The type of the state to be returned"
-    )
-
-    state_graph: CompiledStateGraph = Field(
-        ..., description="The compiled state graph to merge states"
-    )
-
-    storage: StateStorage = Field(
-        ..., description="The storage to fetch and update the state"
-    )
-
-    _set_state_debounced: Any = PrivateAttr()
-
-    class Config:
-        arbitrary_types_allowed = True
 
     def __init__(
         self,
@@ -43,9 +28,11 @@ class StateMerger(BaseModel, Generic[TState]):
         state_graph: CompiledStateGraph,
         storage: StateStorage,
     ):
-        super().__init__(
-            state_type=state_type, state_graph=state_graph, storage=storage
-        )
+        super().__init__()
+
+        self.state_type = state_type
+        self.state_graph = state_graph
+        self.storage = storage
 
         @debounce(wait=4)
         async def set_state_debounced(state: Dict[str, Any]):
@@ -72,7 +59,7 @@ class StateMerger(BaseModel, Generic[TState]):
 
         with pf.interval("state_merger.from_state_and_storage.fetch_initial_state"):
             initial_state = await storage.get_state()
-            await merger.merge_state(initial_state)
+            await merger.merge_state(initial_state, emit_event=False)
 
         return merger
 
@@ -84,17 +71,22 @@ class StateMerger(BaseModel, Generic[TState]):
         snapshot = await self.state_graph.aget_state(config=CONFIG)
         return snapshot.values
 
-    async def merge_state(self, state: TState | Dict[str, Any]):
+    async def merge_state(
+        self, state: TState | Dict[str, Any], emit_event: bool = True
+    ):
         with pf.interval("state_merger.merge_state"):
             if isinstance(state, dict) and len(state) == 0:
-                return await self.get_state()
+                state = await self.get_state()
+            else:
+                with pf.interval("state_merger.merge_state.invoke"):
+                    values = await self.state_graph.ainvoke(state, config=CONFIG)
+                    state = self.state_type(**values)
 
-            with pf.interval("state_merger.merge_state.invoke"):
-                values = await self.state_graph.ainvoke(state, config=CONFIG)
-                state = self.state_type(**values)
+                with pf.interval("state_merger.merge_state.flush"):
+                    self.flush(values)
 
-            with pf.interval("state_merger.merge_state.flush"):
-                self.flush(values)
+            if emit_event:
+                self.emit("state_changed", state)
 
         return state
 

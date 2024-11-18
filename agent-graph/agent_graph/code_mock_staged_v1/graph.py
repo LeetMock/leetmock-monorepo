@@ -91,7 +91,7 @@ async def on_event(
     if state.event == "step_tracking":
         step_name = cast(str, state.event_data)
         state.completed_steps.add(step_name)
-        return with_event_reset(trigger=False)
+        return with_event_reset(trigger=False, completed_steps=state.completed_steps)
 
     if state.event == "user_message":
         messages = cast(MessageWrapper, state.event_data).messages

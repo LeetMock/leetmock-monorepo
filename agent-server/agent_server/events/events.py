@@ -32,7 +32,12 @@ import asyncio
 import logging
 from typing import Any, Dict, List, OrderedDict
 
-from agent_graph.chains.step_tracker import create_llm_step_tracker, emit_interval_fixed
+from agent_graph.chains.step_tracker import (
+    SignalEmitter,
+    create_llm_step_tracker,
+    emit_interval_fixed,
+    emit_stop_after,
+)
 from agent_graph.code_mock_staged_v1.constants import StageTypes
 from agent_graph.code_mock_staged_v1.graph import AgentState
 from agent_graph.llms import get_model
@@ -313,34 +318,43 @@ class StepTrackingEvent(BaseEvent[str]):
 
     state_update_queue: asyncio.Queue[Dict]
 
-    step_map: OrderedDict[StageTypes, List[Step]]
+    _step_queue: asyncio.Queue[Step] = PrivateAttr(default_factory=asyncio.Queue)
 
     @property
     def event_name(self) -> str:
         return "step_tracking"
 
     def _get_llm_step_tracker(self, step: Step):
+        signal_emitters: List[SignalEmitter] = [emit_interval_fixed(interval=4)]
+
+        if not step.required:
+            signal_emitters.append(emit_stop_after(duration=25))
+
         return create_llm_step_tracker(
             step=step,
             state_merger=self.state_merger,
             llm=get_model("gpt-4o", temperature=0.1),
             state_update_queue=self.state_update_queue,
-            signal_emitter=emit_interval_fixed(interval=10),
+            signal_emitter=signal_emitters,
         )
 
-    async def _track_agent_steps_task(self):
-        for steps in self.step_map.values():
-            for step in steps:
-                state = await self.state_merger.get_state()
-                if step.name in state.completed_steps:
-                    logger.info(f"Step tracking already completed: {step.name}")
-                    continue
+    def _try_queue_next_steps(self, state: AgentState):
+        curr_stage = state.current_stage
+        curr_steps = state.steps.get(curr_stage, [])
 
-                logger.info(f"Step tracking started: {step.name}")
-                tracker = self._get_llm_step_tracker(step)
-                await tracker.wait()
-                self.emit(step.name)
-                logger.info(f"Step tracking completed: {step.name}")
+        for step in curr_steps:
+            if step.name in state.completed_steps:
+                continue
+            self._step_queue.put_nowait(step)
+
+    async def _track_agent_steps_task(self):
+        while True:
+            step = await self._step_queue.get()
+            tracker = self._get_llm_step_tracker(step)
+
+            await tracker.wait()
+            self.emit(step.name)
 
     def setup(self):
+        self.state_merger.on("state_changed", self._try_queue_next_steps)
         asyncio.create_task(self._track_agent_steps_task())

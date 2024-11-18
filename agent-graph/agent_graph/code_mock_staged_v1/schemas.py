@@ -12,6 +12,8 @@ class TrackStep(BaseModel):
             "Step-by-step thinking process for deciding if the step has been completed by AI interviewer. "
             "First, observing the conversation and decide if there is any information relevant to the step. "
             "Then, decide if the information is considered DONE based on the definition of done. "
+            "Use bullet points to format your thought. "
+            "Reasoning should be as concise as possible (no more than 5 bullet points)."
         ),
     )
 
