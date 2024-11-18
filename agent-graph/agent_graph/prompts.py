@@ -62,7 +62,15 @@ Got:
 """
 
 def format_static_check_error(error: str) -> str:
-    return TESTCASE_STATIC_CHECK_ERROR_PROMPT.format(static_check_error=error)
+    prompt = PromptTemplate.from_template(
+        TESTCASE_STATIC_CHECK_ERROR_PROMPT, template_format="jinja2"
+    )
+
+    return prompt.invoke(
+        {
+            "static_check_error": error,
+        }
+    ).to_string()
 
 
 def format_test_context(test_results: List[TestcaseResult]) -> str:

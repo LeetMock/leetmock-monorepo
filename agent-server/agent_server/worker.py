@@ -177,7 +177,7 @@ async def entrypoint(ctx: JobContext):
             ReminderEvent(assistant=assistant, delay=20),
             CodeEditorChangedEvent(session=session, assistant=assistant),
             UserTestcaseExecutedEvent(session=session),
-            GroundTruthTestcaseExecutedEvent(session=session),
+            GroundTruthTestcaseExecutedEvent(session=session, convex_api=convex_api),
             UserMessageEvent(user_message_event_q=user_message_event_q),
             TestcaseChangedEvent(session=session),
             StepTrackingEvent(
