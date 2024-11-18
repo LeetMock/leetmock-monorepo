@@ -23,6 +23,20 @@ from openai.types.chat import (
 )
 
 
+def livekit_to_langchain_message(
+    chat_ctx: llm.ChatContext, ts: int
+) -> List[AnyMessage]:
+    lc_messages = filter_langchain_messages(
+        convert_chat_ctx_to_langchain_messages(chat_ctx)
+    )
+
+    for i, message in enumerate(lc_messages):
+        key = f"{ts}-{i}-{message.type}"
+        message.id = hashlib.md5(key.encode()).hexdigest()
+
+    return lc_messages
+
+
 def remove_punctuation(text: str) -> str:
     return text.translate(str.maketrans("", "", string.punctuation)).strip()
 

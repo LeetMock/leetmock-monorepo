@@ -29,6 +29,7 @@ from agent_server.utils.logger import get_logger
 from agent_server.utils.messages import (
     convert_chat_ctx_to_langchain_messages,
     filter_langchain_messages,
+    livekit_to_langchain_message,
 )
 from dotenv import find_dotenv, load_dotenv
 from livekit.agents import cli  # type: ignore
@@ -123,13 +124,7 @@ async def entrypoint(ctx: JobContext):
         Returns:
             EchoStream: The stream to be used for the LLM response
         """
-        lc_messages = filter_langchain_messages(
-            convert_chat_ctx_to_langchain_messages(chat_ctx)
-        )
-
-        for i, message in enumerate(lc_messages):
-            key = f"{unix_timestamp}-{i}-{message.type}"
-            message.id = hashlib.md5(key.encode()).hexdigest()
+        lc_messages = livekit_to_langchain_message(chat_ctx, unix_timestamp)
 
         with pf.interval("before_llm_callback.user_message_q"):
             # Put the messages into the message event queue so that UserMessageEvent can pick it up
@@ -168,6 +163,7 @@ async def entrypoint(ctx: JobContext):
     agent_stream = AgentStream(
         name=agent_name,
         state_cls=AgentState,
+        global_session_ts=unix_timestamp,
         config=AgentConfig(
             # fast_model="claude-3-5-haiku-latest",
             # smart_model="claude-3-5-sonnet-latest",
@@ -184,7 +180,7 @@ async def entrypoint(ctx: JobContext):
         stream=agent_stream,
         state_update_q=state_update_q,
         events=[
-            ReminderEvent(assistant=assistant, repeated=True),
+            ReminderEvent(assistant=assistant, repeated=True, delay=8),
             CodeEditorChangedEvent(session=session, assistant=assistant),
             UserTestcaseExecutedEvent(session=session),
             GroundTruthTestcaseExecutedEvent(session=session),

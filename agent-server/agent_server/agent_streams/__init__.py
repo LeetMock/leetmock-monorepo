@@ -16,6 +16,7 @@ from typing import (
 from agent_graph.state_merger import StateMerger
 from agent_graph.types import EventMessageState
 from agent_server.contexts.session import BaseSession
+from agent_server.utils.messages import livekit_to_langchain_message
 from agent_server.utils.streams import to_async_iterable
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import StateGraph
@@ -79,6 +80,8 @@ class AgentStream(BaseModel, Generic[TState]):
         ..., description="The type of the state to be returned"
     )
 
+    global_session_ts: int = Field(..., description="The global session timestamp")
+
     assistant: VoiceAssistant = Field(
         ..., description="The voice assistant to trigger the agent"
     )
@@ -104,6 +107,7 @@ class AgentStream(BaseModel, Generic[TState]):
         self,
         name: str,
         state_cls: Type[TState],
+        global_session_ts: int,
         config: BaseModel,
         session: BaseSession,
         graph: StateGraph,
@@ -126,6 +130,7 @@ class AgentStream(BaseModel, Generic[TState]):
         super().__init__(
             name=name,
             state_cls=state_cls,
+            global_session_ts=global_session_ts,
             assistant=assistant,
             graph=graph,
             session=session,
@@ -225,6 +230,15 @@ class AgentStream(BaseModel, Generic[TState]):
                 to_async_iterable(text_stream),
                 allow_interruptions=True,
                 add_to_chat_ctx=True,
+            )
+
+            # We need to manually merge the newly added messages into state
+            await self.state_merger.merge_state(
+                dict(
+                    messages=livekit_to_langchain_message(
+                        self.assistant.chat_ctx, self.global_session_ts
+                    )
+                )
             )
 
     async def _assistant_text_stream(
