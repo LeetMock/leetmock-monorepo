@@ -28,6 +28,15 @@ All Tests Passed!
 [/INFO]
 """
 
+TESTCASE_STATIC_CHECK_ERROR_PROMPT = """
+Below are the test results for the code candidate wrote.
+
+[INFO]
+There are some static check errors in the code.
+{{ static_check_error }}
+[/INFO]
+"""
+
 TESTCASE_FAILURE_PROMPT = """
 Below are the test results for the code candidate wrote.
 
@@ -51,6 +60,9 @@ Got:
 [/FAILED_CASE_{{ testcase.index }}]
 {% endfor %}
 """
+
+def format_static_check_error(error: str) -> str:
+    return TESTCASE_STATIC_CHECK_ERROR_PROMPT.format(static_check_error=error)
 
 
 def format_test_context(test_results: List[TestcaseResult]) -> str:
