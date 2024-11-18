@@ -30,8 +30,19 @@ Example:
 
 import asyncio
 import logging
-from typing import Any
+from typing import Any, Dict, List, OrderedDict
 
+from agent_graph.chains.step_tracker import (
+    SignalEmitter,
+    create_llm_step_tracker,
+    emit_interval_fixed,
+    emit_stop_after,
+)
+from agent_graph.code_mock_staged_v1.constants import StageTypes
+from agent_graph.code_mock_staged_v1.graph import AgentState
+from agent_graph.llms import get_model
+from agent_graph.state_merger import StateMerger
+from agent_graph.types import EventMessageState, Step
 from agent_server.contexts.session import CodeSession, CodeSessionEventTypes
 from agent_server.events import BaseEvent
 from debouncer import debounce
@@ -298,3 +309,52 @@ class UserMessageEvent(BaseEvent[MessageWrapper]):
 
     def setup(self):
         asyncio.create_task(self._observe_user_message_task())
+
+
+class StepTrackingEvent(BaseEvent[str]):
+    """Event for monitoring step tracking."""
+
+    state_merger: StateMerger[AgentState]
+
+    state_update_queue: asyncio.Queue[Dict]
+
+    _step_queue: asyncio.Queue[Step] = PrivateAttr(default_factory=asyncio.Queue)
+
+    @property
+    def event_name(self) -> str:
+        return "step_tracking"
+
+    def _get_llm_step_tracker(self, step: Step):
+        signal_emitters: List[SignalEmitter] = [emit_interval_fixed(interval=4)]
+
+        if not step.required:
+            signal_emitters.append(emit_stop_after(duration=25))
+
+        return create_llm_step_tracker(
+            step=step,
+            state_merger=self.state_merger,
+            llm=get_model("gpt-4o", temperature=0.1),
+            state_update_queue=self.state_update_queue,
+            signal_emitter=signal_emitters,
+        )
+
+    def _try_queue_next_steps(self, state: AgentState):
+        curr_stage = state.current_stage
+        curr_steps = state.steps.get(curr_stage, [])
+
+        for step in curr_steps:
+            if step.name in state.completed_steps:
+                continue
+            self._step_queue.put_nowait(step)
+
+    async def _track_agent_steps_task(self):
+        while True:
+            step = await self._step_queue.get()
+            tracker = self._get_llm_step_tracker(step)
+
+            await tracker.wait()
+            self.emit(step.name)
+
+    def setup(self):
+        self.state_merger.on("state_changed", self._try_queue_next_steps)
+        asyncio.create_task(self._track_agent_steps_task())

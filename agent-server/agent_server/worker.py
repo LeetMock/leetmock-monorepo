@@ -1,13 +1,15 @@
 import asyncio
 import hashlib
+import logging
 import os
 from datetime import datetime
-from typing import AsyncIterator
+from typing import AsyncIterator, Dict
 
 import psutil
-from agent_graph.code_mock_staged_v1.constants import AgentConfig
+from agent_graph.code_mock_staged_v1.constants import AgentConfig, get_step_map
 from agent_graph.code_mock_staged_v1.graph import AgentState, create_graph
 from agent_graph.state_merger import StateMerger
+from agent_graph.storages.langgraph_cloud import LangGraphCloudStateStorage
 from agent_server.agent_streams import AgentStream
 from agent_server.agent_triggers import AgentTrigger
 from agent_server.contexts.context_manager import AgentContextManager
@@ -16,19 +18,18 @@ from agent_server.events.events import (
     CodeEditorChangedEvent,
     GroundTruthTestcaseExecutedEvent,
     ReminderEvent,
+    StepTrackingEvent,
     TestcaseChangedEvent,
     UserMessageEvent,
     UserTestcaseExecutedEvent,
 )
 from agent_server.livekit.streams import EchoStream, NoopLLM, NoopStream
 from agent_server.livekit.tts import create_elevenlabs_tts
-from agent_server.storages.langgraph_cloud import LangGraphCloudStateStorage
 from agent_server.utils.logger import get_logger
 from agent_server.utils.messages import (
     convert_chat_ctx_to_langchain_messages,
     filter_langchain_messages,
 )
-from agent_server.utils.profiler import get_profiler, set_profiler_id
 from dotenv import find_dotenv, load_dotenv
 from livekit.agents import cli  # type: ignore
 from livekit.agents import JobContext, WorkerOptions, llm, utils
@@ -37,9 +38,12 @@ from livekit.agents.worker import _DefaultLoadCalc
 from livekit.plugins import deepgram, openai, silero
 
 from libs.convex.api import ConvexApi
+from libs.profiler import get_profiler, set_profiler_id
 from libs.types import MessageWrapper
 
+logging.getLogger("openai._base_client").setLevel(logging.INFO)
 logger = get_logger(__name__)
+
 pf = get_profiler()
 
 load_dotenv(find_dotenv())
@@ -91,9 +95,13 @@ async def entrypoint(ctx: JobContext):
 
     # Initialize session
     session = CodeSession(api=convex_api)
-
+    # Queue for processing adhoc state snapshots updates
+    state_update_q = asyncio.Queue[Dict]()
+    # Queue for sending active user message events when agent is triggered by VAD -> STT
     user_message_event_q = asyncio.Queue[MessageWrapper]()
+    # Queue for sending user message response from agent stream
     user_message_response_q = asyncio.Queue[AsyncIterator[str] | None]()
+    # Unix timestamp for generating unique message ids
     unix_timestamp = int(datetime.now().timestamp())
 
     # Initialize context manager
@@ -103,10 +111,9 @@ async def entrypoint(ctx: JobContext):
 
     set_profiler_id(ctx_manager.session_id)
 
-
     async def before_llm_callback(_: VoiceAssistant, chat_ctx: llm.ChatContext):
         """This callback is executed before the LLM is called. In the actual implementation,
-        we use this callback to override the default behavior of LLM since we are using the customized 
+        we use this callback to override the default behavior of LLM since we are using the customized
         Event Based Agent.
 
         Args:
@@ -143,9 +150,9 @@ async def entrypoint(ctx: JobContext):
         before_llm_cb=before_llm_callback,
     )
 
-    @assistant.on("metrics_collected")
-    def on_metrics_collected(metrics):
-        logger.info(f"[metrics_collected] {metrics}")
+    # @assistant.on("metrics_collected")
+    # def on_metrics_collected(metrics):
+    #     logger.info(f"[metrics_collected] {metrics}")
 
     agent_name = "code-mock-staged-v1"
 
@@ -175,13 +182,17 @@ async def entrypoint(ctx: JobContext):
 
     agent_trigger = AgentTrigger(
         stream=agent_stream,
+        state_update_q=state_update_q,
         events=[
-            ReminderEvent(assistant=assistant),
+            ReminderEvent(assistant=assistant, repeated=True),
             CodeEditorChangedEvent(session=session, assistant=assistant),
             UserTestcaseExecutedEvent(session=session),
             GroundTruthTestcaseExecutedEvent(session=session),
             UserMessageEvent(user_message_event_q=user_message_event_q),
             TestcaseChangedEvent(session=session),
+            StepTrackingEvent(
+                state_merger=state_merger, state_update_queue=state_update_q
+            ),
         ],
     )
 

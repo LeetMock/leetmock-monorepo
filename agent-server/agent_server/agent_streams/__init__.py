@@ -16,7 +16,6 @@ from typing import (
 from agent_graph.state_merger import StateMerger
 from agent_graph.types import EventMessageState
 from agent_server.contexts.session import BaseSession
-from agent_server.utils.profiler import get_profiler
 from agent_server.utils.streams import to_async_iterable
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import StateGraph
@@ -25,6 +24,7 @@ from langgraph_sdk import get_client
 from livekit.agents.voice_assistant import VoiceAssistant
 from pydantic.v1 import BaseModel, Field, PrivateAttr
 
+from libs.profiler import get_profiler
 from libs.timestamp import Timestamp
 
 logger = logging.getLogger(__name__)
@@ -272,6 +272,3 @@ class AgentStream(BaseModel, Generic[TState]):
                 chunks.append(chunk_text)
 
         logger.info(f"Agent text stream: {''.join(chunks)}")
-
-        with pf.interval("agent_stream.trigger_agent.flush_state_merger"):
-            self.state_merger.flush()

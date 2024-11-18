@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, TypeVar
+from typing import List, OrderedDict, TypeVar
 
 from agent_graph.event_descriptors import CodingEventType
 from agent_graph.types import NamedEntity, Signal, Step
@@ -213,7 +213,7 @@ INTRO_STEPS: List[Step] = [
     Step.from_info(
         name="discuss_projects",
         desc="Discuss the candidate's past projects and their role in them. Remember to praise interviewee on their achievement.",
-        done_definition="Interviewer has finished discussing the candidate's past projects and their role in them.",
+        done_definition="Interviewer has finished asking the questions about the candidate's past projects and their role in them.",
         required=True,
     ),
 ]
@@ -330,3 +330,13 @@ EVAL_SIGNALS: List[Signal] = [
         desc="User has asked questions about the interview process or the candidate.",
     ),
 ]
+
+
+def get_step_map() -> OrderedDict[StageTypes, List[Step]]:
+    return OrderedDict(
+        [
+            (StageTypes.INTRO, INTRO_STEPS),
+            (StageTypes.CODING, CODING_STEPS),
+            # (StageTypes.EVAL, EVAL_STEPS),
+        ]
+    )

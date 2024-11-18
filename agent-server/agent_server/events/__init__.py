@@ -36,13 +36,14 @@ from inspect import iscoroutinefunction
 from typing import Any, Callable, Coroutine, Generic, List, Type, TypeVar
 
 from agent_server.contexts.session import BaseSession
-from agent_server.utils.profiler import get_profiler
 from pydantic.v1 import BaseModel, PrivateAttr
+
+from libs.profiler import get_profiler
 
 logger = logging.getLogger(__name__)
 pf = get_profiler()
 
-TModel = TypeVar("TModel", bound=BaseModel)
+TModel = TypeVar("TModel")
 TSession = TypeVar("TSession", bound=BaseSession)
 
 
@@ -71,7 +72,9 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
     def event_name(self) -> str:
         raise NotImplementedError
 
-    def register_callback(self, callback: Callable[[TModel], None | Coroutine[Any, Any, None]]):
+    def register_callback(
+        self, callback: Callable[[TModel], None | Coroutine[Any, Any, None]]
+    ):
         """Register a callback function to be called when the event is published.
 
         Args:

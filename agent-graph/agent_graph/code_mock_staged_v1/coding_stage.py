@@ -1,6 +1,6 @@
 import time
 from collections import defaultdict
-from typing import Dict, List, Literal, cast
+from typing import Dict, List, Literal, OrderedDict, Set, cast
 
 from agent_graph.code_mock_staged_v1.constants import (
     AgentConfig,
@@ -40,17 +40,11 @@ class CodingStageState(EventMessageState):
 
     events: List[EventDescriptor] = Field(default_factory=list)
 
-    steps: Dict[StageTypes, List[Step]] = Field(
-        default_factory=lambda: defaultdict(list)
+    steps: OrderedDict[StageTypes, List[Step]] = Field(
+        default_factory=lambda: OrderedDict()
     )
 
-    signals: Dict[StageTypes, List[Signal]] = Field(
-        default_factory=lambda: defaultdict(list)
-    )
-
-    completed_steps: Dict[StageTypes, List[str]] = Field(
-        default_factory=lambda: defaultdict(list),
-    )
+    completed_steps: Set[str] = Field(default_factory=set)
 
     test_context: str | None = Field(
         default=None,
@@ -126,12 +120,12 @@ async def assistant(
     content = ""
     session_state = CodeSessionState(**state.session_state)
     session_metadata = SessionMetadata(**state.session_metadata)
+    coding_steps = set(map(lambda step: step.name, state.steps[StageTypes.CODING]))
     async for chunk in chain.astream(
         {
             "events": state.events,
             "steps": state.steps[StageTypes.CODING],
-            "completed_steps": state.completed_steps[StageTypes.CODING],
-            "signals": state.signals[StageTypes.CODING],
+            "completed_steps": state.completed_steps.union(coding_steps),
             "content": session_state.editor.content,
             "language": session_state.editor.language,
             "question": session_metadata.question_content,
@@ -164,7 +158,7 @@ async def decide_pre_generation_activities(
         edges.append("interrupter")
 
     # If the user has completed the prompt_explain_code step, start running ground truth tests
-    if "prompt_explain_code" in state.completed_steps[StageTypes.CODING]:
+    if "prompt_explain_code" in state.completed_steps:
         edges.append("test_code_correctness")
 
     # If no other activities are needed, directly call the assistant

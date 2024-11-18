@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Dict, List, cast
+from typing import Dict, List, OrderedDict, cast
 
 from agent_graph.code_mock_staged_v1.constants import (
     AgentConfig,
@@ -21,18 +21,14 @@ from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph, add_messages
 from langgraph.types import StreamWriter
-from pydantic.v1 import BaseModel, Field
+from pydantic.v1 import Field
 
 
 class IntroStageState(EventMessageState):
     """State for the intro stage of the agent."""
 
-    steps: Dict[StageTypes, List[Step]] = Field(
-        default_factory=lambda: defaultdict(list)
-    )
-
-    signals: Dict[StageTypes, List[Signal]] = Field(
-        default_factory=lambda: defaultdict(list)
+    steps: OrderedDict[StageTypes, List[Step]] = Field(
+        default_factory=lambda: OrderedDict()
     )
 
 
@@ -62,7 +58,6 @@ async def assistant(
         {
             "messages": state.messages,
             "steps": state.steps[StageTypes.INTRO],
-            "signals": state.signals[StageTypes.INTRO],
         }
     ):
         content += cast(str, chunk.content)

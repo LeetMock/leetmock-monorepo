@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Dict, List, cast
+from typing import List, OrderedDict, Set, cast
 
 from agent_graph.code_mock_staged_v1 import coding_stage, intro_stage, stage_tracker
 from agent_graph.code_mock_staged_v1.constants import (
@@ -15,6 +15,7 @@ from agent_graph.code_mock_staged_v1.constants import (
     format_testcase_changed_notification_messages,
     format_user_testcase_executed_notification_messages,
     get_next_stage,
+    get_step_map,
 )
 from agent_graph.code_mock_staged_v1.prompts import JOIN_CALL_MESSAGE, RECONNECT_MESSAGE
 from agent_graph.event_descriptors import EVENT_DESCRIPTORS, EventDescriptor
@@ -25,7 +26,11 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 from pydantic.v1 import Field
 
-from libs.convex.convex_types import CodeSessionContentChangedEvent, CodeSessionTestcaseChangedEvent, CodeSessionUserTestcaseExecutedEvent
+from libs.convex.convex_types import (
+    CodeSessionContentChangedEvent,
+    CodeSessionTestcaseChangedEvent,
+    CodeSessionUserTestcaseExecutedEvent,
+)
 from libs.types import MessageWrapper
 
 
@@ -47,24 +52,14 @@ class AgentState(EventMessageState):
         description="Event descriptors for the agent",
     )
 
-    steps: Dict[StageTypes, List[Step]] = Field(
+    steps: OrderedDict[StageTypes, List[Step]] = Field(
         default_factory=lambda: defaultdict(list),
         description="Steps for the agent",
     )
 
-    signals: Dict[StageTypes, List[Signal]] = Field(
-        default_factory=lambda: defaultdict(list),
-        description="Signals for the agent",
-    )
-
-    completed_steps: Dict[StageTypes, List[str]] = Field(
-        default_factory=lambda: defaultdict(list),
+    completed_steps: Set[str] = Field(
+        default_factory=set,
         description="Completed steps for the agent",
-    )
-
-    caught_signals: Dict[StageTypes, List[str]] = Field(
-        default_factory=lambda: defaultdict(list),
-        description="Caught signals for the agent",
     )
 
     test_context: str | None = Field(
@@ -75,33 +70,12 @@ class AgentState(EventMessageState):
 
 # --------------------- agent graph nodes --------------------- #
 async def init_state(_: AgentState):
-    messages = [HumanMessage(content=JOIN_CALL_MESSAGE)]
-    stages = [StageTypes.INTRO, StageTypes.CODING, StageTypes.EVAL]
-    events = EVENT_DESCRIPTORS
-
-    steps = {
-        StageTypes.INTRO: INTRO_STEPS,
-        StageTypes.CODING: CODING_STEPS,
-        StageTypes.EVAL: EVAL_STEPS,
-    }
-
-    signals = {
-        StageTypes.INTRO: INTRO_SIGNALS,
-        StageTypes.CODING: CODING_SIGNALS,
-        StageTypes.EVAL: EVAL_SIGNALS,
-    }
-
-    completed_steps = {stage: [] for stage in stages}
-    caught_signals = {stage: [] for stage in stages}
-
     return dict(
         initialized=True,
-        messages=messages,
-        events=events,
-        steps=steps,
-        signals=signals,
-        completed_steps=completed_steps,
-        caught_signals=caught_signals,
+        messages=[HumanMessage(content=JOIN_CALL_MESSAGE)],
+        events=EVENT_DESCRIPTORS,
+        steps=get_step_map(),
+        completed_steps=set(),
     )
 
 
@@ -113,6 +87,11 @@ async def on_event(
             [HumanMessage(content=RECONNECT_MESSAGE)] if len(state.messages) > 5 else []
         )
         return with_event_reset(trigger=True, messages=messages)
+
+    if state.event == "step_tracking":
+        step_name = cast(str, state.event_data)
+        state.completed_steps.add(step_name)
+        return with_event_reset(trigger=False, completed_steps=state.completed_steps)
 
     if state.event == "user_message":
         messages = cast(MessageWrapper, state.event_data).messages
@@ -148,13 +127,8 @@ async def on_trigger(state: AgentState):
 
 
 async def decide_next_stage(state: AgentState):
-    stage_steps = state.steps[state.current_stage]
-    required_step_names = [step.name for step in stage_steps if step.required]
-    completed_step_names = state.completed_steps[state.current_stage]
-
-    completed_stage_steps = (
-        len(set(required_step_names) - set(completed_step_names)) == 0
-    )
+    stage_steps = set([step.name for step in state.steps[state.current_stage]])
+    completed_stage_steps = len(stage_steps - state.completed_steps) == 0
     next_stage = (
         get_next_stage(state.current_stage)
         if completed_stage_steps
@@ -200,7 +174,6 @@ def create_graph():
         .add_node("on_event", on_event)
         .add_node("on_trigger", on_trigger)
         .add_node("decide_next_stage", decide_next_stage)
-        .add_node("stage_tracker", stage_tracker.create_compiled_graph())
         .add_node(StageTypes.INTRO, intro_stage.create_compiled_graph())
         .add_node(StageTypes.CODING, coding_stage.create_compiled_graph())
         # edges
@@ -220,9 +193,8 @@ def create_graph():
             path=select_stage,
             path_map=[StageTypes.INTRO, StageTypes.CODING, END],
         )
-        .add_edge(StageTypes.INTRO, "stage_tracker")
-        .add_edge(StageTypes.CODING, "stage_tracker")
-        .add_edge("stage_tracker", "decide_next_stage")
+        .add_edge(StageTypes.INTRO, "decide_next_stage")
+        .add_edge(StageTypes.CODING, "decide_next_stage")
         .add_edge("decide_next_stage", END)
     )
 
