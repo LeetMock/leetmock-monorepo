@@ -5,16 +5,20 @@ import random
 from operator import itemgetter
 from typing import Any, Awaitable, Callable, Coroutine, Dict, List
 
+from agent_graph.code_mock_staged_v1.graph import AgentState
 from agent_graph.code_mock_staged_v1.prompts import SIMPLE_STEP_TRACKING_PROMPT
 from agent_graph.code_mock_staged_v1.schemas import TrackStep
 from agent_graph.state_merger import StateMerger
 from agent_graph.types import EventMessageState, Step
 from agent_graph.utils import wrap_xml
+from agent_server.utils.logger import get_logger
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, AnyMessage
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
 from langchain_core.runnables import Runnable, RunnableLambda
 from pydantic.v1 import BaseModel, Field, PrivateAttr
+
+logger = get_logger(__name__)
 
 Emit = Callable[[], None]
 SignalEmitter = Callable[[Emit], Coroutine[Any, Any, None]]
@@ -78,11 +82,13 @@ class StepTracker(BaseModel):
         return cls(tracker_config=config)
 
     async def _track_step_completion(self):
+        logger.info("Step tracker tracking step")
         finished = await self.tracker_config.on_track()
         if finished and not self._step_completion_fut.done():
             self._step_completion_fut.set_result(True)
 
     def _emit(self):
+        logger.info("Step tracker emitting")
         if self._step_completion_fut.done():
             return
         asyncio.create_task(self._track_step_completion())
@@ -116,7 +122,7 @@ class StepTracker(BaseModel):
 
 def create_llm_step_tracker(
     step: Step,
-    state_merger: StateMerger[EventMessageState],
+    state_merger: StateMerger[AgentState],
     llm: BaseChatModel,
     state_update_queue: asyncio.Queue[Dict],
     signal_emitter: SignalEmitter | List[SignalEmitter],
@@ -158,7 +164,7 @@ def create_llm_step_tracker(
         RunnableLambda(get_state_fn)
         # Prepare prompt input variables
         | {
-            "step": step,
+            "step": lambda _: step,
             "messages": itemgetter("messages"),
         }
         # Format the prompt
@@ -188,9 +194,13 @@ def create_llm_step_tracker(
 def emit_interval_fixed(interval: float):
     """Emit a signal at a fixed interval"""
 
+    logger.info(f"Step tracker emitting at interval: {interval}")
+
     async def emit_signal(emit: Emit):
         while True:
+            logger.info("Step tracker sleeping")
             await asyncio.sleep(interval)
+            logger.info("Step tracker emitting")
             emit()
 
     return emit_signal

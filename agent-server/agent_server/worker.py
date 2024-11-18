@@ -147,9 +147,9 @@ async def entrypoint(ctx: JobContext):
         before_llm_cb=before_llm_callback,
     )
 
-    @assistant.on("metrics_collected")
-    def on_metrics_collected(metrics):
-        logger.info(f"[metrics_collected] {metrics}")
+    # @assistant.on("metrics_collected")
+    # def on_metrics_collected(metrics):
+    #     logger.info(f"[metrics_collected] {metrics}")
 
     agent_name = "code-mock-staged-v1"
 
@@ -181,7 +181,7 @@ async def entrypoint(ctx: JobContext):
         stream=agent_stream,
         state_update_q=state_update_q,
         events=[
-            ReminderEvent(assistant=assistant),
+            ReminderEvent(assistant=assistant, repeated=True),
             CodeEditorChangedEvent(session=session, assistant=assistant),
             UserTestcaseExecutedEvent(session=session),
             GroundTruthTestcaseExecutedEvent(session=session),

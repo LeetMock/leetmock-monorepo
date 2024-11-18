@@ -34,6 +34,7 @@ from typing import Any, Dict, List, OrderedDict
 
 from agent_graph.chains.step_tracker import create_llm_step_tracker, emit_interval_fixed
 from agent_graph.code_mock_staged_v1.constants import StageTypes
+from agent_graph.code_mock_staged_v1.graph import AgentState
 from agent_graph.llms import get_model
 from agent_graph.state_merger import StateMerger
 from agent_graph.types import EventMessageState, Step
@@ -308,7 +309,7 @@ class UserMessageEvent(BaseEvent[MessageWrapper]):
 class StepTrackingEvent(BaseEvent[str]):
     """Event for monitoring step tracking."""
 
-    state_merger: StateMerger[EventMessageState]
+    state_merger: StateMerger[AgentState]
 
     state_update_queue: asyncio.Queue[Dict]
 
@@ -330,11 +331,16 @@ class StepTrackingEvent(BaseEvent[str]):
     async def _track_agent_steps_task(self):
         for steps in self.step_map.values():
             for step in steps:
-                logger.info(f"Tracking step: {step.name}")
+                state = await self.state_merger.get_state()
+                if step.name in state.completed_steps:
+                    logger.info(f"Step tracking already completed: {step.name}")
+                    continue
+
+                logger.info(f"Step tracking started: {step.name}")
                 tracker = self._get_llm_step_tracker(step)
                 await tracker.wait()
                 self.emit(step.name)
-                logger.info(f"Step completed: {step.name}")
+                logger.info(f"Step tracking completed: {step.name}")
 
     def setup(self):
         asyncio.create_task(self._track_agent_steps_task())
