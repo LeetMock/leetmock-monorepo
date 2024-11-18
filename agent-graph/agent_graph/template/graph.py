@@ -1,6 +1,6 @@
 from typing import Annotated, List
 
-from agent_graph.constants import JOIN_CALL_MESSAGE
+from agent_graph.prompts import JOIN_CALL_MESSAGE
 from agent_graph.template.stage_subgraph import (
     create_compiled_graph as create_stage_subgraph,
 )

@@ -1,14 +1,8 @@
 from collections import defaultdict
 from typing import List, OrderedDict, Set, cast
 
-from agent_graph.code_mock_staged_v1 import coding_stage, intro_stage, stage_tracker
+from agent_graph.code_mock_staged_v1 import coding_stage, intro_stage
 from agent_graph.code_mock_staged_v1.constants import (
-    CODING_SIGNALS,
-    CODING_STEPS,
-    EVAL_SIGNALS,
-    EVAL_STEPS,
-    INTRO_SIGNALS,
-    INTRO_STEPS,
     AgentConfig,
     StageTypes,
     format_content_changed_notification_messages,
@@ -17,8 +11,8 @@ from agent_graph.code_mock_staged_v1.constants import (
     get_next_stage,
     get_step_map,
 )
-from agent_graph.code_mock_staged_v1.prompts import JOIN_CALL_MESSAGE, RECONNECT_MESSAGE
 from agent_graph.event_descriptors import EVENT_DESCRIPTORS, EventDescriptor
+from agent_graph.prompts import JOIN_CALL_MESSAGE, RECONNECT_MESSAGE
 from agent_graph.types import EventMessageState, Signal, Step
 from agent_graph.utils import with_event_reset, with_trigger_reset
 from langchain_core.messages import HumanMessage

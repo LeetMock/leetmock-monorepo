@@ -1,8 +1,15 @@
-from typing import Any, Dict, List
+from typing import List
 
 from langchain_core.prompts import PromptTemplate
 
 from libs.convex.convex_types import TestcaseResult
+
+JOIN_CALL_MESSAGE = (
+    "(User just joined the call, please welcome and introduce yourself:)"
+)
+
+RECONNECT_MESSAGE = "(User got disconnected and just reconnected, you would say:)"
+
 
 TESTCASE_INTERNAL_ERROR_PROMPT = """
 Below are the test results for the code candidate wrote.
