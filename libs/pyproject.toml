@@ -11,6 +11,7 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.12,<3.13"
 convex_client = { path = "../convex-client", develop = true }
+mypy = "^1.13.0"
 
 [build-system]
 requires = ["poetry-core"]

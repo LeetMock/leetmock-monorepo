@@ -31,7 +31,6 @@ from langgraph.types import StreamWriter
 from pydantic.v1 import BaseModel, Field
 
 from libs.convex.api import ConvexApi
-from libs.convex.convex_requests import create_test_code_correctness_request
 from libs.convex.convex_types import CodeSessionState, SessionMetadata
 
 
@@ -50,27 +49,6 @@ class CodingStageState(EventMessageState):
         default=None,
     )
 
-
-async def test_code_correctness(state: CodingStageState, config: RunnableConfig):
-    agent_config = get_configurable(AgentConfig, config)
-    question_id = SessionMetadata(**state.session_metadata).question_id
-    request = create_test_code_correctness_request(
-        language="python",
-        code=CodeSessionState(**state.session_state).editor.content,
-        question_id=question_id,
-        session_id=SessionMetadata(**state.session_metadata).session_id,
-    )
-
-    try:
-        api = ConvexApi(convex_url=agent_config.convex_url)
-        response = api.action.api_run_actions_run_tests_post(request)
-        assert response.value is not None and response.value.test_results is not None
-        testcase_results = response.value.test_results
-    except Exception:
-        return None
-
-    test_context = format_test_context(testcase_results)
-    return dict(test_context=test_context)
 
 
 async def interrupter(_: CodingStageState):
@@ -147,7 +125,7 @@ async def assistant(
 # --------------------- stage subgraph edges --------------------- #
 async def decide_pre_generation_activities(
     state: CodingStageState,
-) -> List[Literal["assistant", "test_code_correctness", "interrupter"]]:
+) -> List[Literal["assistant", "interrupter"]]:
     edges = []
     time_diff = int(
         time.time() - CodeSessionState(**state.session_state).editor.last_updated / 1000
@@ -157,9 +135,6 @@ async def decide_pre_generation_activities(
     if time_diff < 2:
         edges.append("interrupter")
 
-    # If the user has completed the prompt_explain_code step, start running ground truth tests
-    if "prompt_explain_code" in state.completed_steps:
-        edges.append("test_code_correctness")
 
     # If no other activities are needed, directly call the assistant
     if len(edges) == 0:
@@ -172,16 +147,14 @@ def create_graph():
     return (
         StateGraph(CodingStageState, AgentConfig)
         # nodes
-        .add_node("test_code_correctness", test_code_correctness)
         .add_node("interrupter", interrupter)
         .add_node("assistant", assistant)  # type: ignore
         # edges
         .add_conditional_edges(
             source=START,
             path=decide_pre_generation_activities,
-            path_map=["assistant", "test_code_correctness", "interrupter"],
+            path_map=["assistant", "interrupter"],
         )
-        .add_edge("test_code_correctness", "assistant")
         .add_edge("interrupter", "assistant")
         .add_edge("assistant", END)
     )

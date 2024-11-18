@@ -36,16 +36,20 @@ from agent_graph.chains.emitters import emit_interval_fixed, emit_stop_after
 from agent_graph.chains.step_tracker import SignalEmitter, create_llm_step_tracker
 from agent_graph.code_mock_staged_v1.graph import AgentState
 from agent_graph.llms import get_model
+from agent_graph.prompts import format_static_check_error, format_test_context
 from agent_graph.state_merger import StateMerger
 from agent_graph.types import Step
 from agent_server.contexts.session import CodeSession, CodeSessionEventTypes
 from agent_server.events import BaseEvent
 from debouncer import debounce
+from libs.convex.api import ConvexApi
+from libs.convex.convex_requests import create_test_code_correctness_request
+from libs.helpers import static_check_with_mypy
 from livekit.agents.voice_assistant import VoiceAssistant
 from pydantic import StrictStr
 from pydantic.v1 import BaseModel, Field, PrivateAttr
 
-from libs.convex.convex_types import CodeSessionContentChangedEvent
+from libs.convex.convex_types import CodeSessionContentChangedEvent, CodeSessionState, SessionMetadata
 from libs.types import MessageWrapper
 
 logger = logging.getLogger(__name__)
@@ -256,16 +260,79 @@ class GroundTruthTestcaseExecutedEvent(BaseEvent[Any]):
 
     session: CodeSession
 
+    convex_api: ConvexApi
+    
+    _prev_code: StrictStr | None = PrivateAttr(default=None)
+    
+    delay: float = Field(
+        default=10, description="The delay in seconds before emitting the event."
+    )
+
     @property
     def event_name(self) -> str:
         return "ground_truth_testcase_executed"
+            
+    async def run_ground_truth_tests(self):
+        while True:
+            if self._prev_code is None:
+                self._prev_code = self.session.session_state.editor.content
+            else:
+                current_code = self.session.session_state.editor.content
+                
+                if current_code == self._prev_code:
+                    logger.info("Code hasn't changed, skipping")
+                    await asyncio.sleep(self.delay)
+                    continue
+            try:
+                self._prev_code = current_code
+                
+                # Run static type checking first
+                static_check_error = self._static_code_check(current_code)
+                if static_check_error:
+                    print(f"Emitting static check error: {static_check_error}")
+                    # Emit formatted static check error and the graph should pick it up
+                    self.emit(format_static_check_error(static_check_error))
+                else:
+                    logger.info("No static check error, running tests")
+                    # Get current testcases
+                    request = create_test_code_correctness_request(
+                        language="python",
+                        code=self.session.session_state.editor.content,
+                        question_id=self.session.session_metadata.question_id,
+                        session_id=self.session.session_metadata.session_id,
+                    )
+
+                    response = self.convex_api.action.api_run_actions_run_tests_post(request)
+                    
+                    assert response.value is not None and response.value.test_results is not None, "No test results"
+                    testcase_results = response.value.test_results
+                    
+                    # Emit formatted test results and the graph should pick it up
+                    self.emit(format_test_context(testcase_results))
+            except Exception as e:
+                if isinstance(e, AssertionError) and "No test results" in str(e):
+                    logger.info("No test results, skipping emit")
+                else:
+                    logger.error(f"Error running ground truth tests: {e}, retrying in {self.delay} seconds")
+            
+            await asyncio.sleep(self.delay)  # Wait before retrying on error
 
     def setup(self):
-        # TODO: Implement
-        # USE LCEL: https://python.langchain.com/docs/introduction/
-        # model.with_structured_outputs(BaseModel)
-        # experiment with different LLMs openai gpt-4o gpt-o1-mini claude-35-sonnet (new)
-        pass
+        """Set up the ground truth testcase execution event.
+        
+        This method:
+        1. Sets up a periodic task to run ground truth testcases each 10 seconds
+        2. Validates code with static type checking
+        3. Emits results for agent processing
+        """
+        # Register callback to run tests when code changes, debounced by 10 seconds
+        # self.session.on("content_changed", debounce(wait=10)(self.run_ground_truth_tests))
+        
+        # Start the periodic test execution task
+        asyncio.create_task(self.run_ground_truth_tests())
+    
+    def _static_code_check(self, code: str) -> str:
+        return static_check_with_mypy(code)
 
 
 class UserMessageEvent(BaseEvent[MessageWrapper]):
