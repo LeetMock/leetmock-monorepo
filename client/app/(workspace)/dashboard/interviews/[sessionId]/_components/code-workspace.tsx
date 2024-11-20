@@ -3,6 +3,7 @@
 import { Wait } from "@/components/wait";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { useAgentData } from "@/hooks/use-agent";
 import { useConnection } from "@/hooks/use-connection";
 import { useEditorStore } from "@/hooks/use-editor-store";
 import { useResizePanel } from "@/hooks/use-resize-panel";
@@ -15,6 +16,7 @@ import { redirect } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { useWindowSize } from "usehooks-ts";
+import { AgentTranscripts } from "./agent-transcripts";
 import { CodeEditorPanel } from "./code-editor-panel";
 import { CodeQuestionPanel } from "./code-question-panel";
 import { WorkspaceToolbar } from "./workspace-toolbar";
@@ -22,9 +24,14 @@ import { WorkspaceToolbar } from "./workspace-toolbar";
 export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { disconnect } = useConnection();
   const connectionState = useConnectionState();
+
   const { localParticipant } = useLocalParticipant();
+  const { agentAudioTrack } = useAgentData();
 
   const session = useQuery(api.sessions.getById, { sessionId });
+  const codeSessionState = useQuery(api.codeSessionStates.get, {
+    sessionId,
+  });
   const question = useQuery(api.questions.getById, { questionId: session?.questionId });
 
   const { width: windowWidth = 300 } = useWindowSize();
@@ -75,59 +82,44 @@ export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ session
         {({ sessionData }) => <WorkspaceToolbar session={sessionData} />}
       </Wait>
       <div className="w-full h-full flex justify-center items-center">
-        <Wait
-          data={{ questionData, question }}
-          fallback={
-            <div className="flex flex-col space-y-2 items-center justify-center h-full w-full border rounded-md shadow-md bg-background">
-              <LucideFileText className="w-10 h-10 text-muted-foreground" />
-              <span className="text-muted-foreground">Loading</span>
-            </div>
-          }
-        >
-          {({ questionData, question }) => (
-            <>
-              <CodeQuestionPanel
-                className="border rounded-md shadow-md shrink-0"
-                style={{ width: size }}
-                question={questionData}
-              />
-              <div
-                className={cn(
-                  "w-px h-full cursor-ew-resize px-1 transition-all hover:bg-muted-foreground/10 flex-0 rounded-full relative",
-                  isResizing ? "bg-muted-foreground/10" : "bg-transparent"
-                )}
-                {...resizeHandleProps}
-              >
-                <div className="absolute inset-0 flex justify-center items-center">
-                  <div className="h-9 w-[3px] rounded-full bg-muted-foreground/50"></div>
-                </div>
+        {codeSessionState?.stage === "coding" && (
+          <Wait
+            data={{ questionData, question }}
+            fallback={
+              <div className="flex flex-col space-y-2 items-center justify-center h-full w-full border rounded-md shadow-md bg-background">
+                <LucideFileText className="w-10 h-10 text-muted-foreground" />
+                <span className="text-muted-foreground">Loading</span>
               </div>
-              <CodeEditorPanel sessionId={sessionId} questionId={question._id} />
-            </>
-          )}
-        </Wait>
-
-        {/* <div className="w-[24rem] h-full p-2 flex flex-col space-y-4">
-            <div className="mt-4 p-3 border rounded-md">
-              <div className="text-sm font-medium flex justify-between items-center space-x-2">
-                <div className="flex items-center space-x-1.5">
-                  <span>Agent Status:</span>
-                  {isAgentConnected ? (
-                    <span className="text-green-500 mt-[1px]">Connected</span>
-                  ) : (
-                    <span className="text-red-500 mt-[1px]">Disconnected</span>
-                  )}
-                </div>
-                <LucideVolume2
-                  className={cn(
-                    "w-4 h-4 opacity-0 text-blue-500",
-                    isAgentSpeaking ? "opacity-100" : ""
-                  )}
+            }
+          >
+            {({ questionData, question }) => (
+              <>
+                <CodeQuestionPanel
+                  className="border rounded-md shadow-md shrink-0"
+                  style={{ width: size }}
+                  question={questionData}
                 />
-              </div>
-            </div>
+                <div
+                  className={cn(
+                    "w-px h-full cursor-ew-resize px-1 transition-all hover:bg-muted-foreground/10 flex-0 rounded-full relative",
+                    isResizing ? "bg-muted-foreground/10" : "bg-transparent"
+                  )}
+                  {...resizeHandleProps}
+                >
+                  <div className="absolute inset-0 flex justify-center items-center">
+                    <div className="h-9 w-[3px] rounded-full bg-muted-foreground/50"></div>
+                  </div>
+                </div>
+                <CodeEditorPanel sessionId={sessionId} questionId={question._id} />
+              </>
+            )}
+          </Wait>
+        )}
+        {codeSessionState?.stage === "intro" && (
+          <div className="w-[40rem] h-[40rem] p-2 flex flex-col space-y-4 bg-background rounded-md shadow-md">
             <AgentTranscripts agentAudioTrack={agentAudioTrack} />
-          </div> */}
+          </div>
+        )}
       </div>
     </>
   );

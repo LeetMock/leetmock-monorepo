@@ -12,7 +12,10 @@ from livekit.agents.utils import EventEmitter
 from pydantic import BaseModel
 
 from libs.convex.api import ConvexApi
-from libs.convex.convex_requests import create_get_session_metadata_request
+from libs.convex.convex_requests import (
+    create_commit_code_session_event_request,
+    create_get_session_metadata_request,
+)
 from libs.convex.convex_types import (
     CodeSessionContentChangedEvent,
     CodeSessionGroundTruthTestcaseExecutedEvent,
@@ -204,7 +207,35 @@ class CodeSession(BaseSession[CodeSessionEventTypes, AgentState]):
         Updates the internal session state and completes the sync future
         when the initial state is received.
         """
-        pass
+
+        if prev.current_stage != curr.current_stage:
+            assert (
+                self._session_id is not None
+            ), "Session ID must be set before committing events"
+
+            logger.info(
+                f"Committing stage_switched code session event: {curr.current_stage.value}"
+            )
+            # self._api.mutation.api_run_code_session_events_commit_code_session_event_post(
+            #     create_commit_code_session_event_request(
+            #         self._session_id, curr.current_stage
+            #     )
+            # )
+
+            self._api.mutation_unsafe(
+                name="codeSessionEvents:commitCodeSessionEvent",
+                args={
+                    "sessionId": self._session_id,
+                    "event": {
+                        "type": "stage_switched",
+                        "data": {"stage": curr.current_stage.value},
+                    },
+                },
+            )
+
+            logger.info(
+                f"Committed stage_switched code session event: {curr.current_stage}"
+            )
 
     async def setup(
         self,

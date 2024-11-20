@@ -23,12 +23,11 @@ from convex_client.models.request_code_session_events_commit_code_session_event_
 from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of3 import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3
 from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of4 import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4
 from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of5 import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5
-from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of6 import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6
 from pydantic import StrictStr, Field
 from typing import Union, List, Set, Optional, Dict
 from typing_extensions import Literal, Self
 
-REQUESTCODESESSIONEVENTSCOMMITCODESESSIONEVENTARGSEVENT_ONE_OF_SCHEMAS = ["RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6"]
+REQUESTCODESESSIONEVENTSCOMMITCODESESSIONEVENTARGSEVENT_ONE_OF_SCHEMAS = ["RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5"]
 
 class RequestCodeSessionEventsCommitCodeSessionEventArgsEvent(BaseModel):
     """
@@ -46,10 +45,10 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEvent(BaseModel):
     oneof_schema_5_validator: Optional[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4] = None
     # data type: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5
     oneof_schema_6_validator: Optional[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5] = None
-    # data type: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6
-    oneof_schema_7_validator: Optional[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6] = None
-    actual_instance: Optional[Union[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6]] = None
-    one_of_schemas: Set[str] = { "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6" }
+    # data type: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2
+    oneof_schema_7_validator: Optional[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2] = None
+    actual_instance: Optional[Union[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5]] = None
+    one_of_schemas: Set[str] = { "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5" }
 
     model_config = ConfigDict(
         validate_assignment=True,
@@ -102,17 +101,17 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEvent(BaseModel):
             error_messages.append(f"Error! Input type `{type(v)}` is not `RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5`")
         else:
             match += 1
-        # validate data type: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6
-        if not isinstance(v, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6):
-            error_messages.append(f"Error! Input type `{type(v)}` is not `RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6`")
+        # validate data type: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2
+        if not isinstance(v, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2):
+            error_messages.append(f"Error! Input type `{type(v)}` is not `RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2`")
         else:
             match += 1
         if match > 1:
             # more than 1 match
-            raise ValueError("Multiple matches found when setting `actual_instance` in RequestCodeSessionEventsCommitCodeSessionEventArgsEvent with oneOf schemas: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6. Details: " + ", ".join(error_messages))
+            raise ValueError("Multiple matches found when setting `actual_instance` in RequestCodeSessionEventsCommitCodeSessionEventArgsEvent with oneOf schemas: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5. Details: " + ", ".join(error_messages))
         elif match == 0:
             # no match
-            raise ValueError("No match found when setting `actual_instance` in RequestCodeSessionEventsCommitCodeSessionEventArgsEvent with oneOf schemas: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6. Details: " + ", ".join(error_messages))
+            raise ValueError("No match found when setting `actual_instance` in RequestCodeSessionEventsCommitCodeSessionEventArgsEvent with oneOf schemas: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5. Details: " + ", ".join(error_messages))
         else:
             return v
 
@@ -163,19 +162,19 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEvent(BaseModel):
             match += 1
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
-        # deserialize data into RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6
+        # deserialize data into RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2
         try:
-            instance.actual_instance = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6.from_json(json_str)
+            instance.actual_instance = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2.from_json(json_str)
             match += 1
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
 
         if match > 1:
             # more than 1 match
-            raise ValueError("Multiple matches found when deserializing the JSON string into RequestCodeSessionEventsCommitCodeSessionEventArgsEvent with oneOf schemas: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6. Details: " + ", ".join(error_messages))
+            raise ValueError("Multiple matches found when deserializing the JSON string into RequestCodeSessionEventsCommitCodeSessionEventArgsEvent with oneOf schemas: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5. Details: " + ", ".join(error_messages))
         elif match == 0:
             # no match
-            raise ValueError("No match found when deserializing the JSON string into RequestCodeSessionEventsCommitCodeSessionEventArgsEvent with oneOf schemas: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6. Details: " + ", ".join(error_messages))
+            raise ValueError("No match found when deserializing the JSON string into RequestCodeSessionEventsCommitCodeSessionEventArgsEvent with oneOf schemas: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5. Details: " + ", ".join(error_messages))
         else:
             return instance
 
@@ -189,7 +188,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEvent(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6]]:
+    def to_dict(self) -> Optional[Union[Dict[str, Any], RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5]]:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

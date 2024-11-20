@@ -37,18 +37,18 @@ class TestResponseCodeSessionStatesGetValue(unittest.TestCase):
             return ResponseCodeSessionStatesGetValue(
                 creation_time = 1.337,
                 id = '',
-                display_question = True,
                 editor = convex_client.models.response_code_session_states_get_value_editor.Response_codeSessionStates_get_value_editor(
                     content = '', 
                     language = '', 
                     last_updated = 1.337, ),
                 session_id = '',
+                stage = '',
                 terminal = convex_client.models.response_code_session_states_get_value_terminal.Response_codeSessionStates_get_value_terminal(
                     execution_time = 1.337, 
                     is_error = True, 
                     output = '', ),
                 testcases = [
-                    convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data_after_inner(
+                    convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_3_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_3_data_after_inner(
                         expected_output = null, 
                         input = convex_client.models.input.input(), )
                     ]
@@ -57,18 +57,18 @@ class TestResponseCodeSessionStatesGetValue(unittest.TestCase):
             return ResponseCodeSessionStatesGetValue(
                 creation_time = 1.337,
                 id = '',
-                display_question = True,
                 editor = convex_client.models.response_code_session_states_get_value_editor.Response_codeSessionStates_get_value_editor(
                     content = '', 
                     language = '', 
                     last_updated = 1.337, ),
                 session_id = '',
+                stage = '',
                 terminal = convex_client.models.response_code_session_states_get_value_terminal.Response_codeSessionStates_get_value_terminal(
                     execution_time = 1.337, 
                     is_error = True, 
                     output = '', ),
                 testcases = [
-                    convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data_after_inner(
+                    convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_3_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_3_data_after_inner(
                         expected_output = null, 
                         input = convex_client.models.input.input(), )
                     ],

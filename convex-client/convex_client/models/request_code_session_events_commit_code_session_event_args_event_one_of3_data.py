@@ -19,16 +19,16 @@ import json
 
 from pydantic import BaseModel, ConfigDict
 from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of5_data_after_inner import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner
+from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of3_data_after_inner import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5Data(BaseModel):
+class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3Data(BaseModel):
     """
-    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5Data
+    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3Data
     """ # noqa: E501
-    after: List[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner]
-    before: List[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner]
+    after: List[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner]
+    before: List[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner]
     __properties: ClassVar[List[str]] = ["after", "before"]
 
     model_config = ConfigDict(
@@ -49,7 +49,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5Data(BaseMode
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5Data from a JSON string"""
+        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3Data from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -88,7 +88,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5Data(BaseMode
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5Data from a dict"""
+        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3Data from a dict"""
         if obj is None:
             return None
 
@@ -96,8 +96,8 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5Data(BaseMode
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "after": [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner.from_dict(_item) for _item in obj["after"]] if obj.get("after") is not None else None,
-            "before": [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner.from_dict(_item) for _item in obj["before"]] if obj.get("before") is not None else None
+            "after": [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner.from_dict(_item) for _item in obj["after"]] if obj.get("after") is not None else None,
+            "before": [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner.from_dict(_item) for _item in obj["before"]] if obj.get("before") is not None else None
         })
         return _obj
 

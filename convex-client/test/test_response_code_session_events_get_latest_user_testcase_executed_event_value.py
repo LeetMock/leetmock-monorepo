@@ -35,8 +35,8 @@ class TestResponseCodeSessionEventsGetLatestUserTestcaseExecutedEventValue(unitt
         model = ResponseCodeSessionEventsGetLatestUserTestcaseExecutedEventValue()
         if include_optional:
             return ResponseCodeSessionEventsGetLatestUserTestcaseExecutedEventValue(
-                event = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_6.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_6(
-                    data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_6_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_6_data(
+                event = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_4.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_4(
+                    data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_4_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_4_data(
                         test_results = [
                             convex_client.models.response_actions_run_tests_value_test_results_inner.Response_actions_runTests_value_testResults_inner(
                                 actual = null, 
@@ -53,8 +53,8 @@ class TestResponseCodeSessionEventsGetLatestUserTestcaseExecutedEventValue(unitt
             )
         else:
             return ResponseCodeSessionEventsGetLatestUserTestcaseExecutedEventValue(
-                event = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_6.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_6(
-                    data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_6_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_6_data(
+                event = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_4.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_4(
+                    data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_4_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_4_data(
                         test_results = [
                             convex_client.models.response_actions_run_tests_value_test_results_inner.Response_actions_runTests_value_testResults_inner(
                                 actual = null, 

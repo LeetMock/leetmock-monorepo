@@ -19,7 +19,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Union
-from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of6 import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6
+from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of4 import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -27,7 +27,7 @@ class ResponseCodeSessionEventsGetLatestUserTestcaseExecutedEventValue(BaseModel
     """
     ResponseCodeSessionEventsGetLatestUserTestcaseExecutedEventValue
     """ # noqa: E501
-    event: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6
+    event: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4
     id: StrictStr = Field(description="ID from table \"codeSessionEvents\"")
     ts: Union[StrictFloat, StrictInt]
     __properties: ClassVar[List[str]] = ["event", "id", "ts"]
@@ -86,7 +86,7 @@ class ResponseCodeSessionEventsGetLatestUserTestcaseExecutedEventValue(BaseModel
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "event": RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6.from_dict(obj["event"]) if obj.get("event") is not None else None,
+            "event": RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4.from_dict(obj["event"]) if obj.get("event") is not None else None,
             "id": obj.get("id"),
             "ts": obj.get("ts")
         })

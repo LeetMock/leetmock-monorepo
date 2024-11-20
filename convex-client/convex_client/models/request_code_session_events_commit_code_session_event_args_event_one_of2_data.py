@@ -17,26 +17,17 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, StrictStr
 from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of6_data import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6(BaseModel):
+class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data(BaseModel):
     """
-    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6
+    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data
     """ # noqa: E501
-    data: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data
-    type: StrictStr
-    __properties: ClassVar[List[str]] = ["data", "type"]
-
-    @field_validator('type')
-    def type_validate_enum(cls, value):
-        """Validates the enum"""
-        if value not in set(['user_testcase_executed']):
-            raise ValueError("must be one of enum values ('user_testcase_executed')")
-        return value
+    stage: StrictStr
+    __properties: ClassVar[List[str]] = ["stage"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -56,7 +47,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6 from a JSON string"""
+        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -77,14 +68,11 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of data
-        if self.data:
-            _dict['data'] = self.data.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6 from a dict"""
+        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data from a dict"""
         if obj is None:
             return None
 
@@ -92,8 +80,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "data": RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data.from_dict(obj["data"]) if obj.get("data") is not None else None,
-            "type": obj.get("type")
+            "stage": obj.get("stage")
         })
         return _obj
 

@@ -52,7 +52,7 @@ const schema = defineEntSchema({
     .index("by_user_id", ["userId"])
     .index("by_user_id_and_status", ["userId", "sessionStatus"]),
   codeSessionStates: defineEnt({
-    displayQuestion: v.boolean(),
+    stage: v.string(),
     editor: v.object({
       language: v.string(),
       content: v.string(),
@@ -63,10 +63,12 @@ const schema = defineEntSchema({
       isError: v.boolean(),
       executionTime: v.optional(v.number()),
     }),
-    testcases: v.array(v.object({
-      input: v.record(v.string(), v.any()),
-      expectedOutput: v.optional(v.any()),
-    })),
+    testcases: v.array(
+      v.object({
+        input: v.record(v.string(), v.any()),
+        expectedOutput: v.optional(v.any()),
+      })
+    ),
   })
     .deletion("soft")
     .edge("session")

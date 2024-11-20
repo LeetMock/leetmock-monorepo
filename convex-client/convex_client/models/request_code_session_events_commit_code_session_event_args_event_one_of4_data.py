@@ -23,9 +23,9 @@ from convex_client.models.response_actions_run_tests_value_test_results_inner im
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data(BaseModel):
+class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(BaseModel):
     """
-    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data
+    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data
     """ # noqa: E501
     test_results: List[ResponseActionsRunTestsValueTestResultsInner] = Field(alias="testResults")
     __properties: ClassVar[List[str]] = ["testResults"]
@@ -48,7 +48,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data(BaseMode
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data from a JSON string"""
+        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -80,7 +80,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data(BaseMode
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data from a dict"""
+        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data from a dict"""
         if obj is None:
             return None
 

@@ -1908,26 +1908,6 @@ components:
                     type:
                       type: string
                       enum:
-                        - "user_test_executed"
-                - type: object
-                  required:
-                    - data
-                    - type
-                  properties:
-                    data: {}
-                    type:
-                      type: string
-                      enum:
-                        - "testcase_added"
-                - type: object
-                  required:
-                    - data
-                    - type
-                  properties:
-                    data: {}
-                    type:
-                      type: string
-                      enum:
                         - "testcase_removed"
                 - type: object
                   required:
@@ -1935,11 +1915,16 @@ components:
                     - type
                   properties:
                     data:
-                      type: boolean
+                      type: object
+                      required:
+                        - stage
+                      properties:
+                        stage:
+                          type: string
                     type:
                       type: string
                       enum:
-                        - "question_displayed"
+                        - "stage_switched"
                 - type: object
                   required:
                     - data
@@ -2016,6 +2001,63 @@ components:
                       type: string
                       enum:
                         - "user_testcase_executed"
+                - type: object
+                  required:
+                    - data
+                    - type
+                  properties:
+                    data:
+                      type: object
+                      required:
+                        - testResults
+                      properties:
+                        testResults:
+                          type: array
+                          items:
+                            type: object
+                            required:
+                              - actual
+                              - caseNumber
+                              - error
+                              - expected
+                              - input
+                              - passed
+                              - stdout
+                            properties:
+                              actual: {}
+                              caseNumber:
+                                type: number
+                              error:
+                                type: string
+                                nullable: true
+                              expected: {}
+                              input:
+                                type: object
+                              passed:
+                                type: boolean
+                              stdout:
+                                type: string
+                                nullable: true
+                    type:
+                      type: string
+                      enum:
+                        - "groundtruth_testcase_executed"
+                - type: object
+                  required:
+                    - data
+                    - type
+                  properties:
+                    data:
+                      type: object
+                      required:
+                        - stage
+                      properties:
+                        stage:
+                          type: string
+                    type:
+                      type: string
+                      enum:
+                        - "stage_switched"
             sessionId:
               type: string
               description: ID from table "sessions"
@@ -2377,9 +2419,9 @@ components:
           required:
             - _creationTime
             - _id
-            - displayQuestion
             - editor
             - sessionId
+            - stage
             - terminal
             - testcases
           properties:
@@ -2388,8 +2430,6 @@ components:
             _id:
               type: string
               description: ID from table "codeSessionStates"
-            displayQuestion:
-              type: boolean
             editor:
               type: object
               required:
@@ -2406,6 +2446,8 @@ components:
             sessionId:
               type: string
               description: ID from table "sessions"
+            stage:
+              type: string
             terminal:
               type: object
               required:

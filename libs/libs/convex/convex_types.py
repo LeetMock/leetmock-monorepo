@@ -2,15 +2,19 @@ from convex_client.models import (
     RequestActionsGetSessionMetadata,
     RequestActionsRunTests,
     RequestActionsRunTestsArgs,
-    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner,
+    RequestCodeSessionEventsCommitCodeSessionEvent,
+    RequestCodeSessionEventsCommitCodeSessionEventArgs,
+    RequestCodeSessionEventsCommitCodeSessionEventArgsEvent,
+    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data,
+    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner,
     RequestSessionsEndSessionArgs,
     ResponseActionsGetSessionMetadataValue,
     ResponseActionsRunTestsValue,
     ResponseActionsRunTestsValueTestResultsInner,
     ResponseCodeSessionEventsGetLatestContentChangeEventValue,
+    ResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValue,
     ResponseCodeSessionEventsGetLatestTestcaseChangeEventValue,
     ResponseCodeSessionEventsGetLatestUserTestcaseExecutedEventValue,
-    ResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValue,
     ResponseCodeSessionStatesGetValue,
 )
 
@@ -31,10 +35,16 @@ CodeSessionGroundTruthTestcaseExecutedEvent = (
 
 RunTestsResult = ResponseActionsRunTestsValue
 TestcaseResult = ResponseActionsRunTestsValueTestResultsInner
-Testcase = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner
+Testcase = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner
 
 RequestGetSessionMetadata = RequestActionsGetSessionMetadata
 RequestGetSessionMetadataArgs = RequestSessionsEndSessionArgs
 
 RequestTestCodeCorrectness = RequestActionsRunTests
 RequestTestCodeCorrectnessArgs = RequestActionsRunTestsArgs
+
+RequestCommitCodeSessionEvent = RequestCodeSessionEventsCommitCodeSessionEvent
+RequestCommitCodeSessionEventArgs = RequestCodeSessionEventsCommitCodeSessionEventArgs
+
+CodeSessionEvent = RequestCodeSessionEventsCommitCodeSessionEventArgsEvent
+StageSwitchedEvent = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data
