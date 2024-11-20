@@ -134,7 +134,7 @@ async def decide_next_stage(state: AgentState):
         next_stage = StageTypes.CODING
 
     messages = (
-        format_stage_transition_messages(state.current_stage, next_stage)
+        format_stage_transition_messages(next_stage)
         if state.current_stage != next_stage
         else []
     )
