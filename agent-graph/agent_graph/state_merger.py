@@ -59,7 +59,7 @@ class StateMerger(EventEmitter[EventTypes], Generic[TState]):
 
         with pf.interval("state_merger.from_state_and_storage.fetch_initial_state"):
             initial_state = await storage.get_state()
-            await merger.merge_state(initial_state, emit_event=False)
+            await merger.merge_state(initial_state, is_initial_state=True)
 
         return merger
 
@@ -72,21 +72,24 @@ class StateMerger(EventEmitter[EventTypes], Generic[TState]):
         return snapshot.values
 
     async def merge_state(
-        self, state: TState | Dict[str, Any], emit_event: bool = True
+        self,
+        state: TState | Dict[str, Any],
+        is_initial_state: bool = False,
     ):
-        with pf.interval("state_merger.merge_state"):
-            if isinstance(state, dict) and len(state) == 0:
-                state = await self.get_state()
-            else:
-                with pf.interval("state_merger.merge_state.invoke"):
-                    values = await self.state_graph.ainvoke(state, config=CONFIG)
-                    state = self.state_type(**values)
+        if isinstance(state, dict) and len(state) == 0:
+            state = await self.get_state()
+            return
 
-                with pf.interval("state_merger.merge_state.flush"):
-                    self.flush(values)
+        with pf.interval("state_merger.merge_state.invoke"):
+            values = await self.state_graph.ainvoke(state, config=CONFIG)
+            state = self.state_type(**values)
 
-            if emit_event:
-                self.emit("state_changed", state)
+        with pf.interval("state_merger.merge_state.flush"):
+            self.flush(values)
+
+        # Emit the state changed event only if it's not the initial state
+        if not is_initial_state:
+            self.emit("state_changed", state)
 
         return state
 
