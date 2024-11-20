@@ -226,19 +226,23 @@ class AgentStream(BaseModel, Generic[TState]):
             await self._message_q.put(text_stream)
         else:
             # Case 2: The bot is sending a message to the user spontaneously, e.g. reminder
-            await self.assistant.say(
+            agent_speech_coro = self.assistant.say(
                 to_async_iterable(text_stream),
                 allow_interruptions=True,
                 add_to_chat_ctx=True,
             )
 
             # We need to manually merge the newly added messages into state
-            await self.state_merger.merge_state(
+            merge_state_coro = self.state_merger.merge_state(
                 dict(
                     messages=livekit_to_langchain_message(
                         self.assistant.chat_ctx, self.global_session_ts
                     )
                 )
+            )
+
+            await asyncio.gather(
+                merge_state_coro, agent_speech_coro, return_exceptions=True
             )
 
     async def _assistant_text_stream(
