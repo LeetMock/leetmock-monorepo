@@ -1,7 +1,8 @@
 import asyncio
 from typing import Generic, TypeVar
 
-from agent_graph.state_merger import StateMergerEventEmitter
+from agent_graph.state_merger import AgentStateEmitter
+from agent_graph.storages.langgraph_cloud import LangGraphCloudStateStorage
 from agent_graph.types import EventMessageState
 from agent_server.contexts.session import BaseSession
 from agent_server.livekit.channel import ChanConfig, ChanValue
@@ -49,7 +50,7 @@ class AgentContextManager(Generic[TSession, TState]):
         ctx: JobContext,
         api: ConvexApi,
         session: TSession,
-        agent_state_emitter: StateMergerEventEmitter[TState],
+        agent_state_emitter: AgentStateEmitter[TState],
     ):
         """Initialize the AgentContextManager.
 
@@ -122,6 +123,13 @@ class AgentContextManager(Generic[TSession, TState]):
 
         # Setup the session with the session id
         await self._session.start(result, self._agent_state_emitter)
+        # Connect the agent state emitter to the state storage
+        await self._agent_state_emitter.connect(
+            storage=LangGraphCloudStateStorage(
+                thread_id=self.session.session_metadata.agent_thread_id,
+                assistant_id=self.session.session_metadata.assistant_id,
+            )
+        )
 
     async def start(self):
         """Start the context manager and initialize all components.

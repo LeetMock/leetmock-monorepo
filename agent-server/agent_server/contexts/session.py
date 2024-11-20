@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Generic, Literal, TypeVar
 
 from agent_graph.code_mock_staged_v1.graph import AgentState
-from agent_graph.state_merger import StateMergerEventEmitter
+from agent_graph.state_merger import AgentStateEmitter
 from agent_graph.types import EventMessageState
 from agent_server.convex.query_watcher import query_watcher
 from agent_server.utils.logger import get_logger
@@ -51,12 +51,12 @@ class BaseSession(EventEmitter[TEventTypes], Generic[TEventTypes, TState], ABC):
 
     @abstractmethod
     async def setup(
-        self, session_id: str, agent_state_emitter: StateMergerEventEmitter[TState]
+        self, session_id: str, agent_state_emitter: AgentStateEmitter[TState]
     ):
         raise NotImplementedError
 
     async def start(
-        self, session_id: str, agent_state_emitter: StateMergerEventEmitter[TState]
+        self, session_id: str, agent_state_emitter: AgentStateEmitter[TState]
     ):
         """Start the session with the given session ID."""
         async with self._start_lock:
@@ -209,7 +209,7 @@ class CodeSession(BaseSession[CodeSessionEventTypes, AgentState]):
     async def setup(
         self,
         session_id: str,
-        agent_state_emitter: StateMergerEventEmitter[AgentState],
+        agent_state_emitter: AgentStateEmitter[AgentState],
     ):
         """Set up the code session with the given session ID.
 

@@ -121,11 +121,12 @@ async def assistant(
     session_state = CodeSessionState(**state.session_state)
     session_metadata = SessionMetadata(**state.session_metadata)
     coding_steps = set(map(lambda step: step.name, state.steps[StageTypes.CODING]))
+
     async for chunk in chain.astream(
         {
             "events": state.events,
             "steps": state.steps[StageTypes.CODING],
-            "completed_steps": state.completed_steps.union(coding_steps),
+            "completed_steps": state.completed_steps.intersection(coding_steps),
             "content": session_state.editor.content,
             "language": session_state.editor.language,
             "question": session_metadata.question_content,

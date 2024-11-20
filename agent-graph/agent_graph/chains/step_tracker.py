@@ -13,6 +13,7 @@ from agent_graph.state_merger import StateMerger
 from agent_graph.types import Step
 from agent_graph.utils import wrap_xml
 from agent_server.utils.logger import get_logger
+from agent_server.utils.messages import get_text_hash
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, AnyMessage
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
@@ -149,7 +150,8 @@ def create_llm_step_tracker(
         """Post-process the step tracking result"""
         if result.completed:
             message = wrap_xml("thinking", result.thinking)
-            send_message_fn(AIMessage(content=message))
+            ai_message = AIMessage(content=message, id=get_text_hash(message))
+            send_message_fn(ai_message)
         return result.completed
 
     on_init_chain = (

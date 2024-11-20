@@ -311,7 +311,7 @@ class StepTrackingEvent(BaseEvent[str]):
 
     state_merger: StateMerger[AgentState]
 
-    state_update_queue: asyncio.Queue[Dict]
+    state_update_q: asyncio.Queue[Dict]
 
     _step_queue: asyncio.Queue[Step] = PrivateAttr(default_factory=asyncio.Queue)
 
@@ -331,7 +331,7 @@ class StepTrackingEvent(BaseEvent[str]):
             step=step,
             state_merger=self.state_merger,
             llm=get_model("gpt-4o", temperature=0.1),
-            state_update_queue=self.state_update_queue,
+            state_update_queue=self.state_update_q,
             signal_emitter=signal_emitters,
         )
 
