@@ -21,16 +21,25 @@ export type AgentState =
 const state_attribute = "lk.agent.state";
 const session_id_topic = "session-id";
 
-export const useAgent = (sessionId: Id<"sessions">) => {
-  const [agentReceivedSessionId, setAgentReceivedSessionId] = useState(false);
-
-  const connectionState = useConnectionState();
+export const useAgentData = () => {
   const agentParticipant = useRemoteParticipants().find((p) => p.kind === ParticipantKind.AGENT);
-  const { attributes } = useParticipantAttributes({ participant: agentParticipant });
   const agentAudioTrack = useParticipantTracks(
     [Track.Source.Microphone],
     agentParticipant?.identity
   )[0];
+
+  return {
+    agentParticipant,
+    agentAudioTrack,
+  };
+};
+
+export const useAgent = (sessionId: Id<"sessions">) => {
+  const [agentReceivedSessionId, setAgentReceivedSessionId] = useState(false);
+
+  const connectionState = useConnectionState();
+  const { agentParticipant, agentAudioTrack } = useAgentData();
+  const { attributes } = useParticipantAttributes({ participant: agentParticipant });
 
   // Data channel to send session id to agent server
   const { send: sendSessionId } = useDataChannel(session_id_topic);

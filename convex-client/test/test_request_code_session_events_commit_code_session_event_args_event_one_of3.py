@@ -35,13 +35,33 @@ class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3(unittest
         model = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3()
         if include_optional:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3(
-                data = None,
-                type = 'testcase_removed'
+                data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_3_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_3_data(
+                    after = [
+                        convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_3_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_3_data_after_inner(
+                            expected_output = null, 
+                            input = convex_client.models.input.input(), )
+                        ], 
+                    before = [
+                        convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_3_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_3_data_after_inner(
+                            expected_output = null, 
+                            input = convex_client.models.input.input(), )
+                        ], ),
+                type = 'testcase_changed'
             )
         else:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3(
-                data = None,
-                type = 'testcase_removed',
+                data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_3_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_3_data(
+                    after = [
+                        convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_3_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_3_data_after_inner(
+                            expected_output = null, 
+                            input = convex_client.models.input.input(), )
+                        ], 
+                    before = [
+                        convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_3_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_3_data_after_inner(
+                            expected_output = null, 
+                            input = convex_client.models.input.input(), )
+                        ], ),
+                type = 'testcase_changed',
         )
         """
 

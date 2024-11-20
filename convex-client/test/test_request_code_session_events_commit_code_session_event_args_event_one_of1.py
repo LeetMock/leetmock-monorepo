@@ -36,12 +36,12 @@ class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1(unittest
         if include_optional:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1(
                 data = None,
-                type = 'user_test_executed'
+                type = 'testcase_removed'
             )
         else:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1(
                 data = None,
-                type = 'user_test_executed',
+                type = 'testcase_removed',
         )
         """
 

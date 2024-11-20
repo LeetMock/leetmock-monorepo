@@ -14,14 +14,6 @@ export const codeSessionEventSchemas = {
       after: v.string(),
     }),
   }),
-  user_test_executed: v.object({
-    type: v.literal("user_test_executed"),
-    data: v.any(), // TODO: change this to the actual data type
-  }),
-  testcase_added: v.object({
-    type: v.literal("testcase_added"),
-    data: v.any(), // TODO: change this to the actual data type
-  }),
   testcase_changed: v.object({
     type: v.literal("testcase_changed"),
     data: v.object({
@@ -75,21 +67,22 @@ export const codeSessionEventSchemas = {
       ),
     }),
   }),
-  question_displayed: v.object({
-    type: v.literal("question_displayed"),
-    data: v.boolean(),
+  stage_switched: v.object({
+    type: v.literal("stage_switched"),
+    data: v.object({
+      stage: v.string(),
+    }),
   }),
 };
 
 export const codeSessionEventSchema = v.union(
   codeSessionEventSchemas.content_changed,
-  codeSessionEventSchemas.user_test_executed,
-  codeSessionEventSchemas.testcase_added,
   codeSessionEventSchemas.testcase_removed,
-  codeSessionEventSchemas.question_displayed,
+  codeSessionEventSchemas.stage_switched,
   codeSessionEventSchemas.testcase_changed,
   codeSessionEventSchemas.user_testcase_executed,
-  codeSessionEventSchemas.groundtruth_testcase_executed
+  codeSessionEventSchemas.groundtruth_testcase_executed,
+  codeSessionEventSchemas.stage_switched
 );
 
 export type QueryCtx = CustomCtx<typeof query>;
@@ -107,16 +100,13 @@ export type CodeSessionEventType = keyof typeof codeSessionEventSchemas;
 
 export type CodeSessionContentChanged = (typeof codeSessionEventSchemas)["content_changed"]["type"];
 
-export type CodeSessionUserTestExecuted =
-  (typeof codeSessionEventSchemas)["user_test_executed"]["type"];
-
-export type CodeSessionTestcaseAdded = (typeof codeSessionEventSchemas)["testcase_added"]["type"];
+export type CodeSessionTestcaseChanged =
+  (typeof codeSessionEventSchemas)["testcase_changed"]["type"];
 
 export type CodeSessionTestcaseRemoved =
   (typeof codeSessionEventSchemas)["testcase_removed"]["type"];
 
-export type CodeSessionQuestionDisplayed =
-  (typeof codeSessionEventSchemas)["question_displayed"]["type"];
+export type CodeSessionStageSwitched = (typeof codeSessionEventSchemas)["stage_switched"]["type"];
 
 export type CodeSessionUserTestcaseExecuted =
   (typeof codeSessionEventSchemas)["user_testcase_executed"]["type"];

@@ -35,13 +35,33 @@ class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4(unittest
         model = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4()
         if include_optional:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4(
-                data = True,
-                type = 'question_displayed'
+                data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_4_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_4_data(
+                    test_results = [
+                        convex_client.models.response_actions_run_tests_value_test_results_inner.Response_actions_runTests_value_testResults_inner(
+                            actual = null, 
+                            case_number = 1.337, 
+                            error = '', 
+                            expected = null, 
+                            input = convex_client.models.input.input(), 
+                            passed = True, 
+                            stdout = '', )
+                        ], ),
+                type = 'user_testcase_executed'
             )
         else:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4(
-                data = True,
-                type = 'question_displayed',
+                data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_4_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_4_data(
+                    test_results = [
+                        convex_client.models.response_actions_run_tests_value_test_results_inner.Response_actions_runTests_value_testResults_inner(
+                            actual = null, 
+                            case_number = 1.337, 
+                            error = '', 
+                            expected = null, 
+                            input = convex_client.models.input.input(), 
+                            passed = True, 
+                            stdout = '', )
+                        ], ),
+                type = 'user_testcase_executed',
         )
         """
 

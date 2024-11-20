@@ -48,6 +48,7 @@ Note:
 """
 
 import asyncio
+import json
 import logging
 from inspect import iscoroutinefunction
 from typing import Any, Callable, Coroutine, Dict, Generic, List, Type, TypeVar
@@ -186,6 +187,9 @@ class QueryWatcher(BaseModel, Generic[TModel]):
             try:
                 data = self.validator_cls.model_validate(raw_data)
             except Exception as e:
+                logger.error(
+                    f"Failed to validate data: {json.dumps(raw_data, indent=2)}"
+                )
                 logger.error(f"Error validating data: {e}")
                 continue
 

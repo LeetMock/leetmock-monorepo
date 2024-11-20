@@ -1,6 +1,6 @@
 from convex import ConvexClient, FunctionArgs, QuerySubscription
+from convex_client import ActionApi, ApiClient, Configuration, MutationApi, QueryApi
 from pydantic import BaseModel, Field, PrivateAttr
-from convex_client import QueryApi, MutationApi, ActionApi, Configuration, ApiClient
 
 
 class ConvexApi(BaseModel):
@@ -27,6 +27,9 @@ class ConvexApi(BaseModel):
     @property
     def action(self) -> ActionApi:
         return self._action_api
+
+    def mutation_unsafe(self, name: str, args: FunctionArgs = None):
+        return self._convex_client.mutation(name, args)
 
     def subscribe(self, query: str, params: FunctionArgs) -> QuerySubscription:
         return self._convex_client.subscribe(query, params)
