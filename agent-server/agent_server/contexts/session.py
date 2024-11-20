@@ -216,12 +216,8 @@ class CodeSession(BaseSession[CodeSessionEventTypes, AgentState]):
             logger.info(
                 f"Committing stage_switched code session event: {curr.current_stage.value}"
             )
-            # self._api.mutation.api_run_code_session_events_commit_code_session_event_post(
-            #     create_commit_code_session_event_request(
-            #         self._session_id, curr.current_stage
-            #     )
-            # )
 
+            await asyncio.sleep(5)  # allow agent to finish the last sentence (if any)
             self._api.mutation_unsafe(
                 name="codeSessionEvents:commitCodeSessionEvent",
                 args={

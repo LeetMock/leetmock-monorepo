@@ -72,15 +72,10 @@ def get_first_unseen_entity(entities: List[TEntity], seen: List[str]) -> TEntity
     return None
 
 
-def format_stage_transition_messages(prev_stage: StageTypes, next_stage: StageTypes):
-    message = (
-        f"Now I have finished all the steps in stage {prev_stage}. I will move on to the next stage: {next_stage}. "
-        "But first, I need to something natual to kick off the conversation of current stage."
-    )
-
+def format_stage_transition_messages(curr_stage: StageTypes):
     return [
         AIMessage(
-            content=wrap_xml("thinking", message),
+            content=wrap_xml("thinking", STAGE_TRANSITION_MESSAGES[curr_stage]),
         )
     ]
 
@@ -204,6 +199,23 @@ def format_user_testcase_executed_notification_messages(
     ]
 
 
+START_ASK_CODING_QUESTION_PROMPT = """\
+I have finished all the necessary background questions. \
+From now on, I will stop asking any further background questions immediately!!!! \
+Now, I MUST make a smooth transition to the coding stage. \
+(Try to inform candidate about the transition and kick off the conversation of coding problem.)"""
+
+
+FINISH_EVAL_PROMPT = """\
+Now I have finished evaluating the candidate's code. I will give them some feedback and ask if they have any questions for me."""
+
+
+STAGE_TRANSITION_MESSAGES = {
+    StageTypes.CODING: START_ASK_CODING_QUESTION_PROMPT,
+    StageTypes.EVAL: FINISH_EVAL_PROMPT,
+}
+
+
 INTRO_STEPS: List[Step] = [
     Step.from_info(
         name="introduce_self",
@@ -217,18 +229,18 @@ INTRO_STEPS: List[Step] = [
         done_definition="Interviewer has finished asking about the candidate's background and experience.",
         required=True,
     ),
-    Step.from_info(
-        name="ask_goals",
-        desc="Ask the candidate about their career goals.",
-        done_definition="Interviewer has finished asking about the candidate's career goals.",
-        required=True,
-    ),
-    Step.from_info(
-        name="discuss_projects",
-        desc="Discuss the candidate's past projects and their role in them. Remember to praise interviewee on their achievement.",
-        done_definition="Interviewer has finished asking the questions about the candidate's past projects and their role in them.",
-        required=True,
-    ),
+    # Step.from_info(
+    #     name="ask_goals",
+    #     desc="Ask the candidate about their career goals.",
+    #     done_definition="Interviewer has finished asking about the candidate's career goals.",
+    #     required=True,
+    # ),
+    # Step.from_info(
+    #     name="discuss_projects",
+    #     desc="Discuss the candidate's past projects and their role in them. Remember to praise interviewee on their achievement.",
+    #     done_definition="Interviewer has finished asking the questions about the candidate's past projects and their role in them.",
+    #     required=True,
+    # ),
 ]
 
 INTRO_SIGNALS: List[Signal] = [
