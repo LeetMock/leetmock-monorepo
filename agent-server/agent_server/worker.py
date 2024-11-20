@@ -180,9 +180,7 @@ async def entrypoint(ctx: JobContext):
             GroundTruthTestcaseExecutedEvent(session=session),
             UserMessageEvent(user_message_event_q=user_message_event_q),
             TestcaseChangedEvent(session=session),
-            StepTrackingEvent(
-                state_merger=state_merger, state_update_queue=state_update_q
-            ),
+            StepTrackingEvent(state_merger=state_merger, state_update_q=state_update_q),
         ],
     )
 
