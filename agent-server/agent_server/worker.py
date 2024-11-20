@@ -49,6 +49,8 @@ pf = get_profiler()
 
 load_dotenv(find_dotenv())
 
+AGENT_NAME = "code-mock-staged-v1"
+
 
 class CustomLoadCalc(_DefaultLoadCalc):
     """CustomLoadCalc is a custom load calculator that extends the default load calculator.
@@ -96,6 +98,8 @@ async def entrypoint(ctx: JobContext):
 
     # Initialize session
     session = CodeSession(api=convex_api)
+    # Initialize state merger
+    state_merger = StateMerger.from_state(name=AGENT_NAME, state_type=AgentState)
     # Queue for processing adhoc state snapshots updates
     state_update_q = asyncio.Queue[Dict]()
     # Queue for sending active user message events when agent is triggered by VAD -> STT
@@ -105,9 +109,10 @@ async def entrypoint(ctx: JobContext):
     # Unix timestamp for generating unique message ids
     unix_timestamp = int(datetime.now().timestamp())
 
-    # Initialize context manager
-    ctx_manager = AgentContextManager(ctx=ctx, api=convex_api, session=session)
-    # Start the context manager, which will initialize the code session
+    # Initialize context manager and start, which will initialize the code session
+    ctx_manager = AgentContextManager(
+        ctx=ctx, api=convex_api, session=session, agent_state_emitter=state_merger
+    )
     await ctx_manager.start()
 
     set_profiler_id(ctx_manager.session_id)
@@ -149,19 +154,8 @@ async def entrypoint(ctx: JobContext):
     # def on_metrics_collected(metrics):
     #     logger.info(f"[metrics_collected] {metrics}")
 
-    agent_name = "code-mock-staged-v1"
-
-    state_merger = await StateMerger.from_state_and_storage(
-        name=agent_name,
-        state_type=AgentState,
-        storage=LangGraphCloudStateStorage(
-            thread_id=session.session_metadata.agent_thread_id,
-            assistant_id=session.session_metadata.assistant_id,
-        ),
-    )
-
     agent_stream = AgentStream(
-        name=agent_name,
+        name=AGENT_NAME,
         state_cls=AgentState,
         global_session_ts=unix_timestamp,
         config=AgentConfig(

@@ -335,7 +335,7 @@ class StepTrackingEvent(BaseEvent[str]):
             signal_emitter=signal_emitters,
         )
 
-    def _try_queue_next_steps(self, state: AgentState):
+    def _try_queue_next_steps(self, _: AgentState, state: AgentState):
         curr_stage = state.current_stage
         curr_steps = state.steps.get(curr_stage, [])
 
