@@ -185,5 +185,71 @@ export const evaluationData = {
       met: false,
       importance: "high",
     }
-  ]
+  ],
+  statistics: {
+    timeMetrics: {
+      totalDuration: "45:23", // 45 minutes 23 seconds
+      averageResponseTime: "2:15", // 2 minutes 15 seconds per question
+      timeSpentOnProblemUnderstanding: "8:45",
+      timeSpentOnCoding: "28:12",
+      timeSpentOnTesting: "8:26",
+    },
+    interactionMetrics: {
+      clarifyingQuestions: {
+        count: 5,
+        quality: 4.2, // out of 5
+        examples: [
+          "What should be returned when the input array is empty?",
+          "Should we handle negative numbers?",
+          "What's the expected behavior for duplicate elements?",
+        ]
+      },
+      followUpQuestions: {
+        totalAsked: 8,
+        correctlyAnswered: 6,
+        examples: [
+          {
+            question: "What's the time complexity of your solution?",
+            response: "O(n log n) due to the sorting operation",
+            wasCorrect: true
+          },
+          {
+            question: "How would you optimize this for space complexity?",
+            response: "We could modify the input array directly",
+            wasCorrect: true
+          },
+          {
+            question: "Can you think of an O(n) solution?",
+            response: "Not sure, maybe using two pointers?",
+            wasCorrect: false
+          }
+        ]
+      }
+    },
+    codeMetrics: {
+      linesOfCode: 32,
+      commentLines: 5,
+      syntaxErrors: 2,
+      timesToCompile: 4,
+      testCases: {
+        total: 12,
+        passed: 10,
+        failed: 2,
+        coverage: 85, // percentage
+      },
+      debuggingInstances: 3,
+      timeSpentDebugging: "5:45"
+    },
+    behavioralMetrics: {
+      stressHandling: 4.5, // out of 5
+      problemSolvingApproach: {
+        brainstorming: true,
+        pseudocodeFirst: true,
+        testDrivenDevelopment: false,
+        incrementalDevelopment: true
+      },
+      communicationClarity: 4.2, // out of 5
+      technicalArticulation: 3.8 // out of 5
+    }
+  }
 };

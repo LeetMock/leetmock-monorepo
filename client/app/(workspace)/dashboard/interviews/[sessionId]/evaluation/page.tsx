@@ -17,6 +17,8 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { useRef, useState } from "react";
 import { getHiringRecommendation } from "@/lib/evaluation-utils";
 import { cn } from "@/lib/utils";
+import { BarChart3 } from "lucide-react";
+import Link from "next/link";
 
 const InterviewEvaluationPage = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -169,9 +171,18 @@ const InterviewEvaluationPage = () => {
       className="container mx-auto py-8 px-4 space-y-6"
     >
       <motion.div variants={item}>
-        <h1 className="text-3xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
-          Interview Evaluation
-        </h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
+            Interview Evaluation
+          </h1>
+          <Link 
+            href={`/dashboard/interviews/${sessionId}/statistics`}
+            className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+          >
+            <BarChart3 className="h-4 w-4" />
+            <span className="text-sm font-medium">View Statistics</span>
+          </Link>
+        </div>
       </motion.div>
       
       <motion.div variants={item}>
