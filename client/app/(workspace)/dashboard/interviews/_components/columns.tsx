@@ -8,6 +8,7 @@ import { Doc } from "@/convex/_generated/dataModel";
 import { ColumnHeader } from "./column-header";
 import { difficulties, statuses } from "./data";
 import { RowActions } from "./row-actions";
+import { useRouter } from "next/navigation";
 
 /*
 {
@@ -138,8 +139,13 @@ export const columns: ColumnDef<SessionDoc>[] = [
     id: "feedback",
     header: ({ column }) => <ColumnHeader column={column} title="Feedback" />,
     cell: ({ row }) => {
+      const router = useRouter();
       return (
-        <Button variant="secondary" size="sm">
+        <Button 
+          variant="secondary" 
+          size="sm"
+          onClick={() => router.push(`/dashboard/interviews/${row.original._id}/evaluation`)}
+        >
           View Feedback
         </Button>
       );
