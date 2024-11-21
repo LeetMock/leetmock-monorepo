@@ -1,14 +1,14 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
-import { useParams } from "next/navigation";
 import { evaluationData } from "@/mockedEvaluationData";
-import { StatisticsView } from "../evaluation/_components/statistics-view";
+import { useQuery } from "convex/react";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { StatisticsView } from "../evaluation/_components/statistics-view";
 
 const InterviewStatisticsPage = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -30,10 +30,10 @@ const InterviewStatisticsPage = () => {
           Interview Statistics
         </h1>
       </div>
-      
+
       <StatisticsView statistics={evaluationData.statistics} />
     </div>
   );
 };
 
-export default InterviewStatisticsPage; 
+export default InterviewStatisticsPage;

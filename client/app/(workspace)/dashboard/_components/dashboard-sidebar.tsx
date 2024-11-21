@@ -1,18 +1,23 @@
-import { Package2 } from "lucide-react";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 
 import { ProfileItem } from "@/components/profile-item";
 import { UserDropdown } from "@/components/user-dropdown";
 import { useConfig } from "@/hooks/use-config";
+import { cn } from "@/lib/utils";
 import { NavList } from "./dashboard-navlist";
 import { UpgradeCard } from "./upgrade-card";
 
-export const DashboardSidebar = () => {
+interface DashboardSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
+
+export const DashboardSidebar = ({ className, ...props }: DashboardSidebarProps) => {
   const { showUpgradeCard } = useConfig();
 
   return (
-    <div className="flex h-full flex-col space-y-3 w-64 flex-shrink-0 pb-3 px-2">
+    <div
+      className={cn("flex h-full flex-col space-y-3 w-64 flex-shrink-0 pb-3 px-2", className)}
+      {...props}
+    >
       {/* Logo */}
       <div className="flex flex-col">
         <div className="flex h-14 items-center pl-1.5 pt-2">

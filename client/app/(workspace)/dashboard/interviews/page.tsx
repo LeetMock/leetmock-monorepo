@@ -82,7 +82,7 @@ const InterviewPage: React.FC = () => {
 
   return (
     <div className="flex flex-col">
-      <DashboardBreadcrumb className="py-4 px-6 bg-background/80 backdrop-blur-sm" />
+      <DashboardBreadcrumb className="py-4 px-6 bg-background/80 backdrop-blur-sm rounded-t-md" />
       <div className="flex flex-col space-y-6 px-6 pb-4">
         <div className="flex flex-col space-y-1">
           <span className="text-xl font-bold tracking-tight">Interviews</span>
