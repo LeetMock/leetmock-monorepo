@@ -3,11 +3,11 @@
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import {
-  RadarChart,
-  PolarGrid,
   PolarAngleAxis,
+  PolarGrid,
   PolarRadiusAxis,
   Radar,
+  RadarChart,
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
@@ -36,10 +36,7 @@ export const ScoreRadarChart = ({ data }: ScoreRadarChartProps) => {
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
               <PolarGrid stroke="#e2e8f0" />
-              <PolarAngleAxis
-                dataKey="category"
-                tick={{ fill: "currentColor", fontSize: 12 }}
-              />
+              <PolarAngleAxis dataKey="category" tick={{ fill: "currentColor", fontSize: 12 }} />
               <PolarRadiusAxis
                 angle={30}
                 domain={[0, 10]}
@@ -67,4 +64,4 @@ export const ScoreRadarChart = ({ data }: ScoreRadarChartProps) => {
       </Card>
     </motion.div>
   );
-}; 
+};

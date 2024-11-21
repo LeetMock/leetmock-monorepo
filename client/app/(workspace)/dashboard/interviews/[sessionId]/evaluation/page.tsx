@@ -1,24 +1,24 @@
 "use client";
 
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
-import { useParams } from "next/navigation";
-import { evaluationData } from "@/mockedEvaluationData";
-import { ScoreCard } from "./_components/score-card";
-import { ScoreRadarChart } from "./_components/score-radar-chart";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { motion, AnimatePresence } from "framer-motion";
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { useRef, useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { getHiringRecommendation } from "@/lib/evaluation-utils";
 import { cn } from "@/lib/utils";
+import { evaluationData } from "@/mockedEvaluationData";
+import { useQuery } from "convex/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { BarChart3 } from "lucide-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useRef, useState } from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { ScoreCard } from "./_components/score-card";
+import { ScoreRadarChart } from "./_components/score-radar-chart";
 
 const InterviewEvaluationPage = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -33,7 +33,9 @@ const InterviewEvaluationPage = () => {
   // Transform scoreboards data for radar chart
   const radarData = Object.entries(evaluationData.scoreboards).map(([category, metrics]) => ({
     category: category.charAt(0).toUpperCase() + category.slice(1),
-    score: Object.values(metrics).reduce((acc, curr) => acc + curr.score, 0) / Object.keys(metrics).length,
+    score:
+      Object.values(metrics).reduce((acc, curr) => acc + curr.score, 0) /
+      Object.keys(metrics).length,
     fullMark: 10,
   }));
 
@@ -61,9 +63,7 @@ const InterviewEvaluationPage = () => {
               </p>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold">
-                {Math.round((totalScore / maxScore) * 100)}%
-              </div>
+              <div className="text-2xl font-bold">{Math.round((totalScore / maxScore) * 100)}%</div>
               <div className="text-sm text-muted-foreground">
                 {totalScore}/{maxScore} points
               </div>
@@ -72,21 +72,19 @@ const InterviewEvaluationPage = () => {
         </motion.div>
 
         {Object.entries(metrics).map(([metric, data]) => (
-          <motion.div
-            key={metric}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
+          <motion.div key={metric} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <Card className="p-4 hover:shadow-md transition-all duration-200">
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <h4 className="font-medium capitalize">{metric}</h4>
                   <div className="flex items-center gap-2">
-                    <span className={cn(
-                      "text-xs font-medium px-2 py-1 rounded-full",
-                      getHiringRecommendation(data.score, data.maxScore).bgColor,
-                      getHiringRecommendation(data.score, data.maxScore).color,
-                    )}>
+                    <span
+                      className={cn(
+                        "text-xs font-medium px-2 py-1 rounded-full",
+                        getHiringRecommendation(data.score, data.maxScore).bgColor,
+                        getHiringRecommendation(data.score, data.maxScore).color
+                      )}
+                    >
                       {getHiringRecommendation(data.score, data.maxScore).text}
                     </span>
                     <span className="text-sm text-muted-foreground">
@@ -94,8 +92,8 @@ const InterviewEvaluationPage = () => {
                     </span>
                   </div>
                 </div>
-                <Progress 
-                  value={(data.score / data.maxScore) * 100} 
+                <Progress
+                  value={(data.score / data.maxScore) * 100}
                   className="h-2"
                   indicatorClassName={cn(
                     getHiringRecommendation(data.score, data.maxScore).bgColor,
@@ -124,28 +122,34 @@ const InterviewEvaluationPage = () => {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const item = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
+    show: { opacity: 1, y: 0 },
   };
 
   // Add this function to calculate pillar scores
   const calculatePillarScores = (scoreboards: any) => {
     return Object.entries(scoreboards).map(([name, metrics]) => {
-      const totalScore = Object.values(metrics).reduce((acc: any, curr: any) => acc + curr.score, 0);
-      const maxScore = Object.values(metrics).reduce((acc: any, curr: any) => acc + curr.maxScore, 0);
-      
+      const totalScore = Object.values(metrics).reduce(
+        (acc: any, curr: any) => acc + curr.score,
+        0
+      );
+      const maxScore = Object.values(metrics).reduce(
+        (acc: any, curr: any) => acc + curr.maxScore,
+        0
+      );
+
       // Map the internal category names to display names
       const displayNames: Record<string, string> = {
         communication: "Communication",
         problemSolving: "Problem Solving",
         technicalCompetency: "Technical",
-        testing: "Testing"
+        testing: "Testing",
       };
 
       return {
@@ -175,7 +179,7 @@ const InterviewEvaluationPage = () => {
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
             Interview Evaluation
           </h1>
-          <Link 
+          <Link
             href={`/dashboard/interviews/${sessionId}/statistics`}
             className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
           >
@@ -184,9 +188,9 @@ const InterviewEvaluationPage = () => {
           </Link>
         </div>
       </motion.div>
-      
+
       <motion.div variants={item}>
-        <ScoreCard 
+        <ScoreCard
           totalScore={evaluationData.totalScore}
           overallFeedback={evaluationData.overallFeedback}
           criteria={evaluationData.criteria}
@@ -202,10 +206,7 @@ const InterviewEvaluationPage = () => {
         <div className="h-[500px]">
           <ScoreRadarChart data={radarData} />
         </div>
-        <motion.div
-          variants={item}
-          className="h-[500px]"
-        >
+        <motion.div variants={item} className="h-[500px]">
           <Card className="h-full flex flex-col bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
             <div className="p-4 border-b backdrop-blur-sm">
               <h3 className="font-semibold">Code Submission</h3>
@@ -216,8 +217,8 @@ const InterviewEvaluationPage = () => {
                 style={vscDarkPlus}
                 customStyle={{
                   margin: 0,
-                  borderRadius: '0.5rem',
-                  fontSize: '0.875rem',
+                  borderRadius: "0.5rem",
+                  fontSize: "0.875rem",
                 }}
               >
                 {evaluationData.codeContent}
@@ -233,10 +234,16 @@ const InterviewEvaluationPage = () => {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="w-full justify-start bg-transparent flex flex-wrap gap-2">
               {Object.entries(evaluationData.scoreboards).map(([category, metrics]) => {
-                const totalScore = Object.values(metrics).reduce((acc: any, curr: any) => acc + curr.score, 0);
-                const maxScore = Object.values(metrics).reduce((acc: any, curr: any) => acc + curr.maxScore, 0);
+                const totalScore = Object.values(metrics).reduce(
+                  (acc: any, curr: any) => acc + curr.score,
+                  0
+                );
+                const maxScore = Object.values(metrics).reduce(
+                  (acc: any, curr: any) => acc + curr.maxScore,
+                  0
+                );
                 const recommendation = getHiringRecommendation(totalScore, maxScore);
-                
+
                 return (
                   <TabsTrigger
                     key={category}
@@ -275,4 +282,4 @@ const InterviewEvaluationPage = () => {
   );
 };
 
-export default InterviewEvaluationPage; 
+export default InterviewEvaluationPage;

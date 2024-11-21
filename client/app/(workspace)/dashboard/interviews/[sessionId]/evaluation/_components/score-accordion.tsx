@@ -67,4 +67,4 @@ export const ScoreAccordion = ({ scoreboards }: ScoreAccordionProps) => {
       </Accordion>
     </Card>
   );
-}; 
+};

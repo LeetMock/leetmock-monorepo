@@ -1,9 +1,9 @@
 import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
-import { CheckCircle2, XCircle, AlertCircle } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { getHiringRecommendation } from "@/lib/evaluation-utils";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { AlertCircle, CheckCircle2, XCircle } from "lucide-react";
 
 interface Criterion {
   id: number;
@@ -27,7 +27,13 @@ interface ScoreCardProps {
   onPillarClick: (displayName: string, internalName: string) => void;
 }
 
-export const ScoreCard = ({ totalScore, overallFeedback, criteria, pillarScores, onPillarClick }: ScoreCardProps) => {
+export const ScoreCard = ({
+  totalScore,
+  overallFeedback,
+  criteria,
+  pillarScores,
+  onPillarClick,
+}: ScoreCardProps) => {
   const getScoreColor = (score: number) => {
     if (score >= 90) return "from-green-500 to-emerald-700 text-white";
     if (score >= 80) return "from-blue-500 to-blue-700 text-white";
@@ -60,10 +66,7 @@ export const ScoreCard = ({ totalScore, overallFeedback, criteria, pillarScores,
     >
       <Card className="overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          <div className={cn(
-            "p-6 lg:col-span-2 bg-gradient-to-br",
-            getScoreColor(totalScore)
-          )}>
+          <div className={cn("p-6 lg:col-span-2 bg-gradient-to-br", getScoreColor(totalScore))}>
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -100,7 +103,7 @@ export const ScoreCard = ({ totalScore, overallFeedback, criteria, pillarScores,
                         {getHiringRecommendation(pillar.score, pillar.maxScore).text}
                       </div>
                       <div className="h-1 w-full bg-white/20 rounded-full mt-2">
-                        <div 
+                        <div
                           className="h-full bg-white rounded-full transition-all duration-300 group-hover:bg-opacity-90"
                           style={{ width: `${(pillar.score / pillar.maxScore) * 100}%` }}
                         />
@@ -111,7 +114,7 @@ export const ScoreCard = ({ totalScore, overallFeedback, criteria, pillarScores,
               </div>
             </motion.div>
           </div>
-          
+
           <div className="p-6 lg:col-span-3">
             <motion.div
               initial={{ opacity: 0, x: 20 }}
@@ -131,16 +134,18 @@ export const ScoreCard = ({ totalScore, overallFeedback, criteria, pillarScores,
                         transition={{ delay: 0.1 * criterion.id }}
                         className={cn(
                           "flex items-center gap-3 p-2 rounded-lg",
-                          criterion.met ? "bg-green-50 dark:bg-green-950/30" : "bg-red-50 dark:bg-red-950/30"
+                          criterion.met
+                            ? "bg-green-50 dark:bg-green-950/30"
+                            : "bg-red-50 dark:bg-red-950/30"
                         )}
                       >
                         <Tooltip>
                           <TooltipTrigger>
-                            <AlertCircle 
+                            <AlertCircle
                               className={cn(
                                 "h-4 w-4 shrink-0",
                                 getImportanceColor(criterion.importance)
-                              )} 
+                              )}
                             />
                           </TooltipTrigger>
                           <TooltipContent>
@@ -168,4 +173,4 @@ export const ScoreCard = ({ totalScore, overallFeedback, criteria, pillarScores,
       </Card>
     </motion.div>
   );
-}; 
+};
