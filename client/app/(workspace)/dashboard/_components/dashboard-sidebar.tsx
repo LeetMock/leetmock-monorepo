@@ -15,33 +15,32 @@ export const DashboardSidebar = ({ className, ...props }: DashboardSidebarProps)
 
   return (
     <div
-      className={cn("flex h-full flex-col space-y-3 w-64 flex-shrink-0 pb-3 px-2", className)}
+      className={cn("flex h-full flex-col w-60 flex-shrink-0 pb-3 px-2.5", className)}
       {...props}
     >
       {/* Logo */}
       <div className="flex flex-col">
-        <div className="flex h-14 items-center pl-1.5 pt-2">
-          <Link href="/" className="flex items-center gap-3">
+        <div className="flex h-12 items-center pl-1.5">
+          <Link href="/" className="flex items-center gap-2.5">
             <div aria-hidden="true" className="flex items-center">
               <Image
                 src="/logo.png"
                 alt="LeetMock.AI Logo"
-                width={32}
-                height={32}
-                className="h-6 w-auto"
+                width={24}
+                height={24}
+                className="h-[1.35rem] w-auto"
               />
             </div>
-            <span className="font-semibold text-xl">LeetMock</span>
+            <span className="font-bold text-lg">LeetMock</span>
           </Link>
         </div>
-        <div className="border-t" />
       </div>
 
-      <NavList className="flex-1" />
+      <NavList className="flex-1 mt-1" />
 
-      {showUpgradeCard && <UpgradeCard />}
+      {showUpgradeCard && <UpgradeCard className="mb-2.5" />}
 
-      <UserDropdown>
+      <UserDropdown className="w-56">
         <ProfileItem />
       </UserDropdown>
     </div>

@@ -16,7 +16,6 @@ import { redirect } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { useWindowSize } from "usehooks-ts";
-import { AgentTranscripts } from "./agent-transcripts";
 import { CodeEditorPanel } from "./code-editor-panel";
 import { CodeQuestionPanel } from "./code-question-panel";
 import { WorkspaceToolbar } from "./workspace-toolbar";
@@ -82,44 +81,42 @@ export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ session
         {({ sessionData }) => <WorkspaceToolbar session={sessionData} />}
       </Wait>
       <div className="w-full h-full flex justify-center items-center">
-        {codeSessionState?.stage === "coding" && (
-          <Wait
-            data={{ questionData, question }}
-            fallback={
-              <div className="flex flex-col space-y-2 items-center justify-center h-full w-full border rounded-md shadow-md bg-background">
-                <LucideFileText className="w-10 h-10 text-muted-foreground" />
-                <span className="text-muted-foreground">Loading</span>
-              </div>
-            }
-          >
-            {({ questionData, question }) => (
-              <>
-                <CodeQuestionPanel
-                  className="border rounded-md shadow-md shrink-0"
-                  style={{ width: size }}
-                  question={questionData}
-                />
-                <div
-                  className={cn(
-                    "w-px h-full cursor-ew-resize px-1 transition-all hover:bg-muted-foreground/10 flex-0 rounded-full relative",
-                    isResizing ? "bg-muted-foreground/10" : "bg-transparent"
-                  )}
-                  {...resizeHandleProps}
-                >
-                  <div className="absolute inset-0 flex justify-center items-center">
-                    <div className="h-9 w-[3px] rounded-full bg-muted-foreground/50"></div>
-                  </div>
+        <Wait
+          data={{ questionData, question }}
+          fallback={
+            <div className="flex flex-col space-y-2 items-center justify-center h-full w-full border rounded-md shadow-md bg-background">
+              <LucideFileText className="w-10 h-10 text-muted-foreground" />
+              <span className="text-muted-foreground">Loading</span>
+            </div>
+          }
+        >
+          {({ questionData, question }) => (
+            <>
+              <CodeQuestionPanel
+                className="border rounded-md shadow-md shrink-0"
+                style={{ width: size }}
+                question={questionData}
+              />
+              <div
+                className={cn(
+                  "w-px h-full cursor-ew-resize px-1 transition-all hover:bg-muted-foreground/10 flex-0 rounded-full relative",
+                  isResizing ? "bg-muted-foreground/10" : "bg-transparent"
+                )}
+                {...resizeHandleProps}
+              >
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <div className="h-9 w-[3px] rounded-full bg-muted-foreground/50"></div>
                 </div>
-                <CodeEditorPanel sessionId={sessionId} questionId={question._id} />
-              </>
-            )}
-          </Wait>
-        )}
-        {codeSessionState?.stage === "intro" && (
+              </div>
+              <CodeEditorPanel sessionId={sessionId} questionId={question._id} />
+            </>
+          )}
+        </Wait>
+        {/* {codeSessionState?.stage === "intro" && (
           <div className="w-[40rem] h-[40rem] p-2 flex flex-col space-y-4 bg-background rounded-md shadow-md">
             <AgentTranscripts agentAudioTrack={agentAudioTrack} />
           </div>
-        )}
+        )} */}
       </div>
     </>
   );
