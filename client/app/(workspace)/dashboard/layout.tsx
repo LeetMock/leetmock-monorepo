@@ -12,12 +12,12 @@ const DashboardSkeleton: React.FC<{ children: React.ReactNode }> = ({ children }
   const { showPriceBanner } = useConfig();
 
   return (
-    <div className="flex h-screen bg-muted/50">
+    <div className="flex h-screen ">
       {/* Left Sidebar */}
-      <DashboardSidebar />
+      <DashboardSidebar className="border-r" />
       {/* Right Content */}
-      <div className="flex flex-col flex-1 rounded-md m-3 ml-0 bg-background shadow-lg">
-        {showPriceBanner && <UpgradeBanner className="rounded-t-md" />}
+      <div className="flex flex-col flex-1 ml-0 bg-background">
+        {showPriceBanner && <UpgradeBanner className="h-12" />}
         <div className="relative w-full h-full">
           <div className="absolute inset-0 overflow-y-auto">{children}</div>
         </div>

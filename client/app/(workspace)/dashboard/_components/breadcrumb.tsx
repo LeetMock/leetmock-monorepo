@@ -22,7 +22,7 @@ export const DashboardBreadcrumb: React.FC<DashboardBreadcrumbProps> = ({ classN
   const pathSegments = pathname.split("/").filter((segment) => segment !== "");
 
   return (
-    <Breadcrumb className={cn("sticky top-0 z-50", className)}>
+    <Breadcrumb className={cn("sticky top-0 z-50 flex", className)}>
       <BreadcrumbList>
         {pathSegments.map((segment, index) => (
           <React.Fragment key={segment}>
