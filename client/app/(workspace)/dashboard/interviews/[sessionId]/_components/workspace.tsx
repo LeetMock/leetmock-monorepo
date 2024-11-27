@@ -26,7 +26,7 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
         {/* Timeline */}
         <div className="w-56 h-full flex flex-col justify-between border-r relative group">
           Side
-          <div className="w-full p-2 h-[3.2rem]">
+          <div className="w-full p-2 h-12">
             <TimerCountdown timeLeft={1000} className="h-full w-full" />
           </div>
           <CollapseButton className="absolute top-2 right-2 opacity-0 group-hover:opacity-100" />

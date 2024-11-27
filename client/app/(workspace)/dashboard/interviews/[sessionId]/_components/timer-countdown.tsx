@@ -14,8 +14,8 @@ export const TimerCountdown = ({ timeLeft, className, ...props }: TimerCountdown
   return (
     <div
       className={cn(
-        "flex items-center justify-center space-x-2 font-semibold bg-accent/80 border",
-        "px-2 rounded-sm select-none cursor-pointer text-sm w-20 text-muted-foreground",
+        "flex items-center justify-center space-x-2 font-semibold bg-accent",
+        "px-2 rounded-sm select-none cursor-pointer text-sm w-20 text-primary",
         className
       )}
       {...props}
