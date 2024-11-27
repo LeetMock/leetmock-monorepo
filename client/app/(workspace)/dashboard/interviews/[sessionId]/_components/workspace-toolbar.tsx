@@ -23,11 +23,10 @@ import { ConnectionState } from "livekit-client";
 import { CircleStop, Loader2, Play, Settings } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { TimerCountdown } from "./timer-countdown";
 
 interface WorkspaceToolbarProps {
   session: {
-    sessionId: Id<"sessions">;
+    _id: Id<"sessions">;
     sessionStatus: "not_started" | "in_progress" | "completed";
     questionId: Id<"questions">;
     sessionStartTime?: number;
@@ -45,7 +44,7 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
   const [timeLeft, setTimeLeft] = useState<number>(60 * session.timeLimit);
   const [isEndInterviewDialogOpen, setIsEndInterviewDialogOpen] = useState<boolean>(false);
 
-  const { state } = useAgent(session.sessionId);
+  const { state } = useAgent(session._id);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -69,7 +68,7 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
     }
 
     if (session.sessionStatus === "not_started") {
-      const promise = startSession({ sessionId: session.sessionId }).then(() => connect());
+      const promise = startSession({ sessionId: session._id }).then(() => connect());
       toast.promise(promise, {
         loading: "Starting interview...",
         success: "Interview has started!",
@@ -85,7 +84,7 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
     if (connectionState !== ConnectionState.Connected) return;
 
     await disconnect();
-    const promise = endSession({ sessionId: session.sessionId });
+    const promise = endSession({ sessionId: session._id });
 
     toast.promise(promise, {
       loading: "Ending interview...",
@@ -107,27 +106,7 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
   }, [connectionState]);
 
   return (
-    <div className="flex items-center w-full h-14 justify-between py-2 px-2.5 space-x-3 bg-background rounded-md shadow-md">
-      <div className="flex items-center space-x-3 h-full">
-        {/* <Avatar
-          className={cn(
-            "w-8 h-8 mt-px shadow-sm relative text-xs font-semibold ",
-            theme === "dark" ? "text-gray-700" : "text-white"
-          )}
-        >
-          <div
-            className={cn(
-              "absolute inset-0 flex items-center justify-center rounded-full",
-              "hover:bg-muted-foreground/10 transition-colors duration-200"
-            )}
-          />
-          <AvatarImage />
-          <AvatarFallback className={cn(color, "text-base")}>
-            {getFirstLetter(user?.fullName)}
-          </AvatarFallback>
-        </Avatar> */}
-        <TimerCountdown timeLeft={timeLeft} className="h-9 min-w-24 rounded-md" />
-      </div>
+    <div className="flex items-center w-full justify-end">
       <div className="flex items-center space-x-2.5 h-full">
         <UserDropdown align="end">
           <div className="w-9 h-9 rounded-md flex items-center justify-center hover:bg-muted cursor-pointer">
