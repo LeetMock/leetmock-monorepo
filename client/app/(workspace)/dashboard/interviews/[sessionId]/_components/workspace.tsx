@@ -34,7 +34,7 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
         </div>
         <div className="w-full h-full flex flex-col justify-between">
           Side
-          <div className="w-full p-2 h-12">
+          <div className="w-full p-2 h-[3.2rem]">
             <TimerCountdown timeLeft={1000} className="h-full w-full" />
           </div>
         </div>
