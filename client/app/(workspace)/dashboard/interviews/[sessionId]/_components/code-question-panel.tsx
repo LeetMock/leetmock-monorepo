@@ -29,7 +29,7 @@ export const CodeQuestionPanel: React.FC<CodeQuestionPanelProps> = ({
     .replace(/\n{3,}/g, "\n\n"); // Remove excessive newlines
 
   return (
-    <div className={cn("h-full relative bg-background", className)} {...props}>
+    <div className={cn("h-full flex-1 relative bg-background", className)} {...props}>
       <div className="absolute inset-0 overflow-y-auto p-4">
         <h2 className="text-2xl font-bold mb-4">{question.title}</h2>
         <ReactMarkdown>{markdownContent}</ReactMarkdown>

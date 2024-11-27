@@ -13,7 +13,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { UserDropdown } from "@/components/user-dropdown";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+import { Doc } from "@/convex/_generated/dataModel";
 import { useAgent } from "@/hooks/use-agent";
 import { useConnection } from "@/hooks/use-connection";
 import { cn, getTimeDurationSeconds, isDefined, minutesToMilliseconds } from "@/lib/utils";
@@ -25,13 +25,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 interface WorkspaceToolbarProps {
-  session: {
-    _id: Id<"sessions">;
-    sessionStatus: "not_started" | "in_progress" | "completed";
-    questionId: Id<"questions">;
-    sessionStartTime?: number;
-    timeLimit: number;
-  };
+  session: Doc<"sessions">;
 }
 
 export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {

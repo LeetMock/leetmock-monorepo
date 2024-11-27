@@ -6,19 +6,52 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useConnection } from "@/hooks/use-connection";
 import { useEditorStore } from "@/hooks/use-editor-store";
-import { cn } from "@/lib/utils";
+import { useResizePanel } from "@/hooks/use-resize-panel";
+import { cn, isDefined } from "@/lib/utils";
+import { useConnectionState, useLocalParticipant } from "@livekit/components-react";
 import { useQuery } from "convex/react";
-import { ChevronLeft } from "lucide-react";
+import { ConnectionState } from "livekit-client";
+import { ChevronLeft, LucideFileText } from "lucide-react";
 import { redirect } from "next/navigation";
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, useEffect, useMemo } from "react";
 import { toast } from "sonner";
+import { useWindowSize } from "usehooks-ts";
+import { CodeEditorPanel } from "./code-editor-panel";
+import { CodeQuestionPanel } from "./code-question-panel";
 import { TimerCountdown } from "./timer-countdown";
 import { WorkspaceToolbar } from "./workspace-toolbar";
 
 export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const session = useQuery(api.sessions.getById, { sessionId });
+  const question = useQuery(api.questions.getById, { questionId: session?.questionId });
+  const { localParticipant } = useLocalParticipant();
+
   const { disconnect } = useConnection();
   const { reset } = useEditorStore();
+
+  const connectionState = useConnectionState();
+  const { width: windowWidth = 300 } = useWindowSize();
+  const { size, isResizing, resizeHandleProps } = useResizePanel({
+    defaultSize: 400,
+    minSize: 200,
+    maxSize: windowWidth - 300,
+    direction: "horizontal",
+    storageId: "leetmock.workspace.code-question",
+  });
+
+  // Setup the participant device
+  useEffect(() => {
+    if (connectionState === ConnectionState.Connected) {
+      localParticipant.setCameraEnabled(false);
+      localParticipant.setMicrophoneEnabled(true);
+    }
+  }, [localParticipant, connectionState]);
+
+  const questionData = useMemo(() => {
+    if (!isDefined(question)) return undefined;
+
+    return { title: question.title, content: question.question };
+  }, [question]);
 
   if (session?.sessionStatus === "completed") {
     disconnect();
@@ -51,7 +84,37 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
           <Wait data={{ session }}>{({ session }) => <WorkspaceToolbar session={session} />}</Wait>
         </div>
         <div className="w-full h-full flex justify-center items-center p-2 pt-0">
-          <div className="w-full h-full bg-background rounded-sm shadow-sm"></div>
+          <Wait
+            data={{ questionData, question }}
+            fallback={
+              <div className="flex flex-col space-y-2 items-center justify-center h-full w-full border rounded-md shadow-md bg-background">
+                <LucideFileText className="w-10 h-10 text-muted-foreground" />
+                <span className="text-muted-foreground">Loading</span>
+              </div>
+            }
+          >
+            {({ questionData, question }) => (
+              <>
+                <CodeEditorPanel
+                  sessionId={sessionId}
+                  questionId={question._id}
+                  style={{ width: size }}
+                />
+                <div
+                  className={cn(
+                    "w-px h-full cursor-ew-resize px-1 transition-all hover:bg-muted-foreground/10 flex-0 rounded-full relative",
+                    isResizing ? "bg-muted-foreground/10" : "bg-transparent"
+                  )}
+                  {...resizeHandleProps}
+                >
+                  <div className="absolute inset-0 flex justify-center items-center">
+                    <div className="h-9 w-[3px] rounded-full bg-muted-foreground/50"></div>
+                  </div>
+                </div>
+                <CodeQuestionPanel className="border rounded-md shrink-0" question={questionData} />
+              </>
+            )}
+          </Wait>
         </div>
       </div>
     </div>
