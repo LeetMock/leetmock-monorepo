@@ -18,9 +18,8 @@ import { toast } from "sonner";
 import { useWindowSize } from "usehooks-ts";
 import { CodeEditorPanel } from "./code-editor-panel";
 import { CodeQuestionPanel } from "./code-question-panel";
-import { WorkspaceToolbar } from "./workspace-toolbar";
 
-export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
+export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { disconnect } = useConnection();
   const connectionState = useConnectionState();
 
@@ -77,9 +76,9 @@ export const CodeWorkspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ session
 
   return (
     <>
-      <Wait data={{ sessionData }}>
+      {/* <Wait data={{ sessionData }}>
         {({ sessionData }) => <WorkspaceToolbar session={sessionData} />}
-      </Wait>
+      </Wait> */}
       <div className="w-full h-full flex justify-center items-center">
         <Wait
           data={{ questionData, question }}

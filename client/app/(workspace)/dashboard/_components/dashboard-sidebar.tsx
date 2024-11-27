@@ -1,6 +1,4 @@
-import Image from "next/image";
-import Link from "next/link";
-
+import { Logo } from "@/components/logo";
 import { ProfileItem } from "@/components/profile-item";
 import { UserDropdown } from "@/components/user-dropdown";
 import { useConfig } from "@/hooks/use-config";
@@ -21,18 +19,7 @@ export const DashboardSidebar = ({ className, ...props }: DashboardSidebarProps)
       {/* Logo */}
       <div className="flex flex-col">
         <div className="flex h-12 items-center pl-1.5">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div aria-hidden="true" className="flex items-center">
-              <Image
-                src="/logo.png"
-                alt="LeetMock.AI Logo"
-                width={24}
-                height={24}
-                className="h-[1.35rem] w-auto"
-              />
-            </div>
-            <span className="font-bold text-lg">LeetMock</span>
-          </Link>
+          <Logo />
         </div>
       </div>
 
