@@ -1,27 +1,35 @@
 "use client";
 
 import { cn, formatTime } from "@/lib/utils";
-import { Timer } from "lucide-react";
-import { useTheme } from "next-themes";
+import { Clock } from "lucide-react";
 import { HTMLAttributes } from "react";
+
 export interface TimerCountdownProps extends HTMLAttributes<HTMLDivElement> {
   timeLeft: number;
+  collapsed?: boolean;
 }
 
-export const TimerCountdown = ({ timeLeft, className, ...props }: TimerCountdownProps) => {
-  const { theme } = useTheme();
-
+export const TimerCountdown = ({
+  timeLeft,
+  className,
+  collapsed,
+  ...props
+}: TimerCountdownProps) => {
   return (
     <div
       className={cn(
-        "flex items-center justify-center space-x-2 font-semibold bg-accent",
-        "px-2 rounded-sm select-none cursor-pointer text-sm w-20 text-primary",
+        "flex font-semibold bg-accent rounded-md select-none cursor-pointer text-primary",
+        collapsed
+          ? "flex-col items-center justify-center space-y-1 aspect-square p-2"
+          : "flex-row items-center justify-center space-x-2 px-3 h-full",
         className
       )}
       {...props}
     >
-      <Timer className="w-4 h-4" />
-      <span className="text-base shrink-0 font-mono">{formatTime(timeLeft)}</span>
+      <Clock className="w-4 h-4 shrink-0" />
+      <span className={cn("font-mono text-sm", collapsed && "text-xs")}>
+        {formatTime(timeLeft)}
+      </span>
     </div>
   );
 };
