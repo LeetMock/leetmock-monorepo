@@ -11,7 +11,7 @@ import { cn, isDefined } from "@/lib/utils";
 import { useConnectionState, useLocalParticipant } from "@livekit/components-react";
 import { useQuery } from "convex/react";
 import { ConnectionState } from "livekit-client";
-import { ChevronLeft, LucideFileText } from "lucide-react";
+import { LucideFileText, PanelLeft } from "lucide-react";
 import { redirect } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { toast } from "sonner";
@@ -76,7 +76,7 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
               variant="ghost"
               className={cn("transition-all duration-200 opacity-0 group-hover:opacity-100")}
             >
-              <ChevronLeft className="w-4 h-4 text-primary" />
+              <PanelLeft className="w-4 h-4 text-primary" />
             </Button>
           </Tooltip>
         </div>
