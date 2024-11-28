@@ -18,10 +18,10 @@ export const TimerCountdown = ({
   return (
     <div
       className={cn(
-        "flex font-semibold bg-accent rounded-md select-none cursor-pointer text-primary",
+        "flex font-semibold bg-accent rounded-md select-none cursor-pointer text-primary py-2",
         collapsed
-          ? "flex-col items-center justify-center space-y-1 aspect-square p-2"
-          : "flex-row items-center justify-center space-x-2 px-3 h-full",
+          ? "flex-col items-center justify-center space-y-1"
+          : "flex-row items-center justify-center space-x-2 px-3",
         className
       )}
       {...props}
