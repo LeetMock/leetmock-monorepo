@@ -1,28 +1,30 @@
-"use client";
+import './globals.css'
+import Navbar from './_components/Navbar'
+import Hero from './_components/Hero'
+import Features from './_components/Features'
+import CoreFeatures from './_components/CoreFeatures'
+import Testimonials from './_components/Testimonials'
+import CallToAction from './_components/CallToAction'
 
-import { Urbanist } from "next/font/google";
-import { Stats } from "./_components/Stats";
-import { Features } from "./_components/Features";
-import { HeroSection } from "./_components/HeroSection";
-import { Testimonials } from "./_components/Testimonials";
-import { CallForActions } from "./_components/CallForActions";
-import { Blog } from "./_components/Blog";
-import AppHeader from "./_components/AppHeader";
-
-const urbanist = Urbanist({ subsets: ["latin"] });
-
-export default function Page() {
+function App() {
   return (
-    <div className={`!scroll-smooth ${urbanist.className}`}>
-      <AppHeader />
-      <div className="space-y-40 mb-40">
-        <HeroSection />
+    <div className="min-h-screen bg-black">
+      <Navbar />
+      <Hero />
+      <section id="features">
         <Features />
-        <Stats />
+      </section>
+      <section id="core-features">
+        <CoreFeatures />
+      </section>
+      <section id="testimonials">
         <Testimonials />
-        <CallForActions />
-        <Blog />
-      </div>
+      </section>
+      <section id="cta">
+        <CallToAction />
+      </section>
     </div>
-  );
+  )
 }
+
+export default App

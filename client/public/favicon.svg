@@ -1,0 +1,26 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="32" height="32" rx="6" fill="#0F172A"/>
+  
+  <!-- Cyber grid -->
+  <path d="M0 8H32" stroke="#3B82F6" stroke-width="0.5" stroke-opacity="0.2"/>
+  <path d="M0 16H32" stroke="#3B82F6" stroke-width="0.5" stroke-opacity="0.2"/>
+  <path d="M0 24H32" stroke="#3B82F6" stroke-width="0.5" stroke-opacity="0.2"/>
+  <path d="M8 0V32" stroke="#3B82F6" stroke-width="0.5" stroke-opacity="0.2"/>
+  <path d="M16 0V32" stroke="#3B82F6" stroke-width="0.5" stroke-opacity="0.2"/>
+  <path d="M24 0V32" stroke="#3B82F6" stroke-width="0.5" stroke-opacity="0.2"/>
+  
+  <!-- LM Letters -->
+  <path d="M8 8V20H14" stroke="#22D3EE" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M18 8L18 20M18 20L24 8M24 8L24 20" stroke="#3B82F6" stroke-width="2.5" stroke-linecap="round"/>
+  
+  <!-- Glow effect -->
+  <rect width="32" height="32" rx="6" fill="url(#paint0_radial)"/>
+  
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(16 16) rotate(90) scale(32)">
+      <stop stop-color="#22D3EE" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#0F172A" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
