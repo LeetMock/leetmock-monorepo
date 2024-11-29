@@ -1,100 +1,88 @@
-import Image from "next/image";
-import { Container } from "./Container";
+'use client';
+
+import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 
 const testimonials = [
   {
     name: "Jassica Wu",
     role: "Software Engineer",
-    quote:
-      "I love practicing coding interviews with LeetMock. Its personalized feedback helps me sharpen my skills in ways no other platform has before.",
-    imageSrc: "https://i.pravatar.cc/150?img=31",
+    content: "I love practicing coding interviews with LeetMock. Its personalized feedback helps me sharpen my skills in ways no other platform has before.",
   },
   {
     name: "Alex G.",
     role: "Backend Engineer",
-    quote:
-      "A game changer! The feedback and practice have been invaluable. It gave me so much confidence for my real interviews. Honestly, it’s the closest I’ve felt to the real deal.",
-    imageSrc: "https://i.pravatar.cc/150?img=52",
+    content: "A game changer! The feedback and practice have been invaluable. It gave me so much confidence for my real interviews. Honestly, it's the closest I've felt to the real deal.",
   },
   {
     name: "Taylor R.",
     role: "Career Switcher",
-    quote:
-      "I was surprised by how challenging and supportive the AI was. It felt like I had a genuine interview experience that pushed me to do better each time.",
-    imageSrc: "https://i.pravatar.cc/150?img=33",
+    content: "I was surprised by how challenging and supportive the AI was. It felt like I had a genuine interview experience that pushed me to do better each time.",
   },
   {
     name: "Kyle H.",
     role: "Data Engineer",
-    quote:
-      "The hints during interviews were great—it felt like I had a coach pushing me, but not too much. This balance kept me motivated and helped me improve steadily.",
-    imageSrc: "https://i.pravatar.cc/150?img=34",
+    content: "The hints during interviews were great—it felt like I had a coach pushing me, but not too much. This balance kept me motivated and helped me improve steadily.",
   },
   {
     name: "Jake S.",
     role: "Student",
-    quote:
-      "The AI felt so natural that I forgot I was talking to a bot most of the time. The real-time interaction made the whole experience much more effective.",
-    imageSrc: "https://i.pravatar.cc/150?img=15",
+    content: "The AI felt so natural that I forgot I was talking to a bot most of the time. The real-time interaction made the whole experience much more effective.",
   },
   {
     name: "Xuchen P.",
     role: "Full-Stack Developer",
-    quote:
-      "I liked that I could practice whenever I wanted without needing to find someone to do a mock interview with. It made interview prep so much more convenient and consistent.",
-    imageSrc: "https://i.pravatar.cc/150?img=62",
+    content: "I liked that I could practice whenever I wanted without needing to find someone to do a mock interview with. It made interview prep so much more convenient and consistent.",
   },
 ];
 
-const TestimonialCard = ({
-  name,
-  role,
-  quote,
-  imageSrc,
-}: {
-  name: string;
-  role: string;
-  quote: string;
-  imageSrc: string;
-}) => {
-  return (
-    <>
-      <div className="aspect-auto p-8 border border-gray-100 rounded-3xl bg-white dark:bg-gray-800 dark:border-gray-700 shadow-2xl shadow-gray-600/10 dark:shadow-none">
-        <div className="flex gap-4">
-          <Image
-            className="w-12 h-12 rounded-full"
-            src={imageSrc}
-            alt="user avatar"
-            width="400"
-            height="400"
-            loading="lazy"
-          />
-          <div>
-            <h6 className="text-lg font-medium text-gray-700 dark:text-white">{name}</h6>
-            <p className="text-sm text-gray-500 dark:text-gray-300">{role}</p>
-          </div>
-        </div>
-        <p className="mt-8">{quote}</p>
-      </div>
-    </>
-  );
-};
+const Testimonials = () => {
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
 
-export const Testimonials = () => {
   return (
-    <div className="text-gray-600 dark:text-gray-300" id="reviews">
-      <Container>
-        <div className="mb-20 space-y-4 px-6 md:px-0">
-          <h2 className="text-center text-2xl font-bold text-gray-800 dark:text-white md:text-4xl">
+    <div className="py-24 bg-black">
+      <div className="container mx-auto px-6">
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-4xl font-bold mb-4 text-blue-300">
             We have some fans.
           </h2>
-        </div>
-        <div className="md:columns-2 lg:columns-3 gap-8 space-y-8">
+          <p className="text-xl text-blue-200">
+            95% of users say LeetMock.AI is more effective than other tools.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
-            <TestimonialCard key={index} {...testimonial} />
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: index * 0.1 }}
+              className="bg-blue-900/20 p-8 rounded-xl border border-blue-500/30"
+            >
+              <div className="flex items-center mb-6">
+                <div className="w-12 h-12 rounded-full bg-blue-500/30 mr-4"></div>
+                <div>
+                  <h3 className="font-semibold text-blue-300">{testimonial.name}</h3>
+                  <p className="text-blue-400 text-sm">{testimonial.role}</p>
+                </div>
+              </div>
+              <p className="text-blue-200">{testimonial.content}</p>
+            </motion.div>
           ))}
         </div>
-      </Container>
+      </div>
     </div>
   );
 };
+
+export default Testimonials;
