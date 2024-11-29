@@ -12,7 +12,7 @@ const Navbar = () => {
     { name: 'Features', href: '#features' },
     { name: 'Core Features', href: '#core-features' },
     { name: 'Testimonials', href: '#testimonials' },
-    { name: 'Get Started', href: '#cta', isButton: true },
+    { name: 'Get Started', href: '/dashboard', isButton: true },
   ];
 
   return (

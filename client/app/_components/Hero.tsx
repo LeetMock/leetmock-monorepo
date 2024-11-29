@@ -57,6 +57,9 @@ const Hero = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                window.location.href = '/dashboard';
+              }}
               className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-cyan-600 transition-all shadow-[0_0_20px_rgba(0,195,255,0.5)] flex items-center"
             >
               Start Practicing Now <ArrowRight className="ml-2" />
