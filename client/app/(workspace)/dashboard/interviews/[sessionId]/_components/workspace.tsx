@@ -1,59 +1,161 @@
 import { Logo } from "@/components/logo";
+import { Tooltip } from "@/components/tooltip";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Wait } from "@/components/wait";
+import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { cn } from "@/lib/utils";
-import { ChevronLeft } from "lucide-react";
-import { HTMLAttributes } from "react";
+import { useConnection } from "@/hooks/use-connection";
+import { useEditorStore } from "@/hooks/use-editor-store";
+import { useResizePanel } from "@/hooks/use-resize-panel";
+import { cn, isDefined } from "@/lib/utils";
+import { useConnectionState, useLocalParticipant } from "@livekit/components-react";
+import { useQuery } from "convex/react";
+import { motion } from "framer-motion";
+import { ConnectionState } from "livekit-client";
+import { LucideFileText, PanelLeft, PanelLeftOpen } from "lucide-react";
+import { redirect } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { useWindowSize } from "usehooks-ts";
+import { CodeEditorPanel } from "./code-editor-panel";
+import { CodeQuestionPanel } from "./code-question-panel";
 import { TimerCountdown } from "./timer-countdown";
+import { WorkspaceToolbar } from "./workspace-toolbar";
 
 export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
+  const session = useQuery(api.sessions.getById, { sessionId });
+  const question = useQuery(api.questions.getById, { questionId: session?.questionId });
+  const { localParticipant } = useLocalParticipant();
+
+  const { disconnect } = useConnection();
+  const { reset } = useEditorStore();
+
+  const connectionState = useConnectionState();
+  const { width: windowWidth = 300 } = useWindowSize();
+  const { size, isResizing, resizeHandleProps } = useResizePanel({
+    defaultSize: 400,
+    minSize: 200,
+    maxSize: windowWidth - 300,
+    direction: "horizontal",
+    storageId: "leetmock.workspace.code-question",
+  });
+
+  // Setup the participant device
+  useEffect(() => {
+    if (connectionState === ConnectionState.Connected) {
+      localParticipant.setCameraEnabled(false);
+      localParticipant.setMicrophoneEnabled(true);
+    }
+  }, [localParticipant, connectionState]);
+
+  const questionData = useMemo(() => {
+    if (!isDefined(question)) return undefined;
+
+    return { title: question.title, content: question.question };
+  }, [question]);
+
+  // Add state for sidebar collapse
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  if (session?.sessionStatus === "completed") {
+    disconnect();
+    reset();
+    toast.success("Congratulations! You've completed the interview. 🎉");
+    return redirect("/dashboard/interviews");
+  }
+
   return (
-    <div className="bg-background h-screen w-full flex flex-col">
-      {/* Header */}
-      <div className="flex w-full border-b h-12">
-        {/* Logo */}
-        <Logo
-          showText={false}
+    <div className="bg-background h-screen w-full flex">
+      {/* Sidebar */}
+      <motion.div
+        className="bg-background flex flex-col h-full border-r"
+        animate={{ width: isSidebarCollapsed ? "4.5rem" : "224px" }}
+        transition={{ duration: 0.2 }}
+      >
+        <div
           className={cn(
-            "items-center justify-center cursor-pointer w-12 hover:bg-accent",
-            "transition-all duration-200"
+            "w-full flex items-center justify-between pl-4 pr-2 h-14",
+            "cursor-pointer group",
+            isSidebarCollapsed && "justify-center px-0"
           )}
-        />
-      </div>
-      {/* Main */}
-      <div className="flex justify-center flex-1">
-        {/* Timeline */}
-        <div className="w-56 h-full flex flex-col justify-between border-r relative group">
-          Side
-          <div className="w-full p-2 h-12">
-            <TimerCountdown timeLeft={1000} className="h-full w-full" />
-          </div>
-          <CollapseButton className="absolute top-2 right-2 opacity-0 group-hover:opacity-100" />
+        >
+          <Logo showText={!isSidebarCollapsed} />
+          {!isSidebarCollapsed && (
+            <Tooltip content="Collapse">
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => setIsSidebarCollapsed(true)}
+                className="transition-all duration-200 opacity-0 group-hover:opacity-100"
+              >
+                <PanelLeft className="w-4 h-4 text-primary" />
+              </Button>
+            </Tooltip>
+          )}
         </div>
-        {/* Content */}
-        <div className="h-full flex-1 justify-center items-center p-2 pt-0">Content</div>
+        <div className="w-full h-full flex flex-col justify-between">
+          <div className="flex justify-center">Side</div>
+          <div className={cn("w-full p-2")}>
+            <TimerCountdown timeLeft={1000} collapsed={isSidebarCollapsed} />
+          </div>
+        </div>
+      </motion.div>
+      <div className="flex flex-col justify-center items-center flex-1 bg-accent">
+        <div className={cn("w-full h-14 flex items-center px-2 relative")}>
+          {isSidebarCollapsed && (
+            <Tooltip content="Expand">
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => setIsSidebarCollapsed(false)}
+                className={
+                  "absolute left-2 transition-all duration-200 hover:bg-black/5 dark:hover:bg-white/10"
+                }
+              >
+                <PanelLeftOpen className="w-4 h-4 text-primary" />
+              </Button>
+            </Tooltip>
+          )}
+          <div className="flex-1 flex items-center justify-center">
+            <Wait data={{ session }}>
+              {({ session }) => <WorkspaceToolbar session={session} />}
+            </Wait>
+          </div>
+        </div>
+        <div className="w-full h-full flex justify-center items-center p-2 pt-0">
+          <Wait
+            data={{ questionData, question }}
+            fallback={
+              <div className="flex flex-col space-y-2 items-center justify-center h-full w-full border rounded-md shadow-md bg-background">
+                <LucideFileText className="w-10 h-10 text-muted-foreground" />
+                <span className="text-muted-foreground">Loading</span>
+              </div>
+            }
+          >
+            {({ questionData, question }) => (
+              <>
+                <CodeEditorPanel
+                  sessionId={sessionId}
+                  questionId={question._id}
+                  style={{ width: size }}
+                />
+                <div
+                  className={cn(
+                    "w-px h-full cursor-ew-resize px-1 transition-all hover:bg-muted-foreground/10 flex-0 rounded-full relative",
+                    isResizing ? "bg-muted-foreground/10" : "bg-transparent"
+                  )}
+                  {...resizeHandleProps}
+                >
+                  <div className="absolute inset-0 flex justify-center items-center">
+                    <div className="h-9 w-[3px] rounded-full bg-muted-foreground/50"></div>
+                  </div>
+                </div>
+                <CodeQuestionPanel className="rounded-md shrink-0" question={questionData} />
+              </>
+            )}
+          </Wait>
+        </div>
       </div>
     </div>
-  );
-};
-
-const CollapseButton: React.FC<HTMLAttributes<HTMLButtonElement>> = ({ className, ...props }) => {
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            size="icon"
-            variant="ghost"
-            className={cn("transition-all duration-200", className)}
-            {...props}
-          >
-            <ChevronLeft className="w-4 h-4 text-primary" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>Collapse</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
   );
 };

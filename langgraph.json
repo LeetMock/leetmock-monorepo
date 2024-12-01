@@ -11,9 +11,5 @@
   },
   "env": ".env",
   "python_version": "3.12",
-  "dependencies": [
-    "./agent-graph",
-    "./libs",
-    "./convex-client"
-  ]
+  "dependencies": ["./agent-graph", "./libs", "./convex-client"]
 }

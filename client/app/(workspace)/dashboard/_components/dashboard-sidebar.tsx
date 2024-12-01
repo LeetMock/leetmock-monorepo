@@ -19,7 +19,7 @@ export const DashboardSidebar = ({ className, ...props }: DashboardSidebarProps)
       {/* Logo */}
       <div className="flex flex-col">
         <div className="flex h-12 items-center pl-1.5">
-          <Logo />
+          <Logo showText />
         </div>
       </div>
 
