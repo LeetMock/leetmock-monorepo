@@ -199,7 +199,8 @@ export const createCodeSession = userMutation({
       userId: ctx.user.subject,
       timeLimit,
       sessionStatus: "not_started",
-      voice,
+      evalReady: false,
+      voice
     });
 
     const initialContent = CODE_TEMPLATES["python"](
