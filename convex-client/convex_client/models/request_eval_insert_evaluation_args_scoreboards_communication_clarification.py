@@ -17,19 +17,22 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict
-from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of3_data_after_inner import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner
+from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
+from typing import Any, ClassVar, Dict, List, Union
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3Data(BaseModel):
+class RequestEvalInsertEvaluationArgsScoreboardsCommunicationClarification(BaseModel):
     """
-    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3Data
+    RequestEvalInsertEvaluationArgsScoreboardsCommunicationClarification
     """ # noqa: E501
-    after: List[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner]
-    before: List[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner]
-    __properties: ClassVar[List[str]] = ["after", "before"]
+    comment: StrictStr
+    description: StrictStr
+    examples: List[StrictStr]
+    max_score: Union[StrictFloat, StrictInt] = Field(alias="maxScore")
+    score: Union[StrictFloat, StrictInt]
+    test_name: StrictStr = Field(alias="testName")
+    __properties: ClassVar[List[str]] = ["comment", "description", "examples", "maxScore", "score", "testName"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -49,7 +52,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3Data(BaseMode
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3Data from a JSON string"""
+        """Create an instance of RequestEvalInsertEvaluationArgsScoreboardsCommunicationClarification from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -70,25 +73,11 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3Data(BaseMode
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of each item in after (list)
-        _items = []
-        if self.after:
-            for _item_after in self.after:
-                if _item_after:
-                    _items.append(_item_after.to_dict())
-            _dict['after'] = _items
-        # override the default output from pydantic by calling `to_dict()` of each item in before (list)
-        _items = []
-        if self.before:
-            for _item_before in self.before:
-                if _item_before:
-                    _items.append(_item_before.to_dict())
-            _dict['before'] = _items
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3Data from a dict"""
+        """Create an instance of RequestEvalInsertEvaluationArgsScoreboardsCommunicationClarification from a dict"""
         if obj is None:
             return None
 
@@ -96,8 +85,12 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3Data(BaseMode
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "after": [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner.from_dict(_item) for _item in obj["after"]] if obj.get("after") is not None else None,
-            "before": [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner.from_dict(_item) for _item in obj["before"]] if obj.get("before") is not None else None
+            "comment": obj.get("comment"),
+            "description": obj.get("description"),
+            "examples": obj.get("examples"),
+            "maxScore": obj.get("maxScore"),
+            "score": obj.get("score"),
+            "testName": obj.get("testName")
         })
         return _obj
 

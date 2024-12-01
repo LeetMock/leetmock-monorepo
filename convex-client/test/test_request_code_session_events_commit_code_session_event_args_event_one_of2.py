@@ -35,15 +35,13 @@ class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2(unittest
         model = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2()
         if include_optional:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2(
-                data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_2_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_2_data(
-                    stage = '', ),
-                type = 'stage_switched'
+                data = None,
+                type = 'testcase_added'
             )
         else:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2(
-                data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_2_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_2_data(
-                    stage = '', ),
-                type = 'stage_switched',
+                data = None,
+                type = 'testcase_added',
         )
         """
 

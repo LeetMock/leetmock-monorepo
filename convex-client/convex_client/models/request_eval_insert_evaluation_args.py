@@ -17,22 +17,21 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field
-from typing import Any, ClassVar, Dict, List
-from convex_client.models.response_actions_run_tests_value_test_results_inner import ResponseActionsRunTestsValueTestResultsInner
+from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
+from typing import Any, ClassVar, Dict, List, Union
+from convex_client.models.request_eval_insert_evaluation_args_scoreboards import RequestEvalInsertEvaluationArgsScoreboards
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(BaseModel):
+class RequestEvalInsertEvaluationArgs(BaseModel):
     """
-    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data
-
-class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(BaseModel):
-    """
-    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data
+    RequestEvalInsertEvaluationArgs
     """ # noqa: E501
-    test_results: List[ResponseActionsRunTestsValueTestResultsInner] = Field(alias="testResults")
-    __properties: ClassVar[List[str]] = ["testResults"]
+    overall_feedback: StrictStr = Field(alias="overallFeedback")
+    scoreboards: RequestEvalInsertEvaluationArgsScoreboards
+    session_id: StrictStr = Field(description="ID from table \"sessions\"", alias="sessionId")
+    total_score: Union[StrictFloat, StrictInt] = Field(alias="totalScore")
+    __properties: ClassVar[List[str]] = ["overallFeedback", "scoreboards", "sessionId", "totalScore"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -52,10 +51,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(BaseMode
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data from a JSON string"""
-
-
+        """Create an instance of RequestEvalInsertEvaluationArgs from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -76,19 +72,14 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(BaseMode
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of each item in test_results (list)
-        _items = []
-        if self.test_results:
-            for _item_test_results in self.test_results:
-                if _item_test_results:
-                    _items.append(_item_test_results.to_dict())
-            _dict['testResults'] = _items
+        # override the default output from pydantic by calling `to_dict()` of scoreboards
+        if self.scoreboards:
+            _dict['scoreboards'] = self.scoreboards.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-
-
+        """Create an instance of RequestEvalInsertEvaluationArgs from a dict"""
         if obj is None:
             return None
 
@@ -96,7 +87,10 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(BaseMode
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "testResults": [ResponseActionsRunTestsValueTestResultsInner.from_dict(_item) for _item in obj["testResults"]] if obj.get("testResults") is not None else None
+            "overallFeedback": obj.get("overallFeedback"),
+            "scoreboards": RequestEvalInsertEvaluationArgsScoreboards.from_dict(obj["scoreboards"]) if obj.get("scoreboards") is not None else None,
+            "sessionId": obj.get("sessionId"),
+            "totalScore": obj.get("totalScore")
         })
         return _obj
 

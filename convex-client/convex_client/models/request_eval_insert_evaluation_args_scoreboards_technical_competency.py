@@ -18,17 +18,19 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, Field
-from typing import Any, ClassVar, Dict, List, Optional
+from typing import Any, ClassVar, Dict, List
+from convex_client.models.request_eval_insert_evaluation_args_scoreboards_communication_clarification import RequestEvalInsertEvaluationArgsScoreboardsCommunicationClarification
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner(BaseModel):
+class RequestEvalInsertEvaluationArgsScoreboardsTechnicalCompetency(BaseModel):
     """
-    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner
+    RequestEvalInsertEvaluationArgsScoreboardsTechnicalCompetency
     """ # noqa: E501
-    expected_output: Optional[Any] = Field(default=None, alias="expectedOutput")
-    input: Dict[str, Any]
-    __properties: ClassVar[List[str]] = ["expectedOutput", "input"]
+    code_quality: RequestEvalInsertEvaluationArgsScoreboardsCommunicationClarification = Field(alias="codeQuality")
+    coding_speed: RequestEvalInsertEvaluationArgsScoreboardsCommunicationClarification = Field(alias="codingSpeed")
+    syntax_error: RequestEvalInsertEvaluationArgsScoreboardsCommunicationClarification = Field(alias="syntaxError")
+    __properties: ClassVar[List[str]] = ["codeQuality", "codingSpeed", "syntaxError"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -48,7 +50,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInne
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner from a JSON string"""
+        """Create an instance of RequestEvalInsertEvaluationArgsScoreboardsTechnicalCompetency from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -69,16 +71,20 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInne
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # set to None if expected_output (nullable) is None
-        # and model_fields_set contains the field
-        if self.expected_output is None and "expected_output" in self.model_fields_set:
-            _dict['expectedOutput'] = None
-
+        # override the default output from pydantic by calling `to_dict()` of code_quality
+        if self.code_quality:
+            _dict['codeQuality'] = self.code_quality.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of coding_speed
+        if self.coding_speed:
+            _dict['codingSpeed'] = self.coding_speed.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of syntax_error
+        if self.syntax_error:
+            _dict['syntaxError'] = self.syntax_error.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner from a dict"""
+        """Create an instance of RequestEvalInsertEvaluationArgsScoreboardsTechnicalCompetency from a dict"""
         if obj is None:
             return None
 
@@ -86,8 +92,9 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInne
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "expectedOutput": obj.get("expectedOutput"),
-            "input": obj.get("input")
+            "codeQuality": RequestEvalInsertEvaluationArgsScoreboardsCommunicationClarification.from_dict(obj["codeQuality"]) if obj.get("codeQuality") is not None else None,
+            "codingSpeed": RequestEvalInsertEvaluationArgsScoreboardsCommunicationClarification.from_dict(obj["codingSpeed"]) if obj.get("codingSpeed") is not None else None,
+            "syntaxError": RequestEvalInsertEvaluationArgsScoreboardsCommunicationClarification.from_dict(obj["syntaxError"]) if obj.get("syntaxError") is not None else None
         })
         return _obj
 

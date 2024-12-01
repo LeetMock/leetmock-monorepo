@@ -35,33 +35,33 @@ class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5(unittest
         model = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5()
         if include_optional:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5(
-                data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_4_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_4_data(
-                    test_results = [
-                        convex_client.models.response_actions_run_tests_value_test_results_inner.Response_actions_runTests_value_testResults_inner(
-                            actual = null, 
-                            case_number = 1.337, 
-                            error = '', 
-                            expected = null, 
-                            input = convex_client.models.input.input(), 
-                            passed = True, 
-                            stdout = '', )
+                data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data(
+                    after = [
+                        convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data_after_inner(
+                            expected_output = null, 
+                            input = convex_client.models.input.input(), )
+                        ], 
+                    before = [
+                        convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data_after_inner(
+                            expected_output = null, 
+                            input = convex_client.models.input.input(), )
                         ], ),
-                type = 'groundtruth_testcase_executed'
+                type = 'testcase_changed'
             )
         else:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5(
-                data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_4_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_4_data(
-                    test_results = [
-                        convex_client.models.response_actions_run_tests_value_test_results_inner.Response_actions_runTests_value_testResults_inner(
-                            actual = null, 
-                            case_number = 1.337, 
-                            error = '', 
-                            expected = null, 
-                            input = convex_client.models.input.input(), 
-                            passed = True, 
-                            stdout = '', )
+                data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data(
+                    after = [
+                        convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data_after_inner(
+                            expected_output = null, 
+                            input = convex_client.models.input.input(), )
+                        ], 
+                    before = [
+                        convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data_after_inner(
+                            expected_output = null, 
+                            input = convex_client.models.input.input(), )
                         ], ),
-                type = 'groundtruth_testcase_executed',
+                type = 'testcase_changed',
         )
         """
 

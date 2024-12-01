@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.request_admins_create_user_profile_args_subscription import RequestAdminsCreateUserProfileArgsSubscription
+from convex_client.models.response_sessions_get_by_id_unauth import ResponseSessionsGetByIdUnauth
 
-class TestRequestAdminsCreateUserProfileArgsSubscription(unittest.TestCase):
-    """RequestAdminsCreateUserProfileArgsSubscription unit test stubs"""
+class TestResponseSessionsGetByIdUnauth(unittest.TestCase):
+    """ResponseSessionsGetByIdUnauth unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,24 +25,29 @@ class TestRequestAdminsCreateUserProfileArgsSubscription(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> RequestAdminsCreateUserProfileArgsSubscription:
-        """Test RequestAdminsCreateUserProfileArgsSubscription
+    def make_instance(self, include_optional) -> ResponseSessionsGetByIdUnauth:
+        """Test ResponseSessionsGetByIdUnauth
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `RequestAdminsCreateUserProfileArgsSubscription`
+        # uncomment below to create an instance of `ResponseSessionsGetByIdUnauth`
         """
-        model = RequestAdminsCreateUserProfileArgsSubscription()
+        model = ResponseSessionsGetByIdUnauth()
         if include_optional:
-            return RequestAdminsCreateUserProfileArgsSubscription(
+            return ResponseSessionsGetByIdUnauth(
+                status = 'success',
+                error_message = '',
+                error_data = None,
+                value = None
             )
         else:
-            return RequestAdminsCreateUserProfileArgsSubscription(
+            return ResponseSessionsGetByIdUnauth(
+                status = 'success',
         )
         """
 
-    def testRequestAdminsCreateUserProfileArgsSubscription(self):
-        """Test RequestAdminsCreateUserProfileArgsSubscription"""
+    def testResponseSessionsGetByIdUnauth(self):
+        """Test ResponseSessionsGetByIdUnauth"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

@@ -169,6 +169,37 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/sessions/getById_unauth:
+    post:
+      summary: Calls a query at the path sessions.js:getById_unauth
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_sessions.getById_unauth"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_sessions.getById_unauth"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
   /api/run/sessions/getByUserId:
     post:
       summary: Calls a query at the path sessions.js:getByUserId
@@ -882,6 +913,37 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/eval/insertEvaluation:
+    post:
+      summary: Calls a mutation at the path eval.js:insertEvaluation
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_eval.insertEvaluation"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_eval.insertEvaluation"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -1123,6 +1185,36 @@ components:
               description: ID from table "sessions"
 
     Response_sessions.getByIdInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_sessions.getById_unauth:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_sessions.getById_unauth:
       type: object
       required:
         - status
@@ -1827,6 +1919,26 @@ components:
                     type:
                       type: string
                       enum:
+                        - "user_test_executed"
+                - type: object
+                  required:
+                    - data
+                    - type
+                  properties:
+                    data: {}
+                    type:
+                      type: string
+                      enum:
+                        - "testcase_added"
+                - type: object
+                  required:
+                    - data
+                    - type
+                  properties:
+                    data: {}
+                    type:
+                      type: string
+                      enum:
                         - "testcase_removed"
                 - type: object
                   required:
@@ -1834,16 +1946,11 @@ components:
                     - type
                   properties:
                     data:
-                      type: object
-                      required:
-                        - stage
-                      properties:
-                        stage:
-                          type: string
+                      type: boolean
                     type:
                       type: string
                       enum:
-                        - "stage_switched"
+                        - "question_displayed"
                 - type: object
                   required:
                     - data
@@ -1961,22 +2068,6 @@ components:
                       type: string
                       enum:
                         - "groundtruth_testcase_executed"
-                - type: object
-                  required:
-                    - data
-                    - type
-                  properties:
-                    data:
-                      type: object
-                      required:
-                        - stage
-                      properties:
-                        stage:
-                          type: string
-                    type:
-                      type: string
-                      enum:
-                        - "stage_switched"
             sessionId:
               type: string
               description: ID from table "sessions"
@@ -2419,9 +2510,9 @@ components:
           required:
             - _creationTime
             - _id
+            - displayQuestion
             - editor
             - sessionId
-            - stage
             - terminal
             - testcases
           properties:
@@ -2430,6 +2521,8 @@ components:
             _id:
               type: string
               description: ID from table "codeSessionStates"
+            displayQuestion:
+              type: boolean
             editor:
               type: object
               required:
@@ -2446,8 +2539,6 @@ components:
             sessionId:
               type: string
               description: ID from table "sessions"
-            stage:
-              type: string
             terminal:
               type: object
               required:
@@ -2636,6 +2727,342 @@ components:
               description: ID from table "sessions"
 
     Response_codeSessionStates.getTestCasesStateInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_eval.insertEvaluation:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - overallFeedback
+            - scoreboards
+            - sessionId
+            - totalScore
+          properties:
+            overallFeedback:
+              type: string
+            scoreboards:
+              type: object
+              required:
+                - communication
+                - problemSolving
+                - technicalCompetency
+                - testing
+              properties:
+                communication:
+                  type: object
+                  required:
+                    - clarification
+                    - thoughtProcess
+                  properties:
+                    clarification:
+                      type: object
+                      required:
+                        - comment
+                        - description
+                        - examples
+                        - maxScore
+                        - score
+                        - testName
+                      properties:
+                        comment:
+                          type: string
+                        description:
+                          type: string
+                        examples:
+                          type: array
+                          items:
+                            type: string
+                        maxScore:
+                          type: number
+                        score:
+                          type: number
+                        testName:
+                          type: string
+                    thoughtProcess:
+                      type: object
+                      required:
+                        - comment
+                        - description
+                        - examples
+                        - maxScore
+                        - score
+                        - testName
+                      properties:
+                        comment:
+                          type: string
+                        description:
+                          type: string
+                        examples:
+                          type: array
+                          items:
+                            type: string
+                        maxScore:
+                          type: number
+                        score:
+                          type: number
+                        testName:
+                          type: string
+                problemSolving:
+                  type: object
+                  required:
+                    - optimalSolution
+                    - optimizationProcess
+                    - questionSpecific
+                  properties:
+                    optimalSolution:
+                      type: object
+                      required:
+                        - comment
+                        - description
+                        - examples
+                        - maxScore
+                        - score
+                        - testName
+                      properties:
+                        comment:
+                          type: string
+                        description:
+                          type: string
+                        examples:
+                          type: array
+                          items:
+                            type: string
+                        maxScore:
+                          type: number
+                        score:
+                          type: number
+                        testName:
+                          type: string
+                    optimizationProcess:
+                      type: object
+                      required:
+                        - comment
+                        - description
+                        - examples
+                        - maxScore
+                        - score
+                        - testName
+                      properties:
+                        comment:
+                          type: string
+                        description:
+                          type: string
+                        examples:
+                          type: array
+                          items:
+                            type: string
+                        maxScore:
+                          type: number
+                        score:
+                          type: number
+                        testName:
+                          type: string
+                    questionSpecific:
+                      type: object
+                      required:
+                        - comment
+                        - description
+                        - examples
+                        - maxScore
+                        - score
+                        - testName
+                      properties:
+                        comment:
+                          type: string
+                        description:
+                          type: string
+                        examples:
+                          type: array
+                          items:
+                            type: string
+                        maxScore:
+                          type: number
+                        score:
+                          type: number
+                        testName:
+                          type: string
+                technicalCompetency:
+                  type: object
+                  required:
+                    - codeQuality
+                    - codingSpeed
+                    - syntaxError
+                  properties:
+                    codeQuality:
+                      type: object
+                      required:
+                        - comment
+                        - description
+                        - examples
+                        - maxScore
+                        - score
+                        - testName
+                      properties:
+                        comment:
+                          type: string
+                        description:
+                          type: string
+                        examples:
+                          type: array
+                          items:
+                            type: string
+                        maxScore:
+                          type: number
+                        score:
+                          type: number
+                        testName:
+                          type: string
+                    codingSpeed:
+                      type: object
+                      required:
+                        - comment
+                        - description
+                        - examples
+                        - maxScore
+                        - score
+                        - testName
+                      properties:
+                        comment:
+                          type: string
+                        description:
+                          type: string
+                        examples:
+                          type: array
+                          items:
+                            type: string
+                        maxScore:
+                          type: number
+                        score:
+                          type: number
+                        testName:
+                          type: string
+                    syntaxError:
+                      type: object
+                      required:
+                        - comment
+                        - description
+                        - examples
+                        - maxScore
+                        - score
+                        - testName
+                      properties:
+                        comment:
+                          type: string
+                        description:
+                          type: string
+                        examples:
+                          type: array
+                          items:
+                            type: string
+                        maxScore:
+                          type: number
+                        score:
+                          type: number
+                        testName:
+                          type: string
+                testing:
+                  type: object
+                  required:
+                    - debugging
+                    - testCaseCoverage
+                    - testCaseDesign
+                  properties:
+                    debugging:
+                      type: object
+                      required:
+                        - comment
+                        - description
+                        - examples
+                        - maxScore
+                        - score
+                        - testName
+                      properties:
+                        comment:
+                          type: string
+                        description:
+                          type: string
+                        examples:
+                          type: array
+                          items:
+                            type: string
+                        maxScore:
+                          type: number
+                        score:
+                          type: number
+                        testName:
+                          type: string
+                    testCaseCoverage:
+                      type: object
+                      required:
+                        - comment
+                        - description
+                        - examples
+                        - maxScore
+                        - score
+                        - testName
+                      properties:
+                        comment:
+                          type: string
+                        description:
+                          type: string
+                        examples:
+                          type: array
+                          items:
+                            type: string
+                        maxScore:
+                          type: number
+                        score:
+                          type: number
+                        testName:
+                          type: string
+                    testCaseDesign:
+                      type: object
+                      required:
+                        - comment
+                        - description
+                        - examples
+                        - maxScore
+                        - score
+                        - testName
+                      properties:
+                        comment:
+                          type: string
+                        description:
+                          type: string
+                        examples:
+                          type: array
+                          items:
+                            type: string
+                        maxScore:
+                          type: number
+                        score:
+                          type: number
+                        testName:
+                          type: string
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+            totalScore:
+              type: number
+
+    Response_eval.insertEvaluation:
       type: object
       required:
         - status

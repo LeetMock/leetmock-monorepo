@@ -17,24 +17,26 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List
-from convex_client.models.response_actions_run_tests_value_test_results_inner import ResponseActionsRunTestsValueTestResultsInner
+from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of6_data import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data
 from typing import Optional, Set
 from typing_extensions import Self
 
-<<<<<<<< HEAD:convex-client/convex_client/models/request_code_session_events_commit_code_session_event_args_event_one_of7.py
 class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7(BaseModel):
     """
     RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7
-========
-class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(BaseModel):
-    """
-    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data
->>>>>>>> 1bf0ab9 (add stage transition on frontend):convex-client/convex_client/models/request_code_session_events_commit_code_session_event_args_event_one_of4_data.py
     """ # noqa: E501
-    test_results: List[ResponseActionsRunTestsValueTestResultsInner] = Field(alias="testResults")
-    __properties: ClassVar[List[str]] = ["testResults"]
+    data: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data
+    type: StrictStr
+    __properties: ClassVar[List[str]] = ["data", "type"]
+
+    @field_validator('type')
+    def type_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set(['groundtruth_testcase_executed']):
+            raise ValueError("must be one of enum values ('groundtruth_testcase_executed')")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -54,11 +56,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(BaseMode
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-<<<<<<<< HEAD:convex-client/convex_client/models/request_code_session_events_commit_code_session_event_args_event_one_of7.py
         """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7 from a JSON string"""
-========
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data from a JSON string"""
->>>>>>>> 1bf0ab9 (add stage transition on frontend):convex-client/convex_client/models/request_code_session_events_commit_code_session_event_args_event_one_of4_data.py
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -79,22 +77,14 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(BaseMode
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of each item in test_results (list)
-        _items = []
-        if self.test_results:
-            for _item_test_results in self.test_results:
-                if _item_test_results:
-                    _items.append(_item_test_results.to_dict())
-            _dict['testResults'] = _items
+        # override the default output from pydantic by calling `to_dict()` of data
+        if self.data:
+            _dict['data'] = self.data.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-<<<<<<<< HEAD:convex-client/convex_client/models/request_code_session_events_commit_code_session_event_args_event_one_of7.py
         """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7 from a dict"""
-========
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data from a dict"""
->>>>>>>> 1bf0ab9 (add stage transition on frontend):convex-client/convex_client/models/request_code_session_events_commit_code_session_event_args_event_one_of4_data.py
         if obj is None:
             return None
 
@@ -102,7 +92,8 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(BaseMode
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "testResults": [ResponseActionsRunTestsValueTestResultsInner.from_dict(_item) for _item in obj["testResults"]] if obj.get("testResults") is not None else None
+            "data": RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data.from_dict(obj["data"]) if obj.get("data") is not None else None,
+            "type": obj.get("type")
         })
         return _obj
 
