@@ -1,7 +1,7 @@
 import logging
 import os
 from collections import defaultdict
-from typing import Annotated, List, cast
+from typing import cast
 
 import convex_client
 from agent_graph.eval_agent.constant import (
@@ -10,16 +10,17 @@ from agent_graph.eval_agent.constant import (
     SCORE_GUIDELINES,
     AgentConfig,
     AgentState,
-    RunnableConfig,
 )
 from agent_graph.eval_agent.prompts import overall_prompt
 from agent_graph.eval_agent.sub_eval import EVALUATION_TESTS
 from agent_graph.llms import get_model
 from agent_graph.prompts import JOIN_CALL_MESSAGE
 from agent_graph.storages.langgraph_cloud import LangGraphCloudStateStorage
+from agent_graph.utils import get_configurable
 from convex import ConvexClient
 from langchain_core.messages import AnyMessage, HumanMessage
 from langchain_core.prompts import PromptTemplate
+from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph, add_messages
 from pydantic.v1 import BaseModel, Field
@@ -29,9 +30,7 @@ logger = logging.getLogger(__name__)
 
 
 configuration = convex_client.Configuration(host=os.getenv("CONVEX_URL") or "")
-CONVEX_URL = os.getenv("CONVEX_URL")
-# or you can hardcode your deployment URL instead
-# CONVEX_URL = "https://happy-otter-123.convex.cloud"
+CONVEX_URL = cast(str, os.getenv("CONVEX_URL"))
 
 client = ConvexClient(CONVEX_URL)
 
@@ -82,7 +81,7 @@ async def initialize_agent(state: AgentState, config: RunnableConfig) -> dict:
 
 
 def final_evaluation(state: AgentState, config: RunnableConfig) -> dict:
-    config = DEFAULT_CONFIG
+    agent_config = get_configurable(AgentConfig, config)
 
     final_scores = defaultdict(dict)
     total_score = 0
@@ -103,7 +102,7 @@ def final_evaluation(state: AgentState, config: RunnableConfig) -> dict:
     )
 
     # Get model from config
-    model = get_model(config.smart_model, config.temperature)
+    model = get_model(agent_config.smart_model, agent_config.temperature)
 
     # Create chain
     chain = prompt | model

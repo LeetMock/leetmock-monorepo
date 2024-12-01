@@ -17,7 +17,7 @@ from agent_graph.llms import get_model
 from agent_graph.prompts import format_test_context
 from agent_graph.types import EventMessageState
 from agent_graph.utils import custom_data, get_configurable
-from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
+from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.prompts import (
     ChatPromptTemplate,
     HumanMessagePromptTemplate,
@@ -26,9 +26,9 @@ from langchain_core.prompts import (
 )
 from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
-from langgraph.graph import END, START, StateGraph, add_messages
+from langgraph.graph import END, START, StateGraph
 from langgraph.types import StreamWriter
-from pydantic.v1 import BaseModel, Field
+from pydantic.v1 import Field
 
 from libs.convex.api import ConvexApi
 from libs.convex.convex_requests import create_test_code_correctness_request
