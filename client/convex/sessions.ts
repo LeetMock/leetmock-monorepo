@@ -5,7 +5,7 @@ import { Id } from "./_generated/dataModel";
 
 import { CODE_TEMPLATES } from "@/lib/constants";
 import { isDefined, minutesToMilliseconds } from "@/lib/utils";
-import { internalMutation, internalQuery, userMutation, userQuery } from "./functions";
+import { internalMutation, internalQuery, userMutation, userQuery, query } from "./functions";
 import { MutationCtx } from "./types";
 
 export const exists = userQuery({
@@ -23,6 +23,15 @@ export const exists = userQuery({
 });
 
 export const getById = userQuery({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  handler: async (ctx, { sessionId }) => {
+    return await ctx.table("sessions").get(sessionId);
+  },
+});
+
+export const getById_unauth = query({
   args: {
     sessionId: v.id("sessions"),
   },
@@ -173,6 +182,7 @@ export const createCodeSession = userMutation({
       userId: ctx.user.subject,
       timeLimit,
       sessionStatus: "not_started",
+      evalReady: false,
       voice
     });
 

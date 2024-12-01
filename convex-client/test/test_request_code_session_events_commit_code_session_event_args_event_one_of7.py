@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.response_code_session_events_get_latest_ground_truth_testcase_executed_event_value_event import ResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValueEvent
+from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of7 import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7
 
-class TestResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValueEvent(unittest.TestCase):
-    """ResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValueEvent unit test stubs"""
+class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7(unittest.TestCase):
+    """RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7 unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,16 +25,16 @@ class TestResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValu
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> ResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValueEvent:
-        """Test ResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValueEvent
+    def make_instance(self, include_optional) -> RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7:
+        """Test RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `ResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValueEvent`
+        # uncomment below to create an instance of `RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7`
         """
-        model = ResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValueEvent()
+        model = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7()
         if include_optional:
-            return ResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValueEvent(
+            return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7(
                 data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_6_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_6_data(
                     test_results = [
                         convex_client.models.response_actions_run_tests_value_test_results_inner.Response_actions_runTests_value_testResults_inner(
@@ -49,7 +49,7 @@ class TestResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValu
                 type = 'groundtruth_testcase_executed'
             )
         else:
-            return ResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValueEvent(
+            return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7(
                 data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_6_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_6_data(
                     test_results = [
                         convex_client.models.response_actions_run_tests_value_test_results_inner.Response_actions_runTests_value_testResults_inner(
@@ -65,8 +65,8 @@ class TestResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValu
         )
         """
 
-    def testResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValueEvent(self):
-        """Test ResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValueEvent"""
+    def testRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7(self):
+        """Test RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

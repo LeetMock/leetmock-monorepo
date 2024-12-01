@@ -20,6 +20,7 @@ import type * as admins from "../admins.js";
 import type * as codeSessionEvents from "../codeSessionEvents.js";
 import type * as codeSessionStates from "../codeSessionStates.js";
 import type * as crons from "../crons.js";
+import type * as eval from "../eval.js";
 import type * as functions from "../functions.js";
 import type * as http from "../http.js";
 import type * as inviteCodes from "../inviteCodes.js";
@@ -43,6 +44,7 @@ declare const fullApi: ApiFromModules<{
   codeSessionEvents: typeof codeSessionEvents;
   codeSessionStates: typeof codeSessionStates;
   crons: typeof crons;
+  eval: typeof eval;
   functions: typeof functions;
   http: typeof http;
   inviteCodes: typeof inviteCodes;

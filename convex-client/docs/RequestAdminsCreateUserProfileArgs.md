@@ -8,8 +8,8 @@ Name | Type | Description | Notes
 **email** | **str** |  | 
 **minutes_remaining** | **float** |  | 
 **next_billing_date** | **float** |  | [optional] 
-**role** | [**RequestInviteCodesCreateInviteCodeArgsAssignedRole**](RequestInviteCodesCreateInviteCodeArgsAssignedRole.md) |  | 
-**subscription** | [**RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName**](RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.md) |  | 
+**role** | [**RequestAdminsCreateUserProfileArgsRole**](RequestAdminsCreateUserProfileArgsRole.md) |  | 
+**subscription** | [**RequestAdminsCreateUserProfileArgsSubscription**](RequestAdminsCreateUserProfileArgsSubscription.md) |  | 
 
 ## Example
 
