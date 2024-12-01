@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**event** | [**RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6**](RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6.md) |  | 
+**event** | [**RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4**](RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4.md) |  | 
 **id** | **str** | ID from table \&quot;codeSessionEvents\&quot; | 
 **ts** | **float** |  | 
 

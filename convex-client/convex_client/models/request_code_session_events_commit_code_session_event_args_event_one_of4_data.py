@@ -18,17 +18,17 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, Field
-from typing import Any, ClassVar, Dict, List, Optional
+from typing import Any, ClassVar, Dict, List
+from convex_client.models.response_actions_run_tests_value_test_results_inner import ResponseActionsRunTestsValueTestResultsInner
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner(BaseModel):
+class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(BaseModel):
     """
-    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner
+    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data
     """ # noqa: E501
-    expected_output: Optional[Any] = Field(default=None, alias="expectedOutput")
-    input: Dict[str, Any]
-    __properties: ClassVar[List[str]] = ["expectedOutput", "input"]
+    test_results: List[ResponseActionsRunTestsValueTestResultsInner] = Field(alias="testResults")
+    __properties: ClassVar[List[str]] = ["testResults"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -48,7 +48,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInne
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner from a JSON string"""
+        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -69,16 +69,18 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInne
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # set to None if expected_output (nullable) is None
-        # and model_fields_set contains the field
-        if self.expected_output is None and "expected_output" in self.model_fields_set:
-            _dict['expectedOutput'] = None
-
+        # override the default output from pydantic by calling `to_dict()` of each item in test_results (list)
+        _items = []
+        if self.test_results:
+            for _item_test_results in self.test_results:
+                if _item_test_results:
+                    _items.append(_item_test_results.to_dict())
+            _dict['testResults'] = _items
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner from a dict"""
+        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data from a dict"""
         if obj is None:
             return None
 
@@ -86,8 +88,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInne
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "expectedOutput": obj.get("expectedOutput"),
-            "input": obj.get("input")
+            "testResults": [ResponseActionsRunTestsValueTestResultsInner.from_dict(_item) for _item in obj["testResults"]] if obj.get("testResults") is not None else None
         })
         return _obj
 

@@ -1919,26 +1919,6 @@ components:
                     type:
                       type: string
                       enum:
-                        - "user_test_executed"
-                - type: object
-                  required:
-                    - data
-                    - type
-                  properties:
-                    data: {}
-                    type:
-                      type: string
-                      enum:
-                        - "testcase_added"
-                - type: object
-                  required:
-                    - data
-                    - type
-                  properties:
-                    data: {}
-                    type:
-                      type: string
-                      enum:
                         - "testcase_removed"
                 - type: object
                   required:
@@ -1946,11 +1926,16 @@ components:
                     - type
                   properties:
                     data:
-                      type: boolean
+                      type: object
+                      required:
+                        - stage
+                      properties:
+                        stage:
+                          type: string
                     type:
                       type: string
                       enum:
-                        - "question_displayed"
+                        - "stage_switched"
                 - type: object
                   required:
                     - data
@@ -2068,6 +2053,22 @@ components:
                       type: string
                       enum:
                         - "groundtruth_testcase_executed"
+                - type: object
+                  required:
+                    - data
+                    - type
+                  properties:
+                    data:
+                      type: object
+                      required:
+                        - stage
+                      properties:
+                        stage:
+                          type: string
+                    type:
+                      type: string
+                      enum:
+                        - "stage_switched"
             sessionId:
               type: string
               description: ID from table "sessions"
@@ -2510,9 +2511,9 @@ components:
           required:
             - _creationTime
             - _id
-            - displayQuestion
             - editor
             - sessionId
+            - stage
             - terminal
             - testcases
           properties:
@@ -2521,8 +2522,6 @@ components:
             _id:
               type: string
               description: ID from table "codeSessionStates"
-            displayQuestion:
-              type: boolean
             editor:
               type: object
               required:
@@ -2539,6 +2538,8 @@ components:
             sessionId:
               type: string
               description: ID from table "sessions"
+            stage:
+              type: string
             terminal:
               type: object
               required:
