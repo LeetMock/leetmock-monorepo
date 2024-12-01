@@ -23,15 +23,13 @@ from convex_client.models.response_actions_run_tests_value_test_results_inner im
 from typing import Optional, Set
 from typing_extensions import Self
 
-<<<<<<<< HEAD:convex-client/convex_client/models/request_code_session_events_commit_code_session_event_args_event_one_of4_data.py
 class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(BaseModel):
     """
     RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data
-========
-class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7(BaseModel):
+
+class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(BaseModel):
     """
-    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7
->>>>>>>> eb24b2d (added evaluation pipeline fully tested):convex-client/convex_client/models/request_code_session_events_commit_code_session_event_args_event_one_of7.py
+    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data
     """ # noqa: E501
     test_results: List[ResponseActionsRunTestsValueTestResultsInner] = Field(alias="testResults")
     __properties: ClassVar[List[str]] = ["testResults"]
@@ -54,11 +52,10 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-<<<<<<<< HEAD:convex-client/convex_client/models/request_code_session_events_commit_code_session_event_args_event_one_of4_data.py
+
         """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data from a JSON string"""
-========
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7 from a JSON string"""
->>>>>>>> eb24b2d (added evaluation pipeline fully tested):convex-client/convex_client/models/request_code_session_events_commit_code_session_event_args_event_one_of7.py
+
+
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -90,11 +87,8 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-<<<<<<<< HEAD:convex-client/convex_client/models/request_code_session_events_commit_code_session_event_args_event_one_of4_data.py
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data from a dict"""
-========
-        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7 from a dict"""
->>>>>>>> eb24b2d (added evaluation pipeline fully tested):convex-client/convex_client/models/request_code_session_events_commit_code_session_event_args_event_one_of7.py
+
+
         if obj is None:
             return None
 

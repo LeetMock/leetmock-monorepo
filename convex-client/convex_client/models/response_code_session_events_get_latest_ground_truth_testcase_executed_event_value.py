@@ -20,6 +20,7 @@ import json
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Union
 from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of7 import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7
+
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -28,6 +29,7 @@ class ResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValue(Ba
     ResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValue
     """ # noqa: E501
     event: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7
+
     id: StrictStr = Field(description="ID from table \"codeSessionEvents\"")
     ts: Union[StrictFloat, StrictInt]
     __properties: ClassVar[List[str]] = ["event", "id", "ts"]
@@ -87,6 +89,7 @@ class ResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValue(Ba
 
         _obj = cls.model_validate({
             "event": RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7.from_dict(obj["event"]) if obj.get("event") is not None else None,
+
             "id": obj.get("id"),
             "ts": obj.get("ts")
         })
