@@ -150,7 +150,7 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
                     <div className="h-9 w-[3px] rounded-full bg-muted-foreground/50"></div>
                   </div>
                 </div>
-                <CodeQuestionPanel className="border rounded-md shrink-0" question={questionData} />
+                <CodeQuestionPanel className="rounded-md shrink-0" question={questionData} />
               </>
             )}
           </Wait>

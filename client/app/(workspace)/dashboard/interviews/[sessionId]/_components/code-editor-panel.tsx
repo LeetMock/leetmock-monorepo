@@ -21,7 +21,7 @@ const darkEditorTheme: monacoEditor.IStandaloneThemeData = {
   inherit: true,
   rules: [],
   colors: {
-    "editor.background": "#181a1f",
+    "editor.background": "#09090b",
   },
 };
 
@@ -89,7 +89,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     <div className={cn("h-full flex flex-col", className)} {...props}>
       <div
         className={cn(
-          "flex flex-col justify-start w-full h-full border shrink-0",
+          "flex flex-col justify-start w-full h-full shrink-0",
           "bg-background rounded-md"
         )}
       >
