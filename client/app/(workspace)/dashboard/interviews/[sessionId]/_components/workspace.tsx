@@ -98,6 +98,7 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
           <div className={cn("w-full p-2")}>
             <TimerCountdown timeLeft={1000} collapsed={isSidebarCollapsed} />
           </div>
+          <CollapseButton className="absolute top-2 right-2 opacity-0 group-hover:opacity-100" />
         </div>
       </motion.div>
       <div className="flex flex-col justify-center items-center flex-1 bg-accent">
