@@ -17,18 +17,26 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_admins_create_user_profile_args_role import RequestAdminsCreateUserProfileArgsRole
+from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of6_data import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
+class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7(BaseModel):
     """
-    RequestInviteCodesCreateInviteCodeArgs
+    RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7
     """ # noqa: E501
-    assigned_role: RequestAdminsCreateUserProfileArgsRole = Field(alias="assignedRole")
-    __properties: ClassVar[List[str]] = ["assignedRole"]
+    data: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data
+    type: StrictStr
+    __properties: ClassVar[List[str]] = ["data", "type"]
+
+    @field_validator('type')
+    def type_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set(['groundtruth_testcase_executed']):
+            raise ValueError("must be one of enum values ('groundtruth_testcase_executed')")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -48,7 +56,7 @@ class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestInviteCodesCreateInviteCodeArgs from a JSON string"""
+        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7 from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -69,14 +77,14 @@ class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of assigned_role
-        if self.assigned_role:
-            _dict['assignedRole'] = self.assigned_role.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of data
+        if self.data:
+            _dict['data'] = self.data.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestInviteCodesCreateInviteCodeArgs from a dict"""
+        """Create an instance of RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7 from a dict"""
         if obj is None:
             return None
 
@@ -84,7 +92,8 @@ class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "assignedRole": RequestAdminsCreateUserProfileArgsRole.from_dict(obj["assignedRole"]) if obj.get("assignedRole") is not None else None
+            "data": RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data.from_dict(obj["data"]) if obj.get("data") is not None else None,
+            "type": obj.get("type")
         })
         return _obj
 

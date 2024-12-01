@@ -55,10 +55,10 @@ import convex_client
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://neat-warbler-689.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -90,7 +90,7 @@ with convex_client.ApiClient(configuration) as api_client:
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://posh-chihuahua-941.convex.cloud*
+All URIs are relative to *https://neat-warbler-689.convex.cloud*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
@@ -136,6 +136,8 @@ Class | Method | HTTP request | Description
  - [RequestActionsRunTestsArgs](docs/RequestActionsRunTestsArgs.md)
  - [RequestAdminsCreateUserProfile](docs/RequestAdminsCreateUserProfile.md)
  - [RequestAdminsCreateUserProfileArgs](docs/RequestAdminsCreateUserProfileArgs.md)
+ - [RequestAdminsCreateUserProfileArgsRole](docs/RequestAdminsCreateUserProfileArgsRole.md)
+ - [RequestAdminsCreateUserProfileArgsSubscription](docs/RequestAdminsCreateUserProfileArgsSubscription.md)
  - [RequestAdminsPatchUserSubscription](docs/RequestAdminsPatchUserSubscription.md)
  - [RequestAdminsPatchUserSubscriptionArgs](docs/RequestAdminsPatchUserSubscriptionArgs.md)
  - [RequestCodeSessionEventsCommitCodeSessionEvent](docs/RequestCodeSessionEventsCommitCodeSessionEvent.md)
@@ -151,6 +153,11 @@ Class | Method | HTTP request | Description
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5Data](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5Data.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data.md)
+ - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOfData](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOfData.md)
  - [RequestCodeSessionEventsGetLatestContentChangeEvent](docs/RequestCodeSessionEventsGetLatestContentChangeEvent.md)
  - [RequestCodeSessionEventsGetLatestContentChangeEventArgs](docs/RequestCodeSessionEventsGetLatestContentChangeEventArgs.md)
@@ -168,7 +175,6 @@ Class | Method | HTTP request | Description
  - [RequestInviteCodesApplyInviteCodeArgs](docs/RequestInviteCodesApplyInviteCodeArgs.md)
  - [RequestInviteCodesCreateInviteCode](docs/RequestInviteCodesCreateInviteCode.md)
  - [RequestInviteCodesCreateInviteCodeArgs](docs/RequestInviteCodesCreateInviteCodeArgs.md)
- - [RequestInviteCodesCreateInviteCodeArgsAssignedRole](docs/RequestInviteCodesCreateInviteCodeArgsAssignedRole.md)
  - [RequestQuestionsGetAll](docs/RequestQuestionsGetAll.md)
  - [RequestQuestionsGetById](docs/RequestQuestionsGetById.md)
  - [RequestQuestionsGetByIdArgs](docs/RequestQuestionsGetByIdArgs.md)
@@ -197,7 +203,6 @@ Class | Method | HTTP request | Description
  - [RequestUserProfilesUpdateSubscriptionByEmailInternal](docs/RequestUserProfilesUpdateSubscriptionByEmailInternal.md)
  - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgs](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgs.md)
  - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval.md)
- - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.md)
  - [RequestUserProfilesVoidSubscriptionInternal](docs/RequestUserProfilesVoidSubscriptionInternal.md)
  - [RequestUserProfilesVoidSubscriptionInternalArgs](docs/RequestUserProfilesVoidSubscriptionInternalArgs.md)
  - [ResponseActionsCreateAgentThread](docs/ResponseActionsCreateAgentThread.md)
