@@ -19,8 +19,8 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional, Union
-from convex_client.models.request_invite_codes_create_invite_code_args_assigned_role import RequestInviteCodesCreateInviteCodeArgsAssignedRole
-from convex_client.models.request_user_profiles_update_subscription_by_email_internal_args_plan_name import RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName
+from convex_client.models.request_admins_create_user_profile_args_role import RequestAdminsCreateUserProfileArgsRole
+from convex_client.models.request_admins_create_user_profile_args_subscription import RequestAdminsCreateUserProfileArgsSubscription
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -31,8 +31,8 @@ class RequestAdminsCreateUserProfileArgs(BaseModel):
     email: StrictStr
     minutes_remaining: Union[StrictFloat, StrictInt] = Field(alias="minutesRemaining")
     next_billing_date: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="nextBillingDate")
-    role: RequestInviteCodesCreateInviteCodeArgsAssignedRole
-    subscription: RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName
+    role: RequestAdminsCreateUserProfileArgsRole
+    subscription: RequestAdminsCreateUserProfileArgsSubscription
     __properties: ClassVar[List[str]] = ["email", "minutesRemaining", "nextBillingDate", "role", "subscription"]
 
     model_config = ConfigDict(
@@ -95,8 +95,8 @@ class RequestAdminsCreateUserProfileArgs(BaseModel):
             "email": obj.get("email"),
             "minutesRemaining": obj.get("minutesRemaining"),
             "nextBillingDate": obj.get("nextBillingDate"),
-            "role": RequestInviteCodesCreateInviteCodeArgsAssignedRole.from_dict(obj["role"]) if obj.get("role") is not None else None,
-            "subscription": RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.from_dict(obj["subscription"]) if obj.get("subscription") is not None else None
+            "role": RequestAdminsCreateUserProfileArgsRole.from_dict(obj["role"]) if obj.get("role") is not None else None,
+            "subscription": RequestAdminsCreateUserProfileArgsSubscription.from_dict(obj["subscription"]) if obj.get("subscription") is not None else None
         })
         return _obj
 

@@ -3,6 +3,17 @@ import { v } from "convex/values";
 import { codeSessionEventSchema } from "./types";
 
 // Schema definition
+
+// Score detail schema
+export const scoreDetailSchema = {
+  testName: v.string(),
+  description: v.string(),
+  maxScore: v.number(),
+  comment: v.string(),
+  examples: v.array(v.string()),
+  score: v.number(),
+};
+
 const schema = defineEntSchema({
   userProfiles: defineEnt({
     role: v.union(v.literal("admin"), v.literal("user")),
@@ -42,6 +53,7 @@ const schema = defineEntSchema({
     sessionEndTime: v.optional(v.number()),
     interviewType: v.string(),
     interviewMode: v.union(v.literal("practice"), v.literal("strict")),
+    evalReady: v.boolean(),
     meta: v.object({
       interviewFlow: v.array(v.string()),
       programmingLanguage: v.union(v.string(), v.null()),
@@ -101,6 +113,32 @@ const schema = defineEntSchema({
     code: v.string(),
     assignedRole: v.union(v.literal("admin"), v.literal("user")),
   }).index("by_code", ["code"]),
+  evaluations: defineEnt({
+    sessionId: v.id("sessions"),
+    overallFeedback: v.string(),
+    totalScore: v.number(),
+    scoreboards: v.object({
+      communication: v.object({
+        clarification: v.object(scoreDetailSchema),
+        thoughtProcess: v.object(scoreDetailSchema),
+      }),
+      problemSolving: v.object({
+        optimalSolution: v.object(scoreDetailSchema),
+        optimizationProcess: v.object(scoreDetailSchema),
+        questionSpecific: v.object(scoreDetailSchema),
+      }),
+      technicalCompetency: v.object({
+        syntaxError: v.object(scoreDetailSchema),
+        codeQuality: v.object(scoreDetailSchema),
+        codingSpeed: v.object(scoreDetailSchema),
+      }),
+      testing: v.object({
+        testCaseCoverage: v.object(scoreDetailSchema),
+        debugging: v.object(scoreDetailSchema),
+        testCaseDesign: v.object(scoreDetailSchema),
+      }),
+    })
+  }),
 });
 
 export const entDefinitions = getEntDefinitions(schema);
