@@ -25,13 +25,11 @@ from convex_client.models.request_code_session_events_commit_code_session_event_
 from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of5 import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5
 from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of6 import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6
 from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of7 import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7
-
 from pydantic import StrictStr, Field
 from typing import Union, List, Set, Optional, Dict
 from typing_extensions import Literal, Self
 
 REQUESTCODESESSIONEVENTSCOMMITCODESESSIONEVENTARGSEVENT_ONE_OF_SCHEMAS = ["RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6", "RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7"]
-
 
 class RequestCodeSessionEventsCommitCodeSessionEventArgsEvent(BaseModel):
     """
@@ -107,9 +105,9 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEvent(BaseModel):
             error_messages.append(f"Error! Input type `{type(v)}` is not `RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5`")
         else:
             match += 1
-        # validate data type: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2
-        if not isinstance(v, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2):
-            error_messages.append(f"Error! Input type `{type(v)}` is not `RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2`")
+        # validate data type: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6
+        if not isinstance(v, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6):
+            error_messages.append(f"Error! Input type `{type(v)}` is not `RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6`")
         else:
             match += 1
         # validate data type: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7
@@ -123,7 +121,6 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEvent(BaseModel):
         elif match == 0:
             # no match
             raise ValueError("No match found when setting `actual_instance` in RequestCodeSessionEventsCommitCodeSessionEventArgsEvent with oneOf schemas: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7. Details: " + ", ".join(error_messages))
-
         else:
             return v
 
@@ -174,9 +171,9 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEvent(BaseModel):
             match += 1
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
-        # deserialize data into RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2
+        # deserialize data into RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6
         try:
-            instance.actual_instance = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2.from_json(json_str)
+            instance.actual_instance = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6.from_json(json_str)
             match += 1
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
@@ -193,7 +190,6 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEvent(BaseModel):
         elif match == 0:
             # no match
             raise ValueError("No match found when deserializing the JSON string into RequestCodeSessionEventsCommitCodeSessionEventArgsEvent with oneOf schemas: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7. Details: " + ", ".join(error_messages))
-
         else:
             return instance
 
@@ -208,7 +204,6 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEvent(BaseModel):
             return json.dumps(self.actual_instance)
 
     def to_dict(self) -> Optional[Union[Dict[str, Any], RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6, RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf7]]:
-
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

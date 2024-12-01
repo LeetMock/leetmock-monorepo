@@ -18,6 +18,7 @@ Method | HTTP request | Description
 [**api_run_sessions_exists_post**](QueryApi.md#api_run_sessions_exists_post) | **POST** /api/run/sessions/exists | Calls a query at the path sessions.js:exists
 [**api_run_sessions_get_active_session_post**](QueryApi.md#api_run_sessions_get_active_session_post) | **POST** /api/run/sessions/getActiveSession | Calls a query at the path sessions.js:getActiveSession
 [**api_run_sessions_get_by_id_post**](QueryApi.md#api_run_sessions_get_by_id_post) | **POST** /api/run/sessions/getById | Calls a query at the path sessions.js:getById
+[**api_run_sessions_get_by_id_unauth_post**](QueryApi.md#api_run_sessions_get_by_id_unauth_post) | **POST** /api/run/sessions/getById_unauth | Calls a query at the path sessions.js:getById_unauth
 [**api_run_sessions_get_by_user_id_post**](QueryApi.md#api_run_sessions_get_by_user_id_post) | **POST** /api/run/sessions/getByUserId | Calls a query at the path sessions.js:getByUserId
 [**api_run_user_profiles_get_user_profile_post**](QueryApi.md#api_run_user_profiles_get_user_profile_post) | **POST** /api/run/userProfiles/getUserProfile | Calls a query at the path userProfiles.js:getUserProfile
 
@@ -1108,6 +1109,85 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**ResponseSessionsGetById**](ResponseSessionsGetById.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **api_run_sessions_get_by_id_unauth_post**
+> ResponseSessionsGetByIdUnauth api_run_sessions_get_by_id_unauth_post(request_sessions_get_by_id_unauth)
+
+Calls a query at the path sessions.js:getById_unauth
+
+### Example
+
+* Bearer Authentication (bearerAuth):
+
+```python
+import convex_client
+from convex_client.models.request_sessions_get_by_id_unauth import RequestSessionsGetByIdUnauth
+from convex_client.models.response_sessions_get_by_id_unauth import ResponseSessionsGetByIdUnauth
+from convex_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
+# See configuration.py for a list of all supported configuration parameters.
+configuration = convex_client.Configuration(
+    host = "https://neat-warbler-689.convex.cloud"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization: bearerAuth
+configuration = convex_client.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with convex_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = convex_client.QueryApi(api_client)
+    request_sessions_get_by_id_unauth = convex_client.RequestSessionsGetByIdUnauth() # RequestSessionsGetByIdUnauth | 
+
+    try:
+        # Calls a query at the path sessions.js:getById_unauth
+        api_response = api_instance.api_run_sessions_get_by_id_unauth_post(request_sessions_get_by_id_unauth)
+        print("The response of QueryApi->api_run_sessions_get_by_id_unauth_post:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling QueryApi->api_run_sessions_get_by_id_unauth_post: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_sessions_get_by_id_unauth** | [**RequestSessionsGetByIdUnauth**](RequestSessionsGetByIdUnauth.md)|  | 
+
+### Return type
+
+[**ResponseSessionsGetByIdUnauth**](ResponseSessionsGetByIdUnauth.md)
 
 ### Authorization
 

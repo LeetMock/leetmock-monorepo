@@ -17,9 +17,9 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Union
-from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of3_data_after_inner import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner
+from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of5_data_after_inner import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner
 from convex_client.models.response_code_session_states_get_value_editor import ResponseCodeSessionStatesGetValueEditor
 from convex_client.models.response_code_session_states_get_value_terminal import ResponseCodeSessionStatesGetValueTerminal
 from typing import Optional, Set
@@ -31,12 +31,12 @@ class ResponseCodeSessionStatesGetValue(BaseModel):
     """ # noqa: E501
     creation_time: Union[StrictFloat, StrictInt] = Field(alias="_creationTime")
     id: StrictStr = Field(description="ID from table \"codeSessionStates\"", alias="_id")
+    display_question: StrictBool = Field(alias="displayQuestion")
     editor: ResponseCodeSessionStatesGetValueEditor
     session_id: StrictStr = Field(description="ID from table \"sessions\"", alias="sessionId")
-    stage: StrictStr
     terminal: ResponseCodeSessionStatesGetValueTerminal
-    testcases: List[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner]
-    __properties: ClassVar[List[str]] = ["_creationTime", "_id", "editor", "sessionId", "stage", "terminal", "testcases"]
+    testcases: List[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner]
+    __properties: ClassVar[List[str]] = ["_creationTime", "_id", "displayQuestion", "editor", "sessionId", "terminal", "testcases"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -104,11 +104,11 @@ class ResponseCodeSessionStatesGetValue(BaseModel):
         _obj = cls.model_validate({
             "_creationTime": obj.get("_creationTime"),
             "_id": obj.get("_id"),
+            "displayQuestion": obj.get("displayQuestion"),
             "editor": ResponseCodeSessionStatesGetValueEditor.from_dict(obj["editor"]) if obj.get("editor") is not None else None,
             "sessionId": obj.get("sessionId"),
-            "stage": obj.get("stage"),
             "terminal": ResponseCodeSessionStatesGetValueTerminal.from_dict(obj["terminal"]) if obj.get("terminal") is not None else None,
-            "testcases": [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner.from_dict(_item) for _item in obj["testcases"]] if obj.get("testcases") is not None else None
+            "testcases": [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner.from_dict(_item) for _item in obj["testcases"]] if obj.get("testcases") is not None else None
         })
         return _obj
 

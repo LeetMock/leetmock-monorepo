@@ -124,6 +124,13 @@ class TestQueryApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_sessions_get_by_id_unauth_post(self) -> None:
+        """Test case for api_run_sessions_get_by_id_unauth_post
+
+        Calls a query at the path sessions.js:getById_unauth
+        """
+        pass
+
     def test_api_run_sessions_get_by_user_id_post(self) -> None:
         """Test case for api_run_sessions_get_by_user_id_post
 

@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**data** | [**RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data**](RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data.md) |  | 
+**data** | **bool** |  | 
 **type** | **str** |  | 
 
 ## Example

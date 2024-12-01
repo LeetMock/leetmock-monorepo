@@ -47,6 +47,13 @@ class TestMutationApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_eval_insert_evaluation_post(self) -> None:
+        """Test case for api_run_eval_insert_evaluation_post
+
+        Calls a mutation at the path eval.js:insertEvaluation
+        """
+        pass
+
     def test_api_run_invite_codes_apply_invite_code_post(self) -> None:
         """Test case for api_run_invite_codes_apply_invite_code_post
 

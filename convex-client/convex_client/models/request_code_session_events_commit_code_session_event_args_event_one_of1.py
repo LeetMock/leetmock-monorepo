@@ -33,8 +33,8 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1(BaseModel):
     @field_validator('type')
     def type_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['testcase_removed']):
-            raise ValueError("must be one of enum values ('testcase_removed')")
+        if value not in set(['user_test_executed']):
+            raise ValueError("must be one of enum values ('user_test_executed')")
         return value
 
     model_config = ConfigDict(

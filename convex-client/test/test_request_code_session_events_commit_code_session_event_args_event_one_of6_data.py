@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of4_data import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data
+from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of6_data import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data
 
-class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(unittest.TestCase):
-    """RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data unit test stubs"""
+class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data(unittest.TestCase):
+    """RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,16 +25,16 @@ class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(unit
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data:
-        """Test RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data
+    def make_instance(self, include_optional) -> RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data:
+        """Test RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data`
+        # uncomment below to create an instance of `RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data`
         """
-        model = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data()
+        model = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data()
         if include_optional:
-            return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(
+            return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data(
                 test_results = [
                     convex_client.models.response_actions_run_tests_value_test_results_inner.Response_actions_runTests_value_testResults_inner(
                         actual = null, 
@@ -47,7 +47,7 @@ class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(unit
                     ]
             )
         else:
-            return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(
+            return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data(
                 test_results = [
                     convex_client.models.response_actions_run_tests_value_test_results_inner.Response_actions_runTests_value_testResults_inner(
                         actual = null, 
@@ -61,8 +61,8 @@ class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(unit
         )
         """
 
-    def testRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(self):
-        """Test RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data"""
+    def testRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data(self):
+        """Test RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf6Data"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

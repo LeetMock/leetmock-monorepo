@@ -18,8 +18,7 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of2_data import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data
+from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -27,15 +26,15 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2(BaseModel):
     """
     RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2
     """ # noqa: E501
-    data: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data
+    data: Optional[Any]
     type: StrictStr
     __properties: ClassVar[List[str]] = ["data", "type"]
 
     @field_validator('type')
     def type_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['stage_switched']):
-            raise ValueError("must be one of enum values ('stage_switched')")
+        if value not in set(['testcase_added']):
+            raise ValueError("must be one of enum values ('testcase_added')")
         return value
 
     model_config = ConfigDict(
@@ -77,9 +76,11 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of data
-        if self.data:
-            _dict['data'] = self.data.to_dict()
+        # set to None if data (nullable) is None
+        # and model_fields_set contains the field
+        if self.data is None and "data" in self.model_fields_set:
+            _dict['data'] = None
+
         return _dict
 
     @classmethod
@@ -92,7 +93,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "data": RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data.from_dict(obj["data"]) if obj.get("data") is not None else None,
+            "data": obj.get("data"),
             "type": obj.get("type")
         })
         return _obj

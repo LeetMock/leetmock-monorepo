@@ -102,6 +102,7 @@ Class | Method | HTTP request | Description
 *MutationApi* | [**api_run_admins_create_user_profile_post**](docs/MutationApi.md#api_run_admins_create_user_profile_post) | **POST** /api/run/admins/createUserProfile | Calls a mutation at the path admins.js:createUserProfile
 *MutationApi* | [**api_run_admins_patch_user_subscription_post**](docs/MutationApi.md#api_run_admins_patch_user_subscription_post) | **POST** /api/run/admins/patchUserSubscription | Calls a mutation at the path admins.js:patchUserSubscription
 *MutationApi* | [**api_run_code_session_events_commit_code_session_event_post**](docs/MutationApi.md#api_run_code_session_events_commit_code_session_event_post) | **POST** /api/run/codeSessionEvents/commitCodeSessionEvent | Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
+*MutationApi* | [**api_run_eval_insert_evaluation_post**](docs/MutationApi.md#api_run_eval_insert_evaluation_post) | **POST** /api/run/eval/insertEvaluation | Calls a mutation at the path eval.js:insertEvaluation
 *MutationApi* | [**api_run_invite_codes_apply_invite_code_post**](docs/MutationApi.md#api_run_invite_codes_apply_invite_code_post) | **POST** /api/run/inviteCodes/applyInviteCode | Calls a mutation at the path inviteCodes.js:applyInviteCode
 *MutationApi* | [**api_run_sessions_create_code_session_post**](docs/MutationApi.md#api_run_sessions_create_code_session_post) | **POST** /api/run/sessions/createCodeSession | Calls a mutation at the path sessions.js:createCodeSession
 *MutationApi* | [**api_run_sessions_end_session_post**](docs/MutationApi.md#api_run_sessions_end_session_post) | **POST** /api/run/sessions/endSession | Calls a mutation at the path sessions.js:endSession
@@ -120,6 +121,7 @@ Class | Method | HTTP request | Description
 *QueryApi* | [**api_run_sessions_exists_post**](docs/QueryApi.md#api_run_sessions_exists_post) | **POST** /api/run/sessions/exists | Calls a query at the path sessions.js:exists
 *QueryApi* | [**api_run_sessions_get_active_session_post**](docs/QueryApi.md#api_run_sessions_get_active_session_post) | **POST** /api/run/sessions/getActiveSession | Calls a query at the path sessions.js:getActiveSession
 *QueryApi* | [**api_run_sessions_get_by_id_post**](docs/QueryApi.md#api_run_sessions_get_by_id_post) | **POST** /api/run/sessions/getById | Calls a query at the path sessions.js:getById
+*QueryApi* | [**api_run_sessions_get_by_id_unauth_post**](docs/QueryApi.md#api_run_sessions_get_by_id_unauth_post) | **POST** /api/run/sessions/getById_unauth | Calls a query at the path sessions.js:getById_unauth
 *QueryApi* | [**api_run_sessions_get_by_user_id_post**](docs/QueryApi.md#api_run_sessions_get_by_user_id_post) | **POST** /api/run/sessions/getByUserId | Calls a query at the path sessions.js:getByUserId
 *QueryApi* | [**api_run_user_profiles_get_user_profile_post**](docs/QueryApi.md#api_run_user_profiles_get_user_profile_post) | **POST** /api/run/userProfiles/getUserProfile | Calls a query at the path userProfiles.js:getUserProfile
 
@@ -146,12 +148,8 @@ Class | Method | HTTP request | Description
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf1.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2.md)
- - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3.md)
- - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3Data](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3Data.md)
- - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4.md)
- - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5Data](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5Data.md)
  - [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner](docs/RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5DataAfterInner.md)
@@ -171,6 +169,14 @@ Class | Method | HTTP request | Description
  - [RequestCodeSessionStatesGetTerminalState](docs/RequestCodeSessionStatesGetTerminalState.md)
  - [RequestCodeSessionStatesGetTestCasesState](docs/RequestCodeSessionStatesGetTestCasesState.md)
  - [RequestCodeSessionStatesGetTestCasesStateInternal](docs/RequestCodeSessionStatesGetTestCasesStateInternal.md)
+ - [RequestEvalInsertEvaluation](docs/RequestEvalInsertEvaluation.md)
+ - [RequestEvalInsertEvaluationArgs](docs/RequestEvalInsertEvaluationArgs.md)
+ - [RequestEvalInsertEvaluationArgsScoreboards](docs/RequestEvalInsertEvaluationArgsScoreboards.md)
+ - [RequestEvalInsertEvaluationArgsScoreboardsCommunication](docs/RequestEvalInsertEvaluationArgsScoreboardsCommunication.md)
+ - [RequestEvalInsertEvaluationArgsScoreboardsCommunicationClarification](docs/RequestEvalInsertEvaluationArgsScoreboardsCommunicationClarification.md)
+ - [RequestEvalInsertEvaluationArgsScoreboardsProblemSolving](docs/RequestEvalInsertEvaluationArgsScoreboardsProblemSolving.md)
+ - [RequestEvalInsertEvaluationArgsScoreboardsTechnicalCompetency](docs/RequestEvalInsertEvaluationArgsScoreboardsTechnicalCompetency.md)
+ - [RequestEvalInsertEvaluationArgsScoreboardsTesting](docs/RequestEvalInsertEvaluationArgsScoreboardsTesting.md)
  - [RequestInviteCodesApplyInviteCode](docs/RequestInviteCodesApplyInviteCode.md)
  - [RequestInviteCodesApplyInviteCodeArgs](docs/RequestInviteCodesApplyInviteCodeArgs.md)
  - [RequestInviteCodesCreateInviteCode](docs/RequestInviteCodesCreateInviteCode.md)
@@ -193,6 +199,7 @@ Class | Method | HTTP request | Description
  - [RequestSessionsGetActiveSessionArgs](docs/RequestSessionsGetActiveSessionArgs.md)
  - [RequestSessionsGetById](docs/RequestSessionsGetById.md)
  - [RequestSessionsGetByIdInternal](docs/RequestSessionsGetByIdInternal.md)
+ - [RequestSessionsGetByIdUnauth](docs/RequestSessionsGetByIdUnauth.md)
  - [RequestSessionsGetByUserId](docs/RequestSessionsGetByUserId.md)
  - [RequestSessionsStartSession](docs/RequestSessionsStartSession.md)
  - [RequestUserProfilesGetByEmailInternal](docs/RequestUserProfilesGetByEmailInternal.md)
@@ -234,6 +241,7 @@ Class | Method | HTTP request | Description
  - [ResponseCodeSessionStatesGetValue](docs/ResponseCodeSessionStatesGetValue.md)
  - [ResponseCodeSessionStatesGetValueEditor](docs/ResponseCodeSessionStatesGetValueEditor.md)
  - [ResponseCodeSessionStatesGetValueTerminal](docs/ResponseCodeSessionStatesGetValueTerminal.md)
+ - [ResponseEvalInsertEvaluation](docs/ResponseEvalInsertEvaluation.md)
  - [ResponseInviteCodesApplyInviteCode](docs/ResponseInviteCodesApplyInviteCode.md)
  - [ResponseInviteCodesCreateInviteCode](docs/ResponseInviteCodesCreateInviteCode.md)
  - [ResponseQuestionsGetAll](docs/ResponseQuestionsGetAll.md)
@@ -246,6 +254,7 @@ Class | Method | HTTP request | Description
  - [ResponseSessionsGetActiveSession](docs/ResponseSessionsGetActiveSession.md)
  - [ResponseSessionsGetById](docs/ResponseSessionsGetById.md)
  - [ResponseSessionsGetByIdInternal](docs/ResponseSessionsGetByIdInternal.md)
+ - [ResponseSessionsGetByIdUnauth](docs/ResponseSessionsGetByIdUnauth.md)
  - [ResponseSessionsGetByUserId](docs/ResponseSessionsGetByUserId.md)
  - [ResponseSessionsStartSession](docs/ResponseSessionsStartSession.md)
  - [ResponseUserProfilesGetByEmailInternal](docs/ResponseUserProfilesGetByEmailInternal.md)

@@ -19,7 +19,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of4_data import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data
+from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of5_data import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5Data
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -27,15 +27,15 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5(BaseModel):
     """
     RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5
     """ # noqa: E501
-    data: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data
+    data: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5Data
     type: StrictStr
     __properties: ClassVar[List[str]] = ["data", "type"]
 
     @field_validator('type')
     def type_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['groundtruth_testcase_executed']):
-            raise ValueError("must be one of enum values ('groundtruth_testcase_executed')")
+        if value not in set(['testcase_changed']):
+            raise ValueError("must be one of enum values ('testcase_changed')")
         return value
 
     model_config = ConfigDict(
@@ -92,7 +92,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "data": RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data.from_dict(obj["data"]) if obj.get("data") is not None else None,
+            "data": RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5Data.from_dict(obj["data"]) if obj.get("data") is not None else None,
             "type": obj.get("type")
         })
         return _obj
