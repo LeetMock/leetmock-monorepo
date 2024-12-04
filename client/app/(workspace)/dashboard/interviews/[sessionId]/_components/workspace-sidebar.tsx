@@ -16,7 +16,7 @@ import { TimerCountdown } from "./timer-countdown";
 import { useQuery } from "convex/react";
 import { Id } from "@/convex/_generated/dataModel";
 import { api } from "@/convex/_generated/api";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type TimelineStep = {
   title: string;
@@ -63,6 +63,11 @@ export const WorkspaceSidebar: React.FC<{
   const progressPercentage = (completedTasks / totalTasks) * 100;
 
   const [timeLeft, setTimeLeft] = useState<number>(0);
+
+  const totalTime = useMemo(() => {
+    if (!isDefined(session)) return minutesToSeconds(60);
+    return minutesToSeconds(session.timeLimit);
+  }, [session]);
 
   useEffect(() => {
     if (!isDefined(session)) return;
@@ -217,7 +222,11 @@ export const WorkspaceSidebar: React.FC<{
         </div>
 
         <div className="w-full p-2 border-t">
-          <TimerCountdown timeLeft={timeLeft} collapsed={isSidebarCollapsed} />
+          <TimerCountdown
+            timeLeft={timeLeft}
+            collapsed={isSidebarCollapsed}
+            totalTime={totalTime}
+          />
         </div>
       </div>
     </motion.div>
