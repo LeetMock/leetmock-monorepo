@@ -6,20 +6,20 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useConnection } from "@/hooks/use-connection";
 import { useEditorStore } from "@/hooks/use-editor-store";
 import { useResizePanel } from "@/hooks/use-resize-panel";
+import { useSessionSidebar } from "@/hooks/use-session-sidebar";
 import { cn } from "@/lib/utils";
 import { useConnectionState, useLocalParticipant } from "@livekit/components-react";
 import { useQuery } from "convex/react";
 import { ConnectionState } from "livekit-client";
 import { LucideFileText, PanelLeftOpen } from "lucide-react";
 import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import { useWindowSize } from "usehooks-ts";
 import { CodeEditorPanel } from "./code-editor-panel";
 import { CodeQuestionPanel } from "./code-question-panel";
 import { WorkspaceSidebar } from "./workspace-sidebar";
 import { WorkspaceToolbar } from "./workspace-toolbar";
-import { useSessionSidebar } from "@/hooks/use-session-sidebar";
 
 export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { collapsed, setCollapsed } = useSessionSidebar();

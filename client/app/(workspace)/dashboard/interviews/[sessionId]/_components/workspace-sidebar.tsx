@@ -3,6 +3,9 @@ import { Timeline } from "@/components/timeline";
 import { Tooltip } from "@/components/tooltip";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useSessionSidebar } from "@/hooks/use-session-sidebar";
 import {
   cn,
   getTimeDurationSeconds,
@@ -10,14 +13,11 @@ import {
   minutesToMilliseconds,
   minutesToSeconds,
 } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
-import { Clock, Code, HelpCircle, LucideIcon, MessageSquare, PanelLeft } from "lucide-react";
-import { TimerCountdown } from "./timer-countdown";
 import { useQuery } from "convex/react";
-import { Id } from "@/convex/_generated/dataModel";
-import { api } from "@/convex/_generated/api";
+import { AnimatePresence, motion } from "framer-motion";
+import { Clock, Code, HelpCircle, LucideIcon, MessageSquare, PanelLeft } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useSessionSidebar } from "@/hooks/use-session-sidebar";
+import { TimerCountdown } from "./timer-countdown";
 
 type TimelineStep = {
   title: string;
@@ -196,7 +196,23 @@ export const WorkspaceSidebar: React.FC<{
                     icon={step.icon}
                     isLastItem={index === timelineSteps.length - 1}
                     completed={step.completed}
+                    className="cursor-pointer"
                   />
+                  {collapsed && (
+                    <div className="absolute -top-1 left-7 z-10 hidden group-hover:block min-w-60">
+                      <div className="flex flex-col gap-2 ml-2.5 px-2 py-1.5 bg-red-100 rounded-md shadow-md">
+                        <Timeline.Title>{step.title}</Timeline.Title>
+                        <div className="flex flex-col gap-2">
+                          {step.completed && (
+                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                              <Clock className="h-3 w-3" />
+                              <span>Completed in {step.completedInMinutes} minutes</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   {!collapsed && (
                     <Timeline.Content className="space-y-2 pb-4">
                       <Timeline.Title>{step.title}</Timeline.Title>
