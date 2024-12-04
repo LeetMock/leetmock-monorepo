@@ -42,6 +42,10 @@ export function getTimeDurationSeconds(startTime: number, endTime: number): numb
   return Math.floor((endTime - startTime) / 1000);
 }
 
+export function minutesToSeconds(minutes: number): number {
+  return minutes * 60;
+}
+
 export function minutesToMilliseconds(minutes: number): number {
   return minutes * 60 * 1000;
 }
@@ -108,7 +112,11 @@ interface Question {
   outputParameters: string;
 }
 
-export function generateTestCode(question: any, language: string, testCasesState: Testcase[]): string {
+export function generateTestCode(
+  question: any,
+  language: string,
+  testCasesState: Testcase[]
+): string {
   switch (language) {
     case "python":
       return generatePythonTestCode(question, testCasesState);
@@ -124,10 +132,10 @@ export function generateTestCode(question: any, language: string, testCasesState
 }
 
 function toPythonBoolean(value: any): string {
-  if (typeof value === 'string') {
-    return value.toLowerCase() === 'true' ? 'True' : 'False';
+  if (typeof value === "string") {
+    return value.toLowerCase() === "true" ? "True" : "False";
   }
-  return value ? 'True' : 'False';
+  return value ? "True" : "False";
 }
 
 function generatePythonTestCode(question: Question, testCasesState: Testcase[]): string {
@@ -175,9 +183,10 @@ class TestSolution(unittest.TestCase):
       })
       .join(", ");
 
-    const expectedOutput = outputParameters === "boolean"
-      ? toPythonBoolean(test.expectedOutput)
-      : JSON.stringify(test.expectedOutput);
+    const expectedOutput =
+      outputParameters === "boolean"
+        ? toPythonBoolean(test.expectedOutput)
+        : JSON.stringify(test.expectedOutput);
 
     let comparisonCode;
     if (outputParameters === "boolean") {

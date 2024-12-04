@@ -3,10 +3,20 @@ import { Timeline } from "@/components/timeline";
 import { Tooltip } from "@/components/tooltip";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
+import {
+  cn,
+  getTimeDurationSeconds,
+  isDefined,
+  minutesToMilliseconds,
+  minutesToSeconds,
+} from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Clock, Code, HelpCircle, LucideIcon, MessageSquare, PanelLeft } from "lucide-react";
 import { TimerCountdown } from "./timer-countdown";
+import { useQuery } from "convex/react";
+import { Id } from "@/convex/_generated/dataModel";
+import { api } from "@/convex/_generated/api";
+import { useEffect, useState } from "react";
 
 type TimelineStep = {
   title: string;
@@ -43,12 +53,33 @@ const timelineSteps: TimelineStep[] = [
 ];
 
 export const WorkspaceSidebar: React.FC<{
+  sessionId: Id<"sessions">;
   isSidebarCollapsed: boolean;
   setIsSidebarCollapsed: (isSidebarCollapsed: boolean) => void;
-}> = ({ isSidebarCollapsed, setIsSidebarCollapsed }) => {
+}> = ({ sessionId, isSidebarCollapsed, setIsSidebarCollapsed }) => {
+  const session = useQuery(api.sessions.getById, { sessionId });
   const completedTasks = timelineSteps.filter((step) => step.completed).length;
   const totalTasks = timelineSteps.length;
   const progressPercentage = (completedTasks / totalTasks) * 100;
+
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+
+  useEffect(() => {
+    if (!isDefined(session)) return;
+    if (!isDefined(session.sessionStartTime)) {
+      setTimeLeft(minutesToSeconds(session.timeLimit));
+      return;
+    }
+
+    const interval = setInterval(() => {
+      const currentTime = Date.now();
+      const endTime = session.sessionStartTime! + minutesToMilliseconds(session.timeLimit);
+      const timeLeft = getTimeDurationSeconds(currentTime, endTime);
+      setTimeLeft(Math.max(timeLeft, 0));
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [session, timeLeft]);
 
   return (
     <motion.div className="bg-background flex flex-col h-full border-r">
@@ -150,7 +181,7 @@ export const WorkspaceSidebar: React.FC<{
           </div>
         </div>
         <div className={cn("w-full p-2 border-t")}>
-          <TimerCountdown timeLeft={1000} collapsed={isSidebarCollapsed} />
+          <TimerCountdown timeLeft={timeLeft} collapsed={isSidebarCollapsed} />
         </div>
       </div>
     </motion.div>

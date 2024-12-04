@@ -59,6 +59,7 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
     <div className="bg-background h-screen w-full flex">
       {/* Sidebar */}
       <WorkspaceSidebar
+        sessionId={sessionId}
         isSidebarCollapsed={isSidebarCollapsed}
         setIsSidebarCollapsed={setIsSidebarCollapsed}
       />
