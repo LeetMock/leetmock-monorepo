@@ -67,6 +67,7 @@ class StateMerger(AgentStateEmitter[TState]):
         state_type: Type[TState],
     ):
         graph = StateGraph(state_type)
+        graph = with_noop_node(graph)
         return cls(
             state_type=state_type,
             state_graph=graph.compile(checkpointer=MemorySaver()).with_config(
@@ -141,3 +142,12 @@ class StateMerger(AgentStateEmitter[TState]):
         self.emit("state_changed", prev_state, state)
 
         return state
+
+
+def with_noop_node(graph: StateGraph) -> StateGraph:
+    def noop(state: Any) -> Any:
+        return state
+
+    graph.add_node("noop", noop)
+    graph.set_entry_point("noop")
+    return graph
