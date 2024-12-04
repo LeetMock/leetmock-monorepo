@@ -21,6 +21,8 @@ import { WorkspaceSidebar } from "./workspace-sidebar";
 import { WorkspaceToolbar } from "./workspace-toolbar";
 
 export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
   const session = useQuery(api.sessions.getById, { sessionId });
   const question = useQuery(api.questions.getById, { questionId: session?.questionId });
   const { localParticipant } = useLocalParticipant();
@@ -45,15 +47,6 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
       localParticipant.setMicrophoneEnabled(true);
     }
   }, [localParticipant, connectionState]);
-
-  const questionData = useMemo(() => {
-    if (!isDefined(question)) return undefined;
-
-    return { title: question.title, content: question.question };
-  }, [question]);
-
-  // Add state for sidebar collapse
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   if (session?.sessionStatus === "completed") {
     disconnect();
@@ -93,7 +86,7 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
         </div>
         <div className="w-full h-full flex justify-center items-center p-2 pt-0">
           <Wait
-            data={{ questionData, question }}
+            data={{ question }}
             fallback={
               <div className="flex flex-col space-y-2 items-center justify-center h-full w-full border rounded-md shadow-md bg-background">
                 <LucideFileText className="w-10 h-10 text-muted-foreground" />
@@ -101,11 +94,11 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
               </div>
             }
           >
-            {({ questionData, question }) => (
+            {({ question }) => (
               <>
                 <CodeQuestionPanel
                   className="rounded-md"
-                  question={questionData}
+                  question={question}
                   style={{ width: size }}
                 />
                 <div
