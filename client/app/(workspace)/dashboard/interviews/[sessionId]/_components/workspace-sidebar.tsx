@@ -200,16 +200,16 @@ export const WorkspaceSidebar: React.FC<{
                   />
                   {collapsed && (
                     <div className="absolute -top-1 left-7 z-10 hidden group-hover:block min-w-60">
-                      <div className="flex flex-col gap-2 ml-2.5 px-2 py-1.5 bg-red-100 rounded-md shadow-md">
+                      <div className="flex flex-col gap-2 ml-2.5 px-2 py-1.5 bg-background rounded-md border shadow-sm">
                         <Timeline.Title>{step.title}</Timeline.Title>
-                        <div className="flex flex-col gap-2">
-                          {step.completed && (
+                        {step.completed && (
+                          <div className="flex flex-col gap-2 pb-1">
                             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                               <Clock className="h-3 w-3" />
                               <span>Completed in {step.completedInMinutes} minutes</span>
                             </div>
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
