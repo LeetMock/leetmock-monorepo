@@ -10,7 +10,7 @@ import {
   minutesToMilliseconds,
   minutesToSeconds,
 } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Clock, Code, HelpCircle, LucideIcon, MessageSquare, PanelLeft } from "lucide-react";
 import { TimerCountdown } from "./timer-countdown";
 import { useQuery } from "convex/react";
@@ -85,73 +85,104 @@ export const WorkspaceSidebar: React.FC<{
     <motion.div
       className="bg-background flex flex-col h-full border-r"
       animate={{ width: isSidebarCollapsed ? "4rem" : "240px" }}
-      transition={{ duration: 0.2 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
-      <div
+      <motion.div
         className={cn(
           "w-full flex items-center justify-between pl-4 pr-2 h-14 border-b",
           "cursor-pointer group",
           isSidebarCollapsed && "justify-center px-0"
         )}
+        animate={{ paddingLeft: isSidebarCollapsed ? "0" : "1rem" }}
+        transition={{ duration: 0.2 }}
       >
         <Logo showText={!isSidebarCollapsed} />
-        {!isSidebarCollapsed && (
-          <Tooltip content="Collapse">
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => setIsSidebarCollapsed(true)}
-              className="transition-all duration-200 opacity-0 group-hover:opacity-100"
+        <AnimatePresence>
+          {!isSidebarCollapsed && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.15 }}
             >
-              <PanelLeft className="w-4 h-4 text-primary" />
-            </Button>
-          </Tooltip>
-        )}
-      </div>
+              <Tooltip content="Collapse">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => setIsSidebarCollapsed(true)}
+                  className="transition-all duration-200 opacity-0 group-hover:opacity-100"
+                >
+                  <PanelLeft className="w-4 h-4 text-primary" />
+                </Button>
+              </Tooltip>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+
       <div className="w-full h-full flex flex-col justify-between">
         <div className="space-y-6 pt-4">
-          {/* Interview details and Progress Indicator */}
-          {isSidebarCollapsed ? (
-            <div className="px-2 py-4 space-y-4">
-              {/* Vertical Progress Bar */}
-              <div className="flex flex-col items-center gap-2">
-                <div className="relative h-24 w-1.5 bg-muted rounded-full">
-                  <div
-                    className="absolute bottom-0 w-1.5 bg-primary rounded-full transition-all duration-300"
-                    style={{ height: `${Math.round((completedTasks / totalTasks) * 100)}%` }}
-                  />
+          <AnimatePresence mode="wait">
+            {isSidebarCollapsed ? (
+              <motion.div
+                key="collapsed"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="px-2 py-4 space-y-4"
+              >
+                {/* Vertical Progress Bar */}
+                <div className="flex flex-col items-center gap-2">
+                  <div className="relative h-24 w-1.5 bg-muted rounded-full">
+                    <div
+                      className="absolute bottom-0 w-1.5 bg-primary rounded-full transition-all duration-300"
+                      style={{ height: `${Math.round((completedTasks / totalTasks) * 100)}%` }}
+                    />
+                  </div>
+                  <span className="text-xs font-medium text-muted-foreground rotate-0">
+                    {`${Math.round((completedTasks / totalTasks) * 100)}%`}
+                  </span>
                 </div>
-                <span className="text-xs font-medium text-muted-foreground rotate-0">
-                  {`${Math.round((completedTasks / totalTasks) * 100)}%`}
-                </span>
-              </div>
-            </div>
-          ) : (
-            <div className="px-4 space-y-4">
-              <div className="space-y-1">
-                <h2 className="text-base font-semibold">Software Engineer</h2>
-                <p className="text-sm text-muted-foreground">Technical Interview</p>
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-muted-foreground font-medium">Progress</span>
-                  <span className="text-foreground font-semibold">{`${Math.round((completedTasks / totalTasks) * 100)}%`}</span>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="expanded"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.2 }}
+                className="px-4 space-y-4"
+              >
+                <div className="space-y-1">
+                  <h2 className="text-base font-semibold">Software Engineer</h2>
+                  <p className="text-sm text-muted-foreground">Technical Interview</p>
                 </div>
-                <div className="space-y-1.5">
-                  <Progress
-                    value={progressPercentage}
-                    className="h-1.5 transition-all duration-300"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>{`${completedTasks}/${totalTasks} Complete`}</span>
-                    <span>{`${totalTasks - completedTasks} remaining`}</span>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-muted-foreground font-medium">Progress</span>
+                    <span className="text-foreground font-semibold">{`${Math.round((completedTasks / totalTasks) * 100)}%`}</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Progress
+                      value={progressPercentage}
+                      className="h-1.5 transition-all duration-300"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>{`${completedTasks}/${totalTasks} Complete`}</span>
+                      <span>{`${totalTasks - completedTasks} remaining`}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
           {/* Interview timeline */}
-          <div className={cn("mx-4", isSidebarCollapsed && "mx-2")}>
+          <motion.div
+            className={cn("mx-4", isSidebarCollapsed && "mx-2")}
+            animate={{ marginLeft: isSidebarCollapsed ? "0.5rem" : "1rem" }}
+            transition={{ duration: 0.2 }}
+          >
             <Timeline.Root>
               {timelineSteps.map((step, index) => (
                 <Timeline.Item
@@ -182,9 +213,10 @@ export const WorkspaceSidebar: React.FC<{
                 </Timeline.Item>
               ))}
             </Timeline.Root>
-          </div>
+          </motion.div>
         </div>
-        <div className={cn("w-full p-2 border-t")}>
+
+        <div className="w-full p-2 border-t">
           <TimerCountdown timeLeft={timeLeft} collapsed={isSidebarCollapsed} />
         </div>
       </div>

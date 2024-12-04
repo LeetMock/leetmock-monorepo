@@ -10,7 +10,7 @@ export const Root = ({ className, children, ...props }: React.HTMLAttributes<HTM
 
 export const Item = ({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={cn("flex gap-2", className)} {...props}>
+    <div className={cn("flex gap-2", "data-[collapsed=true]:gap-0", className)} {...props}>
       {children}
     </div>
   );
@@ -28,7 +28,7 @@ export const Connector = ({
   completed?: boolean;
 }) => {
   return (
-    <div className={cn("flex flex-col items-center min-h-16", className)} {...props}>
+    <div className={cn("flex flex-col items-center min-h-14", className)} {...props}>
       <div
         className={cn(
           "flex h-7 w-7 items-center justify-center rounded-[4px] transition-all duration-200",
