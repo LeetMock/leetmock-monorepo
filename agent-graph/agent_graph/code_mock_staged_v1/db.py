@@ -3,5 +3,4 @@ from agent_graph.utils import with_noop_node
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph
 
-graph = StateGraph(AgentState).compile(checkpointer=MemorySaver())
-db = with_noop_node(graph)
+db = with_noop_node(StateGraph(AgentState)).compile(checkpointer=MemorySaver())
