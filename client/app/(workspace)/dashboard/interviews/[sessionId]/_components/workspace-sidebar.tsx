@@ -39,12 +39,6 @@ const timelineSteps: TimelineStep[] = [
     completedInMinutes: 24,
   },
   {
-    title: "Coding Challenge 2",
-    icon: Code,
-    completed: false,
-    completedInMinutes: null,
-  },
-  {
     title: "Q & A",
     icon: HelpCircle,
     completed: false,
