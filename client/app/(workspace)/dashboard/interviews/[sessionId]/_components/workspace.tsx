@@ -21,6 +21,9 @@ import { CodeEditorPanel } from "./code-editor-panel";
 import { CodeQuestionPanel } from "./code-question-panel";
 import { TimerCountdown } from "./timer-countdown";
 import { WorkspaceToolbar } from "./workspace-toolbar";
+import { Timeline } from "@/components/timeline";
+import { CircleIcon, CheckCircle2, Circle } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const session = useQuery(api.sessions.getById, { sessionId });
@@ -57,6 +60,12 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
   // Add state for sidebar collapse
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
+  const timelineSteps = [
+    { title: "Introduction", icon: CheckCircle2, completed: true },
+    { title: "Coding Challenge", icon: Circle, completed: false },
+    { title: "Q & A", icon: Circle, completed: false },
+  ];
+
   if (session?.sessionStatus === "completed") {
     disconnect();
     reset();
@@ -69,12 +78,12 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
       {/* Sidebar */}
       <motion.div
         className="bg-background flex flex-col h-full border-r"
-        animate={{ width: isSidebarCollapsed ? "4.5rem" : "224px" }}
+        animate={{ width: isSidebarCollapsed ? "4.5rem" : "240px" }}
         transition={{ duration: 0.2 }}
       >
         <div
           className={cn(
-            "w-full flex items-center justify-between pl-4 pr-2 h-14",
+            "w-full flex items-center justify-between pl-4 pr-2 h-14 border-b",
             "cursor-pointer group",
             isSidebarCollapsed && "justify-center px-0"
           )}
@@ -94,8 +103,45 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
           )}
         </div>
         <div className="w-full h-full flex flex-col justify-between">
-          <div className="flex justify-center">Side</div>
-          <div className={cn("w-full p-2")}>
+          <div className="space-y-6 pt-4">
+            {!isSidebarCollapsed && (
+              <div className="px-4">
+                <h2 className="text-sm font-semibold">Software Engineer</h2>
+                <p className="text-xs text-muted-foreground/80">Technical Interview</p>
+              </div>
+            )}
+            <div className="mx-4">
+              <Timeline.Root>
+                {timelineSteps.map((step, index) => (
+                  <Timeline.Item
+                    key={index}
+                    className={cn(
+                      "transition-all duration-200",
+                      isSidebarCollapsed && "self-center"
+                    )}
+                  >
+                    <Timeline.Connector
+                      icon={step.icon}
+                      isLastItem={index === timelineSteps.length - 1}
+                      className={cn(
+                        step.completed ? "text-primary" : "text-muted-foreground/50",
+                        "transition-colors duration-200"
+                      )}
+                    />
+                    {!isSidebarCollapsed && (
+                      <Timeline.Content>
+                        <Timeline.Title>{step.title}</Timeline.Title>
+                        <Card className="bg-background shadow-sm rounded-sm px-2 py-1 text-xs">
+                          15:00
+                        </Card>
+                      </Timeline.Content>
+                    )}
+                  </Timeline.Item>
+                ))}
+              </Timeline.Root>
+            </div>
+          </div>
+          <div className={cn("w-full p-2 border-t")}>
             <TimerCountdown timeLeft={1000} collapsed={isSidebarCollapsed} />
           </div>
         </div>

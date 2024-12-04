@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 
-import { ConvexClientProvider } from "@/components/ConvexClientProvider";
+import { ConvexClientProvider } from "@/components/convex-client-provider";
 import { DevTool } from "@/components/dev-tool";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
@@ -17,13 +17,9 @@ export const metadata: Metadata = {
   title: "LeetMock",
   description: "Mock Interview like Ever Before",
   icons: {
-    icon: [
-      { url: "/logo.png", type: "image/png" },
-    ],
-    apple: [
-      { url: "/logo.png" }
-    ]
-  }
+    icon: [{ url: "/logo.png", type: "image/png" }],
+    apple: [{ url: "/logo.png" }],
+  },
 };
 
 export default function RootLayout({
@@ -39,7 +35,7 @@ export default function RootLayout({
           <ConvexClientProvider>
             {children}
             <Toaster
-              duration={1500}  // 1.5 seconds
+              duration={1500} // 1.5 seconds
             />
             <DevTool />
           </ConvexClientProvider>
