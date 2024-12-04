@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import { editor as monacoEditor } from "monaco-editor";
 import { useTheme } from "next-themes";
-import { useDebounceCallback } from "usehooks-ts";
+import { useDebounceCallback, useWindowSize } from "usehooks-ts";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -15,6 +15,8 @@ import { cn, isDefined } from "@/lib/utils";
 import { useConnectionState } from "@livekit/components-react";
 import Editor from "@monaco-editor/react";
 import { toast } from "sonner";
+import { useResizePanel } from "@/hooks/use-resize-panel";
+import { CodeTestPanel } from "./code-test-pannel";
 
 const darkEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -25,6 +27,7 @@ const darkEditorTheme: monacoEditor.IStandaloneThemeData = {
   },
 };
 
+const height = 500;
 const language = "python";
 const UNCONNECTED_MESSAGE = "You are not connected to the interview room.";
 
@@ -40,10 +43,10 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   ...props
 }) => {
   const { theme } = useTheme();
+  const { height } = useWindowSize();
+
   const editorContainerRef = useRef<HTMLDivElement>(null);
   const connectionState = useConnectionState();
-
-  // Zustand store
 
   // Convex
   const editorState = useNonReactiveQuery(api.codeSessionStates.getEditorState, { sessionId });
@@ -53,13 +56,13 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
 
   const [localEditorContent, setLocalEditorContent] = useState<string | undefined>(undefined);
 
-  // const { size, isResizing, resizeHandleProps } = useResizePanel({
-  //   defaultSize: 400,
-  //   minSize: 200,
-  //   maxSize: Math.min(height - 250, 900),
-  //   direction: "vertical",
-  //   storageId: "leetmock.workspace.code-editor",
-  // });
+  const { size, isResizing, resizeHandleProps } = useResizePanel({
+    defaultSize: 400,
+    minSize: 200,
+    maxSize: Math.min(height - 250, 900),
+    direction: "vertical",
+    storageId: "leetmock.workspace.code-editor",
+  });
 
   useEffect(() => {
     if (!isDefined(editorState)) return;
@@ -88,10 +91,8 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   return (
     <div className={cn("h-full flex flex-col", className)} {...props}>
       <div
-        className={cn(
-          "flex flex-col justify-start w-full h-full shrink-0",
-          "bg-background rounded-md"
-        )}
+        className={cn("flex flex-col justify-start w-full shrink-0", "bg-background rounded-md")}
+        style={{ height: size }}
       >
         <div className="flex justify-between items-center px-2.5 py-2 border-b shrink-0">
           <div className="flex items-center space-x-2">
@@ -139,7 +140,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
           />
         </div>
       </div>
-      {/* <div
+      <div
         className={cn(
           "h-px w-full cursor-ns-resize py-1 transition-all hover:bg-muted-foreground/10 rounded-full relative",
           isResizing ? "bg-muted-foreground/10" : "bg-transparent"
@@ -149,7 +150,12 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
         <div className="absolute inset-0 flex justify-center items-center">
           <div className="w-9 h-[3px] rounded-full bg-muted-foreground/50" />
         </div>
-      </div> */}
+      </div>
+      <CodeTestPanel
+        className="h-full flex-1 min-h-0"
+        sessionId={sessionId}
+        questionId={questionId}
+      />
     </div>
   );
 };

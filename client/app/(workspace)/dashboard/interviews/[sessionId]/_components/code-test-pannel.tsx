@@ -17,14 +17,19 @@ import { useDebounceCallback } from "usehooks-ts";
 import { TestResultsBlock } from "./test-results-block";
 import { TestcaseEditor } from "./testcase-editor";
 
-interface CodeTestPanelProps {
+interface CodeTestPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   sessionId: Id<"sessions">;
   questionId: Id<"questions">;
 }
 
 const language = "python";
 
-export const CodeTestPanel: React.FC<CodeTestPanelProps> = ({ sessionId, questionId }) => {
+export const CodeTestPanel: React.FC<CodeTestPanelProps> = ({
+  sessionId,
+  questionId,
+  className,
+  ...props
+}) => {
   const connectionState = useConnectionState();
 
   const terminalState = useQuery(api.codeSessionStates.getTerminalState, { sessionId });
@@ -73,7 +78,7 @@ export const CodeTestPanel: React.FC<CodeTestPanelProps> = ({ sessionId, questio
   const debouncedCommitEvent = useDebounceCallback(handleCommitEvent, 500);
 
   return (
-    <div className="w-full border flex-1 relative bg-background rounded-md min-h-0">
+    <div className={cn("w-full relative bg-background rounded-md", className)} {...props}>
       <div className="flex flex-col absolute inset-0 overflow-auto">
         <div className="flex justify-between items-center px-3 py-3">
           <div className="flex space-x-2">

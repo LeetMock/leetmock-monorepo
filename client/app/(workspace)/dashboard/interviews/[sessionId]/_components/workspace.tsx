@@ -134,9 +134,9 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
           >
             {({ questionData, question }) => (
               <>
-                <CodeEditorPanel
-                  sessionId={sessionId}
-                  questionId={question._id}
+                <CodeQuestionPanel
+                  className="rounded-md"
+                  question={questionData}
                   style={{ width: size }}
                 />
                 <div
@@ -150,7 +150,11 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
                     <div className="h-9 w-[3px] rounded-full bg-muted-foreground/50"></div>
                   </div>
                 </div>
-                <CodeQuestionPanel className="rounded-md shrink-0" question={questionData} />
+                <CodeEditorPanel
+                  className="flex-1"
+                  sessionId={sessionId}
+                  questionId={question._id}
+                />
               </>
             )}
           </Wait>
