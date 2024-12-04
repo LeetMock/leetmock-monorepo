@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Generic, Literal, Type, TypeVar
 
 from agent_graph.storages import StateStorage
+from agent_graph.utils import with_noop_node
 from agent_server.utils.logger import get_logger
 from debouncer import debounce
 from langchain_core.runnables import RunnableConfig
@@ -142,12 +143,3 @@ class StateMerger(AgentStateEmitter[TState]):
         self.emit("state_changed", prev_state, state)
 
         return state
-
-
-def with_noop_node(graph: StateGraph) -> StateGraph:
-    def noop(state: Any) -> Any:
-        return state
-
-    graph.add_node("noop", noop)
-    graph.set_entry_point("noop")
-    return graph
