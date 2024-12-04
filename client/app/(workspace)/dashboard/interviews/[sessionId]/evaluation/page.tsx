@@ -170,17 +170,13 @@ const InterviewEvaluationPage = () => {
                           components={{
                             code: ({ inline, className, children, ...props }: { inline?: boolean } & any) => {
                               const codeText = String(children).trim();
-                              const shouldBeInline = inline || (codeText.length < 40 && !codeText.includes('\n'));
+                              const shouldBeInline = inline || (codeText.length < 15 && !codeText.includes('\n'));
 
-                              if (shouldBeInline) {
-                                return (
-                                  <code className="px-1.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-sm" {...props}>
-                                    {children}
-                                  </code>
-                                );
-                              }
                               return (
-                                <code className="block p-3 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-sm" {...props}>
+                                <code className={cn(
+                                  "px-1.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-sm",
+                                  !shouldBeInline && "block p-3 rounded-lg"
+                                )} {...props}>
                                   {children}
                                 </code>
                               );
