@@ -17,6 +17,7 @@ import { useQuery } from "convex/react";
 import { Id } from "@/convex/_generated/dataModel";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useMemo, useState } from "react";
+import { useSessionSidebar } from "@/hooks/use-session-sidebar";
 
 type TimelineStep = {
   title: string;
@@ -48,10 +49,10 @@ const timelineSteps: TimelineStep[] = [
 
 export const WorkspaceSidebar: React.FC<{
   sessionId: Id<"sessions">;
-  isSidebarCollapsed: boolean;
-  setIsSidebarCollapsed: (isSidebarCollapsed: boolean) => void;
-}> = ({ sessionId, isSidebarCollapsed, setIsSidebarCollapsed }) => {
+}> = ({ sessionId }) => {
   const session = useQuery(api.sessions.getById, { sessionId });
+  const { collapsed, setCollapsed } = useSessionSidebar();
+
   const completedTasks = timelineSteps.filter((step) => step.completed).length;
   const totalTasks = timelineSteps.length;
   const progressPercentage = (completedTasks / totalTasks) * 100;
@@ -83,21 +84,21 @@ export const WorkspaceSidebar: React.FC<{
   return (
     <motion.div
       className="bg-background flex flex-col h-full border-r"
-      animate={{ width: isSidebarCollapsed ? "4rem" : "240px" }}
+      animate={{ width: collapsed ? "4rem" : "240px" }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
       <motion.div
         className={cn(
           "w-full flex items-center justify-between pl-4 pr-2 h-14 border-b",
           "cursor-pointer group",
-          isSidebarCollapsed && "justify-center px-0"
+          collapsed && "justify-center px-0"
         )}
-        animate={{ paddingLeft: isSidebarCollapsed ? "0" : "1rem" }}
+        animate={{ paddingLeft: collapsed ? "0" : "1rem" }}
         transition={{ duration: 0.2 }}
       >
-        <Logo showText={!isSidebarCollapsed} />
+        <Logo showText={!collapsed} />
         <AnimatePresence>
-          {!isSidebarCollapsed && (
+          {!collapsed && (
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -108,7 +109,7 @@ export const WorkspaceSidebar: React.FC<{
                 <Button
                   size="icon"
                   variant="ghost"
-                  onClick={() => setIsSidebarCollapsed(true)}
+                  onClick={() => setCollapsed(true)}
                   className="transition-all duration-200 opacity-0 group-hover:opacity-100"
                 >
                   <PanelLeft className="w-4 h-4 text-primary" />
@@ -122,7 +123,7 @@ export const WorkspaceSidebar: React.FC<{
       <div className="w-full h-full flex flex-col justify-between">
         <div className="space-y-6 pt-4">
           <AnimatePresence mode="wait">
-            {isSidebarCollapsed ? (
+            {collapsed ? (
               <motion.div
                 key="collapsed"
                 initial={{ opacity: 0 }}
@@ -178,8 +179,8 @@ export const WorkspaceSidebar: React.FC<{
           </AnimatePresence>
           {/* Interview timeline */}
           <motion.div
-            className={cn("mx-4", isSidebarCollapsed && "mx-2")}
-            animate={{ marginLeft: isSidebarCollapsed ? "0.5rem" : "1rem" }}
+            className={cn("mx-4", collapsed && "mx-2")}
+            animate={{ marginLeft: collapsed ? "0.5rem" : "1rem" }}
             transition={{ duration: 0.2 }}
           >
             <Timeline.Root>
@@ -188,7 +189,7 @@ export const WorkspaceSidebar: React.FC<{
                   key={index}
                   className={cn(
                     "transition-all duration-200",
-                    isSidebarCollapsed && "self-center relative group"
+                    collapsed && "self-center relative group"
                   )}
                 >
                   <Timeline.Connector
@@ -196,7 +197,7 @@ export const WorkspaceSidebar: React.FC<{
                     isLastItem={index === timelineSteps.length - 1}
                     completed={step.completed}
                   />
-                  {!isSidebarCollapsed && (
+                  {!collapsed && (
                     <Timeline.Content className="space-y-2 pb-4">
                       <Timeline.Title>{step.title}</Timeline.Title>
                       <div className="flex flex-col gap-2">
@@ -216,11 +217,7 @@ export const WorkspaceSidebar: React.FC<{
         </div>
 
         <div className="w-full p-2 border-t">
-          <TimerCountdown
-            timeLeft={timeLeft}
-            collapsed={isSidebarCollapsed}
-            totalTime={totalTime}
-          />
+          <TimerCountdown timeLeft={timeLeft} collapsed={collapsed} totalTime={totalTime} />
         </div>
       </div>
     </motion.div>

@@ -19,9 +19,10 @@ import { CodeEditorPanel } from "./code-editor-panel";
 import { CodeQuestionPanel } from "./code-question-panel";
 import { WorkspaceSidebar } from "./workspace-sidebar";
 import { WorkspaceToolbar } from "./workspace-toolbar";
+import { useSessionSidebar } from "@/hooks/use-session-sidebar";
 
 export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const { collapsed, setCollapsed } = useSessionSidebar();
 
   const session = useQuery(api.sessions.getById, { sessionId });
   const question = useQuery(api.questions.getById, { questionId: session?.questionId });
@@ -58,19 +59,15 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
   return (
     <div className="bg-background h-screen w-full flex">
       {/* Sidebar */}
-      <WorkspaceSidebar
-        sessionId={sessionId}
-        isSidebarCollapsed={isSidebarCollapsed}
-        setIsSidebarCollapsed={setIsSidebarCollapsed}
-      />
+      <WorkspaceSidebar sessionId={sessionId} />
       <div className="flex flex-col justify-center items-center flex-1 bg-accent">
         <div className={cn("w-full h-14 flex items-center px-2 relative")}>
-          {isSidebarCollapsed && (
+          {collapsed && (
             <Tooltip content="Expand">
               <Button
                 size="icon"
                 variant="ghost"
-                onClick={() => setIsSidebarCollapsed(false)}
+                onClick={() => setCollapsed(false)}
                 className={
                   "absolute left-2 transition-all duration-200 hover:bg-black/5 dark:hover:bg-white/10"
                 }
