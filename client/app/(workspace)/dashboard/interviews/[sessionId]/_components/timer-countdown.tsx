@@ -44,13 +44,13 @@ export const TimerCountdown = ({
         <Clock className="w-4 h-4 text-muted-foreground shrink-0" />
         <div className="flex items-baseline gap-1 overflow-hidden">
           <div className="flex items-baseline">
-            <span className="text-base font-semibold tabular-nums">
+            <span className="text-sm font-semibold tabular-nums">
               {String(minutes).padStart(2, "0")}
             </span>
             <span className="text-muted-foreground text-xs font-medium mx-0.5">m</span>
           </div>
           <div className="flex items-baseline">
-            <span className="text-base font-semibold tabular-nums">
+            <span className="text-sm font-semibold tabular-nums">
               {String(seconds).padStart(2, "0")}
             </span>
             <span className="text-muted-foreground text-xs font-medium ml-0.5">s</span>
