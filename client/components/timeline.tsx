@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 export const Root = ({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={cn("flex flex-col gap-4 justify-center ", className)} {...props}>
+    <div className={cn("flex flex-col justify-center ", className)} {...props}>
       {children}
     </div>
   );
@@ -21,44 +21,30 @@ export const Connector = ({
   icon: Icon,
   isLastItem,
   completed,
-  isActive,
   ...props
 }: React.HTMLAttributes<HTMLDivElement> & {
   icon: React.ComponentType<{ className?: string }>;
   isLastItem?: boolean;
   completed?: boolean;
-  isActive?: boolean;
 }) => {
   return (
-    <div className={cn("relative flex", className)} {...props}>
+    <div className={cn("flex flex-col items-center min-h-16", className)} {...props}>
       <div
         className={cn(
-          "relative z-10 flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200",
-          completed
-            ? "bg-primary text-primary-foreground"
-            : isActive
-              ? "bg-secondary/20 ring-2 ring-secondary"
-              : "bg-accent/60"
+          "flex h-7 w-7 items-center justify-center rounded-[4px] transition-all duration-200",
+          completed ? "bg-primary text-primary-foreground" : "bg-accent"
         )}
       >
-        <Icon className="h-4 w-4" />
+        <Icon className="h-3.5 w-3.5" />
       </div>
       {!isLastItem && (
         <div
           className={cn(
-            "absolute left-4 top-8 h-full w-[2px] -translate-x-1/2 transition-colors duration-200",
-            completed ? "bg-primary/50" : "bg-border"
+            "flex-1 w-[1px] transition-colors duration-200",
+            completed ? "bg-primary/30" : "bg-border/60"
           )}
         />
       )}
-    </div>
-  );
-};
-
-export const Header = ({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
-  return (
-    <div className={cn("text-lg font-semibold", className)} {...props}>
-      {children}
     </div>
   );
 };
@@ -79,7 +65,7 @@ export const Title = ({ className, children, ...props }: React.HTMLAttributes<HT
   return (
     <div
       className={cn(
-        "h-8 flex items-center text-sm font-semibold tracking-tight text-foreground",
+        "h-7 flex items-center text-sm font-semibold tracking-tight text-foreground",
         className
       )}
       {...props}
@@ -93,7 +79,6 @@ export const Timeline = {
   Root: Root,
   Item: Item,
   Connector: Connector,
-  Header: Header,
   Content: Content,
   Title: Title,
 };

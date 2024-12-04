@@ -64,15 +64,14 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const timelineSteps = [
-    { title: "Introduction", icon: CheckCircle2, completed: true, isActive: false },
-    { title: "Coding Challenge", icon: Circle, completed: false, isActive: true },
-    { title: "Q & A", icon: Circle, completed: false, isActive: false },
+    { title: "Introduction", icon: CheckCircle2, completed: true },
+    { title: "Coding Challenge", icon: Circle, completed: false },
+    { title: "Q & A", icon: Circle, completed: false },
   ];
 
   const completedTasks = timelineSteps.filter((step) => step.completed).length;
   const totalTasks = timelineSteps.length;
-  const tasksLeft = totalTasks - completedTasks;
-  const progressPercentage = (tasksLeft / totalTasks) * 100;
+  const progressPercentage = (completedTasks / totalTasks) * 100;
 
   if (session?.sessionStatus === "completed") {
     disconnect();
@@ -145,8 +144,8 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
                       className="h-1.5 transition-all duration-300"
                     />
                     <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>{`${totalTasks - tasksLeft}/${totalTasks} Complete`}</span>
-                      <span>{`${tasksLeft} remaining`}</span>
+                      <span>{`${completedTasks}/${totalTasks} Complete`}</span>
+                      <span>{`${totalTasks - completedTasks} remaining`}</span>
                     </div>
                   </div>
                 </div>
@@ -167,50 +166,11 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
                       icon={step.icon}
                       isLastItem={index === timelineSteps.length - 1}
                       completed={step.completed}
-                      isActive={step.isActive}
                     />
-                    {isSidebarCollapsed && (
-                      <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <Tooltip
-                          content={
-                            <div className="text-xs">
-                              <p className="font-medium">{step.title}</p>
-                              <p className="text-muted-foreground">
-                                {step.completed
-                                  ? "Completed"
-                                  : step.isActive
-                                    ? "In Progress"
-                                    : "Pending"}
-                              </p>
-                            </div>
-                          }
-                        >
-                          <div className="h-2 w-2" />
-                        </Tooltip>
-                      </div>
-                    )}
                     {!isSidebarCollapsed && (
                       <Timeline.Content className="space-y-2">
                         <Timeline.Title>{step.title}</Timeline.Title>
-                        <div className="flex flex-col gap-2">
-                          <Badge
-                            variant={
-                              step.completed ? "success" : step.isActive ? "secondary" : "outline"
-                            }
-                            className={cn(
-                              "w-fit transition-all duration-200",
-                              step.completed && "bg-primary/10 text-primary border-primary/20",
-                              step.isActive && "bg-secondary/10 text-secondary border-secondary/20",
-                              !step.completed && !step.isActive && "bg-muted/50"
-                            )}
-                          >
-                            {step.completed
-                              ? "Completed"
-                              : step.isActive
-                                ? "In Progress"
-                                : "Pending"}
-                          </Badge>
-                        </div>
+                        <div className="flex flex-col gap-2"></div>
                       </Timeline.Content>
                     )}
                   </Timeline.Item>
