@@ -2,8 +2,28 @@
 
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 const CallToAction = () => {
+  const [dimensions, setDimensions] = useState({ width: 1200, height: 800 });
+
+  useEffect(() => {
+    setDimensions({
+      width: window.innerWidth,
+      height: window.innerHeight
+    });
+
+    const handleResize = () => {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <div className="py-24 bg-black relative overflow-hidden">
       {/* Neural network visualization */}
@@ -13,8 +33,8 @@ const CallToAction = () => {
             key={i}
             className="absolute"
             initial={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
+              x: Math.random() * dimensions.width,
+              y: Math.random() * dimensions.height,
             }}
           >
             <div className="h-1 w-1 bg-blue-400/30 rounded-full shadow-[0_0_20px_rgba(0,195,255,0.5)]" />

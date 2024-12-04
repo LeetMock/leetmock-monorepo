@@ -1,4 +1,4 @@
-import favicon from '@/public/favicon.ico';
+import favicon from '@/public/logo.png';
 import Image from 'next/image';
 
 interface LogoProps {
@@ -23,7 +23,7 @@ const Logo = ({ className = "", showIcon = true, size = 'medium' }: LogoProps) =
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       {showIcon && (
-        <Image 
+        <Image
           src={favicon.src}
           alt="LeetMock.AI Logo"
           width={24}

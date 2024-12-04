@@ -3,25 +3,43 @@
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Logo from './Logo';
+import { useState, useEffect } from 'react';
 
 const Hero = () => {
+  const [dimensions, setDimensions] = useState({ width: 1200, height: 800 });
+
+  useEffect(() => {
+    setDimensions({
+      width: window.innerWidth,
+      height: window.innerHeight
+    });
+
+    const handleResize = () => {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <div className="h-screen relative overflow-hidden bg-black flex items-center justify-center">
-      {/* Cyber grid background */}
       <div className="absolute inset-0 cyber-grid opacity-20"></div>
 
-      {/* Matrix-like falling characters */}
       <div className="absolute inset-0">
         {[...Array(50)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute text-blue-500/30 text-lg font-mono"
             initial={{
-              x: Math.random() * window.innerWidth,
+              x: Math.random() * dimensions.width,
               y: -100,
             }}
             animate={{
-              y: window.innerHeight + 100,
+              y: dimensions.height + 100,
             }}
             transition={{
               duration: 5 + Math.random() * 10,
