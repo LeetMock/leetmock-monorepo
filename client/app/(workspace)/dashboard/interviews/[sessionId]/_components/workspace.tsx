@@ -26,6 +26,7 @@ import { CircleIcon, CheckCircle2, Circle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Clock } from "lucide-react";
 
 export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const session = useQuery(api.sessions.getById, { sessionId });
@@ -63,9 +64,9 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const timelineSteps = [
-    { title: "Introduction", icon: CheckCircle2, completed: true },
-    { title: "Coding Challenge", icon: Circle, completed: false },
-    { title: "Q & A", icon: Circle, completed: false },
+    { title: "Introduction", icon: CheckCircle2, completed: true, isActive: false },
+    { title: "Coding Challenge", icon: Circle, completed: false, isActive: true },
+    { title: "Q & A", icon: Circle, completed: false, isActive: false },
   ];
 
   const completedTasks = timelineSteps.filter((step) => step.completed).length;
@@ -113,14 +114,20 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
           <div className="space-y-6 pt-4">
             {/* Interview details and Progress Indicator */}
             {!isSidebarCollapsed && (
-              <div className="px-4 flex justify-between items-center">
+              <div className="px-4 space-y-4">
                 <div>
                   <h2 className="text-sm font-semibold">Software Engineer</h2>
                   <p className="text-xs text-muted-foreground/80">Technical Interview</p>
                 </div>
-                <div className="w-24">
-                  <Progress value={progressPercentage} />
-                  <span className="text-xs text-muted-foreground">{`${tasksLeft} of ${totalTasks} tasks left`}</span>
+                <div>
+                  <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
+                    <span>{`${totalTasks - tasksLeft}/${totalTasks} Complete`}</span>
+                    <span>{`${Math.round((completedTasks / totalTasks) * 100)}%`}</span>
+                  </div>
+                  <Progress
+                    value={progressPercentage}
+                    className="h-1.5 transition-all duration-300"
+                  />
                 </div>
               </div>
             )}
@@ -144,17 +151,26 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
                       )}
                     />
                     {!isSidebarCollapsed && (
-                      <Timeline.Content>
+                      <Timeline.Content className="space-y-2">
                         <Timeline.Title>{step.title}</Timeline.Title>
-                        <Badge
-                          variant={step.completed ? "success" : "default"}
-                          className={step.completed ? "bg-green-500" : "bg-gray-300"}
-                        >
-                          {step.completed ? "Completed" : "Pending"}
-                        </Badge>
-                        <Card className="bg-background shadow-sm rounded-sm px-2 py-1 text-xs">
-                          15:00
-                        </Card>
+                        <div className="flex flex-col gap-2">
+                          <Badge
+                            variant={
+                              step.completed ? "success" : step.isActive ? "secondary" : "default"
+                            }
+                            className="w-fit transition-all duration-200"
+                          >
+                            {step.completed
+                              ? "Completed"
+                              : step.isActive
+                                ? "In Progress"
+                                : "Pending"}
+                          </Badge>
+                          <Card className="flex items-center gap-1.5 bg-background/50 shadow-sm rounded-sm px-2 py-1.5 text-xs w-fit">
+                            <Clock className="w-3 h-3 text-muted-foreground" />
+                            <span>15:00</span>
+                          </Card>
+                        </div>
                       </Timeline.Content>
                     )}
                   </Timeline.Item>

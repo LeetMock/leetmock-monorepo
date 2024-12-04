@@ -66,7 +66,7 @@ export const Title = ({ className, children, ...props }: React.HTMLAttributes<HT
   return (
     <div
       className={cn(
-        "h-8 flex items-center text-sm font-medium text-muted-foreground uppercase",
+        "h-8 flex items-center text-sm font-semibold tracking-tight text-foreground",
         className
       )}
       {...props}
