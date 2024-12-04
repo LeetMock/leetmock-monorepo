@@ -6,9 +6,11 @@ import Logo from './Logo';
 import { useState, useEffect } from 'react';
 
 const Hero = () => {
-  const [dimensions, setDimensions] = useState({ width: 1200, height: 800 });
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     setDimensions({
       width: window.innerWidth,
       height: window.innerHeight
@@ -24,6 +26,10 @@ const Hero = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <div className="h-screen relative overflow-hidden bg-black flex items-center justify-center">

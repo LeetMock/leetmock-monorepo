@@ -2,9 +2,9 @@ import { Star, ThumbsUp, AlertTriangle, XCircle } from "lucide-react";
 
 export const getHiringRecommendation = (score: number, maxScore: number) => {
   const percentage = (score / maxScore) * 100;
-  
+
   if (percentage >= 90) return {
-    text: "Strong Hire",
+    text: "Excellent Performance",
     color: "text-green-500",
     bgColor: "bg-green-500/10",
     borderColor: "border-green-500/20",
@@ -12,7 +12,7 @@ export const getHiringRecommendation = (score: number, maxScore: number) => {
     iconColor: "text-green-500",
   };
   if (percentage >= 75) return {
-    text: "Hire",
+    text: "Strong Performance",
     color: "text-blue-500",
     bgColor: "bg-blue-500/10",
     borderColor: "border-blue-500/20",
@@ -20,7 +20,7 @@ export const getHiringRecommendation = (score: number, maxScore: number) => {
     iconColor: "text-blue-500",
   };
   if (percentage >= 60) return {
-    text: "No Hire",
+    text: "Shows Promise",
     color: "text-yellow-500",
     bgColor: "bg-yellow-500/10",
     borderColor: "border-yellow-500/20",
@@ -28,7 +28,7 @@ export const getHiringRecommendation = (score: number, maxScore: number) => {
     iconColor: "text-yellow-500",
   };
   return {
-    text: "Strong No Hire",
+    text: "Needs Development",
     color: "text-red-500",
     bgColor: "bg-red-500/10",
     borderColor: "border-red-500/20",

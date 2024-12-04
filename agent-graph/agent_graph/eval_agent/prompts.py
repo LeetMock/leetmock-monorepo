@@ -8,6 +8,8 @@ Instructions:
 2. You will also give a detailed feedback on the candidate's ability to ask clarification questions.
 3. You will also give some examples from the conversation to support the score and comment, use orginal conversation content as much as possible.
 4. The evaluation should be truthful and based on the conversation, do not make up anything.
+5. Most importantly, use second person to give the feedback. like you are talking to the candidate directly. 
+6. Give the feedback in markdown format.
 
 The Following is the conversation between a candidate and an interviewer:
 {conversation}
@@ -32,6 +34,8 @@ Instructions:
 2. You will also give detailed feedback on the candidate's ability to communicate their thought process.
 3. You will also give some examples from the conversation to support the score and feedback, using the original conversation content as much as possible.
 4. The evaluation should be truthful and based on the conversation; do not make up anything.
+5. Most importantly, use second person to give the feedback. like you are talking to the candidate directly. 
+6. Give the feedback in markdown format.
 
 The following is the conversation between a candidate and an interviewer:
 {conversation}
@@ -59,6 +63,8 @@ Instructions:
    - Correctness: Whether the code solves the given problem correctly under various edge cases.
 3. Use examples or observations from the candidate's code to justify your score and comments.
 4. The evaluation should be based entirely on the provided code and problem; do not make up any details.
+5. Most importantly, use second person to give the feedback. like you are talking to the candidate directly. 
+6. Give the feedback in markdown format.
 
 The following is the coding problem:
 {coding_problem}
@@ -86,6 +92,8 @@ Instructions:
    - Impact of changes: How significantly the optimizations improved the solution in terms of time complexity, space complexity, or overall performance.
 3. Use examples from the conversation history and the candidate's code to justify your score and comments, highlighting any changes or discussions related to optimizations.
 4. The evaluation should be truthful and based entirely on the provided conversation history and code; do not make up any details.
+5. Most importantly, use second person to give the feedback. like you are talking to the candidate directly. 
+6. Give the feedback in markdown format.
 
 The following is the conversation history between the candidate and the interviewer:
 {conversation}
@@ -115,6 +123,8 @@ Instructions:
    - Tailored their approach to the problem's unique requirements
 3. You will also give examples from the conversation to support the score and feedback, using the original conversation content as much as possible.
 4. The evaluation should be truthful and based on the conversation; do not make up any details.
+5. Most importantly, use second person to give the feedback. like you are talking to the candidate directly. 
+6. Give the feedback in markdown format.
 
 The following is the conversation between a candidate and an interviewer:
 {conversation}
@@ -149,6 +159,8 @@ Instructions:
    - Problem complexity relative to time constraint
    - Code completeness and correctness
 4. The evaluation should be based entirely on the provided information; do not make up any details.
+5. Most importantly, use second person to give the feedback. like you are talking to the candidate directly. 
+6. Give the feedback in markdown format.
 
 This is the coding problem:
 {coding_problem}
@@ -184,6 +196,8 @@ Instructions:
    - Function length and complexity
    - Error handling and edge cases
 4. The evaluation should be based entirely on the provided code; do not make up any details.
+5. Most importantly, use second person to give the feedback. like you are talking to the candidate directly. 
+6. Give the feedback in markdown format.
 
 This is the coding problem:
 {coding_problem}
@@ -214,6 +228,8 @@ Instructions:
    - Partial deductions for each type of syntax error found
    - Consider the severity and frequency of errors
 4. The evaluation should be based entirely on the provided code; do not make up any details.
+5. Most importantly, use second person to give the feedback. like you are talking to the candidate directly. 
+6. Give the feedback in markdown format.
 
 This is the coding problem:
 {coding_problem}
@@ -244,6 +260,8 @@ Instructions:
    - Discussion about edge cases and scenarios
    - Any testing strategy or approach discussed
 4. The evaluation should be truthful and based on the conversation; do not make up any details.
+5. Most importantly, use second person to give the feedback. like you are talking to the candidate directly. 
+6. Give the feedback in markdown format.
 
 The following is the conversation between a candidate and an interviewer:
 {conversation}
@@ -283,6 +301,8 @@ Instructions:
    - Speed and efficiency in fixing issues
    - Understanding of error messages and stack traces
 4. The evaluation should be based entirely on the conversation history; do not make up any details.
+5. Most importantly, use second person to give the feedback. like you are talking to the candidate directly. 
+6. Give the feedback in markdown format.
 
 The following is the conversation between a candidate and an interviewer:
 {conversation}
@@ -306,19 +326,17 @@ You will receive detailed evaluations from multiple aspects of the interview, in
 Instructions:
 Based on the previous evaluation scores and comments, provide a concise assessment in the following format:
 
-Overall Assessment (2-3 paragraphs)
+Overall Assessment 
 - Synthesize the candidate's overall performance across all evaluation areas
 - Include the total score and what it means in context
 - Provide a clear hiring recommendation with brief justification
 
-Key Strengths (1 paragraph)
+Key Strengths 
 - Highlight 2-3 most impressive aspects of the candidate's performance
 - Support with brief, specific examples from the evaluations
-- Note relevant high scores in these areas
 
-Areas for Growth (1 paragraph)
+Areas for Growth 
 - Identify 2-3 most important areas for improvement
-- Provide specific, actionable suggestions for each area
 - Keep feedback constructive and forward-looking
 
 Previous evaluation scores and comments:
@@ -326,7 +344,9 @@ Previous evaluation scores and comments:
 
 Remember to:
 1. Be concise but specific in your assessment
-2. Use concrete examples to support your points
+2. Don't dive into details, give overall feedback
 3. Maintain a professional and encouraging tone
 4. Focus on the most impactful aspects of performance
+5. Give the feedback in markdown format.
+6. Most importantly, use second person to give the feedback. like you are talking to the candidate directly.
 """

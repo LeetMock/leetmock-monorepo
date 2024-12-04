@@ -8,40 +8,87 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { getHiringRecommendation } from "@/lib/evaluation-utils";
 import { cn } from "@/lib/utils";
-import { evaluationData } from "@/mockedEvaluationData";
 import { useQuery } from "convex/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { BarChart3 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { ScoreCard } from "./_components/score-card";
 import { ScoreRadarChart } from "./_components/score-radar-chart";
+import { EvaluationLoading } from "./_components/loading-state";
+import { MetricHeader } from "./_components/metric-header";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+
+type Criterion = {
+  id: number;
+  description: string;
+  met: boolean;
+  importance: "medium" | "high" | "critical";
+};
 
 const InterviewEvaluationPage = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
-  const session = useQuery(api.sessions.getById, { sessionId: sessionId as Id<"sessions"> });
+  const evaluation = useQuery(api.eval.getBySessionId, { sessionId: sessionId as Id<"sessions"> });
+  const session_state = useQuery(api.codeSessionStates.getSessionStateBySessionId, { sessionId: sessionId as Id<"sessions"> });
   const [activeTab, setActiveTab] = useState("communication");
   const tabsRef = useRef<HTMLDivElement>(null);
+  const [maxScore, setMaxScore] = useState(100);
 
-  if (!session) {
-    return <div>Loading...</div>;
+  const calculateScores = (metrics: Record<string, { score: number; maxScore: number }>) => {
+    const totalScore = Object.values(metrics).reduce((acc, curr) => acc + curr.score, 0);
+    const maxScore = Object.values(metrics).reduce((acc, curr) => acc + curr.maxScore, 0);
+    const percentage = (totalScore / maxScore) * 100;
+    return { totalScore, maxScore, percentage };
+  };
+
+  const radarData = useMemo(() =>
+    evaluation?.scoreboards
+      ? Object.entries(evaluation.scoreboards).map(([category, metrics]) => {
+        const { percentage } = calculateScores(metrics as Record<string, { score: number; maxScore: number }>);
+        return {
+          category: category.charAt(0).toUpperCase() + category.slice(1),
+          score: percentage,
+          fullMark: 100,
+        };
+      })
+      : [],
+    [evaluation?.scoreboards]
+  );
+
+  const pillarScores = useMemo(() =>
+    evaluation?.scoreboards
+      ? Object.entries(evaluation.scoreboards).map(([name, metrics]) => {
+        const { totalScore, maxScore } = calculateScores(metrics as Record<string, { score: number; maxScore: number }>);
+        const displayNames: Record<string, string> = {
+          communication: "Communication",
+          problemSolving: "Problem Solving",
+          technicalCompetency: "Technical",
+          testing: "Testing",
+        };
+
+        return {
+          name: displayNames[name] || name,
+          internalName: name,
+          score: totalScore,
+          maxScore: maxScore,
+        };
+      })
+      : [],
+    [evaluation?.scoreboards]
+  );
+
+  if (!evaluation) {
+    return <EvaluationLoading />;
   }
 
-  // Transform scoreboards data for radar chart
-  const radarData = Object.entries(evaluationData.scoreboards).map(([category, metrics]) => ({
-    category: category.charAt(0).toUpperCase() + category.slice(1),
-    score:
-      Object.values(metrics).reduce((acc, curr) => acc + curr.score, 0) /
-      Object.keys(metrics).length,
-    fullMark: 10,
-  }));
-
   const renderMetricContent = (metrics: Record<string, any>, categoryName: string) => {
-    const totalScore = Object.values(metrics).reduce((acc: any, curr: any) => acc + curr.score, 0);
-    const maxScore = Object.values(metrics).reduce((acc: any, curr: any) => acc + curr.maxScore, 0);
+    const totalScore = Object.values(metrics).reduce((acc, curr) => acc + curr.score, 0);
+    const maxScore = Object.values(metrics).reduce((acc, curr) => acc + curr.maxScore, 0);
     const recommendation = getHiringRecommendation(totalScore, maxScore);
 
     return (
@@ -76,37 +123,74 @@ const InterviewEvaluationPage = () => {
             <Card className="p-4 hover:shadow-md transition-all duration-200">
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <h4 className="font-medium capitalize">{metric}</h4>
+                  <MetricHeader
+                    title={metric}
+                    description={data.description}
+                  />
                   <div className="flex items-center gap-2">
                     <span
                       className={cn(
-                        "text-xs font-medium px-2 py-1 rounded-full",
+                        "text-sm font-medium px-2.5 py-1.5 rounded-full",
                         getHiringRecommendation(data.score, data.maxScore).bgColor,
                         getHiringRecommendation(data.score, data.maxScore).color
                       )}
                     >
                       {getHiringRecommendation(data.score, data.maxScore).text}
                     </span>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-base text-muted-foreground">
                       {data.score}/{data.maxScore}
                     </span>
                   </div>
                 </div>
-                <Progress
-                  value={(data.score / data.maxScore) * 100}
-                  className="h-2"
-                  indicatorClassName={cn(
-                    getHiringRecommendation(data.score, data.maxScore).bgColor,
-                    "border border-blue-500/20"
-                  )}
-                />
-                <p className="text-sm text-muted-foreground mt-2">{data.description}</p>
-                <p className="text-sm mt-2">{data.comment}</p>
-                <div className="space-y-1 mt-2">
+
+                <div className="prose dark:prose-invert max-w-none text-base">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {data.comment}
+                  </ReactMarkdown>
+                </div>
+                {/* <p className="text-base leading-relaxed mt-2">{data.comment}</p> */}
+                <div className="space-y-3 mt-4 border-l-2 border-blue-500/20 dark:border-blue-400/20">
                   {data.examples.map((example: string, i: number) => (
-                    <div key={i} className="text-sm text-muted-foreground">
-                      • {example}
-                    </div>
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                      className={cn(
+                        "relative pl-6 py-2 -ml-px",
+                        "before:absolute before:left-0 before:top-0 before:h-full before:w-[1px]",
+                        "before:bg-gradient-to-b before:from-blue-500/40 before:to-purple-500/40",
+                        "hover:bg-blue-50/50 dark:hover:bg-blue-950/20",
+                        "transition-colors duration-200 rounded-r-lg"
+                      )}
+                    >
+                      <div className="prose dark:prose-invert max-w-none">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            code: ({ inline, className, children, ...props }: { inline?: boolean } & any) => {
+                              const codeText = String(children).trim();
+                              const shouldBeInline = inline || (codeText.length < 40 && !codeText.includes('\n'));
+
+                              if (shouldBeInline) {
+                                return (
+                                  <code className="px-1.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-sm" {...props}>
+                                    {children}
+                                  </code>
+                                );
+                              }
+                              return (
+                                <code className="block p-3 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-sm" {...props}>
+                                  {children}
+                                </code>
+                              );
+                            },
+                          }}
+                        >
+                          {`• ${example}`}
+                        </ReactMarkdown>
+                      </div>
+                    </motion.div>
                   ))}
                 </div>
               </div>
@@ -130,35 +214,6 @@ const InterviewEvaluationPage = () => {
   const item = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0 },
-  };
-
-  // Add this function to calculate pillar scores
-  const calculatePillarScores = (scoreboards: any) => {
-    return Object.entries(scoreboards).map(([name, metrics]) => {
-      const totalScore = Object.values(metrics).reduce(
-        (acc: any, curr: any) => acc + curr.score,
-        0
-      );
-      const maxScore = Object.values(metrics).reduce(
-        (acc: any, curr: any) => acc + curr.maxScore,
-        0
-      );
-
-      // Map the internal category names to display names
-      const displayNames: Record<string, string> = {
-        communication: "Communication",
-        problemSolving: "Problem Solving",
-        technicalCompetency: "Technical",
-        testing: "Testing",
-      };
-
-      return {
-        name: displayNames[name] || name,
-        internalName: name, // Add this for exact matching
-        score: totalScore,
-        maxScore: maxScore,
-      };
-    });
   };
 
   const scrollToTabs = () => {
@@ -191,10 +246,10 @@ const InterviewEvaluationPage = () => {
 
       <motion.div variants={item}>
         <ScoreCard
-          totalScore={evaluationData.totalScore}
-          overallFeedback={evaluationData.overallFeedback}
-          criteria={evaluationData.criteria}
-          pillarScores={calculatePillarScores(evaluationData.scoreboards)}
+          totalScore={evaluation.totalScore}
+          overallFeedback={evaluation.overallFeedback}
+          // criteria={evaluationData.criteria}
+          pillarScores={pillarScores}
           onPillarClick={(pillarName, internalName) => {
             setActiveTab(internalName);
             scrollToTabs();
@@ -213,7 +268,7 @@ const InterviewEvaluationPage = () => {
             </div>
             <ScrollArea className="flex-1 p-4">
               <SyntaxHighlighter
-                language="javascript"
+                language="python"
                 style={vscDarkPlus}
                 customStyle={{
                   margin: 0,
@@ -221,7 +276,7 @@ const InterviewEvaluationPage = () => {
                   fontSize: "0.875rem",
                 }}
               >
-                {evaluationData.codeContent}
+                {session_state?.editor.content}
               </SyntaxHighlighter>
             </ScrollArea>
           </Card>
@@ -233,14 +288,9 @@ const InterviewEvaluationPage = () => {
           <h3 className="text-xl font-semibold mb-4">Detailed Evaluation</h3>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="w-full justify-start bg-transparent flex flex-wrap gap-2">
-              {Object.entries(evaluationData.scoreboards).map(([category, metrics]) => {
-                const totalScore = Object.values(metrics).reduce(
-                  (acc: any, curr: any) => acc + curr.score,
-                  0
-                );
-                const maxScore = Object.values(metrics).reduce(
-                  (acc: any, curr: any) => acc + curr.maxScore,
-                  0
+              {Object.entries(evaluation.scoreboards).map(([category, metrics]) => {
+                const { totalScore, maxScore, percentage } = calculateScores(
+                  metrics as Record<string, { score: number; maxScore: number }>
                 );
                 const recommendation = getHiringRecommendation(totalScore, maxScore);
 
@@ -259,7 +309,7 @@ const InterviewEvaluationPage = () => {
                     <div className="relative">
                       <span className="capitalize">{category}</span>
                       <div className="text-xs opacity-80 flex items-center gap-1.5">
-                        <span>{Math.round((totalScore / maxScore) * 100)}%</span>
+                        <span>{Math.round(percentage)}%</span>
                         <span>•</span>
                         <span>{recommendation.text}</span>
                       </div>
@@ -269,9 +319,9 @@ const InterviewEvaluationPage = () => {
               })}
             </TabsList>
             <AnimatePresence mode="wait">
-              {Object.entries(evaluationData.scoreboards).map(([category, metrics]) => (
+              {Object.entries(evaluation.scoreboards).map(([category, metrics]) => (
                 <TabsContent key={category} value={category} className="mt-6">
-                  {renderMetricContent(metrics, category)}
+                  {renderMetricContent(metrics as Record<string, any>, category)}
                 </TabsContent>
               ))}
             </AnimatePresence>

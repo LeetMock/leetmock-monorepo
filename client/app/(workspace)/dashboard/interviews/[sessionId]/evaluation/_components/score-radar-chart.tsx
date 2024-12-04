@@ -39,7 +39,7 @@ export const ScoreRadarChart = ({ data }: ScoreRadarChartProps) => {
               <PolarAngleAxis dataKey="category" tick={{ fill: "currentColor", fontSize: 12 }} />
               <PolarRadiusAxis
                 angle={30}
-                domain={[0, 10]}
+                domain={[0, 100]}
                 tick={{ fill: "currentColor", fontSize: 10 }}
               />
               <Radar

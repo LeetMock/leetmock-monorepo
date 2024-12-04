@@ -79,6 +79,7 @@
     "react-resizable-panels": "^2.0.23",
     "react-syntax-highlighter": "^15.6.1",
     "recharts": "^2.13.3",
+    "remark-gfm": "^4.0.0",
     "retell-client-js-sdk": "^2.0.2",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",

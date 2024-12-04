@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation } from "./functions";
+import { mutation, userQuery } from "./functions";
 import { scoreDetailSchema } from "./schema"
 
 
@@ -60,3 +60,16 @@ export const insertEvaluation = mutation({
         return evaluation;
     },
 });
+
+
+export const getBySessionId = userQuery({
+    args: {
+        sessionId: v.id("sessions"),
+    },
+    handler: async (ctx, { sessionId }) => {
+        return await ctx.table("evaluations", "by_session_id", (q) =>
+            q.eq("sessionId", sessionId)
+        ).first();
+    },
+});
+

@@ -34,7 +34,7 @@ def evaluate_test_case_coverage(state: AgentState, config: RunnableConfig) -> di
         "maxScore": MAX_POINTS,
         "comment": "This test is not yet supported for now.",
         "examples": [],
-        "score": MAX_POINTS,
+        "score": MAX_POINTS // 2,
     }
 
     return {"scores": [score_detail]}

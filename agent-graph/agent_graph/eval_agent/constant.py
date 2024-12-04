@@ -43,11 +43,10 @@ class TestCase(TypedDict):
 
 
 class SessionState(TypedDict):
-    displayQuestion: bool
+    stage: str
     editor: EditorState
     terminal: TerminalState
     testcases: List[TestCase]
-
 
 class Question(TypedDict):
     category: List[str]
@@ -120,7 +119,7 @@ class AgentConfig(BaseModel):
 
     smart_model: str = Field(default="o1-preview-2024-09-12")
 
-    temperature: float = Field(default=0.1)
+    temperature: float = Field(default=1)
 
 
 DEFAULT_CONFIG = AgentConfig(

@@ -49,7 +49,7 @@ export const ScoreAccordion = ({ scoreboards }: ScoreAccordionProps) => {
                         {data.score}/{data.maxScore}
                       </span>
                     </div>
-                    <Progress value={(data.score / data.maxScore) * 100} className="h-2" />
+
                     <p className="text-sm text-muted-foreground">{data.comment}</p>
                     <div className="space-y-1 mt-2">
                       {data.examples.map((example, i) => (

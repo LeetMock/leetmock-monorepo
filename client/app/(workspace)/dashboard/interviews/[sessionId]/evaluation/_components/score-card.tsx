@@ -4,6 +4,7 @@ import { getHiringRecommendation } from "@/lib/evaluation-utils";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { AlertCircle, CheckCircle2, XCircle } from "lucide-react";
+import ReactMarkdown from 'react-markdown';
 
 interface Criterion {
   id: number;
@@ -22,7 +23,7 @@ interface PillarScore {
 interface ScoreCardProps {
   totalScore: number;
   overallFeedback: string;
-  criteria: Criterion[];
+  // criteria: Criterion[];
   pillarScores: PillarScore[];
   onPillarClick: (displayName: string, internalName: string) => void;
 }
@@ -30,7 +31,7 @@ interface ScoreCardProps {
 export const ScoreCard = ({
   totalScore,
   overallFeedback,
-  criteria,
+  // criteria,
   pillarScores,
   onPillarClick,
 }: ScoreCardProps) => {
@@ -122,7 +123,7 @@ export const ScoreCard = ({
               transition={{ delay: 0.3 }}
               className="space-y-6"
             >
-              <div>
+              {/* Don't need this for now, will add back in later version<div>
                 <h4 className="text-lg font-semibold mb-4">Problem-Solving Criteria</h4>
                 <div className="grid gap-3">
                   <TooltipProvider>
@@ -162,10 +163,12 @@ export const ScoreCard = ({
                     ))}
                   </TooltipProvider>
                 </div>
-              </div>
+              </div> */}
               <div>
-                <h4 className="font-medium text-muted-foreground mb-2">Overall Feedback</h4>
-                <p className="text-sm leading-relaxed">{overallFeedback}</p>
+                <h4 className="font-medium text-muted-foreground mb-4">Overall Feedback</h4>
+                <div className="text-base leading-relaxed">
+                  <ReactMarkdown>{overallFeedback}</ReactMarkdown>
+                </div>
               </div>
             </motion.div>
           </div>

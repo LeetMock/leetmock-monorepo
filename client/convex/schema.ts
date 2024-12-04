@@ -138,7 +138,7 @@ const schema = defineEntSchema({
         testCaseDesign: v.object(scoreDetailSchema),
       }),
     })
-  }),
+  }).index("by_session_id", ["sessionId"]),
 });
 
 export const entDefinitions = getEntDefinitions(schema);
