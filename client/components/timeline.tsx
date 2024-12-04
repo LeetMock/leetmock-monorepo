@@ -27,11 +27,16 @@ export const Connector = ({
 }) => {
   return (
     <div className={cn("relative flex", className)} {...props}>
-      <div className="relative z-10 flex h-8 w-8 items-center justify-center rounded-sm bg-accent">
+      <div
+        className={cn(
+          "relative z-10 flex h-8 w-8 items-center justify-center rounded-sm",
+          "bg-accent/60"
+        )}
+      >
         <Icon className="h-4 w-4" />
       </div>
       {!isLastItem && (
-        <div className="absolute left-4 top-8 h-full w-[2px] -translate-x-1/2 bg-accent" />
+        <div className="absolute left-4 top-8 h-full w-[1px] -translate-x-1/2 bg-border" />
       )}
     </div>
   );
@@ -51,7 +56,7 @@ export const Content = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={cn("flex flex-col space-y-1", className)} {...props}>
+    <div className={cn("flex flex-col gap-2", className)} {...props}>
       {children}
     </div>
   );
