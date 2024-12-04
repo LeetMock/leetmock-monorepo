@@ -24,6 +24,8 @@ import { WorkspaceToolbar } from "./workspace-toolbar";
 import { Timeline } from "@/components/timeline";
 import { CircleIcon, CheckCircle2, Circle } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 
 export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const session = useQuery(api.sessions.getById, { sessionId });
@@ -66,6 +68,11 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
     { title: "Q & A", icon: Circle, completed: false },
   ];
 
+  const completedTasks = timelineSteps.filter((step) => step.completed).length;
+  const totalTasks = timelineSteps.length;
+  const tasksLeft = totalTasks - completedTasks;
+  const progressPercentage = (tasksLeft / totalTasks) * 100;
+
   if (session?.sessionStatus === "completed") {
     disconnect();
     reset();
@@ -104,12 +111,20 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
         </div>
         <div className="w-full h-full flex flex-col justify-between">
           <div className="space-y-6 pt-4">
+            {/* Interview details and Progress Indicator */}
             {!isSidebarCollapsed && (
-              <div className="px-4">
-                <h2 className="text-sm font-semibold">Software Engineer</h2>
-                <p className="text-xs text-muted-foreground/80">Technical Interview</p>
+              <div className="px-4 flex justify-between items-center">
+                <div>
+                  <h2 className="text-sm font-semibold">Software Engineer</h2>
+                  <p className="text-xs text-muted-foreground/80">Technical Interview</p>
+                </div>
+                <div className="w-24">
+                  <Progress value={progressPercentage} />
+                  <span className="text-xs text-muted-foreground">{`${tasksLeft} of ${totalTasks} tasks left`}</span>
+                </div>
               </div>
             )}
+            {/* Interview timeline */}
             <div className="mx-4">
               <Timeline.Root>
                 {timelineSteps.map((step, index) => (
@@ -131,6 +146,12 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
                     {!isSidebarCollapsed && (
                       <Timeline.Content>
                         <Timeline.Title>{step.title}</Timeline.Title>
+                        <Badge
+                          variant={step.completed ? "success" : "default"}
+                          className={step.completed ? "bg-green-500" : "bg-gray-300"}
+                        >
+                          {step.completed ? "Completed" : "Pending"}
+                        </Badge>
                         <Card className="bg-background shadow-sm rounded-sm px-2 py-1 text-xs">
                           15:00
                         </Card>
