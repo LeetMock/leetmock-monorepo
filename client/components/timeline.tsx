@@ -55,7 +55,7 @@ export const Content = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={cn("flex flex-col gap-2", className)} {...props}>
+    <div className={cn("flex flex-col", className)} {...props}>
       {children}
     </div>
   );

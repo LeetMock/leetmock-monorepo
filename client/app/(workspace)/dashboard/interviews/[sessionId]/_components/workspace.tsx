@@ -12,7 +12,15 @@ import { useConnectionState, useLocalParticipant } from "@livekit/components-rea
 import { useQuery } from "convex/react";
 import { motion } from "framer-motion";
 import { ConnectionState } from "livekit-client";
-import { LucideFileText, PanelLeft, PanelLeftOpen } from "lucide-react";
+import {
+  LucideFileText,
+  LucideIcon,
+  PanelLeft,
+  PanelLeftOpen,
+  MessageSquare,
+  Code,
+  HelpCircle,
+} from "lucide-react";
 import { redirect } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -27,6 +35,13 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Clock } from "lucide-react";
+
+type TimelineStep = {
+  title: string;
+  icon: LucideIcon;
+  completed: boolean;
+  completedInMinutes: number | null;
+};
 
 export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const session = useQuery(api.sessions.getById, { sessionId });
@@ -63,10 +78,31 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
   // Add state for sidebar collapse
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  const timelineSteps = [
-    { title: "Introduction", icon: CheckCircle2, completed: true },
-    { title: "Coding Challenge", icon: Circle, completed: false },
-    { title: "Q & A", icon: Circle, completed: false },
+  const timelineSteps: TimelineStep[] = [
+    {
+      title: "Introduction",
+      icon: MessageSquare,
+      completed: true,
+      completedInMinutes: 2,
+    },
+    {
+      title: "Coding Challenge 1",
+      icon: Code,
+      completed: true,
+      completedInMinutes: 24,
+    },
+    {
+      title: "Coding Challenge 2",
+      icon: Code,
+      completed: false,
+      completedInMinutes: null,
+    },
+    {
+      title: "Q & A",
+      icon: HelpCircle,
+      completed: false,
+      completedInMinutes: null,
+    },
   ];
 
   const completedTasks = timelineSteps.filter((step) => step.completed).length;
@@ -168,9 +204,16 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
                       completed={step.completed}
                     />
                     {!isSidebarCollapsed && (
-                      <Timeline.Content className="space-y-2">
+                      <Timeline.Content className="space-y-2 pb-4">
                         <Timeline.Title>{step.title}</Timeline.Title>
-                        <div className="flex flex-col gap-2"></div>
+                        <div className="flex flex-col gap-2">
+                          {step.completed && (
+                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                              <Clock className="h-3 w-3" />
+                              <span>Completed in {step.completedInMinutes} minutes</span>
+                            </div>
+                          )}
+                        </div>
                       </Timeline.Content>
                     )}
                   </Timeline.Item>
