@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, formatTime } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Clock } from "lucide-react";
 import { HTMLAttributes } from "react";
 
@@ -15,21 +15,37 @@ export const TimerCountdown = ({
   collapsed,
   ...props
 }: TimerCountdownProps) => {
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+
+  if (collapsed) {
+    return (
+      <div className={cn("flex flex-col items-center gap-1 py-2", className)} {...props}>
+        <Clock className="w-4 h-4 text-muted-foreground" />
+        <span className="font-medium text-xs tabular-nums">
+          {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn(
-        "flex font-semibold bg-accent rounded-md select-none cursor-pointer text-primary py-2",
-        collapsed
-          ? "flex-col items-center justify-center space-y-1"
-          : "flex-row items-center justify-center space-x-2 px-3",
+        "flex items-center gap-2 px-3 py-1.5 bg-background/50 border rounded-md",
         className
       )}
       {...props}
     >
-      <Clock className="w-4 h-4 shrink-0" />
-      <span className={cn("font-mono text-sm", collapsed && "text-xs")}>
-        {formatTime(timeLeft)}
-      </span>
+      <Clock className="w-4 h-4 text-muted-foreground" />
+      <div className="flex items-baseline gap-1">
+        <span className="font-medium tabular-nums">
+          {String(minutes).padStart(2, "0")}
+          <span className="text-muted-foreground text-xs mx-0.5">m</span>
+          {String(seconds).padStart(2, "0")}
+          <span className="text-muted-foreground text-xs ml-0.5">s</span>
+        </span>
+      </div>
     </div>
   );
 };

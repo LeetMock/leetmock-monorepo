@@ -82,7 +82,11 @@ export const WorkspaceSidebar: React.FC<{
   }, [session, timeLeft]);
 
   return (
-    <motion.div className="bg-background flex flex-col h-full border-r">
+    <motion.div
+      className="bg-background flex flex-col h-full border-r"
+      animate={{ width: isSidebarCollapsed ? "4rem" : "240px" }}
+      transition={{ duration: 0.2 }}
+    >
       <div
         className={cn(
           "w-full flex items-center justify-between pl-4 pr-2 h-14 border-b",
