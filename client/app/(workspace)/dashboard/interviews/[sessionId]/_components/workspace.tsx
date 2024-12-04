@@ -113,52 +113,96 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
         <div className="w-full h-full flex flex-col justify-between">
           <div className="space-y-6 pt-4">
             {/* Interview details and Progress Indicator */}
-            {!isSidebarCollapsed && (
-              <div className="px-4 space-y-4">
-                <div>
-                  <h2 className="text-sm font-semibold">Software Engineer</h2>
-                  <p className="text-xs text-muted-foreground/80">Technical Interview</p>
-                </div>
-                <div>
-                  <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
-                    <span>{`${totalTasks - tasksLeft}/${totalTasks} Complete`}</span>
-                    <span>{`${Math.round((completedTasks / totalTasks) * 100)}%`}</span>
+            {isSidebarCollapsed ? (
+              <div className="px-2 py-4 space-y-4">
+                {/* Vertical Progress Bar */}
+                <div className="flex flex-col items-center gap-2">
+                  <div className="relative h-24 w-1.5 bg-muted rounded-full">
+                    <div
+                      className="absolute bottom-0 w-1.5 bg-primary rounded-full transition-all duration-300"
+                      style={{ height: `${Math.round((completedTasks / totalTasks) * 100)}%` }}
+                    />
                   </div>
-                  <Progress
-                    value={progressPercentage}
-                    className="h-1.5 transition-all duration-300"
-                  />
+                  <span className="text-xs font-medium text-muted-foreground rotate-0">
+                    {`${Math.round((completedTasks / totalTasks) * 100)}%`}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="px-4 space-y-4">
+                <div className="space-y-1">
+                  <h2 className="text-base font-semibold">Software Engineer</h2>
+                  <p className="text-sm text-muted-foreground">Technical Interview</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-muted-foreground font-medium">Progress</span>
+                    <span className="text-foreground font-semibold">{`${Math.round((completedTasks / totalTasks) * 100)}%`}</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Progress
+                      value={progressPercentage}
+                      className="h-1.5 transition-all duration-300"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>{`${totalTasks - tasksLeft}/${totalTasks} Complete`}</span>
+                      <span>{`${tasksLeft} remaining`}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
             {/* Interview timeline */}
-            <div className="mx-4">
+            <div className={cn("mx-4", isSidebarCollapsed && "mx-2")}>
               <Timeline.Root>
                 {timelineSteps.map((step, index) => (
                   <Timeline.Item
                     key={index}
                     className={cn(
                       "transition-all duration-200",
-                      isSidebarCollapsed && "self-center"
+                      isSidebarCollapsed && "self-center relative group"
                     )}
                   >
                     <Timeline.Connector
                       icon={step.icon}
                       isLastItem={index === timelineSteps.length - 1}
-                      className={cn(
-                        step.completed ? "text-primary" : "text-muted-foreground/50",
-                        "transition-colors duration-200"
-                      )}
+                      completed={step.completed}
+                      isActive={step.isActive}
                     />
+                    {isSidebarCollapsed && (
+                      <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <Tooltip
+                          content={
+                            <div className="text-xs">
+                              <p className="font-medium">{step.title}</p>
+                              <p className="text-muted-foreground">
+                                {step.completed
+                                  ? "Completed"
+                                  : step.isActive
+                                    ? "In Progress"
+                                    : "Pending"}
+                              </p>
+                            </div>
+                          }
+                        >
+                          <div className="h-2 w-2" />
+                        </Tooltip>
+                      </div>
+                    )}
                     {!isSidebarCollapsed && (
                       <Timeline.Content className="space-y-2">
                         <Timeline.Title>{step.title}</Timeline.Title>
                         <div className="flex flex-col gap-2">
                           <Badge
                             variant={
-                              step.completed ? "success" : step.isActive ? "secondary" : "default"
+                              step.completed ? "success" : step.isActive ? "secondary" : "outline"
                             }
-                            className="w-fit transition-all duration-200"
+                            className={cn(
+                              "w-fit transition-all duration-200",
+                              step.completed && "bg-primary/10 text-primary border-primary/20",
+                              step.isActive && "bg-secondary/10 text-secondary border-secondary/20",
+                              !step.completed && !step.isActive && "bg-muted/50"
+                            )}
                           >
                             {step.completed
                               ? "Completed"
@@ -166,10 +210,6 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
                                 ? "In Progress"
                                 : "Pending"}
                           </Badge>
-                          <Card className="flex items-center gap-1.5 bg-background/50 shadow-sm rounded-sm px-2 py-1.5 text-xs w-fit">
-                            <Clock className="w-3 h-3 text-muted-foreground" />
-                            <span>15:00</span>
-                          </Card>
                         </div>
                       </Timeline.Content>
                     )}

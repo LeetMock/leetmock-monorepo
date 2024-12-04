@@ -20,23 +20,36 @@ export const Connector = ({
   className,
   icon: Icon,
   isLastItem,
+  completed,
+  isActive,
   ...props
 }: React.HTMLAttributes<HTMLDivElement> & {
   icon: React.ComponentType<{ className?: string }>;
   isLastItem?: boolean;
+  completed?: boolean;
+  isActive?: boolean;
 }) => {
   return (
     <div className={cn("relative flex", className)} {...props}>
       <div
         className={cn(
-          "relative z-10 flex h-8 w-8 items-center justify-center rounded-sm",
-          "bg-accent/60"
+          "relative z-10 flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200",
+          completed
+            ? "bg-primary text-primary-foreground"
+            : isActive
+              ? "bg-secondary/20 ring-2 ring-secondary"
+              : "bg-accent/60"
         )}
       >
         <Icon className="h-4 w-4" />
       </div>
       {!isLastItem && (
-        <div className="absolute left-4 top-8 h-full w-[1px] -translate-x-1/2 bg-border" />
+        <div
+          className={cn(
+            "absolute left-4 top-8 h-full w-[2px] -translate-x-1/2 transition-colors duration-200",
+            completed ? "bg-primary/50" : "bg-border"
+          )}
+        />
       )}
     </div>
   );
