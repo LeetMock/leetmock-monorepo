@@ -115,6 +115,7 @@ async def entrypoint(ctx: JobContext):
     )
     await ctx_manager.start()
 
+    logger.info(f"Setting profiler ID to {ctx_manager.session_id}")
     set_profiler_id(ctx_manager.session_id)
 
     async def before_llm_callback(_: VoiceAssistant, chat_ctx: llm.ChatContext):

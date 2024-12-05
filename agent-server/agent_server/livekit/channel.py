@@ -112,6 +112,7 @@ class ChanValue(Generic[T]):
         try:
             raw = data.data.decode("utf-8")
             self._result = self._config.validator(raw)
+            logger.info(f"Validated data: {self._result}")
         except Exception as e:
             logger.error(f"Error validating data: {e}")
             return
