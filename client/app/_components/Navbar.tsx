@@ -9,8 +9,8 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { name: 'Features', href: '#features' },
-    { name: 'Core Features', href: '#core-features' },
+    { name: 'Motivation', href: '#motivation' },
+    { name: 'Core Advantages', href: '#core-advantages' },
     { name: 'Testimonials', href: '#testimonials' },
     { name: 'Get Started', href: '/dashboard', isButton: true },
   ];

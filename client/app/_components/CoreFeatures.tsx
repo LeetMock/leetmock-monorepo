@@ -4,10 +4,10 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
-import interviewProcess from '../../public/interview-process.svg';
+import interviewProcess from '../../public/feature1.png';
 import aiInterviewer from '../../public/ai-interviewer.svg';
-import humanAi from '../../public/human-ai.svg';
-import evaluation from '../../public/evaluation.svg';
+import humanAi from '../../public/feature2.png';
+import evaluation from '../../public/feature3.png';
 import Link from 'next/link';
 
 const CoreFeatures = () => {

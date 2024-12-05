@@ -16,10 +16,10 @@ function App() {
         <div className="absolute inset-0 bg-gradient-to-b from-blue-900/20 to-black/50 pointer-events-none" />
         
         <Hero />
-        <section id="features" className="relative">
+        <section id="motivation" className="relative">
           <Features />
         </section>
-        <section id="core-features" className="relative">
+        <section id="core-advantages" className="relative">
           <CoreFeatures />
         </section>
         <section id="testimonials" className="relative">
