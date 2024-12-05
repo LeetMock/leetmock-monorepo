@@ -70,7 +70,15 @@ const Testimonials = () => {
               className="bg-blue-900/20 p-8 rounded-xl border border-blue-500/30"
             >
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 rounded-full bg-blue-500/30 mr-4"></div>
+                <div className="w-12 h-12 rounded-full bg-blue-500/30 mr-4 flex items-center justify-center">
+                  <svg
+                    className="w-6 h-6 text-blue-300"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                  </svg>
+                </div>
                 <div>
                   <h3 className="font-semibold text-blue-300">{testimonial.name}</h3>
                   <p className="text-blue-400 text-sm">{testimonial.role}</p>

@@ -36,12 +36,21 @@ const CallToAction = () => {
               x: Math.random() * dimensions.width,
               y: Math.random() * dimensions.height,
             }}
+            animate={{
+              x: Math.random() * dimensions.width,
+              y: Math.random() * dimensions.height,
+            }}
+            transition={{
+              duration: 20 + Math.random() * 10,
+              repeat: Infinity,
+              ease: "linear",
+            }}
           >
-            <div className="h-1 w-1 bg-blue-400/30 rounded-full shadow-[0_0_20px_rgba(0,195,255,0.5)]" />
+            <div className="h-2 w-2 bg-blue-400/30 rounded-full shadow-[0_0_30px_rgba(0,195,255,0.5)]" />
             {[...Array(3)].map((_, j) => (
               <motion.div
                 key={j}
-                className="absolute h-px w-20 origin-left"
+                className="absolute h-px w-32 origin-left"
                 style={{
                   background: 'linear-gradient(90deg, rgba(0,195,255,0.3) 0%, transparent 100%)',
                   transform: `rotate(${j * 120}deg)`,
@@ -76,12 +85,16 @@ const CallToAction = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-cyan-600 transition-all shadow-[0_0_20px_rgba(0,195,255,0.5)] flex items-center justify-center">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                window.location.href = '/dashboard';
+              }}
+              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-cyan-600 transition-all shadow-[0_0_20px_rgba(0,195,255,0.5)] flex items-center justify-center"
+            >
               Initialize System <ArrowRight className="ml-2" />
-            </button>
-            <button className="px-8 py-4 bg-transparent border-2 border-blue-500 text-blue-400 rounded-lg font-semibold text-lg hover:bg-blue-500/10 transition-colors backdrop-blur-sm">
-              View Demo Matrix
-            </button>
+            </motion.button>
           </motion.div>
         </div>
       </div>

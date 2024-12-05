@@ -65,12 +65,15 @@ const Hero = () => {
           transition={{ duration: 0.8 }}
           className="text-center"
         >
-          <div className="flex justify-center mb-8">
-            <Logo size="large" />
-          </div>
-          <h1 className="text-5xl md:text-7xl font-bold mb-8">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 text-2xl md:text-3xl block mb-4">
+              AI Empowered
+            </span>
+            <div className="flex justify-center mb-4">
+              <Logo size="largest" />
+            </div>
             <span className="text-white text-4xl md:text-5xl block mt-4">
-              AI Empowered Technical Mock Interviews Platform
+              Technical Mock Interviews Platform
             </span>
           </h1>
           <p className="text-xl md:text-2xl text-blue-200 mb-12 max-w-3xl mx-auto">
@@ -91,9 +94,10 @@ const Hero = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-transparent border-2 border-blue-500 text-blue-400 rounded-lg font-semibold text-lg hover:bg-blue-500/10 transition-colors backdrop-blur-sm"
+              className="px-8 py-4 bg-transparent border-2 border-blue-500/50 text-blue-400/50 rounded-lg font-semibold text-lg cursor-not-allowed backdrop-blur-sm"
+              disabled
             >
-              Watch Demo
+              Watch Demo (Coming Soon)
             </motion.button>
           </div>
         </motion.div>
