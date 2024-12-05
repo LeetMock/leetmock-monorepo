@@ -21,6 +21,8 @@ Now Please start your evaluation. Format your output as a JSON object with the f
 - score: int
 - comment: str
 - examples: List[str]
+
+Do not include any markdown formatting or additional text in your response. Only output valid JSON.
 """
 
 
@@ -47,6 +49,8 @@ Now, please start your evaluation. Format your output as a JSON object with the 
 - score: int
 - comment: str
 - examples: List[str]
+
+Do not include any markdown formatting or additional text in your response. Only output valid JSON.
 """
 
 optimalSolution_prompt = """
@@ -76,6 +80,8 @@ Now, please start your evaluation. Format your output as a JSON object with the 
 - score: int
 - comment: str
 - examples: List[str] (provide specific examples from the code that support your evaluation)
+
+Do not include any markdown formatting or additional text in your response. Only output valid JSON.
 """
 
 optimizationProcess_prompt = """
@@ -108,6 +114,8 @@ Now, please start your evaluation. Format your output as a JSON object with the 
 - score: int
 - comment: str
 - examples: List[str] (provide specific examples from the conversation and code changes that demonstrate optimization efforts)
+
+Do not include any markdown formatting or additional text in your response. Only output valid JSON.
 """
 
 questionSpecific_prompt = """
@@ -139,6 +147,8 @@ Now, please start your evaluation. Format your output as a JSON object with the 
 - score: int
 - comment: str
 - examples: List[str] (provide specific examples from the conversation that show understanding of problem requirements)
+
+Do not include any markdown formatting or additional text in your response. Only output valid JSON.
 """
 
 
@@ -174,6 +184,8 @@ Now, please start your evaluation. Format your output as a JSON object with the 
 - score: int
 - comment: str
 - examples: List[str] (provide specific examples of time management, implementation speed, quality under pressure, and blocker handling)
+
+Do not include any markdown formatting or additional text in your response. Only output valid JSON.
 """
 
 codeQuality_prompt = """
@@ -209,6 +221,8 @@ Now, please start your evaluation. Format your output as a JSON object with the 
 - score: int
 - comment: str
 - examples: List[str] (provide specific examples of code organization, naming conventions, documentation, best practices, and maintainability)
+
+Do not include any markdown formatting or additional text in your response. Only output valid JSON.
 """
 
 syntaxError_prompt = """
@@ -241,6 +255,8 @@ Now, please start your evaluation. Format your output as a JSON object with the 
 - score: int
 - comment: str
 - examples: List[str] (provide specific examples of syntax errors, variable declaration issues, function definition issues, and language-specific syntax rules)
+
+Do not include any markdown formatting or additional text in your response. Only output valid JSON.
 """
 
 testCaseDesign_prompt = """
@@ -273,6 +289,8 @@ Now, please start your evaluation. Format your output as a JSON object with the 
 - score: int
 - comment: str
 - examples: List[str] (provide specific examples of test coverage, edge cases, input variations, and error cases)
+
+Do not include any markdown formatting or additional text in your response. Only output valid JSON.
 """
 
 # testCaseCoverage_prompt = '''
@@ -317,6 +335,8 @@ Now, please start your evaluation. Format your output as a JSON object with the 
 - score: int
 - comment: str
 - examples: List[str] (provide specific examples of issue identification, debugging strategy, problem resolution, and prevention)
+
+Do not include any markdown formatting or additional text in your response. Only output valid JSON.
 """
 
 overall_prompt = """
@@ -349,4 +369,6 @@ Remember to:
 4. Focus on the most impactful aspects of performance
 5. Give the feedback in markdown format.
 6. Most importantly, use second person to give the feedback. like you are talking to the candidate directly.
+
+Do not include any markdown formatting or additional text in your response. Only output valid JSON.
 """

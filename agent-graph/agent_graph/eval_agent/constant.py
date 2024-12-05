@@ -123,7 +123,7 @@ class AgentConfig(BaseModel):
 
 
 DEFAULT_CONFIG = AgentConfig(
-    fast_model="o1-mini", smart_model="o1-preview-2024-09-12", temperature=1
+    fast_model="o1-mini", smart_model="o1-mini", temperature=1
 )
 
 

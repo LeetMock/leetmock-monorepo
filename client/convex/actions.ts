@@ -3,6 +3,7 @@ import axios from "axios";
 import type { VideoGrant } from "livekit-server-sdk";
 
 import { api, internal } from "./_generated/api";
+import { userAction } from "./functions";
 import { action } from "./_generated/server";
 
 import { CODE_PREFIX, DATA_STRUCTURES } from "@/lib/constants";
@@ -90,6 +91,34 @@ export const createAgentThread = action({
   },
 });
 
+// export const triggerEval = userAction({
+//   args: {
+//     sessionId: v.id("sessions"),
+//   },
+//   handler: async (ctx, { sessionId }) => {
+//     const apiKey = process.env.LANGSMITH_API_KEY;
+//     const apiUrl = process.env.LANGGRAPH_API_URL;
+
+//     if (!apiKey || !apiUrl) {
+//       throw new Error("LangGraph API credentials not configured");
+//     }
+
+//     const client = new Client({ apiKey, apiUrl });
+
+//     try {
+//       const eval_assistant = await client.runs.create({
+//         graphId: "eval-agent",
+//         input: { sessionId }
+//       });
+
+//       return eval_assistant;
+//     } catch (error) {
+//       console.error("Error invoking evaluation graph:", error);
+//       throw new Error("Failed to trigger evaluation");
+//     }
+//   },
+// });
+
 export const getToken = action({
   handler: async (ctx) => {
     const apiKey = process.env.LIVEKIT_API_KEY;
@@ -145,11 +174,11 @@ export const runCode = action({
 
     return result
       ? {
-          status: !result.isError, //true if API call was successful
-          executionTime: result.executionTime,
-          isError: !!result.stderr, //true if there's an error in the code
-          output: result.stderr || result.stdout || "",
-        }
+        status: !result.isError, //true if API call was successful
+        executionTime: result.executionTime,
+        isError: !!result.stderr, //true if there's an error in the code
+        output: result.stderr || result.stdout || "",
+      }
       : undefined;
   },
 });
