@@ -20,6 +20,7 @@ import { CodeEditorPanel } from "./code-editor-panel";
 import { CodeQuestionPanel } from "./code-question-panel";
 import { WorkspaceSidebar } from "./workspace-sidebar";
 import { WorkspaceToolbar } from "./workspace-toolbar";
+import { useAgent } from "@/hooks/use-agent";
 
 export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { collapsed, setCollapsed } = useSessionSidebar();
@@ -40,6 +41,8 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
     direction: "horizontal",
     storageId: "leetmock.workspace.code-question",
   });
+
+  useAgent(sessionId);
 
   // Setup the participant device
   useEffect(() => {
