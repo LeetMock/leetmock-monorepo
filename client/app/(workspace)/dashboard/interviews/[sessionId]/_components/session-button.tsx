@@ -16,7 +16,7 @@ import { Doc } from "@/convex/_generated/dataModel";
 import { useConnection } from "@/hooks/use-connection";
 import { cn, isDefined } from "@/lib/utils";
 import { useConnectionState, useRoomContext } from "@livekit/components-react";
-import { useMutation } from "convex/react";
+import { useMutation, useAction } from "convex/react";
 import { ConnectionState } from "livekit-client";
 import { CircleStop, Loader2, Play } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
@@ -32,6 +32,7 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
   const { connect, disconnect } = useConnection(room);
   const startSession = useMutation(api.sessions.startSession);
   const endSession = useMutation(api.sessions.endSession);
+  const triggerEval = useAction(api.actions.triggerEval);
   const [isEndInterviewDialogOpen, setIsEndInterviewDialogOpen] = useState<boolean>(false);
 
   const handleConnectionChange = useCallback(async () => {
@@ -60,8 +61,9 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
 
     await disconnect();
     const promise = endSession({ sessionId: session._id });
+    const evalPromise = triggerEval({ sessionId: session._id });
 
-    toast.promise(promise, {
+    toast.promise(Promise.all([promise, evalPromise]), {
       loading: "Ending interview...",
       success: "Interview ended successfully! 🎉",
       error: "Failed to end interview",

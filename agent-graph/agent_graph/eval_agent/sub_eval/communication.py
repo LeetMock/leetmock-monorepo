@@ -68,11 +68,9 @@ def evaluate_clarification(state: AgentState, config: RunnableConfig) -> dict:
         "testName": TEST,
         "description": DESCRIPTION,
         "maxScore": MAX_POINTS,
-        "comment": result["comment"] if result["comment"] else "Failed to get comment",
-        "examples": (
-            result["examples"] if result["examples"] else "Failed to get examples"
-        ),
-        "score": result["score"] if result["score"] else 0,
+        "comment": result.get("comment", "Failed to get comment"),
+        "examples": result.get("examples", []),
+        "score": result.get("score", 0),
     }
 
     return {"scores": [score_detail]}
@@ -118,11 +116,9 @@ def evaluate_thought_process(state: AgentState, config: RunnableConfig) -> dict:
         "testName": TEST,
         "description": DESCRIPTION,
         "maxScore": MAX_POINTS,
-        "comment": result["comment"] if result["comment"] else "Failed to get comment",
-        "examples": (
-            result["examples"] if result["examples"] else "Failed to get examples"
-        ),
-        "score": result["score"] if result["score"] else 0,
+        "comment": result.get("comment", "Failed to get comment"),
+        "examples": result.get("examples", []),
+        "score": result.get("score", 0),
     }
 
     return {"scores": [score_detail]}

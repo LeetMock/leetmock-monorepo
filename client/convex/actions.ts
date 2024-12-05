@@ -91,33 +91,30 @@ export const createAgentThread = action({
   },
 });
 
-// export const triggerEval = userAction({
-//   args: {
-//     sessionId: v.id("sessions"),
-//   },
-//   handler: async (ctx, { sessionId }) => {
-//     const apiKey = process.env.LANGSMITH_API_KEY;
-//     const apiUrl = process.env.LANGGRAPH_API_URL;
+export const triggerEval = userAction({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  handler: async (ctx, { sessionId }) => {
+    const apiKey = process.env.LANGSMITH_API_KEY;
+    if (!apiKey) throw new Error("LANGSMITH_API_KEY not found");
+    const apiUrl = process.env.LANGGRAPH_API_URL;
 
-//     if (!apiKey || !apiUrl) {
-//       throw new Error("LangGraph API credentials not configured");
-//     }
-
-//     const client = new Client({ apiKey, apiUrl });
-
-//     try {
-//       const eval_assistant = await client.runs.create({
-//         graphId: "eval-agent",
-//         input: { sessionId }
-//       });
-
-//       return eval_assistant;
-//     } catch (error) {
-//       console.error("Error invoking evaluation graph:", error);
-//       throw new Error("Failed to trigger evaluation");
-//     }
-//   },
-// });
+    const response = await fetch(apiUrl + '/runs', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Api-Key': apiKey
+      },
+      body: JSON.stringify({
+        "assistant_id": "eval-agent",
+        input: {
+          "session_id": sessionId
+        }
+      })
+    });
+  },
+});
 
 export const getToken = action({
   handler: async (ctx) => {

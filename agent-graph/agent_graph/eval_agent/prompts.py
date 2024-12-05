@@ -370,5 +370,5 @@ Remember to:
 5. Give the feedback in markdown format.
 6. Most importantly, use second person to give the feedback. like you are talking to the candidate directly.
 
-Do not include any markdown formatting or additional text in your response. Only output valid JSON.
+Just output the feedback in markdown format. 
 """

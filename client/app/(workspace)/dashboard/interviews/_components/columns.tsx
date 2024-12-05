@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
+
 /*
 {
     "_creationTime": 1725764789756.072,
@@ -152,6 +153,7 @@ export const columns: ColumnDef<SessionDoc>[] = [
           </div>
         );
       }
+
 
       return (
         <Button

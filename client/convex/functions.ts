@@ -12,6 +12,7 @@ import { internal } from "./_generated/api";
 import { DataModel } from "./_generated/dataModel";
 import {
   action,
+  internalAction as baseInternalAction,
   internalMutation as baseInternalMutation,
   internalQuery as baseInternalQuery,
   mutation as baseMutation,
@@ -85,6 +86,13 @@ export const internalMutation = customMutation(
       table: entsTableFactory(ctx, entDefinitions),
       db: undefined,
     };
+  })
+);
+
+export const internalAction = customAction(
+  baseInternalAction,
+  customCtx(async (ctx) => {
+    return {};
   })
 );
 
