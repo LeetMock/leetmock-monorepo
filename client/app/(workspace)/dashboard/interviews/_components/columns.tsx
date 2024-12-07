@@ -146,7 +146,6 @@ export const columns: ColumnDef<SessionDoc>[] = [
           </div>
         );
       }
-
       return (
         <Button
           variant="secondary"
