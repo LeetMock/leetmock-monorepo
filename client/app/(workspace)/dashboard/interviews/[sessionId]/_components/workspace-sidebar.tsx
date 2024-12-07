@@ -15,16 +15,24 @@ import {
 } from "@/lib/utils";
 import { useQuery } from "convex/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Clock, Code, HelpCircle, LucideIcon, MessageSquare, PanelLeft } from "lucide-react";
+import {
+  CheckCircle,
+  Clock,
+  Code,
+  HelpCircle,
+  LucideIcon,
+  MessageSquare,
+  PanelLeft,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { TimerCountdown } from "./timer-countdown";
 import { InterviewStage } from "@/lib/constants";
 
 type TimelineStep = {
-  id: string;
+  id: InterviewStage | undefined;
   title: string;
   icon: LucideIcon;
-  completedInMinutes: number | null;
+  completedInMinutes: number | undefined;
 };
 
 const timelineSteps: TimelineStep[] = [
@@ -44,9 +52,16 @@ const timelineSteps: TimelineStep[] = [
     id: InterviewStage.Evaluation,
     title: "Q & A",
     icon: HelpCircle,
-    completedInMinutes: null,
+    completedInMinutes: 3,
   },
 ];
+
+const endStep = {
+  id: InterviewStage.End,
+  title: "",
+  icon: CheckCircle,
+  completedInMinutes: undefined,
+};
 
 export const WorkspaceSidebar: React.FC<{
   sessionId: Id<"sessions">;
@@ -62,11 +77,17 @@ export const WorkspaceSidebar: React.FC<{
     let taskIdx = 0;
 
     if (isDefined(codeSessionState)) {
+      const sessionStage = codeSessionState.stage;
+
       timelineSteps.forEach((step, idx) => {
-        if (step.id === codeSessionState.stage) {
+        if (step.id === sessionStage) {
           taskIdx = idx;
         }
       });
+
+      if (sessionStage === InterviewStage.End) {
+        taskIdx = timelineSteps.length;
+      }
     }
 
     return taskIdx;
@@ -203,49 +224,21 @@ export const WorkspaceSidebar: React.FC<{
           >
             <Timeline.Root>
               {timelineSteps.map((step, index) => (
-                <Timeline.Item
-                  key={index}
-                  className={cn(
-                    "transition-all duration-200",
-                    collapsed && "self-center relative group"
-                  )}
-                >
-                  <Timeline.Connector
-                    icon={step.icon}
-                    isLastItem={index === timelineSteps.length - 1}
-                    completed={index < activeTaskIdx}
-                    className="cursor-pointer"
-                  />
-                  {collapsed && (
-                    <div className="absolute -top-1 left-7 z-10 hidden group-hover:block min-w-60">
-                      <div className="flex flex-col gap-2 ml-2.5 px-2 py-1.5 bg-background rounded-md border shadow-sm">
-                        <Timeline.Title>{step.title}</Timeline.Title>
-                        {index < activeTaskIdx && (
-                          <div className="flex flex-col gap-2 pb-1">
-                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                              <Clock className="h-3 w-3" />
-                              <span>Completed in {step.completedInMinutes} minutes</span>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  {!collapsed && (
-                    <Timeline.Content className="space-y-2 pb-4">
-                      <Timeline.Title>{step.title}</Timeline.Title>
-                      <div className="flex flex-col gap-2">
-                        {index < activeTaskIdx && (
-                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                            <Clock className="h-3 w-3" />
-                            <span>Completed in {step.completedInMinutes} minutes</span>
-                          </div>
-                        )}
-                      </div>
-                    </Timeline.Content>
-                  )}
-                </Timeline.Item>
+                <TimelineItem
+                  key={step.title}
+                  step={step}
+                  completed={index < activeTaskIdx}
+                  isLastItem={false}
+                  collapsed={collapsed}
+                />
               ))}
+              <TimelineItem
+                key={endStep.title}
+                step={endStep}
+                completed={activeTaskIdx === timelineSteps.length}
+                isLastItem={true}
+                collapsed={collapsed}
+              />
             </Timeline.Root>
           </motion.div>
         </div>
@@ -255,5 +248,60 @@ export const WorkspaceSidebar: React.FC<{
         </div>
       </div>
     </motion.div>
+  );
+};
+
+const TimelineItem: React.FC<{
+  step: TimelineStep;
+  completed: boolean;
+  isLastItem: boolean;
+  collapsed: boolean;
+}> = ({ step, completed, isLastItem, collapsed }) => {
+  const collapsedView = useMemo(() => {
+    return (
+      <div className="absolute -top-1 left-7 z-10 hidden group-hover:block min-w-60">
+        <div className="flex flex-col gap-2 ml-2.5 px-2 py-1.5 bg-background rounded-md border shadow-sm">
+          <Timeline.Title>{step.title}</Timeline.Title>
+          {completed && step.completedInMinutes && (
+            <div className="flex flex-col gap-2 pb-1">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Clock className="h-3 w-3" />
+                <span>Completed in {step.completedInMinutes} minutes</span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }, [step, completed]);
+
+  const expandedView = useMemo(() => {
+    return (
+      <Timeline.Content className="space-y-2 pb-4">
+        <Timeline.Title>{step.title}</Timeline.Title>
+        <div className="flex flex-col gap-2">
+          {completed && step.completedInMinutes && (
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Clock className="h-3 w-3" />
+              <span>Completed in {step.completedInMinutes} minutes</span>
+            </div>
+          )}
+        </div>
+      </Timeline.Content>
+    );
+  }, [step, completed]);
+
+  return (
+    <Timeline.Item
+      className={cn("transition-all duration-200", collapsed && "self-center relative group")}
+    >
+      <Timeline.Connector
+        icon={step.icon}
+        isLastItem={isLastItem}
+        completed={completed}
+        className="cursor-pointer"
+      />
+      {collapsed ? collapsedView : expandedView}
+    </Timeline.Item>
   );
 };

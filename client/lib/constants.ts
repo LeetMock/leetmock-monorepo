@@ -7,12 +7,14 @@ export enum InterviewStage {
   Background = "background",
   Coding = "coding",
   Evaluation = "evaluation",
+  End = "end",
 }
 
 export const STAGE_NAME_MAPPING: Record<InterviewStage, string> = {
   [InterviewStage.Background]: "Background Discussion",
   [InterviewStage.Coding]: "Coding",
   [InterviewStage.Evaluation]: "Evaluation",
+  [InterviewStage.End]: "End",
 };
 
 export const LANGUAGES: Language[] = [
