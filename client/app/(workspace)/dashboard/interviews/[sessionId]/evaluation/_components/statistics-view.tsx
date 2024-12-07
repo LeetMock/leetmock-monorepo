@@ -37,7 +37,7 @@ export const StatisticsView = ({ statistics }: StatisticsViewProps) => {
                 <div className="text-sm text-muted-foreground capitalize">
                   {key.replace(/([A-Z])/g, " $1").trim()}
                 </div>
-                <div className="text-2xl font-bold mt-1">{value}</div>
+                <div className="text-2xl font-bold mt-1">{value as any}</div>
               </div>
             ))}
           </div>

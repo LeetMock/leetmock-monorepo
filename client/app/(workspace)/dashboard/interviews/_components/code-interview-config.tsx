@@ -39,7 +39,7 @@ export const CodeInterviewConfig: React.FC<CodeInterviewConfigProps> = ({
     mode: "practice",
   });
 
-  const [stages, setStages] = useState<Record<InterviewStage, boolean>>({
+  const [stages, setStages] = useState({
     [InterviewStage.Background]: true,
     [InterviewStage.Coding]: true,
     [InterviewStage.Evaluation]: true,
@@ -73,7 +73,7 @@ export const CodeInterviewConfig: React.FC<CodeInterviewConfigProps> = ({
       interviewTime,
       mode,
     });
-  }, [stages, language, voice, interviewTime, mode]);
+  }, [stages, language, voice, interviewTime, mode, updateConfig]);
 
   const toggleStage = (stage: InterviewStage) => {
     if (stage !== InterviewStage.Coding) {

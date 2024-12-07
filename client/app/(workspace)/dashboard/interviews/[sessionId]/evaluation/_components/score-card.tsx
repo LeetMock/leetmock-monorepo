@@ -4,7 +4,7 @@ import { getHiringRecommendation } from "@/lib/evaluation-utils";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { AlertCircle, CheckCircle2, XCircle } from "lucide-react";
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown from "react-markdown";
 
 interface Criterion {
   id: number;
