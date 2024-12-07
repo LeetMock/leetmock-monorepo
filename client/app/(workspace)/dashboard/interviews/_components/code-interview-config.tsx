@@ -10,16 +10,15 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { CodeInterviewConfigState } from "@/hooks/use-session-create-modal";
-import { AVAILABLE_LANGUAGES, AVAILABLE_VOICES, InterviewStage } from "@/lib/constants";
+import {
+  AVAILABLE_LANGUAGES,
+  AVAILABLE_VOICES,
+  InterviewStage,
+  STAGE_NAME_MAPPING,
+} from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import React, { useCallback, useEffect, useState } from "react";
 import { QuestionCard } from "./question-card";
-
-const stageNameMapping: Record<InterviewStage, string> = {
-  [InterviewStage.Background]: "Background Discussion",
-  [InterviewStage.Coding]: "Coding",
-  [InterviewStage.Evaluation]: "Evaluation",
-};
 
 const INTERVIEW_DURATIONS = [15, 30, 45, 60, 75, 90];
 
@@ -98,7 +97,7 @@ export const CodeInterviewConfig: React.FC<CodeInterviewConfigProps> = ({
                 )}
                 onClick={() => toggleStage(stage as InterviewStage)}
               >
-                {stageNameMapping[stage]}
+                {STAGE_NAME_MAPPING[stage]}
               </Badge>
             ))}
           </div>
