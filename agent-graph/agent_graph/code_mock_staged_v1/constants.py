@@ -20,9 +20,9 @@ TEntity = TypeVar("TEntity", bound=NamedEntity)
 
 
 class StageTypes(str, Enum):
-    INTRO = "intro"
+    BACKGROUND = "background"
     CODING = "coding"
-    EVAL = "eval"
+    EVAL = "evaluation"
     END = "end"
 
 
@@ -45,7 +45,7 @@ class AgentConfig(BaseModel):
 def get_next_stage(stage: StageTypes) -> StageTypes:
     """Get the next stage."""
 
-    if stage == StageTypes.INTRO:
+    if stage == StageTypes.BACKGROUND:
         return StageTypes.CODING
     elif stage == StageTypes.CODING:
         return StageTypes.EVAL
@@ -360,7 +360,7 @@ EVAL_SIGNALS: List[Signal] = [
 def get_step_map() -> OrderedDict[StageTypes, List[Step]]:
     return OrderedDict(
         [
-            (StageTypes.INTRO, INTRO_STEPS),
+            (StageTypes.BACKGROUND, INTRO_STEPS),
             (StageTypes.CODING, CODING_STEPS),
             # (StageTypes.EVAL, EVAL_STEPS),
         ]

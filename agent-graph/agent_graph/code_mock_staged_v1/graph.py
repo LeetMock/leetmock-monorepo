@@ -38,7 +38,7 @@ class AgentState(EventMessageState):
     )
 
     current_stage: StageTypes = Field(
-        default=StageTypes.INTRO,
+        default=StageTypes.BACKGROUND,
         description="Current stage of the agent",
     )
 
@@ -175,7 +175,7 @@ def create_graph():
         .add_node("on_event", on_event)
         .add_node("on_trigger", on_trigger)
         .add_node("decide_next_stage", decide_next_stage)
-        .add_node(StageTypes.INTRO, intro_stage.create_compiled_graph())
+        .add_node(StageTypes.BACKGROUND, intro_stage.create_compiled_graph())
         .add_node(StageTypes.CODING, coding_stage.create_compiled_graph())
         # edges
         .add_conditional_edges(
@@ -192,9 +192,9 @@ def create_graph():
         .add_conditional_edges(
             source="on_trigger",
             path=select_stage,
-            path_map=[StageTypes.INTRO, StageTypes.CODING, END],
+            path_map=[StageTypes.BACKGROUND, StageTypes.CODING, END],
         )
-        .add_edge(StageTypes.INTRO, "decide_next_stage")
+        .add_edge(StageTypes.BACKGROUND, "decide_next_stage")
         .add_edge(StageTypes.CODING, "decide_next_stage")
         .add_edge("decide_next_stage", END)
     )

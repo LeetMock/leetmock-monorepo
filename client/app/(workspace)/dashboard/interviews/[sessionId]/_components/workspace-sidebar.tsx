@@ -18,31 +18,32 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Clock, Code, HelpCircle, LucideIcon, MessageSquare, PanelLeft } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { TimerCountdown } from "./timer-countdown";
+import { InterviewStage } from "@/lib/constants";
 
 type TimelineStep = {
+  id: string;
   title: string;
   icon: LucideIcon;
-  completed: boolean;
   completedInMinutes: number | null;
 };
 
 const timelineSteps: TimelineStep[] = [
   {
-    title: "Introduction",
+    id: InterviewStage.Background,
+    title: "Background Discussion",
     icon: MessageSquare,
-    completed: true,
     completedInMinutes: 2,
   },
   {
-    title: "Coding Challenge 1",
+    id: InterviewStage.Coding,
+    title: "Coding Challenge",
     icon: Code,
-    completed: true,
     completedInMinutes: 24,
   },
   {
+    id: InterviewStage.Evaluation,
     title: "Q & A",
     icon: HelpCircle,
-    completed: false,
     completedInMinutes: null,
   },
 ];
@@ -50,12 +51,29 @@ const timelineSteps: TimelineStep[] = [
 export const WorkspaceSidebar: React.FC<{
   sessionId: Id<"sessions">;
 }> = ({ sessionId }) => {
-  const session = useQuery(api.sessions.getById, { sessionId });
   const { collapsed, setCollapsed } = useSessionSidebar();
 
-  const completedTasks = timelineSteps.filter((step) => step.completed).length;
+  const session = useQuery(api.sessions.getById, { sessionId });
+  const codeSessionState = useQuery(api.codeSessionStates.getSessionStateBySessionId, {
+    sessionId,
+  });
+
+  const activeTaskIdx = useMemo(() => {
+    let taskIdx = 0;
+
+    if (isDefined(codeSessionState)) {
+      timelineSteps.forEach((step, idx) => {
+        if (step.id === codeSessionState.stage) {
+          taskIdx = idx;
+        }
+      });
+    }
+
+    return taskIdx;
+  }, [codeSessionState]);
+
   const totalTasks = timelineSteps.length;
-  const progressPercentage = (completedTasks / totalTasks) * 100;
+  const progressPercentage = (activeTaskIdx / totalTasks) * 100;
 
   const [timeLeft, setTimeLeft] = useState<number>(0);
 
@@ -137,11 +155,11 @@ export const WorkspaceSidebar: React.FC<{
                   <div className="relative h-24 w-1.5 bg-muted rounded-full">
                     <div
                       className="absolute bottom-0 w-1.5 bg-primary rounded-full transition-all duration-300"
-                      style={{ height: `${Math.round((completedTasks / totalTasks) * 100)}%` }}
+                      style={{ height: `${Math.round((activeTaskIdx / totalTasks) * 100)}%` }}
                     />
                   </div>
                   <span className="text-xs font-medium text-muted-foreground rotate-0">
-                    {`${Math.round((completedTasks / totalTasks) * 100)}%`}
+                    {`${Math.round((activeTaskIdx / totalTasks) * 100)}%`}
                   </span>
                 </div>
               </motion.div>
@@ -161,7 +179,7 @@ export const WorkspaceSidebar: React.FC<{
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-xs">
                     <span className="text-muted-foreground font-medium">Progress</span>
-                    <span className="text-foreground font-semibold">{`${Math.round((completedTasks / totalTasks) * 100)}%`}</span>
+                    <span className="text-foreground font-semibold">{`${Math.round((activeTaskIdx / totalTasks) * 100)}%`}</span>
                   </div>
                   <div className="space-y-1.5">
                     <Progress
@@ -169,8 +187,8 @@ export const WorkspaceSidebar: React.FC<{
                       className="h-1.5 transition-all duration-300"
                     />
                     <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>{`${completedTasks}/${totalTasks} Complete`}</span>
-                      <span>{`${totalTasks - completedTasks} remaining`}</span>
+                      <span>{`${activeTaskIdx}/${totalTasks} Complete`}</span>
+                      <span>{`${totalTasks - activeTaskIdx} remaining`}</span>
                     </div>
                   </div>
                 </div>
@@ -195,14 +213,14 @@ export const WorkspaceSidebar: React.FC<{
                   <Timeline.Connector
                     icon={step.icon}
                     isLastItem={index === timelineSteps.length - 1}
-                    completed={step.completed}
+                    completed={index < activeTaskIdx}
                     className="cursor-pointer"
                   />
                   {collapsed && (
                     <div className="absolute -top-1 left-7 z-10 hidden group-hover:block min-w-60">
                       <div className="flex flex-col gap-2 ml-2.5 px-2 py-1.5 bg-background rounded-md border shadow-sm">
                         <Timeline.Title>{step.title}</Timeline.Title>
-                        {step.completed && (
+                        {index < activeTaskIdx && (
                           <div className="flex flex-col gap-2 pb-1">
                             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                               <Clock className="h-3 w-3" />
@@ -217,7 +235,7 @@ export const WorkspaceSidebar: React.FC<{
                     <Timeline.Content className="space-y-2 pb-4">
                       <Timeline.Title>{step.title}</Timeline.Title>
                       <div className="flex flex-col gap-2">
-                        {step.completed && (
+                        {index < activeTaskIdx && (
                           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                             <Clock className="h-3 w-3" />
                             <span>Completed in {step.completedInMinutes} minutes</span>

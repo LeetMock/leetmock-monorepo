@@ -56,7 +56,7 @@ async def assistant(
     async for chunk in chain.astream(
         {
             "messages": state.messages,
-            "steps": state.steps[StageTypes.INTRO],
+            "steps": state.steps[StageTypes.BACKGROUND],
         }
     ):
         content += cast(str, chunk.content)
