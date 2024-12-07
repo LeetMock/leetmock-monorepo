@@ -8,10 +8,6 @@ import { Doc } from "@/convex/_generated/dataModel";
 import { ColumnHeader } from "./column-header";
 import { difficulties, statuses } from "./data";
 import { RowActions } from "./row-actions";
-import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
-import { useState } from "react";
-
 
 /*
 {
@@ -142,9 +138,6 @@ export const columns: ColumnDef<SessionDoc>[] = [
     id: "feedback",
     header: ({ column }) => <ColumnHeader column={column} title="Feedback" />,
     cell: ({ row }) => {
-      const router = useRouter();
-      const [isLoading, setIsLoading] = useState(false);
-
       // Check if session has ended but evaluation is not ready
       if (row.original.sessionEndTime && !row.original.evalReady) {
         return (
@@ -154,26 +147,17 @@ export const columns: ColumnDef<SessionDoc>[] = [
         );
       }
 
-
       return (
         <Button
           variant="secondary"
           size="sm"
           onClick={async () => {
-            setIsLoading(true);
-            router.push(`/dashboard/interviews/${row.original._id}/evaluation`);
+            // setIsLoading(true);
+            // router.push(`/dashboard/interviews/${row.original._id}/evaluation`);
           }}
-          disabled={isLoading}
           className="transition-all active:scale-95"
         >
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Loading...
-            </>
-          ) : (
-            "View Feedback"
-          )}
+          View Feedback
         </Button>
       );
     },
