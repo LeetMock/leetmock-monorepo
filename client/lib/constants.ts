@@ -3,6 +3,12 @@ export interface Language {
   label: string;
 }
 
+export enum InterviewStage {
+  Background = "background",
+  Coding = "coding",
+  Evaluation = "evaluation",
+}
+
 export const LANGUAGES: Language[] = [
   { value: "python", label: "Python" },
   { value: "javascript", label: "JavaScript" },
@@ -39,7 +45,8 @@ interface CodeTemplate {
 }
 
 export const CODE_PREFIX: { [key: string]: string } = {
-  python: "from typing import List, Dict, Tuple, Optional, Union, Any\nimport math\nfrom data_structure import *\n",
+  python:
+    "from typing import List, Dict, Tuple, Optional, Union, Any\nimport math\nfrom data_structure import *\n",
   javascript: "",
   java: "",
   cpp: "",
@@ -121,8 +128,8 @@ from typing import List, Any
 
 class Solution:
     def ${functionName}(self, ${Object.entries(params)
-        .map(([param, type]) => `${param}: ${type}`)
-        .join(", ")}):
+      .map(([param, type]) => `${param}: ${type}`)
+      .join(", ")}):
         # TODO: Write your Python code here
         pass
 `.trim(),
@@ -145,8 +152,8 @@ import java.util.List;
 
 class Solution {
     public Object ${functionName}(${Object.entries(params)
-        .map(([param, type]) => `${type} ${param}`)
-        .join(", ")}) {
+      .map(([param, type]) => `${type} ${param}`)
+      .join(", ")}) {
         // TODO: Write your Java code here
         return null;
     }
@@ -161,8 +168,8 @@ class Solution {
 class Solution {
 public:
     int ${functionName}(${Object.entries(params)
-        .map(([param, type]) => `${type} ${param}`)
-        .join(", ")}) {
+      .map(([param, type]) => `${type} ${param}`)
+      .join(", ")}) {
         // TODO: Write your C++ code here
         return 0;
     }

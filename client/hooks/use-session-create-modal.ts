@@ -1,4 +1,5 @@
 import { Id } from "@/convex/_generated/dataModel";
+import { InterviewStage } from "@/lib/constants";
 import { allDefined, isDefined } from "@/lib/utils";
 import { useMemo } from "react";
 import { create } from "zustand";
@@ -14,7 +15,7 @@ export interface CodeInterviewState {
 }
 
 export interface CodeInterviewConfigState {
-  interviewFlow: string[];
+  interviewFlow: InterviewStage[];
   language: string;
   voice: string;
   interviewTime: number;
@@ -44,7 +45,15 @@ export const useSessionCreateModalState = create<SessionCreateModalState>((set, 
 }));
 
 export const useSessionCreateModal = () => {
-  const { type, setType, codeInterview, updateCodeInterview, codeInterviewConfig, updateCodeInterviewConfig, reset } = useSessionCreateModalState();
+  const {
+    type,
+    setType,
+    codeInterview,
+    updateCodeInterview,
+    codeInterviewConfig,
+    updateCodeInterviewConfig,
+    reset,
+  } = useSessionCreateModalState();
 
   const hasSetInterviewType = useMemo(() => isDefined(type), [type]);
 

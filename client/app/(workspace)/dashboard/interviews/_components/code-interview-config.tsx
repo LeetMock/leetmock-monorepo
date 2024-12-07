@@ -10,15 +10,15 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { CodeInterviewConfigState } from "@/hooks/use-session-create-modal";
-import { AVAILABLE_LANGUAGES, AVAILABLE_VOICES } from "@/lib/constants";
+import { AVAILABLE_LANGUAGES, AVAILABLE_VOICES, InterviewStage } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { QuestionCard } from "./question-card";
 
-const stageNameMapping = {
-  background_discussion: "Background Discussion",
-  coding: "Coding",
-  eval: "Evaluation",
+const stageNameMapping: Record<InterviewStage, string> = {
+  [InterviewStage.Background]: "Background Discussion",
+  [InterviewStage.Coding]: "Coding",
+  [InterviewStage.Evaluation]: "Evaluation",
 };
 
 const INTERVIEW_DURATIONS = [15, 30, 45, 60, 75, 90];
@@ -33,35 +33,39 @@ export const CodeInterviewConfig: React.FC<CodeInterviewConfigProps> = ({
   selectedQuestion,
 }) => {
   const [config, setConfig] = useState<CodeInterviewConfigState>({
-    interviewFlow: ["coding"],
+    interviewFlow: [InterviewStage.Coding],
     language: AVAILABLE_LANGUAGES[0],
     voice: AVAILABLE_VOICES[0],
     interviewTime: 30,
     mode: "practice",
   });
 
-  useEffect(() => {
-    onConfigUpdate(config);
-  }, [config, onConfigUpdate]);
-
-  const updateConfig = (updates: Partial<CodeInterviewConfigState>) => {
-    setConfig((prevConfig) => ({ ...prevConfig, ...updates }));
-  };
-
-  const [stages, setStages] = useState({
-    background_discussion: false,
-    coding: true,
-    eval: false,
+  const [stages, setStages] = useState<Record<InterviewStage, boolean>>({
+    [InterviewStage.Background]: true,
+    [InterviewStage.Coding]: true,
+    [InterviewStage.Evaluation]: true,
   });
+
   const [language, setLanguage] = useState(AVAILABLE_LANGUAGES[0]);
   const [voice, setVoice] = useState(AVAILABLE_VOICES[0]);
   const [interviewTime, setInterviewTime] = useState(30);
   const [mode, setMode] = useState<"practice" | "strict">("practice");
 
+  const updateConfig = useCallback(
+    (updates: Partial<CodeInterviewConfigState>) => {
+      setConfig((prevConfig) => ({ ...prevConfig, ...updates }));
+    },
+    [setConfig]
+  );
+
+  useEffect(() => {
+    onConfigUpdate(config);
+  }, [config, onConfigUpdate]);
+
   useEffect(() => {
     const interviewFlow = Object.entries(stages)
       .filter(([_, isSelected]) => isSelected)
-      .map(([stage]) => stage);
+      .map(([stage]) => stage as InterviewStage);
 
     updateConfig({
       interviewFlow,
@@ -72,8 +76,8 @@ export const CodeInterviewConfig: React.FC<CodeInterviewConfigProps> = ({
     });
   }, [stages, language, voice, interviewTime, mode]);
 
-  const toggleStage = (stage: string) => {
-    if (stage !== "coding") {
+  const toggleStage = (stage: InterviewStage) => {
+    if (stage !== InterviewStage.Coding) {
       setStages((prev) => ({ ...prev, [stage]: !prev[stage] }));
     }
   };
@@ -92,7 +96,7 @@ export const CodeInterviewConfig: React.FC<CodeInterviewConfigProps> = ({
                   "cursor-pointer text-sm py-1 px-3 transition-all",
                   stage === "coding" ? "opacity-50" : "hover:bg-blue-100 hover:text-blue-800"
                 )}
-                onClick={() => toggleStage(stage)}
+                onClick={() => toggleStage(stage as InterviewStage)}
               >
                 {stageNameMapping[stage]}
               </Badge>
