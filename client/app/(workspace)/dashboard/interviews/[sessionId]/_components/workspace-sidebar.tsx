@@ -84,7 +84,6 @@ export const WorkspaceSidebar: React.FC<{
           taskIdx = idx;
         }
       });
-
       if (sessionStage === InterviewStage.End) {
         taskIdx = timelineSteps.length;
       }
