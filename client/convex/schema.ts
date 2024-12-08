@@ -42,6 +42,8 @@ const schema = defineEntSchema({
     questionId: v.id("questions"),
     agentThreadId: v.string(),
     assistantId: v.string(),
+    sessionStartTime: v.optional(v.number()),
+    sessionEndTime: v.optional(v.number()),
     sessionStatus: v.union(
       v.literal("not_started"),
       v.literal("in_progress"),
@@ -49,16 +51,12 @@ const schema = defineEntSchema({
     ),
     timeLimit: v.number(),
     voice: v.string(),
-    sessionStartTime: v.optional(v.number()),
-    sessionEndTime: v.optional(v.number()),
     interviewType: v.string(),
     interviewMode: v.union(v.literal("practice"), v.literal("strict")),
     evalReady: v.boolean(),
-    meta: v.object({
-      interviewFlow: v.array(v.string()),
-      programmingLanguage: v.union(v.string(), v.null()),
-      metaData: v.record(v.string(), v.any()),
-    }),
+    interviewFlow: v.array(v.string()),
+    programmingLanguage: v.union(v.string(), v.null()),
+    metadata: v.record(v.string(), v.any()),
   })
     .edge("codeSessionState", { optional: true })
     .index("by_user_id", ["userId"])
@@ -137,7 +135,7 @@ const schema = defineEntSchema({
         debugging: v.object(scoreDetailSchema),
         testCaseDesign: v.object(scoreDetailSchema),
       }),
-    })
+    }),
   }).index("by_session_id", ["sessionId"]),
 });
 
