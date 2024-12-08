@@ -138,6 +138,7 @@ async def entrypoint(ctx: JobContext):
             # Get the text stream from the message response queue so that we can return it to the voice assistant
             text_stream = await user_message_response_q.get()
 
+        logger.info(f"[before_llm_callback] text_stream: {text_stream}")
         if text_stream is not None:
             return EchoStream(text_stream=text_stream, chat_ctx=chat_ctx)
         else:
@@ -147,7 +148,7 @@ async def entrypoint(ctx: JobContext):
         vad=silero.VAD.load(),
         stt=deepgram.STT(),
         llm=no_op_llm,
-        tts=create_elevenlabs_tts(),
+        tts=openai.TTS(),
         before_llm_cb=before_llm_callback,
     )
 
