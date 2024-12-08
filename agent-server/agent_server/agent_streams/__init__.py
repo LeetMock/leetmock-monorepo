@@ -25,11 +25,9 @@ from langgraph_sdk import get_client
 from livekit.agents.voice_assistant import VoiceAssistant
 from pydantic.v1 import BaseModel, Field, PrivateAttr
 
-from libs.profiler import get_profiler
 from libs.timestamp import Timestamp
 
 logger = logging.getLogger(__name__)
-pf = get_profiler()
 
 TState = TypeVar("TState", bound=EventMessageState)
 TConfig = TypeVar("TConfig", bound=BaseModel)
@@ -173,23 +171,19 @@ class AgentStream(BaseModel, Generic[TState]):
         Returns:
             bool: True if the agent should be triggered to respond
         """
-        with pf.interval("agent_stream.notify_agent.prepare_state"):
-            state = await self.state_merger.get_state()
-            state.event = event_name
-            state.event_data = data
-            state.trigger = False
-            state.session_metadata = self.session.session_metadata.dict()
-            state.session_state = self.session.session_state.dict()
+        state = await self.state_merger.get_state()
+        state.event = event_name
+        state.event_data = data
+        state.trigger = False
+        state.session_metadata = self.session.session_metadata.dict()
+        state.session_state = self.session.session_state.dict()
 
         should_trigger = False
         async for mode, part in self._stateless_graph_stream(state):
-            pf.point("agent_stream.notify_agent.stream.part")
-
             if mode != "values":
                 continue
 
-            with pf.interval("agent_stream.notify_agent.stream.merge_state"):
-                snapshot = await self.state_merger.merge_state(part)
+            snapshot = await self.state_merger.merge_state(part)
 
             if snapshot.trigger:
                 should_trigger = True
@@ -210,13 +204,12 @@ class AgentStream(BaseModel, Generic[TState]):
         start_t = timestamp.t
         should_interrupt = lambda: start_t != timestamp.t
 
-        with pf.interval("agent_stream.trigger_agent.prepare_state"):
-            state = await self.state_merger.get_state()
-            state.event = None
-            state.event_data = None
-            state.trigger = True
-            state.session_metadata = self.session.session_metadata.dict()
-            state.session_state = self.session.session_state.dict()
+        state = await self.state_merger.get_state()
+        state.event = None
+        state.event_data = None
+        state.trigger = True
+        state.session_metadata = self.session.session_metadata.dict()
+        state.session_state = self.session.session_state.dict()
 
         logger.info("Triggering agent")
         text_stream = self._assistant_text_stream(state, should_interrupt)
@@ -266,11 +259,8 @@ class AgentStream(BaseModel, Generic[TState]):
                 logger.info("Interrupting graph stream")
                 break
 
-            pf.point("agent_stream.trigger_agent.stream.part")
-
             if mode == "values":
-                with pf.interval("agent_stream.trigger_agent.stream.merge_state"):
-                    await self.state_merger.merge_state(part)
+                await self.state_merger.merge_state(part)
 
             if mode == "custom":
                 id, chunk_text = part["id"], cast(str, part["data"])
@@ -279,9 +269,7 @@ class AgentStream(BaseModel, Generic[TState]):
 
                 if not first_token_received:
                     first_token_received = True
-                    pf.point("agent_stream.trigger_agent.stream.first_token")
 
-                pf.point("agent_stream.trigger_agent.stream.chunk_text")
                 yield chunk_text
                 logger.info(f"Chunk text: {chunk_text}")
                 chunks.append(chunk_text)

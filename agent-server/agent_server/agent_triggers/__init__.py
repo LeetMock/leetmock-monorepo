@@ -34,13 +34,10 @@ from agent_server.events import BaseEvent
 from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
 from pydantic.v1 import BaseModel, Field, PrivateAttr
 
-from libs.profiler import get_profiler
 from libs.timestamp import Timestamp
 from libs.types import MessageWrapper
 
 logger = logging.getLogger(__name__)
-
-pf = get_profiler()
 
 
 class AgentTrigger(BaseModel):
@@ -153,14 +150,9 @@ class AgentTrigger(BaseModel):
 
         while True:
             event, data = await self._event_q.get()
-            pf.point(
-                ["agent_trigger.main_task.event", f"agent_trigger.main_task.{event}"]
-            )
 
             logger.info(f"Receiving event: {event} with data: {data}")
-
-            with pf.interval(f"agent_trigger.main_task.notify_agent.{event}"):
-                should_trigger = await self.stream.notify_agent(event, data)
+            should_trigger = await self.stream.notify_agent(event, data)
 
             if should_trigger:
                 is_user_message = event == "user_message"

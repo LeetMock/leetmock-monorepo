@@ -39,13 +39,10 @@ from livekit.agents.worker import _DefaultLoadCalc
 from livekit.plugins import deepgram, openai, silero
 
 from libs.convex.api import ConvexApi
-from libs.profiler import get_profiler, set_profiler_id
 from libs.types import MessageWrapper
 
 logging.getLogger("openai._base_client").setLevel(logging.INFO)
 logger = get_logger(__name__)
-
-pf = get_profiler()
 
 load_dotenv(find_dotenv())
 
@@ -91,8 +88,6 @@ class CustomLoadCalc(_DefaultLoadCalc):
 
 
 async def entrypoint(ctx: JobContext):
-    pf.start()
-
     no_op_llm = NoopLLM()
     convex_api = ConvexApi(convex_url=os.getenv("CONVEX_URL") or "")
 
@@ -115,9 +110,6 @@ async def entrypoint(ctx: JobContext):
     )
     await ctx_manager.start()
 
-    logger.info(f"Setting profiler ID to {ctx_manager.session_id}")
-    set_profiler_id(ctx_manager.session_id)
-
     async def before_llm_callback(_: VoiceAssistant, chat_ctx: llm.ChatContext):
         """This callback is executed before the LLM is called. In the actual implementation,
         we use this callback to override the default behavior of LLM since we are using the customized
@@ -132,13 +124,11 @@ async def entrypoint(ctx: JobContext):
         """
         lc_messages = livekit_to_langchain_message(chat_ctx, unix_timestamp)
 
-        with pf.interval("before_llm_callback.user_message_q"):
-            # Put the messages into the message event queue so that UserMessageEvent can pick it up
-            user_message_event_q.put_nowait(MessageWrapper.from_messages(lc_messages))
-            # Get the text stream from the message response queue so that we can return it to the voice assistant
-            text_stream = await user_message_response_q.get()
+        # Put the messages into the message event queue so that UserMessageEvent can pick it up
+        user_message_event_q.put_nowait(MessageWrapper.from_messages(lc_messages))
+        # Get the text stream from the message response queue so that we can return it to the voice assistant
+        text_stream = await user_message_response_q.get()
 
-        logger.info(f"[before_llm_callback] text_stream: {text_stream}")
         if text_stream is not None:
             return EchoStream(text_stream=text_stream, chat_ctx=chat_ctx)
         else:
@@ -193,8 +183,7 @@ async def entrypoint(ctx: JobContext):
     agent_trigger.start()
     assistant.start(ctx.room)
 
-    with pf.interval("entrypoint.agent_trigger.trigger"):
-        await agent_trigger.trigger()
+    await agent_trigger.trigger()
 
 
 if __name__ == "__main__":
