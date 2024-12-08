@@ -14,7 +14,7 @@ from agent_graph.code_mock_staged_v1.constants import (
 )
 from agent_graph.event_descriptors import EVENT_DESCRIPTORS, EventDescriptor
 from agent_graph.prompts import JOIN_CALL_MESSAGE, RECONNECT_MESSAGE
-from agent_graph.types import EventMessageState, Signal, Step
+from agent_graph.types import EventMessageState, Step
 from agent_graph.utils import with_event_reset, with_trigger_reset
 from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
@@ -99,17 +99,17 @@ async def on_event(
         return with_event_reset(trigger=True, messages=messages)
 
     if state.event == "testcase_changed":
-        event_data = cast(CodeSessionTestcaseChangedEvent, state.event_data)
+        event_data = cast(CodeSessionTestcaseChangedEvent, state.event_data)  # type: ignore
         messages = format_testcase_changed_notification_messages(event_data)
         return with_event_reset(trigger=False, messages=messages)
 
     if state.event == "user_testcase_executed":
-        event_data = cast(CodeSessionUserTestcaseExecutedEvent, state.event_data)
+        event_data = cast(CodeSessionUserTestcaseExecutedEvent, state.event_data)  # type: ignore
         messages = format_user_testcase_executed_notification_messages(event_data)
         return with_event_reset(trigger=False, messages=messages)
 
     if state.event == "content_changed":
-        event_data = cast(CodeSessionContentChangedEvent, state.event_data)
+        event_data = cast(CodeSessionContentChangedEvent, state.event_data)  # type: ignore
         messages = format_content_changed_notification_messages(event_data)
         return with_event_reset(trigger=False, messages=messages)
 
