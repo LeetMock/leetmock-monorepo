@@ -93,6 +93,8 @@ export const WorkspaceSidebar: React.FC<{
     return taskIdx;
   }, [codeSessionState]);
 
+  const isEndStage = activeTaskIdx === timelineSteps.length;
+
   const totalTasks = timelineSteps.length;
   const progressPercentage = (activeTaskIdx / totalTasks) * 100;
 
@@ -228,6 +230,7 @@ export const WorkspaceSidebar: React.FC<{
                   key={step.title}
                   step={step}
                   completed={index < activeTaskIdx}
+                  isActive={index === activeTaskIdx}
                   isLastItem={false}
                   collapsed={collapsed}
                 />
@@ -235,7 +238,8 @@ export const WorkspaceSidebar: React.FC<{
               <TimelineItem
                 key={endStep.title}
                 step={endStep}
-                completed={activeTaskIdx === timelineSteps.length}
+                completed={isEndStage}
+                isActive={isEndStage}
                 isLastItem={true}
                 collapsed={collapsed}
               />
@@ -254,9 +258,10 @@ export const WorkspaceSidebar: React.FC<{
 const TimelineItem: React.FC<{
   step: TimelineStep;
   completed: boolean;
+  isActive: boolean;
   isLastItem: boolean;
   collapsed: boolean;
-}> = ({ step, completed, isLastItem, collapsed }) => {
+}> = ({ step, completed, isActive, isLastItem, collapsed }) => {
   const collapsedView = useMemo(() => {
     return (
       <div className="absolute -top-1 left-7 z-10 hidden group-hover:block min-w-60">
@@ -293,7 +298,11 @@ const TimelineItem: React.FC<{
 
   return (
     <Timeline.Item
-      className={cn("transition-all duration-200", collapsed && "self-center relative group")}
+      className={cn(
+        "transition-all duration-200",
+        collapsed && "self-center relative group",
+        !isActive && !completed && "opacity-50"
+      )}
     >
       <Timeline.Connector
         icon={step.icon}
