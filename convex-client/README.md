@@ -55,10 +55,10 @@ import convex_client
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://neat-warbler-689.convex.cloud
+# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://neat-warbler-689.convex.cloud"
+    host = "https://posh-chihuahua-941.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -90,7 +90,7 @@ with convex_client.ApiClient(configuration) as api_client:
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://neat-warbler-689.convex.cloud*
+All URIs are relative to *https://posh-chihuahua-941.convex.cloud*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
@@ -99,6 +99,7 @@ Class | Method | HTTP request | Description
 *ActionApi* | [**api_run_actions_get_token_post**](docs/ActionApi.md#api_run_actions_get_token_post) | **POST** /api/run/actions/getToken | Calls a action at the path actions.js:getToken
 *ActionApi* | [**api_run_actions_run_code_post**](docs/ActionApi.md#api_run_actions_run_code_post) | **POST** /api/run/actions/runCode | Calls a action at the path actions.js:runCode
 *ActionApi* | [**api_run_actions_run_tests_post**](docs/ActionApi.md#api_run_actions_run_tests_post) | **POST** /api/run/actions/runTests | Calls a action at the path actions.js:runTests
+*ActionApi* | [**api_run_actions_trigger_eval_post**](docs/ActionApi.md#api_run_actions_trigger_eval_post) | **POST** /api/run/actions/triggerEval | Calls a action at the path actions.js:triggerEval
 *MutationApi* | [**api_run_admins_create_user_profile_post**](docs/MutationApi.md#api_run_admins_create_user_profile_post) | **POST** /api/run/admins/createUserProfile | Calls a mutation at the path admins.js:createUserProfile
 *MutationApi* | [**api_run_admins_patch_user_subscription_post**](docs/MutationApi.md#api_run_admins_patch_user_subscription_post) | **POST** /api/run/admins/patchUserSubscription | Calls a mutation at the path admins.js:patchUserSubscription
 *MutationApi* | [**api_run_code_session_events_commit_code_session_event_post**](docs/MutationApi.md#api_run_code_session_events_commit_code_session_event_post) | **POST** /api/run/codeSessionEvents/commitCodeSessionEvent | Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
@@ -116,6 +117,7 @@ Class | Method | HTTP request | Description
 *QueryApi* | [**api_run_code_session_states_get_session_state_by_session_id_post**](docs/QueryApi.md#api_run_code_session_states_get_session_state_by_session_id_post) | **POST** /api/run/codeSessionStates/getSessionStateBySessionId | Calls a query at the path codeSessionStates.js:getSessionStateBySessionId
 *QueryApi* | [**api_run_code_session_states_get_terminal_state_post**](docs/QueryApi.md#api_run_code_session_states_get_terminal_state_post) | **POST** /api/run/codeSessionStates/getTerminalState | Calls a query at the path codeSessionStates.js:getTerminalState
 *QueryApi* | [**api_run_code_session_states_get_test_cases_state_post**](docs/QueryApi.md#api_run_code_session_states_get_test_cases_state_post) | **POST** /api/run/codeSessionStates/getTestCasesState | Calls a query at the path codeSessionStates.js:getTestCasesState
+*QueryApi* | [**api_run_eval_get_by_session_id_post**](docs/QueryApi.md#api_run_eval_get_by_session_id_post) | **POST** /api/run/eval/getBySessionId | Calls a query at the path eval.js:getBySessionId
 *QueryApi* | [**api_run_questions_get_all_post**](docs/QueryApi.md#api_run_questions_get_all_post) | **POST** /api/run/questions/getAll | Calls a query at the path questions.js:getAll
 *QueryApi* | [**api_run_questions_get_by_id_post**](docs/QueryApi.md#api_run_questions_get_by_id_post) | **POST** /api/run/questions/getById | Calls a query at the path questions.js:getById
 *QueryApi* | [**api_run_sessions_exists_post**](docs/QueryApi.md#api_run_sessions_exists_post) | **POST** /api/run/sessions/exists | Calls a query at the path sessions.js:exists
@@ -136,10 +138,9 @@ Class | Method | HTTP request | Description
  - [RequestActionsRunCodeArgs](docs/RequestActionsRunCodeArgs.md)
  - [RequestActionsRunTests](docs/RequestActionsRunTests.md)
  - [RequestActionsRunTestsArgs](docs/RequestActionsRunTestsArgs.md)
+ - [RequestActionsTriggerEval](docs/RequestActionsTriggerEval.md)
  - [RequestAdminsCreateUserProfile](docs/RequestAdminsCreateUserProfile.md)
  - [RequestAdminsCreateUserProfileArgs](docs/RequestAdminsCreateUserProfileArgs.md)
- - [RequestAdminsCreateUserProfileArgsRole](docs/RequestAdminsCreateUserProfileArgsRole.md)
- - [RequestAdminsCreateUserProfileArgsSubscription](docs/RequestAdminsCreateUserProfileArgsSubscription.md)
  - [RequestAdminsPatchUserSubscription](docs/RequestAdminsPatchUserSubscription.md)
  - [RequestAdminsPatchUserSubscriptionArgs](docs/RequestAdminsPatchUserSubscriptionArgs.md)
  - [RequestCodeSessionEventsCommitCodeSessionEvent](docs/RequestCodeSessionEventsCommitCodeSessionEvent.md)
@@ -168,6 +169,8 @@ Class | Method | HTTP request | Description
  - [RequestCodeSessionStatesGetTerminalState](docs/RequestCodeSessionStatesGetTerminalState.md)
  - [RequestCodeSessionStatesGetTestCasesState](docs/RequestCodeSessionStatesGetTestCasesState.md)
  - [RequestCodeSessionStatesGetTestCasesStateInternal](docs/RequestCodeSessionStatesGetTestCasesStateInternal.md)
+ - [RequestEvalCheckPendingEvaluationsInternal](docs/RequestEvalCheckPendingEvaluationsInternal.md)
+ - [RequestEvalGetBySessionId](docs/RequestEvalGetBySessionId.md)
  - [RequestEvalInsertEvaluation](docs/RequestEvalInsertEvaluation.md)
  - [RequestEvalInsertEvaluationArgs](docs/RequestEvalInsertEvaluationArgs.md)
  - [RequestEvalInsertEvaluationArgsScoreboards](docs/RequestEvalInsertEvaluationArgsScoreboards.md)
@@ -176,10 +179,12 @@ Class | Method | HTTP request | Description
  - [RequestEvalInsertEvaluationArgsScoreboardsProblemSolving](docs/RequestEvalInsertEvaluationArgsScoreboardsProblemSolving.md)
  - [RequestEvalInsertEvaluationArgsScoreboardsTechnicalCompetency](docs/RequestEvalInsertEvaluationArgsScoreboardsTechnicalCompetency.md)
  - [RequestEvalInsertEvaluationArgsScoreboardsTesting](docs/RequestEvalInsertEvaluationArgsScoreboardsTesting.md)
+ - [RequestEvalTriggerEvalAction](docs/RequestEvalTriggerEvalAction.md)
  - [RequestInviteCodesApplyInviteCode](docs/RequestInviteCodesApplyInviteCode.md)
  - [RequestInviteCodesApplyInviteCodeArgs](docs/RequestInviteCodesApplyInviteCodeArgs.md)
  - [RequestInviteCodesCreateInviteCode](docs/RequestInviteCodesCreateInviteCode.md)
  - [RequestInviteCodesCreateInviteCodeArgs](docs/RequestInviteCodesCreateInviteCodeArgs.md)
+ - [RequestInviteCodesCreateInviteCodeArgsAssignedRole](docs/RequestInviteCodesCreateInviteCodeArgsAssignedRole.md)
  - [RequestQuestionsGetAll](docs/RequestQuestionsGetAll.md)
  - [RequestQuestionsGetById](docs/RequestQuestionsGetById.md)
  - [RequestQuestionsGetByIdArgs](docs/RequestQuestionsGetByIdArgs.md)
@@ -209,6 +214,7 @@ Class | Method | HTTP request | Description
  - [RequestUserProfilesUpdateSubscriptionByEmailInternal](docs/RequestUserProfilesUpdateSubscriptionByEmailInternal.md)
  - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgs](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgs.md)
  - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval.md)
+ - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.md)
  - [RequestUserProfilesVoidSubscriptionInternal](docs/RequestUserProfilesVoidSubscriptionInternal.md)
  - [RequestUserProfilesVoidSubscriptionInternalArgs](docs/RequestUserProfilesVoidSubscriptionInternalArgs.md)
  - [ResponseActionsCreateAgentThread](docs/ResponseActionsCreateAgentThread.md)
@@ -219,6 +225,7 @@ Class | Method | HTTP request | Description
  - [ResponseActionsRunTests](docs/ResponseActionsRunTests.md)
  - [ResponseActionsRunTestsValue](docs/ResponseActionsRunTestsValue.md)
  - [ResponseActionsRunTestsValueTestResultsInner](docs/ResponseActionsRunTestsValueTestResultsInner.md)
+ - [ResponseActionsTriggerEval](docs/ResponseActionsTriggerEval.md)
  - [ResponseAdminsCreateUserProfile](docs/ResponseAdminsCreateUserProfile.md)
  - [ResponseAdminsPatchUserSubscription](docs/ResponseAdminsPatchUserSubscription.md)
  - [ResponseCodeSessionEventsCommitCodeSessionEvent](docs/ResponseCodeSessionEventsCommitCodeSessionEvent.md)
@@ -240,7 +247,10 @@ Class | Method | HTTP request | Description
  - [ResponseCodeSessionStatesGetValue](docs/ResponseCodeSessionStatesGetValue.md)
  - [ResponseCodeSessionStatesGetValueEditor](docs/ResponseCodeSessionStatesGetValueEditor.md)
  - [ResponseCodeSessionStatesGetValueTerminal](docs/ResponseCodeSessionStatesGetValueTerminal.md)
+ - [ResponseEvalCheckPendingEvaluationsInternal](docs/ResponseEvalCheckPendingEvaluationsInternal.md)
+ - [ResponseEvalGetBySessionId](docs/ResponseEvalGetBySessionId.md)
  - [ResponseEvalInsertEvaluation](docs/ResponseEvalInsertEvaluation.md)
+ - [ResponseEvalTriggerEvalAction](docs/ResponseEvalTriggerEvalAction.md)
  - [ResponseInviteCodesApplyInviteCode](docs/ResponseInviteCodesApplyInviteCode.md)
  - [ResponseInviteCodesCreateInviteCode](docs/ResponseInviteCodesCreateInviteCode.md)
  - [ResponseQuestionsGetAll](docs/ResponseQuestionsGetAll.md)

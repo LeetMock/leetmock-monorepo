@@ -17,18 +17,18 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_invite_codes_create_invite_code_args_assigned_role import RequestInviteCodesCreateInviteCodeArgsAssignedRole
+from convex_client.models.request_sessions_end_session_args import RequestSessionsEndSessionArgs
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
+class RequestEvalTriggerEvalAction(BaseModel):
     """
-    RequestInviteCodesCreateInviteCodeArgs
+    RequestEvalTriggerEvalAction
     """ # noqa: E501
-    assigned_role: RequestInviteCodesCreateInviteCodeArgsAssignedRole = Field(alias="assignedRole")
-    __properties: ClassVar[List[str]] = ["assignedRole"]
+    args: RequestSessionsEndSessionArgs
+    __properties: ClassVar[List[str]] = ["args"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -48,7 +48,7 @@ class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestInviteCodesCreateInviteCodeArgs from a JSON string"""
+        """Create an instance of RequestEvalTriggerEvalAction from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -69,14 +69,14 @@ class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of assigned_role
-        if self.assigned_role:
-            _dict['assignedRole'] = self.assigned_role.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of args
+        if self.args:
+            _dict['args'] = self.args.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestInviteCodesCreateInviteCodeArgs from a dict"""
+        """Create an instance of RequestEvalTriggerEvalAction from a dict"""
         if obj is None:
             return None
 
@@ -84,7 +84,7 @@ class RequestInviteCodesCreateInviteCodeArgs(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "assignedRole": RequestInviteCodesCreateInviteCodeArgsAssignedRole.from_dict(obj["assignedRole"]) if obj.get("assignedRole") is not None else None
+            "args": RequestSessionsEndSessionArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
         })
         return _obj
 
