@@ -283,6 +283,7 @@ class AgentStream(BaseModel, Generic[TState]):
 
                 pf.point("agent_stream.trigger_agent.stream.chunk_text")
                 yield chunk_text
+                logger.info(f"Chunk text: {chunk_text}")
                 chunks.append(chunk_text)
 
         logger.info(f"Agent text stream: {''.join(chunks)}")
