@@ -41,7 +41,6 @@ class AgentState(EventMessageState):
         default=StageTypes.BACKGROUND,
         description="Current stage of the agent",
     )
-
     events: List[EventDescriptor] = Field(
         default_factory=list,
         description="Event descriptors for the agent",
