@@ -37,7 +37,7 @@ prioritize finishing the step. You should proceed the following steps in that or
 {% for step in steps %}
 <step name="{{step.name}}" required="{{step.required}}">
 <description>
-{{step.desc}}
+{{step.description}}
 </description>
 <definition-of-done>
 {{step.done_definition}}
@@ -113,7 +113,7 @@ prioritize finishing the step. You should proceed the following steps in that or
 {% for step in steps %}
 <step name="{{step.name}}" required="{{step.required}}">
 <description>
-{{step.desc}}
+{{step.description}}
 </description>
 <definition-of-done>
 {{step.done_definition}}
