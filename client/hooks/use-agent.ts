@@ -18,8 +18,8 @@ export type AgentState =
   | "thinking"
   | "speaking";
 
-const state_attribute = "lk.agent.state";
-const session_id_topic = "session-id";
+const stateAttribute = "lk.agent.state";
+const sessionIdTopic = "session-id";
 
 export const useAgentData = () => {
   const agentParticipant = useRemoteParticipants().find((p) => p.kind === ParticipantKind.AGENT);
@@ -42,21 +42,7 @@ export const useAgent = (sessionId: Id<"sessions">) => {
   const { attributes } = useParticipantAttributes({ participant: agentParticipant });
 
   // Data channel to send session id to agent server
-  const { send: sendSessionId } = useDataChannel(session_id_topic);
-
-  // Listen to agent server requesting session id from client
-  useDataChannel(session_id_topic, (message) => {
-    console.log("Got request for session id", message);
-    sendSessionId(encode(sessionId), { reliable: true });
-    setAgentReceivedSessionId(true);
-  });
-
-  // Reset the agent received session id status whenever disconnected
-  useEffect(() => {
-    if (connectionState === ConnectionState.Disconnected) {
-      setAgentReceivedSessionId(false);
-    }
-  }, [connectionState]);
+  const { send: sendSessionId } = useDataChannel(sessionIdTopic);
 
   const isAgentConnected = useMemo(() => {
     return agentParticipant !== undefined && agentReceivedSessionId;
@@ -70,13 +56,27 @@ export const useAgent = (sessionId: Id<"sessions">) => {
     } else if (
       connectionState === ConnectionState.Connecting ||
       !agentParticipant ||
-      !attributes?.[state_attribute]
+      !attributes?.[stateAttribute]
     ) {
       return "connecting";
     } else {
-      return attributes[state_attribute] as AgentState;
+      return attributes[stateAttribute] as AgentState;
     }
   }, [attributes, agentParticipant, connectionState]);
+
+  // Listen to agent server requesting session id from client
+  useDataChannel(sessionIdTopic, (message) => {
+    console.log("Got request for session id", message);
+    sendSessionId(encode(sessionId), { reliable: true });
+    setAgentReceivedSessionId(true);
+  });
+
+  // Reset the agent received session id status whenever disconnected
+  useEffect(() => {
+    if (connectionState === ConnectionState.Disconnected) {
+      setAgentReceivedSessionId(false);
+    }
+  }, [connectionState]);
 
   return {
     isAgentSpeaking,

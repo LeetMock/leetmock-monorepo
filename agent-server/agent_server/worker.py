@@ -35,8 +35,10 @@ from dotenv import find_dotenv, load_dotenv
 from livekit.agents import cli  # type: ignore
 from livekit.agents import JobContext, WorkerOptions, llm, utils
 from livekit.agents.voice_assistant import VoiceAssistant
+from livekit.agents.llm import ChatMessage
 from livekit.agents.worker import _DefaultLoadCalc
 from livekit.plugins import deepgram, openai, silero
+from livekit.rtc import DataPacket
 
 from libs.convex.api import ConvexApi
 from libs.types import MessageWrapper
@@ -182,6 +184,22 @@ async def entrypoint(ctx: JobContext):
     # assistant might not be captured properly.
     agent_trigger.start()
     assistant.start(ctx.room)
+
+    ####################### Dev only #######################
+
+    @ctx.room.on("data_received")
+    def handle_data_received(data: DataPacket):
+        if data.topic != "chat-message":
+            return
+
+        message = data.data.decode("utf-8")
+        logger.info(f"[chat-message] {message}")
+
+        assistant.chat_ctx.messages.append(ChatMessage(role="user", content=message))
+        lc_messages = livekit_to_langchain_message(assistant.chat_ctx, unix_timestamp)
+        agent_trigger.add_user_message(lc_messages)
+
+    ####################### Dev only #######################
 
     await agent_trigger.trigger()
 

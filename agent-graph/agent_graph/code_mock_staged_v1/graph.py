@@ -16,7 +16,7 @@ from agent_graph.event_descriptors import EVENT_DESCRIPTORS, EventDescriptor
 from agent_graph.prompts import JOIN_CALL_MESSAGE, RECONNECT_MESSAGE
 from agent_graph.types import EventMessageState, Step
 from agent_graph.utils import with_event_reset, with_trigger_reset
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage, AIMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 from pydantic.v1 import Field
@@ -91,6 +91,15 @@ async def on_event(
     if state.event == "user_message":
         messages = cast(MessageWrapper, state.event_data).messages
         return with_event_reset(trigger=True, messages=messages)
+
+    if state.event == "add_user_message":
+        messages = cast(List, state.event_data)
+        print("add_user_message", messages)
+        return with_event_reset(trigger=True, messages=messages)
+
+    if state.event == "add_ai_message":
+        messages = cast(List, state.event_data)
+        return with_event_reset(trigger=False, messages=messages)
 
     if state.event == "reminder":
         messages = HumanMessage(

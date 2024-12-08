@@ -2,7 +2,6 @@ from typing import List, OrderedDict, cast
 
 from agent_graph.code_mock_staged_v1.constants import (
     AgentConfig,
-    Signal,
     StageTypes,
     Step,
 )
