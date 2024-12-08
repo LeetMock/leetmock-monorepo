@@ -5,7 +5,7 @@ from agent_graph.code_mock_staged_v1.constants import (
     StageTypes,
     Step,
 )
-from agent_graph.code_mock_staged_v1.prompts import INTRO_PROMPT
+from agent_graph.code_mock_staged_v1.prompts import EVAL_PROMPT
 from agent_graph.llms import get_model
 from agent_graph.types import EventMessageState
 from agent_graph.utils import custom_data, get_configurable
@@ -22,7 +22,7 @@ from langgraph.types import StreamWriter
 from pydantic.v1 import Field
 
 
-class IntroStageState(EventMessageState):
+class EvalStageState(EventMessageState):
     """State for the intro stage of the agent."""
 
     steps: OrderedDict[StageTypes, List[Step]] = Field(
@@ -32,15 +32,13 @@ class IntroStageState(EventMessageState):
 
 # --------------------- stage subgraph nodes --------------------- #
 async def assistant(
-    state: IntroStageState, config: RunnableConfig, writer: StreamWriter
+    state: EvalStageState, config: RunnableConfig, writer: StreamWriter
 ):
     agent_config = get_configurable(AgentConfig, config)
-    print(agent_config)
-
     prompt = ChatPromptTemplate.from_messages(
         [
             SystemMessagePromptTemplate.from_template(
-                INTRO_PROMPT, template_format="jinja2"
+                EVAL_PROMPT, template_format="jinja2"
             ),
             MessagesPlaceholder(variable_name="messages"),
         ]
@@ -55,7 +53,7 @@ async def assistant(
     async for chunk in chain.astream(
         {
             "messages": state.messages,
-            "steps": state.steps[StageTypes.BACKGROUND],
+            "steps": state.steps[StageTypes.EVAL],
         }
     ):
         content += cast(str, chunk.content)
@@ -70,7 +68,7 @@ async def assistant(
 
 def create_graph():
     return (
-        StateGraph(IntroStageState, AgentConfig)
+        StateGraph(EvalStageState, AgentConfig)
         # nodes
         .add_node("assistant", assistant)  # type: ignore
         # edges

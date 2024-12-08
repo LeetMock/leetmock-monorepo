@@ -1,7 +1,6 @@
 from collections import defaultdict
 from typing import List, OrderedDict, Set, cast
 
-from agent_graph.code_mock_staged_v1 import coding_stage, intro_stage
 from agent_graph.code_mock_staged_v1.constants import (
     AgentConfig,
     StageTypes,
@@ -12,11 +11,17 @@ from agent_graph.code_mock_staged_v1.constants import (
     get_next_stage,
     get_step_map,
 )
+from agent_graph.code_mock_staged_v1.subgraphs import (
+    intro_stage,
+    coding_stage,
+    background_stage,
+    eval_stage,
+)
 from agent_graph.event_descriptors import EVENT_DESCRIPTORS, EventDescriptor
 from agent_graph.prompts import JOIN_CALL_MESSAGE, RECONNECT_MESSAGE
 from agent_graph.types import EventMessageState, Step
 from agent_graph.utils import with_event_reset, with_trigger_reset
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 from pydantic.v1 import Field
@@ -131,6 +136,9 @@ async def on_trigger(state: AgentState):
 
 
 async def decide_next_stage(state: AgentState):
+    if state.current_stage == StageTypes.END:
+        return dict(trigger=False)
+
     stage_steps = set([step.name for step in state.steps[state.current_stage]])
     completed_stage_steps = len(stage_steps - state.completed_steps) == 0
     next_stage = (
@@ -138,9 +146,6 @@ async def decide_next_stage(state: AgentState):
         if completed_stage_steps
         else state.current_stage
     )
-
-    if next_stage == StageTypes.EVAL:
-        next_stage = StageTypes.CODING
 
     messages = (
         format_stage_transition_messages(next_stage)
@@ -184,8 +189,10 @@ def create_graph():
         .add_node("on_event", on_event)
         .add_node("on_trigger", on_trigger)
         .add_node("decide_next_stage", decide_next_stage)
-        .add_node(StageTypes.BACKGROUND, intro_stage.create_compiled_graph())
+        .add_node(StageTypes.INTRO, intro_stage.create_compiled_graph())
+        .add_node(StageTypes.BACKGROUND, background_stage.create_compiled_graph())
         .add_node(StageTypes.CODING, coding_stage.create_compiled_graph())
+        .add_node(StageTypes.EVAL, eval_stage.create_compiled_graph())
         # edges
         .add_conditional_edges(
             source=START,
@@ -201,10 +208,18 @@ def create_graph():
         .add_conditional_edges(
             source="on_trigger",
             path=select_stage,
-            path_map=[StageTypes.BACKGROUND, StageTypes.CODING, END],
+            path_map=[
+                StageTypes.INTRO,
+                StageTypes.BACKGROUND,
+                StageTypes.CODING,
+                StageTypes.EVAL,
+                END,
+            ],
         )
+        .add_edge(StageTypes.INTRO, "decide_next_stage")
         .add_edge(StageTypes.BACKGROUND, "decide_next_stage")
         .add_edge(StageTypes.CODING, "decide_next_stage")
+        .add_edge(StageTypes.EVAL, "decide_next_stage")
         .add_edge("decide_next_stage", END)
     )
 

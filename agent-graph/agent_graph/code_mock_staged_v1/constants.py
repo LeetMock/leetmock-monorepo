@@ -20,6 +20,7 @@ TEntity = TypeVar("TEntity", bound=NamedEntity)
 
 
 class StageTypes(str, Enum):
+    INTRO = "introduction"
     BACKGROUND = "background"
     CODING = "coding"
     EVAL = "evaluation"
@@ -45,14 +46,13 @@ class AgentConfig(BaseModel):
 def get_next_stage(stage: StageTypes) -> StageTypes:
     """Get the next stage."""
 
-    if stage == StageTypes.BACKGROUND:
-        return StageTypes.CODING
-    elif stage == StageTypes.CODING:
-        return StageTypes.EVAL
-    elif stage == StageTypes.EVAL:
-        return StageTypes.END
-    else:
-        raise ValueError(f"Invalid stage: {stage}")
+    return {
+        StageTypes.INTRO: StageTypes.BACKGROUND,
+        StageTypes.BACKGROUND: StageTypes.CODING,
+        StageTypes.CODING: StageTypes.EVAL,
+        StageTypes.EVAL: StageTypes.END,
+        StageTypes.END: StageTypes.END,
+    }[stage]
 
 
 def get_new_entities(
@@ -229,18 +229,21 @@ INTRO_STEPS: List[Step] = [
         done_definition="Interviewer has finished asking about the candidate's background and experience.",
         required=True,
     ),
-    # Step.from_info(
-    #     name="ask_goals",
-    #     desc="Ask the candidate about their career goals.",
-    #     done_definition="Interviewer has finished asking about the candidate's career goals.",
-    #     required=True,
-    # ),
-    # Step.from_info(
-    #     name="discuss_projects",
-    #     desc="Discuss the candidate's past projects and their role in them. Remember to praise interviewee on their achievement.",
-    #     done_definition="Interviewer has finished asking the questions about the candidate's past projects and their role in them.",
-    #     required=True,
-    # ),
+]
+
+BACKGROUND_STEPS: List[Step] = [
+    Step.from_info(
+        name="ask_goals",
+        desc="Ask the candidate about their career goals.",
+        done_definition="Interviewer has finished asking about the candidate's career goals.",
+        required=True,
+    ),
+    Step.from_info(
+        name="discuss_projects",
+        desc="Discuss the candidate's past projects and their role in them. Remember to praise interviewee on their achievement.",
+        done_definition="Interviewer has finished asking the questions about the candidate's past projects and their role in them.",
+        required=True,
+    ),
 ]
 
 INTRO_SIGNALS: List[Signal] = [
@@ -360,8 +363,9 @@ EVAL_SIGNALS: List[Signal] = [
 def get_step_map() -> OrderedDict[StageTypes, List[Step]]:
     return OrderedDict(
         [
-            (StageTypes.BACKGROUND, INTRO_STEPS),
+            (StageTypes.INTRO, INTRO_STEPS),
+            (StageTypes.BACKGROUND, BACKGROUND_STEPS),
             (StageTypes.CODING, CODING_STEPS),
-            # (StageTypes.EVAL, EVAL_STEPS),
+            (StageTypes.EVAL, EVAL_STEPS),
         ]
     )
