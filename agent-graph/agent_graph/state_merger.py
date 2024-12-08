@@ -12,10 +12,8 @@ from langgraph.graph.state import CompiledStateGraph, StateGraph
 from livekit.agents.utils import EventEmitter
 from pydantic.v1 import BaseModel
 
-from libs.profiler import get_profiler
 
 logger = get_logger(__name__)
-pf = get_profiler()
 
 TState = TypeVar("TState", bound=BaseModel)
 EventTypes = Literal["state_changed"]
@@ -128,12 +126,10 @@ class StateMerger(AgentStateEmitter[TState]):
         if isinstance(state, dict) and len(state) == 0:
             return await self.get_state()
 
-        with pf.interval("state_merger.merge_state"):
-            state_dict = await self.state_graph.ainvoke(state, config=CONFIG)
-            state = self.state_type(**state_dict)
+        state_dict = await self.state_graph.ainvoke(state, config=CONFIG)
+        state = self.state_type(**state_dict)
 
-        with pf.interval("state_merger.merge_state.flush"):
-            self.flush(state_dict)
+        self.flush(state_dict)
 
         prev_state = self._cached_state
         self._cached_state = state
