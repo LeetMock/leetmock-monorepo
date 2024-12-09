@@ -189,10 +189,11 @@ async def should_trigger_event(state: AgentState):
     return END
 
 
-async def select_stage(state: AgentState):
-    if state.current_stage == StageTypes.END:
+async def select_stage(state: AgentState, config: RunnableConfig):
+    agent_config = get_configurable(AgentConfig, config)
+    if state.current_stage_idx == len(agent_config.stages):
         return END
-    return state.current_stage.value
+    return agent_config.stages[state.current_stage_idx]
 
 
 def create_graph():
