@@ -2122,10 +2122,10 @@ components:
                     data:
                       type: object
                       required:
-                        - stage
+                        - stageIdx
                       properties:
-                        stage:
-                          type: string
+                        stageIdx:
+                          type: number
                     type:
                       type: string
                       enum:
@@ -2255,10 +2255,10 @@ components:
                     data:
                       type: object
                       required:
-                        - stage
+                        - stageIdx
                       properties:
-                        stage:
-                          type: string
+                        stageIdx:
+                          type: number
                     type:
                       type: string
                       enum:
@@ -2624,9 +2624,9 @@ components:
           required:
             - _creationTime
             - _id
+            - currentStageIdx
             - editor
             - sessionId
-            - stage
             - terminal
             - testcases
           properties:
@@ -2635,6 +2635,8 @@ components:
             _id:
               type: string
               description: ID from table "codeSessionStates"
+            currentStageIdx:
+              type: number
             editor:
               type: object
               required:
@@ -2651,8 +2653,6 @@ components:
             sessionId:
               type: string
               description: ID from table "sessions"
-            stage:
-              type: string
             terminal:
               type: object
               required:

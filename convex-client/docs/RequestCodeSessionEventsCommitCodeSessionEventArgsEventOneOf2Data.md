@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**stage** | **str** |  | 
+**stage_idx** | **float** |  | 
 
 ## Example
 

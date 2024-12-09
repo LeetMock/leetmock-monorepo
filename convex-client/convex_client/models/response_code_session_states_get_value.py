@@ -31,12 +31,12 @@ class ResponseCodeSessionStatesGetValue(BaseModel):
     """ # noqa: E501
     creation_time: Union[StrictFloat, StrictInt] = Field(alias="_creationTime")
     id: StrictStr = Field(description="ID from table \"codeSessionStates\"", alias="_id")
+    current_stage_idx: Union[StrictFloat, StrictInt] = Field(alias="currentStageIdx")
     editor: ResponseCodeSessionStatesGetValueEditor
     session_id: StrictStr = Field(description="ID from table \"sessions\"", alias="sessionId")
-    stage: StrictStr
     terminal: ResponseCodeSessionStatesGetValueTerminal
     testcases: List[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner]
-    __properties: ClassVar[List[str]] = ["_creationTime", "_id", "editor", "sessionId", "stage", "terminal", "testcases"]
+    __properties: ClassVar[List[str]] = ["_creationTime", "_id", "currentStageIdx", "editor", "sessionId", "terminal", "testcases"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -104,9 +104,9 @@ class ResponseCodeSessionStatesGetValue(BaseModel):
         _obj = cls.model_validate({
             "_creationTime": obj.get("_creationTime"),
             "_id": obj.get("_id"),
+            "currentStageIdx": obj.get("currentStageIdx"),
             "editor": ResponseCodeSessionStatesGetValueEditor.from_dict(obj["editor"]) if obj.get("editor") is not None else None,
             "sessionId": obj.get("sessionId"),
-            "stage": obj.get("stage"),
             "terminal": ResponseCodeSessionStatesGetValueTerminal.from_dict(obj["terminal"]) if obj.get("terminal") is not None else None,
             "testcases": [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner.from_dict(_item) for _item in obj["testcases"]] if obj.get("testcases") is not None else None
         })

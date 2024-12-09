@@ -36,13 +36,13 @@ class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEvent(unittest.TestC
         if include_optional:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEvent(
                 data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_2_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_2_data(
-                    stage = '', ),
+                    stage_idx = 1.337, ),
                 type = 'content_changed'
             )
         else:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEvent(
                 data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_2_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_2_data(
-                    stage = '', ),
+                    stage_idx = 1.337, ),
                 type = 'content_changed',
         )
         """

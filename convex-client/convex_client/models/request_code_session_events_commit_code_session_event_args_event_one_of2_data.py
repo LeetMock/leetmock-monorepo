@@ -17,8 +17,8 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictStr
-from typing import Any, ClassVar, Dict, List
+from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt
+from typing import Any, ClassVar, Dict, List, Union
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -26,8 +26,8 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data(BaseMode
     """
     RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data
     """ # noqa: E501
-    stage: StrictStr
-    __properties: ClassVar[List[str]] = ["stage"]
+    stage_idx: Union[StrictFloat, StrictInt] = Field(alias="stageIdx")
+    __properties: ClassVar[List[str]] = ["stageIdx"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -80,7 +80,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data(BaseMode
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "stage": obj.get("stage")
+            "stageIdx": obj.get("stageIdx")
         })
         return _obj
 
