@@ -41,11 +41,19 @@ class TestResponseActionsGetSessionMetadata(unittest.TestCase):
                 value = convex_client.models.response_actions_get_session_metadata_value.Response_actions_getSessionMetadata_value(
                     agent_thread_id = '', 
                     assistant_id = '', 
+                    interview_flow = [
+                        ''
+                        ], 
+                    interview_mode = '', 
+                    interview_type = '', 
+                    metadata = convex_client.models.metadata.metadata(), 
+                    programming_language = '', 
                     question_content = '', 
                     question_id = '', 
                     question_title = '', 
                     session_id = '', 
-                    session_status = '', )
+                    session_status = '', 
+                    voice = '', )
             )
         else:
             return ResponseActionsGetSessionMetadata(

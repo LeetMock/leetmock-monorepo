@@ -7,11 +7,17 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **agent_thread_id** | **str** |  | 
 **assistant_id** | **str** |  | 
+**interview_flow** | **List[str]** |  | 
+**interview_mode** | **str** |  | 
+**interview_type** | **str** |  | 
+**metadata** | **object** |  | 
+**programming_language** | **str** |  | 
 **question_content** | **str** |  | 
 **question_id** | **str** | ID from table \&quot;questions\&quot; | 
 **question_title** | **str** |  | 
 **session_id** | **str** | ID from table \&quot;sessions\&quot; | 
 **session_status** | **str** |  | 
+**voice** | **str** |  | 
 
 ## Example
 

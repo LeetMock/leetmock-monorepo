@@ -18,7 +18,7 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List
+from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -26,14 +26,20 @@ class ResponseActionsGetSessionMetadataValue(BaseModel):
     """
     ResponseActionsGetSessionMetadataValue
     """ # noqa: E501
-    agent_thread_id: StrictStr
-    assistant_id: StrictStr
-    question_content: StrictStr
-    question_id: StrictStr = Field(description="ID from table \"questions\"")
-    question_title: StrictStr
-    session_id: StrictStr = Field(description="ID from table \"sessions\"")
-    session_status: StrictStr
-    __properties: ClassVar[List[str]] = ["agent_thread_id", "assistant_id", "question_content", "question_id", "question_title", "session_id", "session_status"]
+    agent_thread_id: StrictStr = Field(alias="agentThreadId")
+    assistant_id: StrictStr = Field(alias="assistantId")
+    interview_flow: List[StrictStr] = Field(alias="interviewFlow")
+    interview_mode: StrictStr = Field(alias="interviewMode")
+    interview_type: StrictStr = Field(alias="interviewType")
+    metadata: Dict[str, Any]
+    programming_language: Optional[StrictStr] = Field(alias="programmingLanguage")
+    question_content: StrictStr = Field(alias="questionContent")
+    question_id: StrictStr = Field(description="ID from table \"questions\"", alias="questionId")
+    question_title: StrictStr = Field(alias="questionTitle")
+    session_id: StrictStr = Field(description="ID from table \"sessions\"", alias="sessionId")
+    session_status: StrictStr = Field(alias="sessionStatus")
+    voice: StrictStr
+    __properties: ClassVar[List[str]] = ["agentThreadId", "assistantId", "interviewFlow", "interviewMode", "interviewType", "metadata", "programmingLanguage", "questionContent", "questionId", "questionTitle", "sessionId", "sessionStatus", "voice"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -74,6 +80,11 @@ class ResponseActionsGetSessionMetadataValue(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # set to None if programming_language (nullable) is None
+        # and model_fields_set contains the field
+        if self.programming_language is None and "programming_language" in self.model_fields_set:
+            _dict['programmingLanguage'] = None
+
         return _dict
 
     @classmethod
@@ -86,13 +97,19 @@ class ResponseActionsGetSessionMetadataValue(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "agent_thread_id": obj.get("agent_thread_id"),
-            "assistant_id": obj.get("assistant_id"),
-            "question_content": obj.get("question_content"),
-            "question_id": obj.get("question_id"),
-            "question_title": obj.get("question_title"),
-            "session_id": obj.get("session_id"),
-            "session_status": obj.get("session_status")
+            "agentThreadId": obj.get("agentThreadId"),
+            "assistantId": obj.get("assistantId"),
+            "interviewFlow": obj.get("interviewFlow"),
+            "interviewMode": obj.get("interviewMode"),
+            "interviewType": obj.get("interviewType"),
+            "metadata": obj.get("metadata"),
+            "programmingLanguage": obj.get("programmingLanguage"),
+            "questionContent": obj.get("questionContent"),
+            "questionId": obj.get("questionId"),
+            "questionTitle": obj.get("questionTitle"),
+            "sessionId": obj.get("sessionId"),
+            "sessionStatus": obj.get("sessionStatus"),
+            "voice": obj.get("voice")
         })
         return _obj
 
