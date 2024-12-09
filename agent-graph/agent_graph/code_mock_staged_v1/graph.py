@@ -20,12 +20,12 @@ from agent_graph.code_mock_staged_v1.subgraphs import (
 from agent_graph.event_descriptors import EVENT_DESCRIPTORS, EventDescriptor
 from agent_graph.prompts import JOIN_CALL_MESSAGE, RECONNECT_MESSAGE
 from agent_graph.types import EventMessageState, Step
-from agent_graph.utils import with_event_reset, with_trigger_reset
+from agent_graph.utils import get_configurable, with_event_reset, with_trigger_reset
 from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 from pydantic.v1 import Field
-
+from langchain_core.runnables import RunnableConfig
 from libs.convex.convex_types import (
     CodeSessionContentChangedEvent,
     CodeSessionTestcaseChangedEvent,
@@ -42,9 +42,9 @@ class AgentState(EventMessageState):
         description="Whether the agent is initialized",
     )
 
-    current_stage: StageTypes = Field(
-        default=StageTypes.BACKGROUND,
-        description="Current stage of the agent",
+    current_stage_idx: int = Field(
+        default=0,
+        description="Current stage index of the agent",
     )
 
     events: List[EventDescriptor] = Field(
@@ -72,6 +72,7 @@ class AgentState(EventMessageState):
 async def init_state(_: AgentState):
     return dict(
         initialized=True,
+        current_stage_idx=0,
         messages=[HumanMessage(content=JOIN_CALL_MESSAGE)],
         events=EVENT_DESCRIPTORS,
         steps=get_step_map(),
@@ -135,21 +136,34 @@ async def on_trigger(state: AgentState):
     return with_trigger_reset()
 
 
-async def decide_next_stage(state: AgentState):
-    if state.current_stage == StageTypes.END:
+async def decide_next_stage(state: AgentState, config: RunnableConfig):
+    agent_config = get_configurable(AgentConfig, config)
+
+    if state.current_stage_idx >= len(agent_config.stages):
         return dict(trigger=False)
 
-    stage_steps = set([step.name for step in state.steps[state.current_stage]])
+    stages = agent_config.stages
+    current_stage = stages[state.current_stage_idx]
+
+    # Check if all steps in the current stage are completed
+    stage_steps = set([step.name for step in state.steps[current_stage]])
     completed_stage_steps = len(stage_steps - state.completed_steps) == 0
+
+    # If not all steps are completed, stay in the current stage
+    if not completed_stage_steps:
+        return dict(trigger=False)
+
+    # Move to the next stage
     next_stage = (
-        get_next_stage(state.current_stage)
-        if completed_stage_steps
-        else state.current_stage
+        stages[state.current_stage_idx + 1]
+        if state.current_stage_idx + 1 < len(stages)
+        else StageTypes.END
     )
 
+    # Format the stage transition messages
     messages = (
         format_stage_transition_messages(next_stage)
-        if state.current_stage != next_stage
+        if current_stage != next_stage
         else []
     )
 

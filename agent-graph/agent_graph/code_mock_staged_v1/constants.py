@@ -42,6 +42,8 @@ class AgentConfig(BaseModel):
 
     temperature: float = Field(default=0.2)
 
+    stages: List[StageTypes] = Field(default=[])
+
 
 def get_next_stage(stage: StageTypes) -> StageTypes:
     """Get the next stage."""
