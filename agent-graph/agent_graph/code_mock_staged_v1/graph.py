@@ -167,7 +167,9 @@ async def decide_next_stage(state: AgentState, config: RunnableConfig):
         else []
     )
 
-    return dict(current_stage=next_stage, trigger=False, messages=messages)
+    return dict(
+        current_stage_idx=state.current_stage_idx + 1, trigger=False, messages=messages
+    )
 
 
 # --------------------- agent graph edges --------------------- #

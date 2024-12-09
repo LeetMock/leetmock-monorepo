@@ -148,16 +148,18 @@ async def entrypoint(ctx: JobContext):
     # def on_metrics_collected(metrics):
     #     logger.info(f"[metrics_collected] {metrics}")
 
+    agent_config = AgentConfig(
+        # fast_model="claude-3-5-haiku-latest",
+        # smart_model="claude-3-5-sonnet-latest",
+        convex_url=convex_api.convex_url,
+        stages=session.session_metadata.interview_flow,
+    )
+
     agent_stream = AgentStream(
         name=AGENT_NAME,
         state_cls=AgentState,
         global_session_ts=unix_timestamp,
-        config=AgentConfig(
-            # fast_model="claude-3-5-haiku-latest",
-            # smart_model="claude-3-5-sonnet-latest",
-            convex_url=convex_api.convex_url,
-            stages=session.session_metadata.interview_flow,
-        ),
+        config=agent_config,
         session=session,
         graph=create_graph(),
         assistant=assistant,
@@ -175,7 +177,11 @@ async def entrypoint(ctx: JobContext):
             GroundTruthTestcaseExecutedEvent(session=session),
             UserMessageEvent(user_message_event_q=user_message_event_q),
             TestcaseChangedEvent(session=session),
-            StepTrackingEvent(state_merger=state_merger, state_update_q=state_update_q),
+            StepTrackingEvent(
+                state_merger=state_merger,
+                agent_config=agent_config,
+                state_update_q=state_update_q,
+            ),
         ],
     )
 
