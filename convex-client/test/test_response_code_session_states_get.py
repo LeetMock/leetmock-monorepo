@@ -41,12 +41,12 @@ class TestResponseCodeSessionStatesGet(unittest.TestCase):
                 value = convex_client.models.response_code_session_states_get_value.Response_codeSessionStates_get_value(
                     _creation_time = 1.337, 
                     _id = '', 
+                    current_stage_idx = 1.337, 
                     editor = convex_client.models.response_code_session_states_get_value_editor.Response_codeSessionStates_get_value_editor(
                         content = '', 
                         language = '', 
                         last_updated = 1.337, ), 
                     session_id = '', 
-                    stage = '', 
                     terminal = convex_client.models.response_code_session_states_get_value_terminal.Response_codeSessionStates_get_value_terminal(
                         execution_time = 1.337, 
                         is_error = True, 

@@ -100,18 +100,18 @@ export const triggerEval = userAction({
     if (!apiKey) throw new Error("LANGSMITH_API_KEY not found");
     const apiUrl = process.env.LANGGRAPH_API_URL;
 
-    const response = await fetch(apiUrl + '/runs', {
-      method: 'POST',
+    const response = await fetch(apiUrl + "/runs", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'X-Api-Key': apiKey
+        "Content-Type": "application/json",
+        "X-Api-Key": apiKey,
       },
       body: JSON.stringify({
-        "assistant_id": "eval-agent",
+        assistant_id: "eval-agent",
         input: {
-          "session_id": sessionId
-        }
-      })
+          session_id: sessionId,
+        },
+      }),
     });
   },
 });
@@ -171,11 +171,11 @@ export const runCode = action({
 
     return result
       ? {
-        status: !result.isError, //true if API call was successful
-        executionTime: result.executionTime,
-        isError: !!result.stderr, //true if there's an error in the code
-        output: result.stderr || result.stdout || "",
-      }
+          status: !result.isError, //true if API call was successful
+          executionTime: result.executionTime,
+          isError: !!result.stderr, //true if there's an error in the code
+          output: result.stderr || result.stdout || "",
+        }
       : undefined;
   },
 });
@@ -281,13 +281,19 @@ export const getSessionMetadata = action({
     sessionId: v.id("sessions"),
   },
   returns: v.object({
-    session_id: v.id("sessions"),
-    question_title: v.string(),
-    question_content: v.string(),
-    agent_thread_id: v.string(),
-    assistant_id: v.string(),
-    session_status: v.string(),
-    question_id: v.id("questions"),
+    sessionId: v.id("sessions"),
+    questionId: v.id("questions"),
+    questionTitle: v.string(),
+    questionContent: v.string(),
+    agentThreadId: v.string(),
+    assistantId: v.string(),
+    sessionStatus: v.string(),
+    voice: v.string(),
+    interviewType: v.string(),
+    interviewMode: v.string(),
+    interviewFlow: v.array(v.string()),
+    programmingLanguage: v.union(v.string(), v.null()),
+    metadata: v.record(v.string(), v.any()),
   }),
   handler: async (ctx, { sessionId }) => {
     const session = await ctx.runQuery(internal.sessions.getByIdInternal, { sessionId });
@@ -302,14 +308,33 @@ export const getSessionMetadata = action({
       throw new ConvexError({ name: "QuestionNotFound", message: "Question not found" });
     }
 
+    const {
+      agentThreadId,
+      assistantId,
+      sessionStatus,
+      voice,
+      interviewType,
+      interviewMode,
+      interviewFlow,
+      programmingLanguage,
+      metadata,
+    } = session;
+    const { _id: questionId, title: questionTitle, question: questionContent } = question;
+
     return {
-      session_id: sessionId,
-      question_title: question.title,
-      question_content: question.question,
-      agent_thread_id: session.agentThreadId,
-      assistant_id: session.assistantId,
-      session_status: session.sessionStatus,
-      question_id: question._id,
+      sessionId,
+      questionId,
+      questionTitle,
+      questionContent,
+      agentThreadId,
+      assistantId,
+      sessionStatus,
+      voice,
+      interviewType,
+      interviewMode,
+      interviewFlow,
+      programmingLanguage,
+      metadata,
     };
   },
 });

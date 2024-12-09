@@ -208,30 +208,25 @@ class CodeSession(BaseSession[CodeSessionEventTypes, AgentState]):
         when the initial state is received.
         """
 
-        if prev.current_stage != curr.current_stage:
+        if prev.current_stage_idx != curr.current_stage_idx:
             assert (
                 self._session_id is not None
             ), "Session ID must be set before committing events"
 
-            logger.info(
-                f"Committing stage_switched code session event: {curr.current_stage.value}"
-            )
+            logger.info("Committing stage_switched code session event")
+            await asyncio.sleep(3)  # allow agent to finish the last sentence (if any)
 
-            await asyncio.sleep(5)  # allow agent to finish the last sentence (if any)
             self._api.mutation_unsafe(
                 name="codeSessionEvents:commitCodeSessionEvent",
                 args={
                     "sessionId": self._session_id,
                     "event": {
                         "type": "stage_switched",
-                        "data": {"stage": curr.current_stage.value},
+                        "data": {"stageIdx": curr.current_stage_idx},
                     },
                 },
             )
-
-            logger.info(
-                f"Committed stage_switched code session event: {curr.current_stage}"
-            )
+            logger.info("Committed stage_switched code session event")
 
     async def setup(
         self,

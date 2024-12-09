@@ -4,13 +4,22 @@ export interface Language {
 }
 
 export enum InterviewStage {
+  Intro = "introduction",
   Background = "background",
   Coding = "coding",
   Evaluation = "evaluation",
   End = "end",
 }
 
+export type InterviewFlow = {
+  [InterviewStage.Intro]: boolean;
+  [InterviewStage.Background]: boolean;
+  [InterviewStage.Coding]: boolean;
+  [InterviewStage.Evaluation]: boolean;
+};
+
 export const STAGE_NAME_MAPPING: Record<InterviewStage, string> = {
+  [InterviewStage.Intro]: "Introduction",
   [InterviewStage.Background]: "Background Discussion",
   [InterviewStage.Coding]: "Coding",
   [InterviewStage.Evaluation]: "Evaluation",

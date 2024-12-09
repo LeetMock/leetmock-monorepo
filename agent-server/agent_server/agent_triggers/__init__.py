@@ -94,16 +94,11 @@ class AgentTrigger(BaseModel):
         """Triggers the agent manually by adding a trigger event to the queue."""
         await self._event_q.put(("trigger", None))
 
-    async def add_messages(self, messages: List[AnyMessage]):
-        await self._event_q.put(("add_messages", MessageWrapper(messages=messages)))
+    def add_user_message(self, messages: List[AnyMessage]):
+        self._event_q.put_nowait(("add_user_message", messages))
 
-    async def add_human_message(self, message: str):
-        messages = [HumanMessage(content=message)]
-        await self.add_messages(messages)  # type: ignore
-
-    async def add_ai_message(self, message: str):
-        messages = [AIMessage(content=message)]
-        await self.add_messages(messages)  # type: ignore
+    def add_ai_message(self, messages: List[AnyMessage]):
+        self._event_q.put_nowait(("add_ai_message", messages))
 
     def _create_event_handler(self, event: BaseEvent):
         """Creates an event handler for a specific event type.
@@ -153,6 +148,9 @@ class AgentTrigger(BaseModel):
 
             logger.info(f"Receiving event: {event} with data: {data}")
             should_trigger = await self.stream.notify_agent(event, data)
+
+            if event == "add_user_message" and should_trigger == False:
+                assert False
 
             if should_trigger:
                 is_user_message = event == "user_message"

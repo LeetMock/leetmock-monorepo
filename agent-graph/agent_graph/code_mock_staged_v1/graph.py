@@ -1,7 +1,6 @@
 from collections import defaultdict
 from typing import List, OrderedDict, Set, cast
 
-from agent_graph.code_mock_staged_v1 import coding_stage, intro_stage
 from agent_graph.code_mock_staged_v1.constants import (
     AgentConfig,
     StageTypes,
@@ -12,15 +11,21 @@ from agent_graph.code_mock_staged_v1.constants import (
     get_next_stage,
     get_step_map,
 )
+from agent_graph.code_mock_staged_v1.subgraphs import (
+    intro_stage,
+    coding_stage,
+    background_stage,
+    eval_stage,
+)
 from agent_graph.event_descriptors import EVENT_DESCRIPTORS, EventDescriptor
 from agent_graph.prompts import JOIN_CALL_MESSAGE, RECONNECT_MESSAGE
-from agent_graph.types import EventMessageState, Signal, Step
-from agent_graph.utils import with_event_reset, with_trigger_reset
+from agent_graph.types import EventMessageState, Step
+from agent_graph.utils import get_configurable, with_event_reset, with_trigger_reset
 from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 from pydantic.v1 import Field
-
+from langchain_core.runnables import RunnableConfig
 from libs.convex.convex_types import (
     CodeSessionContentChangedEvent,
     CodeSessionTestcaseChangedEvent,
@@ -37,9 +42,9 @@ class AgentState(EventMessageState):
         description="Whether the agent is initialized",
     )
 
-    current_stage: StageTypes = Field(
-        default=StageTypes.BACKGROUND,
-        description="Current stage of the agent",
+    current_stage_idx: int = Field(
+        default=0,
+        description="Current stage index of the agent",
     )
 
     events: List[EventDescriptor] = Field(
@@ -67,6 +72,7 @@ class AgentState(EventMessageState):
 async def init_state(_: AgentState):
     return dict(
         initialized=True,
+        current_stage_idx=0,
         messages=[HumanMessage(content=JOIN_CALL_MESSAGE)],
         events=EVENT_DESCRIPTORS,
         steps=get_step_map(),
@@ -92,6 +98,15 @@ async def on_event(
         messages = cast(MessageWrapper, state.event_data).messages
         return with_event_reset(trigger=True, messages=messages)
 
+    if state.event == "add_user_message":
+        messages = cast(List, state.event_data)
+        print("add_user_message", messages)
+        return with_event_reset(trigger=True, messages=messages)
+
+    if state.event == "add_ai_message":
+        messages = cast(List, state.event_data)
+        return with_event_reset(trigger=False, messages=messages)
+
     if state.event == "reminder":
         messages = HumanMessage(
             content="(Now the user has been silent in a while, ask them if they are doing well.)"
@@ -99,17 +114,17 @@ async def on_event(
         return with_event_reset(trigger=True, messages=messages)
 
     if state.event == "testcase_changed":
-        event_data = cast(CodeSessionTestcaseChangedEvent, state.event_data)
+        event_data = cast(CodeSessionTestcaseChangedEvent, state.event_data)  # type: ignore
         messages = format_testcase_changed_notification_messages(event_data)
         return with_event_reset(trigger=False, messages=messages)
 
     if state.event == "user_testcase_executed":
-        event_data = cast(CodeSessionUserTestcaseExecutedEvent, state.event_data)
+        event_data = cast(CodeSessionUserTestcaseExecutedEvent, state.event_data)  # type: ignore
         messages = format_user_testcase_executed_notification_messages(event_data)
         return with_event_reset(trigger=False, messages=messages)
 
     if state.event == "content_changed":
-        event_data = cast(CodeSessionContentChangedEvent, state.event_data)
+        event_data = cast(CodeSessionContentChangedEvent, state.event_data)  # type: ignore
         messages = format_content_changed_notification_messages(event_data)
         return with_event_reset(trigger=False, messages=messages)
 
@@ -121,21 +136,34 @@ async def on_trigger(state: AgentState):
     return with_trigger_reset()
 
 
-async def decide_next_stage(state: AgentState):
-    stage_steps = set([step.name for step in state.steps[state.current_stage]])
+async def decide_next_stage(state: AgentState, config: RunnableConfig):
+    agent_config = get_configurable(AgentConfig, config)
+
+    if state.current_stage_idx >= len(agent_config.stages):
+        return dict(trigger=False)
+
+    stages = agent_config.stages
+    current_stage = stages[state.current_stage_idx]
+
+    # Check if all steps in the current stage are completed
+    stage_steps = set([step.name for step in state.steps[current_stage]])
     completed_stage_steps = len(stage_steps - state.completed_steps) == 0
+
+    # If not all steps are completed, stay in the current stage
+    if not completed_stage_steps:
+        return dict(trigger=False)
+
+    # Move to the next stage
     next_stage = (
-        get_next_stage(state.current_stage)
-        if completed_stage_steps
-        else state.current_stage
+        stages[state.current_stage_idx + 1]
+        if state.current_stage_idx + 1 < len(stages)
+        else StageTypes.END
     )
 
-    if next_stage == StageTypes.EVAL:
-        next_stage = StageTypes.CODING
-
+    # Format the stage transition messages
     messages = (
         format_stage_transition_messages(next_stage)
-        if state.current_stage != next_stage
+        if current_stage != next_stage
         else []
     )
 
@@ -161,10 +189,11 @@ async def should_trigger_event(state: AgentState):
     return END
 
 
-async def select_stage(state: AgentState):
-    if state.current_stage == StageTypes.END:
+async def select_stage(state: AgentState, config: RunnableConfig):
+    agent_config = get_configurable(AgentConfig, config)
+    if state.current_stage_idx == len(agent_config.stages):
         return END
-    return state.current_stage.value
+    return agent_config.stages[state.current_stage_idx]
 
 
 def create_graph():
@@ -175,8 +204,10 @@ def create_graph():
         .add_node("on_event", on_event)
         .add_node("on_trigger", on_trigger)
         .add_node("decide_next_stage", decide_next_stage)
-        .add_node(StageTypes.BACKGROUND, intro_stage.create_compiled_graph())
+        .add_node(StageTypes.INTRO, intro_stage.create_compiled_graph())
+        .add_node(StageTypes.BACKGROUND, background_stage.create_compiled_graph())
         .add_node(StageTypes.CODING, coding_stage.create_compiled_graph())
+        .add_node(StageTypes.EVAL, eval_stage.create_compiled_graph())
         # edges
         .add_conditional_edges(
             source=START,
@@ -192,10 +223,18 @@ def create_graph():
         .add_conditional_edges(
             source="on_trigger",
             path=select_stage,
-            path_map=[StageTypes.BACKGROUND, StageTypes.CODING, END],
+            path_map=[
+                StageTypes.INTRO,
+                StageTypes.BACKGROUND,
+                StageTypes.CODING,
+                StageTypes.EVAL,
+                END,
+            ],
         )
+        .add_edge(StageTypes.INTRO, "decide_next_stage")
         .add_edge(StageTypes.BACKGROUND, "decide_next_stage")
         .add_edge(StageTypes.CODING, "decide_next_stage")
+        .add_edge(StageTypes.EVAL, "decide_next_stage")
         .add_edge("decide_next_stage", END)
     )
 

@@ -5,8 +5,6 @@
     "code-mock-staged-v1-graph": "./agent-graph/agent_graph/code_mock_staged_v1/graph.py:graph",
     "template": "./agent-graph/agent_graph/template/graph.py:graph",
     "eval-agent": "./agent-graph/agent_graph/eval_agent/graph.py:graph",
-    "coding_stage": "./agent-graph/agent_graph/code_mock_staged_v1/coding_stage.py:stage_subgraph",
-    "intro_stage": "./agent-graph/agent_graph/code_mock_staged_v1/intro_stage.py:stage_subgraph",
     "stage_tracker": "./agent-graph/agent_graph/code_mock_staged_v1/stage_tracker.py:stage_subgraph"
   },
   "env": ".env",

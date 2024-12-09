@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.request_admins_create_user_profile_args_role import RequestAdminsCreateUserProfileArgsRole
+from convex_client.models.response_eval_get_by_session_id import ResponseEvalGetBySessionId
 
-class TestRequestAdminsCreateUserProfileArgsRole(unittest.TestCase):
-    """RequestAdminsCreateUserProfileArgsRole unit test stubs"""
+class TestResponseEvalGetBySessionId(unittest.TestCase):
+    """ResponseEvalGetBySessionId unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,24 +25,29 @@ class TestRequestAdminsCreateUserProfileArgsRole(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> RequestAdminsCreateUserProfileArgsRole:
-        """Test RequestAdminsCreateUserProfileArgsRole
+    def make_instance(self, include_optional) -> ResponseEvalGetBySessionId:
+        """Test ResponseEvalGetBySessionId
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `RequestAdminsCreateUserProfileArgsRole`
+        # uncomment below to create an instance of `ResponseEvalGetBySessionId`
         """
-        model = RequestAdminsCreateUserProfileArgsRole()
+        model = ResponseEvalGetBySessionId()
         if include_optional:
-            return RequestAdminsCreateUserProfileArgsRole(
+            return ResponseEvalGetBySessionId(
+                status = 'success',
+                error_message = '',
+                error_data = None,
+                value = None
             )
         else:
-            return RequestAdminsCreateUserProfileArgsRole(
+            return ResponseEvalGetBySessionId(
+                status = 'success',
         )
         """
 
-    def testRequestAdminsCreateUserProfileArgsRole(self):
-        """Test RequestAdminsCreateUserProfileArgsRole"""
+    def testResponseEvalGetBySessionId(self):
+        """Test ResponseEvalGetBySessionId"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

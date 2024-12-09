@@ -61,6 +61,13 @@ class TestActionApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_actions_trigger_eval_post(self) -> None:
+        """Test case for api_run_actions_trigger_eval_post
+
+        Calls a action at the path actions.js:triggerEval
+        """
+        pass
+
 
 if __name__ == '__main__':
     unittest.main()

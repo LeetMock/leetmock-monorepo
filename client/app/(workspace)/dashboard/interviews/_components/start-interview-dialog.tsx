@@ -13,11 +13,11 @@ import {
 import { Wait } from "@/components/wait";
 import { api } from "@/convex/_generated/api";
 import { SessionType, useSessionCreateModal } from "@/hooks/use-session-create-modal";
-import { cn } from "@/lib/utils";
+import { allDefined, cn } from "@/lib/utils";
 import { useAction, useMutation, useQuery } from "convex/react";
 import { Code, Database, Lock, MoveRight, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { CodeInterviewConfig } from "./code-interview-config";
 import { CodeQuestionViewer } from "./code-question-viewer";
@@ -34,7 +34,7 @@ interface SessionMeta {
 const interviewTypes: SessionMeta[] = [
   {
     title: "Coding Interview",
-    type: SessionType.CodeInterview,
+    type: SessionType.Coding,
     description: "Practice algorithmic problem-solving",
     icon: <Code className="w-4 h-4" />,
     available: true,
@@ -87,12 +87,13 @@ export const InterviewTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & 
   onClick,
   ...props
 }) => {
-  const { type: currentType, setType } = useSessionCreateModal();
+  const { sessionConfig, setSessionConfig } = useSessionCreateModal();
+  const { type: currentType } = sessionConfig;
 
   const handleSelect = (e: React.MouseEvent<HTMLDivElement>) => {
     onClick?.(e);
     if (!available) return;
-    setType(currentType === type ? undefined : type);
+    setSessionConfig({ type: currentType === type ? undefined : type });
   };
 
   return (
@@ -148,40 +149,59 @@ export const InterviewTypeSelection: React.FC = () => {
 };
 
 export const StartInterviewDialog: React.FC = () => {
-  const {
-    maxStep,
-    codeInterview,
-    codeInterviewConfig,
-    updateCodeInterview,
-    updateCodeInterviewConfig: updateConfig,
-    reset,
-    setType,
-  } = useSessionCreateModal();
   const router = useRouter();
+  const [currentStep, setCurrentStep] = useState(0);
+  const [startDialogOpen, setStartDialogOpen] = useState(false);
+
+  const {
+    sessionConfig,
+    hasConfiguredSession,
+    hasSetInterviewType,
+    hasSetProblem,
+    setSessionConfig,
+    reset,
+  } = useSessionCreateModal();
+  const { type, questionId, interviewFlow, language, voice, interviewTime, mode } = sessionConfig;
+
+  const maxStep = useMemo(() => {
+    if (!hasSetInterviewType) return 0;
+    if (!hasSetProblem) return 1;
+    if (!hasConfiguredSession) return 2;
+    return 3;
+  }, [hasSetInterviewType, hasSetProblem, hasConfiguredSession]);
+
   const questions = useQuery(api.questions.getAll);
   const createAgentThread = useAction(api.actions.createAgentThread);
   const createSession = useMutation(api.sessions.createCodeSession);
 
-  const [currentStep, setCurrentStep] = useState(0);
-  const [startDialogOpen, setStartDialogOpen] = useState(false);
-
   const handleSessionCreate = useCallback(async () => {
     if (!questions) return;
-    const question = questions.find((q) => q._id === codeInterview.questionId);
+    const question = questions.find((q) => q._id === questionId);
     if (!question) return;
 
     const promise = createAgentThread({ graphId: "code-mock-staged-v1-db" })
       .then(({ threadId, assistantId }) => {
+        if (
+          !type ||
+          !mode ||
+          !interviewFlow ||
+          !language ||
+          !interviewTime ||
+          !voice ||
+          !questionId
+        )
+          return;
+
         return createSession({
-          questionId: codeInterview.questionId!,
+          questionId: questionId,
           agentThreadId: threadId,
           assistantId: assistantId,
-          interviewType: "coding",
-          interviewMode: codeInterviewConfig.mode!,
-          interviewFlow: codeInterviewConfig.interviewFlow!,
-          programmingLanguage: codeInterviewConfig.language!,
-          timeLimit: codeInterviewConfig.interviewTime!,
-          voice: codeInterviewConfig.voice!,
+          interviewType: type,
+          interviewMode: mode,
+          interviewFlow: Object.keys(interviewFlow).filter((key) => interviewFlow[key]),
+          programmingLanguage: language,
+          timeLimit: interviewTime,
+          voice: voice,
         });
       })
       .then((sessionId) => {
@@ -198,11 +218,16 @@ export const StartInterviewDialog: React.FC = () => {
   }, [
     questions,
     createAgentThread,
-    codeInterview,
-    codeInterviewConfig,
+    questionId,
+    type,
+    mode,
+    interviewFlow,
+    language,
+    interviewTime,
+    voice,
     createSession,
-    router,
     reset,
+    router,
   ]);
 
   return (
@@ -247,7 +272,7 @@ export const StartInterviewDialog: React.FC = () => {
                   <CodeQuestionViewer
                     questions={questions}
                     onQuestionSelected={(questionId) => {
-                      updateCodeInterview({ questionId });
+                      setSessionConfig({ questionId });
                       setCurrentStep(1);
                     }}
                   />
@@ -258,8 +283,7 @@ export const StartInterviewDialog: React.FC = () => {
           {currentStep === 2 && (
             <div className="flex flex-col h-[calc(100vh-20rem)]">
               <CodeInterviewConfig
-                onConfigUpdate={updateConfig}
-                selectedQuestion={questions?.find((q) => q._id === codeInterview.questionId)}
+                selectedQuestion={questions?.find((q) => q._id === questionId)}
               />
             </div>
           )}

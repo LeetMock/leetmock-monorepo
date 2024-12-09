@@ -186,21 +186,19 @@ export const createCodeSession = userMutation({
 
     const question = await ctx.table("questions").getX(questionId);
     const sessionId = await ctx.table("sessions").insert({
+      userId: ctx.user.subject,
+      questionId,
       agentThreadId,
       assistantId,
+      sessionStatus: "not_started",
       interviewMode,
       interviewType,
-      meta: {
-        interviewFlow: interviewFlow,
-        programmingLanguage: programmingLanguage,
-        metaData: {},
-      },
-      questionId,
-      userId: ctx.user.subject,
       timeLimit,
-      sessionStatus: "not_started",
       evalReady: false,
-      voice
+      voice,
+      interviewFlow,
+      programmingLanguage,
+      metadata: {},
     });
 
     const initialContent = CODE_TEMPLATES["python"](
@@ -226,7 +224,7 @@ export const createCodeSession = userMutation({
         output: "",
         isError: false,
       },
-      stage: "intro",
+      currentStageIdx: 0,
       testcases: testCases,
     });
 

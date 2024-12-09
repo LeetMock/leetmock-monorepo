@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 **interval** | [**RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval**](RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval.md) |  | [optional] 
 **latest_subscription_id** | **str** |  | [optional] 
 **minutes_remaining** | **float** |  | [optional] 
-**plan_name** | [**RequestAdminsCreateUserProfileArgsSubscription**](RequestAdminsCreateUserProfileArgsSubscription.md) |  | [optional] 
+**plan_name** | [**RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName**](RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.md) |  | [optional] 
 **refresh_date** | **float** |  | [optional] 
 **subscription_status** | **str** |  | [optional] 
 

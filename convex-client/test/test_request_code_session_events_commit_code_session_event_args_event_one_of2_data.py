@@ -35,11 +35,11 @@ class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data(unit
         model = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data()
         if include_optional:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data(
-                stage = ''
+                stage_idx = 1.337
             )
         else:
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data(
-                stage = '',
+                stage_idx = 1.337,
         )
         """
 
