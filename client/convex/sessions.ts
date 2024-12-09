@@ -224,7 +224,7 @@ export const createCodeSession = userMutation({
         output: "",
         isError: false,
       },
-      stage: "intro",
+      currentStageIdx: 0,
       testcases: testCases,
     });
 

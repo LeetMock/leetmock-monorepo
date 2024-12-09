@@ -70,7 +70,7 @@ export const codeSessionEventSchemas = {
   stage_switched: v.object({
     type: v.literal("stage_switched"),
     data: v.object({
-      stage: v.string(),
+      stageIdx: v.number(),
     }),
   }),
 };

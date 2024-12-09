@@ -21,6 +21,7 @@ import {
   Code,
   HelpCircle,
   LucideIcon,
+  MessageCircleQuestion,
   MessageSquare,
   PanelLeft,
 } from "lucide-react";
@@ -28,82 +29,44 @@ import { useEffect, useMemo, useState } from "react";
 import { TimerCountdown } from "./timer-countdown";
 import { InterviewStage } from "@/lib/constants";
 
-type TimelineStep = {
-  id: InterviewStage | undefined;
-  title: string;
-  icon: LucideIcon;
-  completedInMinutes: number | undefined;
+const STAGE_TO_ICON_MAP: Record<InterviewStage, LucideIcon> = {
+  [InterviewStage.Intro]: MessageCircleQuestion,
+  [InterviewStage.Background]: MessageSquare,
+  [InterviewStage.Coding]: Code,
+  [InterviewStage.Evaluation]: HelpCircle,
+  [InterviewStage.End]: CheckCircle,
 };
 
-const timelineSteps: TimelineStep[] = [
-  {
-    id: InterviewStage.Background,
-    title: "Background Discussion",
-    icon: MessageSquare,
-    completedInMinutes: 2,
-  },
-  {
-    id: InterviewStage.Coding,
-    title: "Coding Challenge",
-    icon: Code,
-    completedInMinutes: 24,
-  },
-  {
-    id: InterviewStage.Evaluation,
-    title: "Q & A",
-    icon: HelpCircle,
-    completedInMinutes: 3,
-  },
-];
-
-const endStep = {
-  id: InterviewStage.End,
-  title: "",
-  icon: CheckCircle,
-  completedInMinutes: undefined,
+const STAGE_TO_TITLE_MAP: Record<InterviewStage, string> = {
+  [InterviewStage.Intro]: "Introduction",
+  [InterviewStage.Background]: "Background",
+  [InterviewStage.Coding]: "Coding",
+  [InterviewStage.Evaluation]: "Evaluation",
+  [InterviewStage.End]: "End",
 };
 
 export const WorkspaceSidebar: React.FC<{
   sessionId: Id<"sessions">;
 }> = ({ sessionId }) => {
   const { collapsed, setCollapsed } = useSessionSidebar();
+  const [timeLeft, setTimeLeft] = useState<number>(0);
 
   const session = useQuery(api.sessions.getById, { sessionId });
   const codeSessionState = useQuery(api.codeSessionStates.getSessionStateBySessionId, {
     sessionId,
   });
 
-  const activeTaskIdx = useMemo(() => {
-    let taskIdx = 0;
+  const activeTaskIdx = codeSessionState?.currentStageIdx ?? 0;
+  const timelineSteps: InterviewStage[] | undefined = !isDefined(session)
+    ? undefined
+    : (session.interviewFlow as InterviewStage[]);
 
-    if (isDefined(codeSessionState)) {
-      const sessionStage = codeSessionState.stage;
-
-      timelineSteps.forEach((step, idx) => {
-        if (step.id === sessionStage) {
-          taskIdx = idx;
-        }
-      });
-
-      if (sessionStage === InterviewStage.End) {
-        taskIdx = timelineSteps.length;
-      }
-    }
-
-    return taskIdx;
-  }, [codeSessionState]);
-
-  const isEndStage = activeTaskIdx === timelineSteps.length;
-
-  const totalTasks = timelineSteps.length;
-  const progressPercentage = (activeTaskIdx / totalTasks) * 100;
-
-  const [timeLeft, setTimeLeft] = useState<number>(0);
-
-  const totalTime = useMemo(() => {
-    if (!isDefined(session)) return minutesToSeconds(60);
-    return minutesToSeconds(session.timeLimit);
-  }, [session]);
+  const isEndStage = isDefined(timelineSteps) && activeTaskIdx === timelineSteps.length;
+  const totalTasks = timelineSteps?.length ?? 0;
+  const progressPercentage = isDefined(timelineSteps) ? (activeTaskIdx / totalTasks) * 100 : 0;
+  const totalTime = !isDefined(session)
+    ? minutesToSeconds(60)
+    : minutesToSeconds(session.timeLimit);
 
   useEffect(() => {
     if (!isDefined(session)) return;
@@ -160,7 +123,7 @@ export const WorkspaceSidebar: React.FC<{
           )}
         </AnimatePresence>
       </motion.div>
-
+      {/* Sidebar Content */}
       <div className="w-full h-full flex flex-col justify-between">
         <div className="space-y-6 pt-4">
           <AnimatePresence mode="wait">
@@ -219,34 +182,36 @@ export const WorkspaceSidebar: React.FC<{
             )}
           </AnimatePresence>
           {/* Interview timeline */}
-          <motion.div
-            className={cn("mx-4", collapsed && "mx-2")}
-            animate={{ marginLeft: collapsed ? "0.5rem" : "1rem" }}
-            transition={{ duration: 0.2 }}
-          >
-            <Timeline.Root>
-              {timelineSteps.map((step, index) => (
+          {timelineSteps && (
+            <motion.div
+              className={cn("mx-4", collapsed && "mx-2")}
+              animate={{ marginLeft: collapsed ? "0.5rem" : "1rem" }}
+              transition={{ duration: 0.2 }}
+            >
+              <Timeline.Root>
+                {timelineSteps.map((step, index) => (
+                  <TimelineItem
+                    key={step}
+                    step={step}
+                    completed={index < activeTaskIdx}
+                    isActive={index === activeTaskIdx}
+                    isLastItem={false}
+                    collapsed={collapsed}
+                  />
+                ))}
                 <TimelineItem
-                  key={step.title}
-                  step={step}
-                  completed={index < activeTaskIdx}
-                  isActive={index === activeTaskIdx}
-                  isLastItem={false}
+                  key={InterviewStage.End}
+                  step={InterviewStage.End}
+                  completed={isEndStage}
+                  isActive={isEndStage}
+                  isLastItem={true}
                   collapsed={collapsed}
                 />
-              ))}
-              <TimelineItem
-                key={endStep.title}
-                step={endStep}
-                completed={isEndStage}
-                isActive={isEndStage}
-                isLastItem={true}
-                collapsed={collapsed}
-              />
-            </Timeline.Root>
-          </motion.div>
+              </Timeline.Root>
+            </motion.div>
+          )}
         </div>
-
+        {/* Timer */}
         <div className="w-full p-2 border-t">
           <TimerCountdown timeLeft={timeLeft} collapsed={collapsed} totalTime={totalTime} />
         </div>
@@ -256,7 +221,7 @@ export const WorkspaceSidebar: React.FC<{
 };
 
 const TimelineItem: React.FC<{
-  step: TimelineStep;
+  step: InterviewStage;
   completed: boolean;
   isActive: boolean;
   isLastItem: boolean;
@@ -266,12 +231,12 @@ const TimelineItem: React.FC<{
     return (
       <div className="absolute -top-1 left-7 z-10 hidden group-hover:block min-w-60">
         <div className="flex flex-col gap-2 ml-2.5 px-2 py-1.5 bg-background rounded-md border shadow-sm">
-          <Timeline.Title>{step.title}</Timeline.Title>
-          {completed && step.completedInMinutes && (
+          <Timeline.Title>{STAGE_TO_TITLE_MAP[step]}</Timeline.Title>
+          {completed && (
             <div className="flex flex-col gap-2 pb-1">
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Clock className="h-3 w-3" />
-                <span>Completed in {step.completedInMinutes} minutes</span>
+                <span>Completed in 22 minutes</span>
               </div>
             </div>
           )}
@@ -283,12 +248,12 @@ const TimelineItem: React.FC<{
   const expandedView = useMemo(() => {
     return (
       <Timeline.Content className="space-y-2 pb-4">
-        <Timeline.Title>{step.title}</Timeline.Title>
+        <Timeline.Title>{STAGE_TO_TITLE_MAP[step]}</Timeline.Title>
         <div className="flex flex-col gap-2">
-          {completed && step.completedInMinutes && (
+          {completed && (
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Clock className="h-3 w-3" />
-              <span>Completed in {step.completedInMinutes} minutes</span>
+              <span>Completed in 22 minutes</span>
             </div>
           )}
         </div>
@@ -305,7 +270,7 @@ const TimelineItem: React.FC<{
       )}
     >
       <Timeline.Connector
-        icon={step.icon}
+        icon={STAGE_TO_ICON_MAP[step]}
         isLastItem={isLastItem}
         completed={completed}
         className="cursor-pointer"

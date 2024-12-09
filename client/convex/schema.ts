@@ -62,7 +62,7 @@ const schema = defineEntSchema({
     .index("by_user_id", ["userId"])
     .index("by_user_id_and_status", ["userId", "sessionStatus"]),
   codeSessionStates: defineEnt({
-    stage: v.string(),
+    currentStageIdx: v.number(),
     editor: v.object({
       language: v.string(),
       content: v.string(),

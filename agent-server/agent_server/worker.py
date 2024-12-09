@@ -156,6 +156,7 @@ async def entrypoint(ctx: JobContext):
             # fast_model="claude-3-5-haiku-latest",
             # smart_model="claude-3-5-sonnet-latest",
             convex_url=convex_api.convex_url,
+            stages=session.session_metadata.interview_flow,
         ),
         session=session,
         graph=create_graph(),

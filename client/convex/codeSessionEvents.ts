@@ -58,11 +58,11 @@ async function handleStageSwitchedEvent(
   sessionState: EntWriter<"codeSessionStates">,
   e: Extract<CodeSessionEvent, { type: "stage_switched" }>
 ) {
-  const { stage } = e.data;
+  const { stageIdx } = e.data;
 
-  console.log("stage switched event", stage);
+  console.log("stage switched event", stageIdx);
   await sessionState.patch({
-    stage,
+    currentStageIdx: stageIdx,
   });
 }
 
