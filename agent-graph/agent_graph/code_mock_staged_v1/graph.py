@@ -12,20 +12,21 @@ from agent_graph.code_mock_staged_v1.constants import (
     get_step_map,
 )
 from agent_graph.code_mock_staged_v1.subgraphs import (
-    intro_stage,
-    coding_stage,
     background_stage,
+    coding_stage,
     eval_stage,
+    intro_stage,
 )
 from agent_graph.event_descriptors import EVENT_DESCRIPTORS, EventDescriptor
 from agent_graph.prompts import JOIN_CALL_MESSAGE, RECONNECT_MESSAGE
 from agent_graph.types import EventMessageState, Step
 from agent_graph.utils import get_configurable, with_event_reset, with_trigger_reset
 from langchain_core.messages import HumanMessage
+from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 from pydantic.v1 import Field
-from langchain_core.runnables import RunnableConfig
+
 from libs.convex.convex_types import (
     CodeSessionContentChangedEvent,
     CodeSessionTestcaseChangedEvent,
@@ -108,25 +109,33 @@ async def on_event(
         return with_event_reset(trigger=False, messages=messages)
 
     if state.event == "reminder":
-        messages = HumanMessage(
-            content="(Now the user has been silent in a while, ask them if they are doing well.)"
+        return with_event_reset(
+            trigger=True,
+            messages=HumanMessage(
+                content="(Now the user has been silent in a while, ask them if they are doing well.)"
+            ),
         )
-        return with_event_reset(trigger=True, messages=messages)
 
     if state.event == "testcase_changed":
-        event_data = cast(CodeSessionTestcaseChangedEvent, state.event_data)  # type: ignore
-        messages = format_testcase_changed_notification_messages(event_data)
-        return with_event_reset(trigger=False, messages=messages)
+        event_data = cast(CodeSessionTestcaseChangedEvent, state.event_data)
+        return with_event_reset(
+            trigger=False,
+            messages=format_testcase_changed_notification_messages(event_data),
+        )
 
     if state.event == "user_testcase_executed":
-        event_data = cast(CodeSessionUserTestcaseExecutedEvent, state.event_data)  # type: ignore
-        messages = format_user_testcase_executed_notification_messages(event_data)
-        return with_event_reset(trigger=False, messages=messages)
+        event_data = cast(CodeSessionUserTestcaseExecutedEvent, state.event_data)
+        return with_event_reset(
+            trigger=False,
+            messages=format_user_testcase_executed_notification_messages(event_data),  # type: ignore
+        )
 
     if state.event == "content_changed":
-        event_data = cast(CodeSessionContentChangedEvent, state.event_data)  # type: ignore
-        messages = format_content_changed_notification_messages(event_data)
-        return with_event_reset(trigger=False, messages=messages)
+        event_data = cast(CodeSessionContentChangedEvent, state.event_data)
+        return with_event_reset(
+            trigger=False,
+            messages=format_content_changed_notification_messages(event_data),  # type: ignore
+        )
 
     return with_event_reset(trigger=False)
 

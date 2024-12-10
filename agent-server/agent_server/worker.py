@@ -34,8 +34,8 @@ from agent_server.utils.messages import (
 from dotenv import find_dotenv, load_dotenv
 from livekit.agents import cli  # type: ignore
 from livekit.agents import JobContext, WorkerOptions, llm, utils
-from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.agents.llm import ChatMessage
+from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.agents.worker import _DefaultLoadCalc
 from livekit.plugins import deepgram, openai, silero
 from livekit.rtc import DataPacket
