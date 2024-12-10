@@ -16,7 +16,6 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
   const connectionState = useConnectionState();
 
   const { localParticipant } = useLocalParticipant();
-  const { agentAudioTrack } = useAgentData();
 
   const session = useQuery(api.sessions.getById, { sessionId });
   const codeSessionState = useQuery(api.codeSessionStates.get, {

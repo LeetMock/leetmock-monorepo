@@ -278,7 +278,8 @@ class CodeSession(BaseSession[CodeSessionEventTypes, AgentState]):
         # Observe for agent state changes
         agent_state_emitter.on("state_changed", self._create_handle_state_changed_task)
         agent_state_emitter.on(
-            "state_initialized", self._create_handle_state_changed_task
+            "state_initialized",
+            lambda s: self._create_handle_state_changed_task(None, s),
         )
 
         content_changed_watcher = query_watcher(

@@ -1,29 +1,28 @@
 import { Tooltip } from "@/components/tooltip";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Wait } from "@/components/wait";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { useAgent } from "@/hooks/use-agent";
+import { useAgentChat } from "@/hooks/use-agent-chat";
 import { useConnection } from "@/hooks/use-connection";
 import { useEditorStore } from "@/hooks/use-editor-store";
-import { useResizePanel } from "@/hooks/use-resize-panel";
 import { useSessionSidebar } from "@/hooks/use-session-sidebar";
+import { useUserProfile } from "@/hooks/use-user-profile";
 import { cn, isDefined } from "@/lib/utils";
 import { useConnectionState, useLocalParticipant } from "@livekit/components-react";
 import { useQuery } from "convex/react";
 import { ConnectionState } from "livekit-client";
-import { LucideFileText, PanelLeftOpen, MessageCircle, X } from "lucide-react";
+import { MessageCircle, PanelLeftOpen, X } from "lucide-react";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useWindowSize } from "usehooks-ts";
-import { CodeEditorPanel } from "./code-editor-panel";
-import { CodeQuestionPanel } from "./code-question-panel";
 import { WorkspaceSidebar } from "./workspace-sidebar";
 import { WorkspaceToolbar } from "./workspace-toolbar";
-import { useAgent } from "@/hooks/use-agent";
-import { useAgentChat } from "@/hooks/use-agent-chat";
-import { Input } from "@/components/ui/input";
-import { useUserProfile } from "@/hooks/use-user-profile";
+import { CodeView } from "./code-view";
+import { ChatView } from "./chat-view";
 
 export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { collapsed, setCollapsed } = useSessionSidebar();
@@ -36,14 +35,6 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
   const { reset } = useEditorStore();
 
   const connectionState = useConnectionState();
-  const { width: windowWidth = 300 } = useWindowSize();
-  const { size, isResizing, resizeHandleProps } = useResizePanel({
-    defaultSize: 400,
-    minSize: 200,
-    maxSize: windowWidth - 300,
-    direction: "horizontal",
-    storageId: "leetmock.workspace.code-question",
-  });
 
   const { isAgentConnected } = useAgent(sessionId);
 
@@ -89,41 +80,8 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
           </div>
         </div>
         <div className="w-full h-full flex justify-center items-center p-2 pt-0 relative">
-          <Wait
-            data={{ question }}
-            fallback={
-              <div className="flex flex-col space-y-2 items-center justify-center h-full w-full border rounded-md shadow-md bg-background">
-                <LucideFileText className="w-10 h-10 text-muted-foreground" />
-                <span className="text-muted-foreground">Loading</span>
-              </div>
-            }
-          >
-            {({ question }) => (
-              <>
-                <CodeQuestionPanel
-                  className="rounded-md"
-                  question={question}
-                  style={{ width: size }}
-                />
-                <div
-                  className={cn(
-                    "w-px h-full cursor-ew-resize px-1 transition-all hover:bg-muted-foreground/10 flex-0 rounded-full relative",
-                    isResizing ? "bg-muted-foreground/10" : "bg-transparent"
-                  )}
-                  {...resizeHandleProps}
-                >
-                  <div className="absolute inset-0 flex justify-center items-center">
-                    <div className="h-9 w-[3px] rounded-full bg-muted-foreground/50"></div>
-                  </div>
-                </div>
-                <CodeEditorPanel
-                  className="flex-1"
-                  sessionId={sessionId}
-                  questionId={question._id}
-                />
-              </>
-            )}
-          </Wait>
+          {/* <CodeView sessionId={sessionId} question={isDefined(question) ? question : undefined} /> */}
+          <ChatView sessionId={sessionId} />
         </div>
       </div>
       <ChatWindow isAgentConnected={isAgentConnected} />

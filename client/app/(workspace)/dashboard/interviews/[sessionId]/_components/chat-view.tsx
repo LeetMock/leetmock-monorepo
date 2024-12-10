@@ -1,11 +1,16 @@
-import { cn } from "@/lib/utils";
+import { Id } from "@/convex/_generated/dataModel";
+import { useAgentData } from "@/hooks/use-agent";
+import { cn, isDefined, secondsToMilliseconds } from "@/lib/utils";
 import {
-  TrackReferenceOrPlaceholder,
+  AgentState,
+  BarVisualizer,
   useLocalParticipant,
   useTrackTranscription,
+  useVoiceAssistant,
 } from "@livekit/components-react";
 import { LocalParticipant, Participant, Track, TranscriptionSegment } from "livekit-client";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { useLocalStorage } from "usehooks-ts";
 
 type ChatMessageType = {
   name: string;
@@ -28,15 +33,15 @@ const segmentToChatMessage = (
   return msg;
 };
 
-const TranscriptsInner = ({
-  agentAudioTrack,
-}: {
-  agentAudioTrack: TrackReferenceOrPlaceholder;
-}) => {
-  const { localParticipant, microphoneTrack } = useLocalParticipant();
-  const [transcripts, setTranscripts] = useState<Record<string, ChatMessageType>>({});
+export const SessionTranscripts = ({ sessionId }: { sessionId: Id<"sessions"> }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [transcripts, setTranscripts] = useLocalStorage<Record<string, ChatMessageType>>(
+    `leetmock.transcriptions-${sessionId}`,
+    {}
+  );
 
+  const { localParticipant, microphoneTrack } = useLocalParticipant();
+  const { agentAudioTrack } = useAgentData();
   const agentMessages = useTrackTranscription(agentAudioTrack);
   const localMessages = useTrackTranscription({
     publication: microphoneTrack,
@@ -45,6 +50,8 @@ const TranscriptsInner = ({
   });
 
   useEffect(() => {
+    if (!isDefined(agentAudioTrack)) return;
+
     agentMessages.segments.forEach((s) =>
       setTranscripts((prev) => ({
         ...prev,
@@ -59,10 +66,11 @@ const TranscriptsInner = ({
       }))
     );
   }, [
+    localParticipant,
+    setTranscripts,
+    agentAudioTrack,
     agentMessages.segments,
     localMessages.segments,
-    agentAudioTrack.participant,
-    localParticipant,
   ]);
 
   const messages = useMemo(() => {
@@ -79,11 +87,14 @@ const TranscriptsInner = ({
   }, [messages]);
 
   return (
-    <div className="relative h-full">
+    <div className="relative h-full w-full">
       <div className="absolute inset-0 overflow-y-auto">
         <div className="flex flex-col pb-2">
           {messages.map((msg, index, allMessages) => {
-            const isConsecutive = allMessages[index - 1]?.name === msg.name;
+            const isConsecutive =
+              allMessages[index - 1]?.name === msg.name &&
+              Math.abs(allMessages[index - 1]?.timestamp - msg.timestamp) <
+                secondsToMilliseconds(10);
 
             return (
               <div key={index} className="px-2">
@@ -102,14 +113,31 @@ const TranscriptsInner = ({
   );
 };
 
-export const AgentTranscripts = ({
-  agentAudioTrack,
-}: {
-  agentAudioTrack: TrackReferenceOrPlaceholder | undefined;
-}) => {
-  return agentAudioTrack ? (
-    <TranscriptsInner agentAudioTrack={agentAudioTrack} />
-  ) : (
-    <div className="p-4 text-center text-gray-500">No agent audio track</div>
+export const AudioRenderer = () => {
+  const { state, audioTrack } = useVoiceAssistant();
+  console.log(audioTrack, state);
+  return (
+    <div className="h-[300px] max-w-[90vw] mx-auto bg-green-50">
+      <BarVisualizer
+        state={state}
+        barCount={5}
+        trackRef={audioTrack}
+        className="agent-visualizer bg-red-50"
+        options={{ minHeight: 24 }}
+      />
+    </div>
+  );
+};
+
+export const ChatView = ({ sessionId }: { sessionId: Id<"sessions"> }) => {
+  return (
+    <div className="flex h-full w-full">
+      <div className="flex-1">
+        <SessionTranscripts sessionId={sessionId} />
+      </div>
+      <div className="flex-1 bg-blue-50">
+        <AudioRenderer />
+      </div>
+    </div>
   );
 };

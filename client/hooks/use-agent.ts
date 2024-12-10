@@ -23,10 +23,11 @@ const sessionIdTopic = "session-id";
 
 export const useAgentData = () => {
   const agentParticipant = useRemoteParticipants().find((p) => p.kind === ParticipantKind.AGENT);
-  const agentAudioTrack = useParticipantTracks(
+  const participantTracks = useParticipantTracks(
     [Track.Source.Microphone],
     agentParticipant?.identity
-  )[0];
+  );
+  const agentAudioTrack = participantTracks.length > 0 ? participantTracks[0] : undefined;
 
   return {
     agentParticipant,
