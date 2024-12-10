@@ -201,20 +201,22 @@ class CodeSession(BaseSession[CodeSessionEventTypes, AgentState]):
     def _create_handle_state_changed_task(self, prev: AgentState, curr: AgentState):
         asyncio.create_task(self._handle_state_changed(prev, curr))
 
-    async def _handle_state_changed(self, prev: AgentState, curr: AgentState):
+    async def _handle_state_changed(self, prev: AgentState, next: AgentState):
         """Handle updates to the code session state.
 
         Updates the internal session state and completes the sync future
         when the initial state is received.
         """
 
-        if prev.current_stage_idx != curr.current_stage_idx:
+        await self._synced_future
+
+        curr_stage_idx = self.session_state.current_stage_idx
+        next_stage_idx = next.current_stage_idx
+
+        if curr_stage_idx != next_stage_idx:
             assert (
                 self._session_id is not None
             ), "Session ID must be set before committing events"
-
-            logger.info("Committing stage_switched code session event")
-            await asyncio.sleep(3)  # allow agent to finish the last sentence (if any)
 
             self._api.mutation_unsafe(
                 name="codeSessionEvents:commitCodeSessionEvent",
@@ -222,7 +224,7 @@ class CodeSession(BaseSession[CodeSessionEventTypes, AgentState]):
                     "sessionId": self._session_id,
                     "event": {
                         "type": "stage_switched",
-                        "data": {"stageIdx": curr.current_stage_idx},
+                        "data": {"stageIdx": next_stage_idx},
                     },
                 },
             )
@@ -275,6 +277,9 @@ class CodeSession(BaseSession[CodeSessionEventTypes, AgentState]):
 
         # Observe for agent state changes
         agent_state_emitter.on("state_changed", self._create_handle_state_changed_task)
+        agent_state_emitter.on(
+            "state_initialized", self._create_handle_state_changed_task
+        )
 
         content_changed_watcher = query_watcher(
             query=CONTENT_CHANGED_QUERY,

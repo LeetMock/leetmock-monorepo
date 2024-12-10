@@ -12,11 +12,10 @@ from langgraph.graph.state import CompiledStateGraph, StateGraph
 from livekit.agents.utils import EventEmitter
 from pydantic.v1 import BaseModel
 
-
 logger = get_logger(__name__)
 
 TState = TypeVar("TState", bound=BaseModel)
-EventTypes = Literal["state_changed"]
+EventTypes = Literal["state_changed", "state_initialized"]
 
 CONFIG = RunnableConfig(configurable={"thread_id": "1"})
 
@@ -81,6 +80,7 @@ class StateMerger(AgentStateEmitter[TState]):
         await self.merge_state(initial_state, is_initial_state=True)
 
         self._initialized_fut.set_result(True)
+        self.emit("state_initialized", initial_state)
         return self
 
     async def get_state(self) -> TState:
