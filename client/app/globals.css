@@ -85,10 +85,6 @@
     display: none;
     /* Chrome, Safari and Opera */
   }
-
-  .agent-visualizer > .lk-audio-bar {
-    width: 72px;
-  }
 }
 
 .glow-text {

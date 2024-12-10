@@ -122,9 +122,11 @@ export const AudioRenderer = () => {
         state={state}
         barCount={5}
         trackRef={audioTrack}
-        className="agent-visualizer bg-red-50"
+        className="agent-visualizer bg-red-50 w-full h-full"
         options={{ minHeight: 24 }}
-      />
+      >
+        <div className="bg-blue-50 w-full bg-primary mb-2"></div>
+      </BarVisualizer>
     </div>
   );
 };
