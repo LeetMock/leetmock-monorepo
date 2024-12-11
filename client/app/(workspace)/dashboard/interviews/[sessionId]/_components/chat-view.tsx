@@ -220,14 +220,14 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
         />
       </div>
       <div className="absolute inset-0">
-        <div className="absolute -top-[2%] left-1/2 transform -translate-x-1/2">
-          <div className="w-32 h-32 bg-pink-500 opacity-50 blur-2xl rounded-full animate-pulse"></div>
+        <div className="absolute -top-[20%] left-1/2 transform -translate-x-1/2">
+          <div className="w-36 h-36 bg-pink-500 opacity-50 blur-2xl rounded-full animate-pulse"></div>
         </div>
-        <div className="absolute bottom-[10%] left-[20%]">
-          <div className="w-32 h-32 bg-yellow-500 opacity-50 blur-2xl rounded-full animate-pulse"></div>
+        <div className="absolute bottom-[2%] left-[18%]">
+          <div className="w-36 h-36 bg-yellow-500 opacity-50 blur-2xl rounded-full animate-pulse"></div>
         </div>
-        <div className="absolute bottom-[10%] right-[20%]">
-          <div className="w-32 h-32 bg-indigo-500 opacity-50 blur-2xl rounded-full animate-pulse"></div>
+        <div className="absolute bottom-[2%] right-[18%]">
+          <div className="w-36 h-36 bg-indigo-500 opacity-50 blur-2xl rounded-full animate-pulse"></div>
         </div>
       </div>
     </div>
