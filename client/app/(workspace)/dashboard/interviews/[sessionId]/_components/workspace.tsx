@@ -24,6 +24,7 @@ import { WorkspaceToolbar } from "./workspace-toolbar";
 import { CodeView } from "./code-view";
 import { ChatView } from "./chat-view";
 import { InterviewStage, STAGE_VIEW_MAPPING, StageView } from "@/lib/constants";
+import { AnimatePresence, motion } from "framer-motion";
 
 export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { reset } = useEditorStore();
