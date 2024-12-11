@@ -216,15 +216,26 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
           }}
         />
       </div>
+      <div className="absolute inset-0">
+        <div className="absolute -top-[2%] left-1/2 transform -translate-x-1/2">
+          <div className="w-32 h-32 bg-pink-500 opacity-50 blur-2xl rounded-full animate-pulse"></div>
+        </div>
+        <div className="absolute bottom-[10%] left-[20%]">
+          <div className="w-32 h-32 bg-yellow-500 opacity-50 blur-2xl rounded-full animate-pulse"></div>
+        </div>
+        <div className="absolute bottom-[10%] right-[20%]">
+          <div className="w-32 h-32 bg-indigo-500 opacity-50 blur-2xl rounded-full animate-pulse"></div>
+        </div>
+      </div>
     </div>
   );
 };
 
 const AudioRenderer = () => {
   const { state, audioTrack } = useVoiceAssistant();
-
+  console.log(audioTrack);
   return (
-    <div className="flex flex-col items-center gap-8 p-10 rounded-3xl backdrop-blur-sm">
+    <div className="flex flex-col items-center gap-12 p-10 rounded-3xl backdrop-blur-sm">
       <div className="flex items-center gap-3 bg-card/80 px-5 py-2.5 rounded-full">
         <motion.div
           className={cn(
@@ -267,7 +278,7 @@ export const ChatView = ({ sessionId }: { sessionId: Id<"sessions"> }) => {
           <AudioRenderer />
         </div>
       </div>
-      <div className="w-[28rem] my-8 mr-8 bg-card/40 backdrop-blur-sm rounded-2xl shadow-lg border-0">
+      <div className="w-[24rem] rounded-md shadow-lg">
         <SessionTranscripts sessionId={sessionId} />
       </div>
     </div>
