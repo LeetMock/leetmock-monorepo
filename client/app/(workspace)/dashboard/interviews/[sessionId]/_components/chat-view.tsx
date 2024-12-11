@@ -4,11 +4,19 @@ import { cn, isDefined, secondsToMilliseconds } from "@/lib/utils";
 import {
   AgentState,
   BarVisualizer,
+  TrackReference,
   useLocalParticipant,
+  useMultibandTrackVolume,
   useTrackTranscription,
   useVoiceAssistant,
 } from "@livekit/components-react";
-import { LocalParticipant, Participant, Track, TranscriptionSegment } from "livekit-client";
+import {
+  AudioTrack,
+  LocalParticipant,
+  Participant,
+  Track,
+  TranscriptionSegment,
+} from "livekit-client";
 import { useEffect, useMemo, useRef } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
@@ -113,20 +121,57 @@ export const SessionTranscripts = ({ sessionId }: { sessionId: Id<"sessions"> })
   );
 };
 
-export const AudioRenderer = () => {
-  const { state, audioTrack } = useVoiceAssistant();
-  console.log(audioTrack, state);
+const AudioBandVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
+  const volumeBands = useMultibandTrackVolume(audioTrack, {
+    bands: 32,
+    loPass: 100,
+    hiPass: 200,
+    updateInterval: 16,
+  });
+
   return (
-    <div className="h-[300px] max-w-[90vw] mx-auto bg-green-50">
-      <BarVisualizer
-        state={state}
-        barCount={5}
-        trackRef={audioTrack}
-        className="agent-visualizer bg-red-50 w-full h-full"
-        options={{ minHeight: 24 }}
-      >
-        <div className="bg-blue-50 w-full bg-primary mb-2"></div>
-      </BarVisualizer>
+    <div className="flex items-end justify-center h-32 gap-[2px] p-4">
+      {volumeBands.map((band, idx) => (
+        <div
+          key={idx}
+          className="w-2 bg-blue-500/80 rounded-t transition-all duration-[16ms]"
+          style={{
+            height: `${Math.max(4, band * 100)}%`,
+            opacity: 0.3 + band * 0.7,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
+const AudioRenderer = () => {
+  const { state, audioTrack } = useVoiceAssistant();
+
+  return (
+    <div className="flex flex-col gap-4 p-4 rounded-lg backdrop-blur-sm">
+      <div className="flex items-center gap-2">
+        <div
+          className={cn(
+            "w-2 h-2 rounded-full",
+            state === "listening" && "bg-green-500 animate-pulse",
+            state === "thinking" && "bg-yellow-500 animate-pulse",
+            state === "speaking" && "bg-blue-500 animate-pulse",
+            state === "connecting" && "bg-gray-500",
+            !state && "bg-gray-300"
+          )}
+        />
+        <span className="text-sm text-gray-600 capitalize">{state || "Not connected"}</span>
+      </div>
+
+      <div className="relative overflow-hidden rounded-lg border bg-gray-50/50">
+        {audioTrack && <AudioBandVisualizer audioTrack={audioTrack} />}
+      </div>
+
+      <div className="flex justify-between text-xs text-gray-500 px-2">
+        <span>Audio Input</span>
+        <span>{state === "listening" ? "Recording..." : "Idle"}</span>
+      </div>
     </div>
   );
 };
@@ -137,7 +182,7 @@ export const ChatView = ({ sessionId }: { sessionId: Id<"sessions"> }) => {
       <div className="flex-1">
         <SessionTranscripts sessionId={sessionId} />
       </div>
-      <div className="flex-1 bg-blue-50">
+      <div className="flex-1 flex items-center justify-center p-4">
         <AudioRenderer />
       </div>
     </div>
