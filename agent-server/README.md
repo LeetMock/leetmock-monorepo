@@ -11,7 +11,7 @@ cd leetmock-monorepo
 podman build -t agent-server -f agent-server/Dockerfile .
 
 # Run locally for pre-production testing
-podman run -it -p 8081:8081 agent-server
+podman run --env-file agent-server/.env -it -p 8081:8081 agent-server
 ```
 
 # Deploy to fly.io
