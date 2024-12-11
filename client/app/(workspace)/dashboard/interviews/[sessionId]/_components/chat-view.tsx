@@ -153,7 +153,7 @@ export const SessionTranscripts = ({ sessionId }: { sessionId: Id<"sessions"> })
 
 const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
   const volumeBands = useMultibandTrackVolume(audioTrack, {
-    bands: 48,
+    bands: 36,
     loPass: 100,
     hiPass: 200,
     updateInterval: 16,
@@ -162,10 +162,11 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
   return (
     <div className="relative w-full h-full flex items-center justify-center">
       <div className="relative w-48 h-48">
+        {/* Outer circle */}
         <motion.div
-          className="absolute inset-0 rounded-full bg-primary/5"
+          className="absolute inset-0 rounded-full bg-primary/40"
           animate={{
-            scale: [1, 1.1, 1],
+            scale: [1.2, 1.4, 1.2],
             opacity: [0.05, 0.1, 0.05],
           }}
           transition={{
@@ -175,17 +176,18 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
           }}
         />
 
+        {/* Bands */}
         <div className="absolute inset-0">
           {volumeBands.map((band, idx) => {
             const rotation = (idx / volumeBands.length) * Math.PI * 2;
             const x = Math.cos(rotation) * 70;
             const y = Math.sin(rotation) * 70;
-            const scale = 0.3 + band * 1.5;
+            const scale = 0.8 + band * 1.3;
 
             return (
               <motion.div
                 key={idx}
-                className="absolute w-1 h-1 rounded-full bg-primary/80"
+                className="absolute w-1 h-1 rounded-full bg-primary/60"
                 style={{
                   left: "50%",
                   top: "50%",
@@ -204,6 +206,7 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
           })}
         </div>
 
+        {/* Circle in the center */}
         <motion.div
           className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-gradient-to-tr from-primary/10 to-primary/5"
           animate={{
