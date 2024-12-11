@@ -1,10 +1,12 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
+import { useRouter } from "next/navigation";
+import React, { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Doc } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { ColumnHeader } from "./column-header";
 import { difficulties, statuses } from "./data";
 import { RowActions } from "./row-actions";
@@ -35,6 +37,28 @@ export type SessionDoc = Doc<"sessions"> & {
     difficulty: number;
     title: string;
   };
+};
+
+const FeedbackButton = ({ sessionId }: { sessionId: Id<"sessions"> }) => {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleClick = async () => {
+    setIsLoading(true);
+    router.push(`/dashboard/interviews/${sessionId}/evaluation`);
+  };
+
+  return (
+    <Button
+      variant="secondary"
+      size="sm"
+      onClick={handleClick}
+      className="transition-all active:scale-95"
+      disabled={isLoading}
+    >
+      {isLoading ? "Loading..." : "View Feedback"}
+    </Button>
+  );
 };
 
 export const columns: ColumnDef<SessionDoc>[] = [
@@ -138,7 +162,6 @@ export const columns: ColumnDef<SessionDoc>[] = [
     id: "feedback",
     header: ({ column }) => <ColumnHeader column={column} title="Feedback" />,
     cell: ({ row }) => {
-      // Check if session has ended but evaluation is not ready
       if (row.original.sessionEndTime && !row.original.evalReady) {
         return (
           <div className="flex items-center">
@@ -146,19 +169,7 @@ export const columns: ColumnDef<SessionDoc>[] = [
           </div>
         );
       }
-      return (
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={async () => {
-            // setIsLoading(true);
-            // router.push(`/dashboard/interviews/${row.original._id}/evaluation`);
-          }}
-          className="transition-all active:scale-95"
-        >
-          View Feedback
-        </Button>
-      );
+      return <FeedbackButton sessionId={row.original._id} />;
     },
   },
   {
