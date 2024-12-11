@@ -143,10 +143,10 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
     <div className="relative w-full h-full flex items-center justify-center">
       <div className="relative w-48 h-48">
         <motion.div
-          className="absolute inset-0 rounded-full border-2 border-blue-400/20"
+          className="absolute inset-0 rounded-full border-2 border-primary/20"
           animate={{
             scale: [1, 1.1, 1],
-            opacity: [0.2, 0.4, 0.2],
+            opacity: [0.1, 0.2, 0.1],
           }}
           transition={{
             duration: 2,
@@ -165,16 +165,16 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
             return (
               <motion.div
                 key={idx}
-                className="absolute w-2 h-2 rounded-full bg-blue-400"
+                className="absolute w-1.5 h-1.5 rounded-full bg-primary"
                 style={{
                   left: "50%",
                   top: "50%",
-                  x: x - 4,
-                  y: y - 4,
+                  x: x - 3,
+                  y: y - 3,
                 }}
                 animate={{
                   scale: scale,
-                  opacity: 0.2 + band * 0.8,
+                  opacity: 0.1 + band * 0.9,
                 }}
                 transition={{
                   duration: 0.1,
@@ -185,7 +185,7 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
         </div>
 
         <motion.div
-          className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-blue-400/20"
+          className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-primary/10"
           animate={{
             scale: [1, 1.2, 1],
           }}
@@ -204,16 +204,16 @@ const AudioRenderer = () => {
   const { state, audioTrack } = useVoiceAssistant();
 
   return (
-    <div className="flex flex-col items-center gap-8 p-10 rounded-2xl bg-[#141B38]/40 border border-white/5">
-      <div className="flex items-center gap-3 bg-[#1C2447] px-5 py-2.5 rounded-full border border-white/5">
+    <div className="flex flex-col items-center gap-8 p-10 rounded-2xl bg-card/40">
+      <div className="flex items-center gap-3 bg-card px-5 py-2.5 rounded-full">
         <motion.div
           className={cn(
             "w-2.5 h-2.5 rounded-full",
             state === "listening" && "bg-emerald-500",
             state === "thinking" && "bg-amber-500",
-            state === "speaking" && "bg-blue-500",
-            state === "connecting" && "bg-gray-500",
-            !state && "bg-gray-300"
+            state === "speaking" && "bg-primary",
+            state === "connecting" && "bg-muted",
+            !state && "bg-muted-foreground"
           )}
           animate={{
             scale: state ? [1, 1.2, 1] : 1,
@@ -223,16 +223,16 @@ const AudioRenderer = () => {
             repeat: Infinity,
           }}
         />
-        <span className="text-sm text-white/90 font-medium capitalize">
+        <span className="text-sm text-foreground font-medium capitalize">
           {state || "Not connected"}
         </span>
       </div>
 
-      <div className="relative w-full aspect-square rounded-2xl bg-[#1C2447]/50 border border-white/5 p-4">
+      <div className="relative w-full aspect-square rounded-2xl bg-card/50 p-4">
         {audioTrack && <WaveVisualizer audioTrack={audioTrack} />}
       </div>
 
-      <div className="text-sm text-white/70 font-medium">
+      <div className="text-sm text-muted-foreground font-medium">
         {state === "listening" ? "Listening to your response..." : "Waiting for input"}
       </div>
     </div>
@@ -241,15 +241,15 @@ const AudioRenderer = () => {
 
 export const ChatView = ({ sessionId }: { sessionId: Id<"sessions"> }) => {
   return (
-    <div className="flex h-full w-full bg-[#0A0F1E]">
+    <div className="flex h-full w-full bg-background">
       <div className="flex-1 flex items-center justify-center">
         <div className="w-[600px]">
           <AudioRenderer />
         </div>
       </div>
 
-      <div className="w-[400px] h-full p-6 bg-[#0F1631]/50">
-        <div className="h-full bg-[#141B38]/40 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/5">
+      <div className="w-[400px] h-full p-6 bg-card/50">
+        <div className="h-full bg-card/40 backdrop-blur-sm rounded-2xl overflow-hidden">
           <SessionTranscripts sessionId={sessionId} />
         </div>
       </div>
