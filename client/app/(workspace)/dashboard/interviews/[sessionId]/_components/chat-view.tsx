@@ -177,12 +177,12 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
   return (
     <div className="relative w-full h-full flex items-center justify-center">
       <div className="relative w-48 h-48">
-        {/* Outer circle */}
+        {/* Outer circle with a joyful color */}
         <motion.div
-          className="absolute inset-0 rounded-full bg-primary/40"
+          className="absolute inset-0 rounded-full bg-primary/30"
           animate={{
             scale: [1.2, 1.4, 1.2],
-            opacity: [0.05, 0.1, 0.05],
+            opacity: [0.1, 0.2, 0.1],
           }}
           transition={{
             duration: 2,
@@ -191,7 +191,7 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
           }}
         />
 
-        {/* Bands */}
+        {/* Bands with vibrant colors */}
         <div className="absolute inset-0">
           {volumeBands.map((band, idx) => {
             const rotation = (idx / volumeBands.length) * Math.PI * 2;
@@ -202,8 +202,9 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
             return (
               <motion.div
                 key={idx}
-                className="absolute w-1 h-1 rounded-full bg-primary/60"
+                className="absolute w-1 h-1 rounded-full"
                 style={{
+                  backgroundColor: `hsl(${(idx / volumeBands.length) * 360}, 100%, 50%)`,
                   left: "50%",
                   top: "50%",
                   x: x - 3,
@@ -221,9 +222,9 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
           })}
         </div>
 
-        {/* Circle in the center */}
+        {/* Center circle with a gradient of joyful colors */}
         <motion.div
-          className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-gradient-to-tr from-primary/10 to-primary/5"
+          className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-gradient-to-tr from-yellow-300 via-pink-300 to-purple-300"
           animate={{
             scale: [1, 1.2, 1],
           }}
@@ -234,13 +235,18 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
           }}
         />
       </div>
+
+      {/* Glowing effects positioned further apart */}
       <div className="absolute inset-0">
+        {/* Top Vertex */}
         <div className="absolute -top-[20%] left-1/2 transform -translate-x-1/2">
           <div className="w-36 h-36 bg-pink-500 opacity-50 blur-2xl rounded-full animate-pulse"></div>
         </div>
+        {/* Bottom Left Vertex */}
         <div className="absolute bottom-[2%] left-[18%]">
           <div className="w-36 h-36 bg-yellow-500 opacity-50 blur-2xl rounded-full animate-pulse"></div>
         </div>
+        {/* Bottom Right Vertex */}
         <div className="absolute bottom-[2%] right-[18%]">
           <div className="w-36 h-36 bg-indigo-500 opacity-50 blur-2xl rounded-full animate-pulse"></div>
         </div>
