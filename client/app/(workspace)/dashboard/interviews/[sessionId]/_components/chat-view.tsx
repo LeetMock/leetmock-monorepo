@@ -96,9 +96,9 @@ export const SessionTranscripts = ({ sessionId }: { sessionId: Id<"sessions"> })
   }, [messages]);
 
   return (
-    <div className="relative h-full w-full">
-      <div className="absolute inset-0 overflow-y-auto px-4">
-        <div className="flex flex-col py-4 space-y-3">
+    <div className="relative h-full w-full overflow-hidden bg-background/50 rounded-2xl backdrop-blur-sm">
+      <div className="absolute inset-0 overflow-y-auto p-6 space-y-4 scrollbar-hide">
+        <AnimatePresence initial={false}>
           {messages.map((msg, index, allMessages) => {
             const isConsecutive =
               allMessages[index - 1]?.name === msg.name &&
@@ -106,26 +106,46 @@ export const SessionTranscripts = ({ sessionId }: { sessionId: Id<"sessions"> })
                 secondsToMilliseconds(10);
 
             return (
-              <div
+              <motion.div
                 key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
                 className={cn(
-                  "rounded-xl p-3",
-                  msg.isSelf
-                    ? "ml-6 bg-blue-500/10 border border-blue-500/20"
-                    : "mr-6 bg-[#1C2447] border border-white/5"
+                  "flex",
+                  msg.isSelf ? "justify-end" : "justify-start",
+                  !isConsecutive && "mt-6"
                 )}
               >
-                {!isConsecutive && (
-                  <div className="text-xs text-white/50 mb-1 font-medium">{msg.name}</div>
-                )}
-                <div className={cn("text-sm", msg.isSelf ? "text-blue-200" : "text-white/90")}>
-                  {msg.message}
+                <div className={cn("flex flex-col", msg.isSelf ? "items-end" : "items-start")}>
+                  {!isConsecutive && (
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-sm font-medium text-foreground">{msg.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(msg.timestamp).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                  )}
+                  <div
+                    className={cn(
+                      "max-w-[80%] px-4 py-2.5 rounded-2xl text-sm",
+                      msg.isSelf
+                        ? "bg-primary text-primary-foreground rounded-tr-sm"
+                        : "bg-muted text-foreground rounded-tl-sm"
+                    )}
+                  >
+                    {msg.message}
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-          <div ref={messagesEndRef} />
-        </div>
+        </AnimatePresence>
+        <div ref={messagesEndRef} />
       </div>
     </div>
   );
@@ -138,7 +158,7 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
     hiPass: 200,
     updateInterval: 16,
   });
-
+  console.log(volumeBands);
   return (
     <div className="relative w-full h-full flex items-center justify-center">
       <div className="relative w-48 h-48">
@@ -185,7 +205,7 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
         </div>
 
         <motion.div
-          className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-primary/10"
+          className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-primary/10 bg-gradient-to-r from-blue-400/10 to-purple-400/10"
           animate={{
             scale: [1, 1.2, 1],
           }}
@@ -202,7 +222,7 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
 
 const AudioRenderer = () => {
   const { state, audioTrack } = useVoiceAssistant();
-
+  console.log(state, audioTrack);
   return (
     <div className="flex flex-col items-center gap-8 p-10 rounded-2xl bg-card/40">
       <div className="flex items-center gap-3 bg-card px-5 py-2.5 rounded-full">
@@ -242,15 +262,14 @@ const AudioRenderer = () => {
 export const ChatView = ({ sessionId }: { sessionId: Id<"sessions"> }) => {
   return (
     <div className="flex h-full w-full bg-background">
-      <div className="flex-1 flex items-center justify-center">
-        <div className="w-[600px]">
-          <AudioRenderer />
-        </div>
-      </div>
-
-      <div className="w-[400px] h-full p-6 bg-card/50">
-        <div className="h-full bg-card/40 backdrop-blur-sm rounded-2xl overflow-hidden">
+      <div className="relative flex-1 grid grid-cols-2 gap-6 p-6">
+        <div className="h-full">
           <SessionTranscripts sessionId={sessionId} />
+        </div>
+        <div className="flex items-center justify-center">
+          <div className="w-[600px]">
+            <AudioRenderer />
+          </div>
         </div>
       </div>
     </div>
