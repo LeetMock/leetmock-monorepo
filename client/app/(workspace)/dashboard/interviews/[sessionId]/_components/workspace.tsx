@@ -50,7 +50,6 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
     if (view === StageView.Chat) {
       return <ChatView sessionId={sessionId} />;
     }
-
     if (view === StageView.Coding) {
       return (
         <CodeView sessionId={sessionId} question={isDefined(question) ? question : undefined} />

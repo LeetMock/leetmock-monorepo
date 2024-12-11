@@ -201,6 +201,13 @@ def format_user_testcase_executed_notification_messages(
     ]
 
 
+START_ASK_BACKGROUND_QUESTION_PROMPT = """\
+I have finished all the necessary introduction questions. \
+From now on, I will stop asking any further introduction questions immediately!!!! \
+Now, I MUST make a smooth transition to the background stage. \
+(Try to inform candidate about the transition and kick off the conversation of background questions.)"""
+
+
 START_ASK_CODING_QUESTION_PROMPT = """\
 I have finished all the necessary background questions. \
 From now on, I will stop asking any further background questions immediately!!!! \
@@ -213,6 +220,7 @@ Now I have finished evaluating the candidate's code. I will give them some feedb
 
 
 STAGE_TRANSITION_MESSAGES = {
+    StageTypes.BACKGROUND: START_ASK_BACKGROUND_QUESTION_PROMPT,
     StageTypes.CODING: START_ASK_CODING_QUESTION_PROMPT,
     StageTypes.EVAL: FINISH_EVAL_PROMPT,
 }

@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { TimerCountdown } from "./timer-countdown";
-import { InterviewStage } from "@/lib/constants";
+import { InterviewStage, STAGE_NAME_MAPPING } from "@/lib/constants";
 
 const STAGE_TO_ICON_MAP: Record<InterviewStage, LucideIcon> = {
   [InterviewStage.Intro]: MessageCircleQuestion,
@@ -35,14 +35,6 @@ const STAGE_TO_ICON_MAP: Record<InterviewStage, LucideIcon> = {
   [InterviewStage.Coding]: Code,
   [InterviewStage.Evaluation]: HelpCircle,
   [InterviewStage.End]: CheckCircle,
-};
-
-const STAGE_TO_TITLE_MAP: Record<InterviewStage, string> = {
-  [InterviewStage.Intro]: "Introduction",
-  [InterviewStage.Background]: "Background",
-  [InterviewStage.Coding]: "Coding",
-  [InterviewStage.Evaluation]: "Evaluation",
-  [InterviewStage.End]: "End",
 };
 
 export const WorkspaceSidebar: React.FC<{
@@ -231,7 +223,7 @@ const TimelineItem: React.FC<{
     return (
       <div className="absolute -top-1 left-7 z-10 hidden group-hover:block min-w-60">
         <div className="flex flex-col gap-2 ml-2.5 px-2 py-1.5 bg-background rounded-md border shadow-sm">
-          <Timeline.Title>{STAGE_TO_TITLE_MAP[step]}</Timeline.Title>
+          <Timeline.Title>{STAGE_NAME_MAPPING[step]}</Timeline.Title>
           {completed && (
             <div className="flex flex-col gap-2 pb-1">
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -248,7 +240,7 @@ const TimelineItem: React.FC<{
   const expandedView = useMemo(() => {
     return (
       <Timeline.Content className="space-y-2 pb-4">
-        <Timeline.Title>{STAGE_TO_TITLE_MAP[step]}</Timeline.Title>
+        <Timeline.Title>{STAGE_NAME_MAPPING[step]}</Timeline.Title>
         <div className="flex flex-col gap-2">
           {completed && (
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">

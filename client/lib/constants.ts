@@ -32,9 +32,9 @@ export const STAGE_VIEW_MAPPING: Record<InterviewStage, StageView> = {
 };
 
 export const STAGE_NAME_MAPPING: Record<InterviewStage, string> = {
-  [InterviewStage.Intro]: "Introduction",
+  [InterviewStage.Intro]: "Greetings",
   [InterviewStage.Background]: "Background Discussion",
-  [InterviewStage.Coding]: "Coding",
+  [InterviewStage.Coding]: "Coding Challenge",
   [InterviewStage.Evaluation]: "Evaluation",
   [InterviewStage.End]: "End",
 };
