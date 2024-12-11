@@ -46,8 +46,6 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
     const stage = flow[sessionState.currentStageIdx];
     const view = STAGE_VIEW_MAPPING[stage];
 
-    return <ChatView sessionId={sessionId} />;
-
     if (view === StageView.Chat) {
       return <ChatView sessionId={sessionId} />;
     }
