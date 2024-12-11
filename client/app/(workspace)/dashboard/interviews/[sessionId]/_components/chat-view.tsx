@@ -261,16 +261,12 @@ const AudioRenderer = () => {
 
 export const ChatView = ({ sessionId }: { sessionId: Id<"sessions"> }) => {
   return (
-    <div className="flex h-full w-full bg-background">
-      <div className="relative flex-1 grid grid-cols-2 gap-6 p-6">
-        <div className="h-full">
-          <SessionTranscripts sessionId={sessionId} />
-        </div>
-        <div className="flex items-center justify-center">
-          <div className="w-[600px]">
-            <AudioRenderer />
-          </div>
-        </div>
+    <div className="flex h-full w-full">
+      <div className="flex-1 flex items-center justify-center">
+        <AudioRenderer />
+      </div>
+      <div className="w-[24rem] my-16 mr-8 bg-background rounded-lg shadow-md py-2">
+        <SessionTranscripts sessionId={sessionId} />
       </div>
     </div>
   );
