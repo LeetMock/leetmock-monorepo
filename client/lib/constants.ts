@@ -11,11 +11,24 @@ export enum InterviewStage {
   End = "end",
 }
 
+export enum StageView {
+  Chat = "chat",
+  Coding = "coding",
+}
+
 export type InterviewFlow = {
   [InterviewStage.Intro]: boolean;
   [InterviewStage.Background]: boolean;
   [InterviewStage.Coding]: boolean;
   [InterviewStage.Evaluation]: boolean;
+};
+
+export const STAGE_VIEW_MAPPING: Record<InterviewStage, StageView> = {
+  [InterviewStage.Intro]: StageView.Chat,
+  [InterviewStage.Background]: StageView.Chat,
+  [InterviewStage.Coding]: StageView.Coding,
+  [InterviewStage.Evaluation]: StageView.Chat,
+  [InterviewStage.End]: StageView.Chat,
 };
 
 export const STAGE_NAME_MAPPING: Record<InterviewStage, string> = {

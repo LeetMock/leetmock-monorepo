@@ -16,27 +16,46 @@ import { useQuery } from "convex/react";
 import { ConnectionState } from "livekit-client";
 import { MessageCircle, PanelLeftOpen, X } from "lucide-react";
 import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useWindowSize } from "usehooks-ts";
 import { WorkspaceSidebar } from "./workspace-sidebar";
 import { WorkspaceToolbar } from "./workspace-toolbar";
 import { CodeView } from "./code-view";
 import { ChatView } from "./chat-view";
+import { InterviewStage, STAGE_VIEW_MAPPING, StageView } from "@/lib/constants";
 
 export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
+  const { reset } = useEditorStore();
+  const { isAgentConnected } = useAgent(sessionId);
   const { collapsed, setCollapsed } = useSessionSidebar();
+
+  const { disconnect } = useConnection();
+  const connectionState = useConnectionState();
 
   const session = useQuery(api.sessions.getById, { sessionId });
   const question = useQuery(api.questions.getById, { questionId: session?.questionId });
+  const sessionState = useQuery(api.codeSessionStates.get, { sessionId });
   const { localParticipant } = useLocalParticipant();
 
-  const { disconnect } = useConnection();
-  const { reset } = useEditorStore();
+  const stageView = useMemo(() => {
+    if (!isDefined(session)) return undefined;
+    if (!isDefined(sessionState)) return undefined;
 
-  const connectionState = useConnectionState();
+    const flow = session.interviewFlow as InterviewStage[];
+    const stage = flow[sessionState.currentStageIdx];
+    const view = STAGE_VIEW_MAPPING[stage];
 
-  const { isAgentConnected } = useAgent(sessionId);
+    if (view === StageView.Chat) {
+      return <ChatView sessionId={sessionId} />;
+    }
+
+    if (view === StageView.Coding) {
+      return (
+        <CodeView sessionId={sessionId} question={isDefined(question) ? question : undefined} />
+      );
+    }
+  }, [question, session, sessionId, sessionState]);
 
   // Setup the participant device
   useEffect(() => {
@@ -80,8 +99,7 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
           </div>
         </div>
         <div className="w-full h-full flex justify-center items-center p-2 pt-0 relative">
-          {/* <CodeView sessionId={sessionId} question={isDefined(question) ? question : undefined} /> */}
-          <ChatView sessionId={sessionId} />
+          {stageView}
         </div>
       </div>
       <ChatWindow isAgentConnected={isAgentConnected} />
