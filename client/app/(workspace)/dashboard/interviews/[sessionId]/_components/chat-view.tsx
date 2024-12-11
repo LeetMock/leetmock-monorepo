@@ -166,7 +166,7 @@ export const SessionTranscripts = ({ sessionId }: { sessionId: Id<"sessions"> })
   );
 };
 
-const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
+const WaveVisualizer = ({ audioTrack }: { audioTrack?: TrackReference }) => {
   const volumeBands = useMultibandTrackVolume(audioTrack, {
     bands: 36,
     loPass: 100,
@@ -177,12 +177,12 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
   return (
     <div className="relative w-full h-full flex items-center justify-center">
       <div className="relative w-48 h-48">
-        {/* Outer circle with a joyful color */}
+        {/* Outer circle with a distinct joyful color */}
         <motion.div
-          className="absolute inset-0 rounded-full bg-primary/30"
+          className="absolute inset-0 rounded-full bg-primary/10"
           animate={{
             scale: [1.2, 1.4, 1.2],
-            opacity: [0.1, 0.2, 0.1],
+            opacity: [0.1, 0.3, 0.1],
           }}
           transition={{
             duration: 2,
@@ -197,7 +197,7 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
             const rotation = (idx / volumeBands.length) * Math.PI * 2;
             const x = Math.cos(rotation) * 70;
             const y = Math.sin(rotation) * 70;
-            const scale = 0.8 + band * 1.3;
+            const scale = 1 + band * 1.3;
 
             return (
               <motion.div
@@ -222,9 +222,9 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
           })}
         </div>
 
-        {/* Center circle with a gradient of joyful colors */}
+        {/* Center circle with a different gradient of joyful colors */}
         <motion.div
-          className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-gradient-to-tr from-yellow-300 via-pink-300 to-purple-300"
+          className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-primary/20"
           animate={{
             scale: [1, 1.2, 1],
           }}
@@ -282,7 +282,7 @@ const AudioRenderer = () => {
       </div>
 
       <div className="relative w-full aspect-square rounded-3xl p-4">
-        {audioTrack && <WaveVisualizer audioTrack={audioTrack} />}
+        <WaveVisualizer audioTrack={audioTrack} />
       </div>
 
       <div className="text-sm text-muted-foreground font-medium">
