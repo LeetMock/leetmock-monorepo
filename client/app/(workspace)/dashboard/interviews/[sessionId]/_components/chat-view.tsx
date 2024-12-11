@@ -158,15 +158,15 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
     hiPass: 200,
     updateInterval: 16,
   });
-  console.log(volumeBands);
+
   return (
     <div className="relative w-full h-full flex items-center justify-center">
       <div className="relative w-48 h-48">
         <motion.div
-          className="absolute inset-0 rounded-full border-2 border-primary/20"
+          className="absolute inset-0 rounded-full bg-primary/5"
           animate={{
             scale: [1, 1.1, 1],
-            opacity: [0.1, 0.2, 0.1],
+            opacity: [0.05, 0.1, 0.05],
           }}
           transition={{
             duration: 2,
@@ -185,7 +185,7 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
             return (
               <motion.div
                 key={idx}
-                className="absolute w-1.5 h-1.5 rounded-full bg-primary"
+                className="absolute w-1 h-1 rounded-full bg-primary/80"
                 style={{
                   left: "50%",
                   top: "50%",
@@ -194,7 +194,7 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
                 }}
                 animate={{
                   scale: scale,
-                  opacity: 0.1 + band * 0.9,
+                  opacity: 0.2 + band * 0.8,
                 }}
                 transition={{
                   duration: 0.1,
@@ -205,7 +205,7 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
         </div>
 
         <motion.div
-          className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-primary/10 bg-gradient-to-r from-blue-400/10 to-purple-400/10"
+          className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-gradient-to-tr from-primary/10 to-primary/5"
           animate={{
             scale: [1, 1.2, 1],
           }}
@@ -222,10 +222,10 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack: TrackReference }) => {
 
 const AudioRenderer = () => {
   const { state, audioTrack } = useVoiceAssistant();
-  console.log(state, audioTrack);
+
   return (
-    <div className="flex flex-col items-center gap-8 p-10 rounded-2xl bg-card/40">
-      <div className="flex items-center gap-3 bg-card px-5 py-2.5 rounded-full">
+    <div className="flex flex-col items-center gap-8 p-10 rounded-3xl backdrop-blur-sm">
+      <div className="flex items-center gap-3 bg-card/80 px-5 py-2.5 rounded-full">
         <motion.div
           className={cn(
             "w-2.5 h-2.5 rounded-full",
@@ -248,7 +248,7 @@ const AudioRenderer = () => {
         </span>
       </div>
 
-      <div className="relative w-full aspect-square rounded-2xl bg-card/50 p-4">
+      <div className="relative w-full aspect-square rounded-3xl p-4">
         {audioTrack && <WaveVisualizer audioTrack={audioTrack} />}
       </div>
 
@@ -263,9 +263,11 @@ export const ChatView = ({ sessionId }: { sessionId: Id<"sessions"> }) => {
   return (
     <div className="flex h-full w-full">
       <div className="flex-1 flex items-center justify-center">
-        <AudioRenderer />
+        <div className="w-[500px] border-0">
+          <AudioRenderer />
+        </div>
       </div>
-      <div className="w-[24rem] my-16 mr-8 bg-background rounded-lg shadow-md py-2">
+      <div className="w-[28rem] my-8 mr-8 bg-card/40 backdrop-blur-sm rounded-2xl shadow-lg border-0">
         <SessionTranscripts sessionId={sessionId} />
       </div>
     </div>
