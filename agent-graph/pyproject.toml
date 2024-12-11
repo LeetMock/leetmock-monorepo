@@ -17,7 +17,7 @@ langchain-openai = "^0.1.17"
 convex = "^0.6.0"
 langchainhub = "^0.1.20"
 python-dotenv = "^1.0.1"
-langgraph = "^0.2.44"
+langgraph = "0.2.54"
 libs = { path = "../libs", develop = true }
 convex_client = { path = "../convex-client", develop = true }
 langchain-core = "^0.2.30"
