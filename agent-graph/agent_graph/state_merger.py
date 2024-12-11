@@ -80,7 +80,8 @@ class StateMerger(AgentStateEmitter[TState]):
         await self.merge_state(initial_state, is_initial_state=True)
 
         self._initialized_fut.set_result(True)
-        self.emit("state_initialized", initial_state)
+        state = await self.get_state()
+        self.emit("state_initialized", state)
         return self
 
     async def get_state(self) -> TState:
