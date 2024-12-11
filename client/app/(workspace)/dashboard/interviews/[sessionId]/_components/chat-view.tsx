@@ -42,6 +42,21 @@ const segmentToChatMessage = (
   return msg;
 };
 
+export const ChatView = ({ sessionId }: { sessionId: Id<"sessions"> }) => {
+  return (
+    <div className="flex h-full w-full">
+      <div className="flex-1 flex items-center justify-center">
+        <div className="w-[500px] border-0">
+          <AudioRenderer />
+        </div>
+      </div>
+      <div className="w-[24rem] rounded-md shadow-lg">
+        <SessionTranscripts sessionId={sessionId} />
+      </div>
+    </div>
+  );
+};
+
 export const SessionTranscripts = ({ sessionId }: { sessionId: Id<"sessions"> }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [transcripts, setTranscripts] = useLocalStorage<Record<string, ChatMessageType>>(
@@ -97,7 +112,7 @@ export const SessionTranscripts = ({ sessionId }: { sessionId: Id<"sessions"> })
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-background/50 rounded-2xl backdrop-blur-sm">
-      <div className="absolute inset-0 overflow-y-auto p-6 space-y-4 scrollbar-hide">
+      <div className="absolute inset-0 overflow-y-auto px-4 space-y-4">
         <AnimatePresence initial={false}>
           {messages.map((msg, index, allMessages) => {
             const isConsecutive =
@@ -115,7 +130,7 @@ export const SessionTranscripts = ({ sessionId }: { sessionId: Id<"sessions"> })
                 className={cn(
                   "flex",
                   msg.isSelf ? "justify-end" : "justify-start",
-                  !isConsecutive && "mt-6"
+                  !isConsecutive && "mt-4"
                 )}
               >
                 <div className={cn("flex flex-col", msg.isSelf ? "items-end" : "items-start")}>
@@ -247,19 +262,17 @@ const AudioRenderer = () => {
             state === "thinking" && "bg-amber-500",
             state === "speaking" && "bg-primary",
             state === "connecting" && "bg-muted",
-            !state && "bg-muted-foreground"
+            state === "disconnected" && "bg-red-500"
           )}
           animate={{
-            scale: state ? [1, 1.2, 1] : 1,
+            scale: state !== "disconnected" ? [1, 1.2, 1] : 1,
           }}
           transition={{
             duration: 1,
             repeat: Infinity,
           }}
         />
-        <span className="text-sm text-foreground font-medium capitalize">
-          {state || "Not connected"}
-        </span>
+        <span className="text-sm text-foreground font-medium capitalize">{state}</span>
       </div>
 
       <div className="relative w-full aspect-square rounded-3xl p-4">
@@ -268,21 +281,6 @@ const AudioRenderer = () => {
 
       <div className="text-sm text-muted-foreground font-medium">
         {state === "listening" ? "Listening to your response..." : "Waiting for input"}
-      </div>
-    </div>
-  );
-};
-
-export const ChatView = ({ sessionId }: { sessionId: Id<"sessions"> }) => {
-  return (
-    <div className="flex h-full w-full">
-      <div className="flex-1 flex items-center justify-center">
-        <div className="w-[500px] border-0">
-          <AudioRenderer />
-        </div>
-      </div>
-      <div className="w-[24rem] rounded-md shadow-lg">
-        <SessionTranscripts sessionId={sessionId} />
       </div>
     </div>
   );
