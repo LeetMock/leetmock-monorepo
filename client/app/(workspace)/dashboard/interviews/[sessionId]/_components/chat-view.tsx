@@ -2,8 +2,6 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useAgentData } from "@/hooks/use-agent";
 import { cn, isDefined, secondsToMilliseconds } from "@/lib/utils";
 import {
-  AgentState,
-  BarVisualizer,
   TrackReference,
   useLocalParticipant,
   useMultibandTrackVolume,
@@ -20,6 +18,7 @@ import {
 import { useEffect, useMemo, useRef } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { motion, AnimatePresence } from "framer-motion";
+import { MessageSquare } from "lucide-react";
 
 type ChatMessageType = {
   name: string;
@@ -113,54 +112,58 @@ export const SessionTranscripts = ({ sessionId }: { sessionId: Id<"sessions"> })
   return (
     <div className="relative h-full w-full overflow-hidden bg-background/50 rounded-2xl backdrop-blur-sm">
       <div className="absolute inset-0 overflow-y-auto px-4 space-y-4">
-        <AnimatePresence initial={false}>
-          {messages.map((msg, index, allMessages) => {
-            const isConsecutive =
-              allMessages[index - 1]?.name === msg.name &&
-              Math.abs(allMessages[index - 1]?.timestamp - msg.timestamp) <
-                secondsToMilliseconds(10);
+        {messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-3 w-full h-full">
+            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+              <MessageSquare className="w-6 h-6 text-muted-foreground" />
+            </div>
+            <span className="text-muted-foreground text-sm">No transcripts available yet</span>
+          </div>
+        ) : (
+          <>
+            {messages.map((_, index) => (
+              <TranscriptItem key={index} messages={messages} index={index} />
+            ))}
+            <div ref={messagesEndRef} />
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
 
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.2 }}
-                className={cn(
-                  "flex",
-                  msg.isSelf ? "justify-end" : "justify-start",
-                  !isConsecutive && "mt-4"
-                )}
-              >
-                <div className={cn("flex flex-col", msg.isSelf ? "items-end" : "items-start")}>
-                  {!isConsecutive && (
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-sm font-medium text-foreground">{msg.name}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {new Date(msg.timestamp).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                    </div>
-                  )}
-                  <div
-                    className={cn(
-                      "max-w-[80%] px-4 py-2.5 rounded-2xl text-sm",
-                      msg.isSelf
-                        ? "bg-primary text-primary-foreground rounded-tr-sm"
-                        : "bg-muted text-foreground rounded-tl-sm"
-                    )}
-                  >
-                    {msg.message}
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-        <div ref={messagesEndRef} />
+const TranscriptItem = ({ messages, index }: { messages: ChatMessageType[]; index: number }) => {
+  const msg = messages[index];
+  const isConsecutive =
+    messages[index - 1]?.name === msg.name &&
+    Math.abs(messages[index - 1]?.timestamp - msg.timestamp) < secondsToMilliseconds(10);
+
+  return (
+    <div
+      className={cn("flex", msg.isSelf ? "justify-end" : "justify-start", !isConsecutive && "mt-4")}
+    >
+      <div className={cn("flex flex-col", msg.isSelf ? "items-end" : "items-start")}>
+        {!isConsecutive && (
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm font-medium text-foreground">{msg.name}</span>
+            <span className="text-xs text-muted-foreground">
+              {new Date(msg.timestamp).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
+          </div>
+        )}
+        <div
+          className={cn(
+            "max-w-[80%] px-4 py-2.5 rounded-2xl text-sm",
+            msg.isSelf
+              ? "bg-primary text-primary-foreground rounded-tr-sm"
+              : "bg-muted text-foreground rounded-tl-sm"
+          )}
+        >
+          {msg.message}
+        </div>
       </div>
     </div>
   );

@@ -21,16 +21,16 @@ import {
   Code,
   HelpCircle,
   LucideIcon,
-  MessageCircleQuestion,
   MessageSquare,
   PanelLeft,
+  Smile,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { TimerCountdown } from "./timer-countdown";
 import { InterviewStage, STAGE_NAME_MAPPING } from "@/lib/constants";
 
 const STAGE_TO_ICON_MAP: Record<InterviewStage, LucideIcon> = {
-  [InterviewStage.Intro]: MessageCircleQuestion,
+  [InterviewStage.Intro]: Smile,
   [InterviewStage.Background]: MessageSquare,
   [InterviewStage.Coding]: Code,
   [InterviewStage.Evaluation]: HelpCircle,
