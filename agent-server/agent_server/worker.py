@@ -41,7 +41,7 @@ from livekit.plugins import deepgram, openai, silero
 from livekit.rtc import DataPacket
 
 from libs.convex.api import ConvexApi
-from libs.types import MessageWrapper
+from libs.message_wrapper import MessageWrapper
 
 logging.getLogger("openai._base_client").setLevel(logging.INFO)
 logger = get_logger(__name__)

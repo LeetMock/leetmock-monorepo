@@ -33,7 +33,7 @@ from libs.convex.convex_types import (
     CodeSessionTestcaseChangedEvent,
     CodeSessionUserTestcaseExecutedEvent,
 )
-from libs.types import MessageWrapper
+from libs.message_wrapper import MessageWrapper
 
 
 class AgentState(EventMessageState):

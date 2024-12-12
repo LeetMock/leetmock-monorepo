@@ -34,8 +34,8 @@ from agent_server.events import BaseEvent
 from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
 from pydantic.v1 import BaseModel, Field, PrivateAttr
 
+from libs.message_wrapper import MessageWrapper
 from libs.timestamp import Timestamp
-from libs.types import MessageWrapper
 
 logger = logging.getLogger(__name__)
 
