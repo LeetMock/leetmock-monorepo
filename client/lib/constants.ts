@@ -16,6 +16,17 @@ export enum StageView {
   Coding = "coding",
 }
 
+export enum VoiceProvider {
+  ElevenLabs = "elevenlabs",
+  OpenAI = "openai",
+}
+
+export type Voice = {
+  id: string;
+  name: string;
+  provider: VoiceProvider;
+};
+
 export type InterviewFlow = {
   [InterviewStage.Intro]: boolean;
   [InterviewStage.Background]: boolean;
@@ -47,15 +58,9 @@ export const LANGUAGES: Language[] = [
 ];
 
 export const AVAILABLE_LANGUAGES = ["python"];
-export const AVAILABLE_VOICES = ["Brian", "alloy"];
-
-export const VOICES: Language[] = [
-  { value: "nova", label: "Nova" },
-  { value: "alloy", label: "Alloy" },
-  { value: "echo", label: "Echo" },
-  { value: "fable", label: "Fable (British)" },
-  { value: "onyx", label: "Onyx" },
-  { value: "shimmer", label: "Shimmer" },
+export const AVAILABLE_VOICES: Voice[] = [
+  { id: "brian", name: "Brian", provider: VoiceProvider.ElevenLabs },
+  { id: "alloy", name: "Alloy", provider: VoiceProvider.OpenAI },
 ];
 
 export const BG_COLORS = [

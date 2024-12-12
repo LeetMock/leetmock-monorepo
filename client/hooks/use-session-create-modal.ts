@@ -38,7 +38,7 @@ interface SessionCreateModalState {
 
 const INITIAL_SESSION_CONFIG: SessionConfigState = {
   language: AVAILABLE_LANGUAGES[0],
-  voice: AVAILABLE_VOICES[0],
+  voice: AVAILABLE_VOICES[0].id,
   interviewTime: 30,
   mode: SessionMode.Practice,
   interviewFlow: {

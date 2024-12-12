@@ -24,7 +24,7 @@ from agent_server.events.events import (
     UserTestcaseExecutedEvent,
 )
 from agent_server.livekit.streams import EchoStream, NoopLLM, NoopStream
-from agent_server.livekit.tts import create_elevenlabs_tts
+from agent_server.livekit.tts import create_elevenlabs_tts, get_tts_engine
 from agent_server.utils.logger import get_logger
 from agent_server.utils.messages import (
     convert_chat_ctx_to_langchain_messages,
@@ -107,8 +107,11 @@ async def entrypoint(ctx: JobContext):
     unix_timestamp = int(datetime.now().timestamp())
 
     # Initialize context manager and start, which will initialize the code session
-    ctx_manager = AgentContextManager(
-        ctx=ctx, api=convex_api, session=session, agent_state_emitter=state_merger
+    ctx_manager: AgentContextManager = AgentContextManager(
+        ctx=ctx,
+        api=convex_api,
+        session=session,
+        agent_state_emitter=state_merger,
     )
     await ctx_manager.start()
 
@@ -140,7 +143,7 @@ async def entrypoint(ctx: JobContext):
         vad=silero.VAD.load(),
         stt=deepgram.STT(),
         llm=no_op_llm,
-        tts=openai.TTS(),
+        tts=get_tts_engine(session.session_metadata.voice),
         before_llm_cb=before_llm_callback,
     )
 

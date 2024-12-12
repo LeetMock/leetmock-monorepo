@@ -115,9 +115,12 @@ export const CodeInterviewConfig: React.FC<CodeInterviewConfigProps> = ({ select
                 <SelectValue placeholder="Select a voice" />
               </SelectTrigger>
               <SelectContent>
-                {AVAILABLE_VOICES.map((v) => (
-                  <SelectItem key={v} value={v}>
-                    {v}
+                {AVAILABLE_VOICES.map(({ id, name, provider }) => (
+                  <SelectItem key={id} value={id}>
+                    <span className="flex items-center gap-2">
+                      {name}
+                      <span className="text-xs text-muted-foreground">({provider})</span>
+                    </span>
                   </SelectItem>
                 ))}
               </SelectContent>
