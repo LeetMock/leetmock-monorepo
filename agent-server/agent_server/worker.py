@@ -36,7 +36,7 @@ from livekit.agents import cli  # type: ignore
 from livekit.agents import JobContext, WorkerOptions, llm, utils
 from livekit.agents.llm import ChatMessage
 from livekit.agents.voice_assistant import VoiceAssistant
-from livekit.agents.worker import _DefaultLoadCalc
+from livekit.agents.worker import Worker, _DefaultLoadCalc
 from livekit.plugins import deepgram, openai, silero
 from livekit.rtc import DataPacket
 
@@ -77,7 +77,7 @@ class CustomLoadCalc(_DefaultLoadCalc):
             return max(cpu_load, mem_load)
 
     @classmethod
-    def get_load(cls) -> float:
+    def get_load(cls, worker: Worker) -> float:
         """The load is the maximum of the CPU and memory usage.
 
         Returns:
