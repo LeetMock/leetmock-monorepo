@@ -5,7 +5,7 @@ import { Id } from "./_generated/dataModel";
 
 import { CODE_TEMPLATES } from "@/lib/constants";
 import { isDefined, minutesToMilliseconds } from "@/lib/utils";
-import { internalMutation, internalQuery, userMutation, userQuery } from "./functions";
+import { internalMutation, internalQuery, userMutation, userQuery, query } from "./functions";
 import { MutationCtx } from "./types";
 
 export const exists = userQuery({
@@ -23,6 +23,15 @@ export const exists = userQuery({
 });
 
 export const getById = userQuery({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  handler: async (ctx, { sessionId }) => {
+    return await ctx.table("sessions").get(sessionId);
+  },
+});
+
+export const getById_unauth = query({
   args: {
     sessionId: v.id("sessions"),
   },
@@ -136,14 +145,31 @@ export const createCodeSession = userMutation({
     questionId: v.id("questions"),
     agentThreadId: v.string(),
     assistantId: v.string(),
-    interviewType: v.union(v.literal("coding"), v.literal("system_design"), v.literal("behavioral")),
+    interviewType: v.union(
+      v.literal("coding"),
+      v.literal("system_design"),
+      v.literal("behavioral")
+    ),
     interviewMode: v.union(v.literal("practice"), v.literal("strict")),
     interviewFlow: v.array(v.string()),
     programmingLanguage: v.string(),
     timeLimit: v.number(),
     voice: v.string(),
   },
-  handler: async (ctx, { questionId, agentThreadId, assistantId, interviewMode, interviewType, interviewFlow, programmingLanguage, timeLimit, voice }) => {
+  handler: async (
+    ctx,
+    {
+      questionId,
+      agentThreadId,
+      assistantId,
+      interviewMode,
+      interviewType,
+      interviewFlow,
+      programmingLanguage,
+      timeLimit,
+      voice,
+    }
+  ) => {
     const activeSession = await ctx
       .table("sessions", "by_user_id", (q) => q.eq("userId", ctx.user.subject))
       .filter((q) =>
@@ -160,20 +186,19 @@ export const createCodeSession = userMutation({
 
     const question = await ctx.table("questions").getX(questionId);
     const sessionId = await ctx.table("sessions").insert({
+      userId: ctx.user.subject,
+      questionId,
       agentThreadId,
       assistantId,
+      sessionStatus: "not_started",
       interviewMode,
       interviewType,
-      meta: {
-        interviewFlow: interviewFlow,
-        programmingLanguage: programmingLanguage,
-        metaData: {},
-      },
-      questionId,
-      userId: ctx.user.subject,
       timeLimit,
-      sessionStatus: "not_started",
-      voice
+      evalReady: false,
+      voice,
+      interviewFlow,
+      programmingLanguage,
+      metadata: {},
     });
 
     const initialContent = CODE_TEMPLATES["python"](
@@ -199,7 +224,7 @@ export const createCodeSession = userMutation({
         output: "",
         isError: false,
       },
-      displayQuestion: false,
+      currentStageIdx: 0,
       testcases: testCases,
     });
 

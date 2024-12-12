@@ -1,7 +1,7 @@
 import { isDefined } from "@/lib/utils";
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
-import { query, userMutation } from "./functions";
+import { mutation, query } from "./functions";
 import {
   CodeSessionEvent,
   codeSessionEventSchema,
@@ -11,7 +11,7 @@ import {
   QueryCtx,
 } from "./types";
 
-export const commitCodeSessionEvent = userMutation({
+export const commitCodeSessionEvent = mutation({
   args: {
     sessionId: v.id("sessions"),
     event: codeSessionEventSchema,
@@ -25,6 +25,8 @@ export const commitCodeSessionEvent = userMutation({
       await handleTestcasesChangeEvent(sessionState, event);
     } else if (event.type === "user_testcase_executed") {
       console.log("user testcase executed event");
+    } else if (event.type === "stage_switched") {
+      await handleStageSwitchedEvent(sessionState, event);
     } else {
       // TODO: handle other event types
       throw new Error(`Unsupported event type: ${event.type}`);
@@ -51,6 +53,19 @@ async function handleContentChangeEvent(
     },
   });
 }
+
+async function handleStageSwitchedEvent(
+  sessionState: EntWriter<"codeSessionStates">,
+  e: Extract<CodeSessionEvent, { type: "stage_switched" }>
+) {
+  const { stageIdx } = e.data;
+
+  console.log("stage switched event", stageIdx);
+  await sessionState.patch({
+    currentStageIdx: stageIdx,
+  });
+}
+
 // don't need to handle user testcase executed event for now
 // async function handleUserTestcaseExecutedEvent(
 //   sessionState: EntWriter<"codeSessionStates">,
@@ -140,7 +155,11 @@ export const getLatestGroundTruthTestcaseExecutedEvent = query({
     v.null()
   ),
   handler: async (ctx, { codeSessionStateId }) => {
-    const event = await getLatestEventByType(ctx, codeSessionStateId, "groundtruth_testcase_executed");
+    const event = await getLatestEventByType(
+      ctx,
+      codeSessionStateId,
+      "groundtruth_testcase_executed"
+    );
     console.log("event", event);
     return event;
   },
@@ -154,10 +173,10 @@ async function getLatestEventByType<T extends CodeSessionEventType>(
   eventType: T
 ): Promise<
   | {
-    id: Id<"codeSessionEvents">;
-    ts: number;
-    event: Extract<CodeSessionEvent, { type: T }>;
-  }
+      id: Id<"codeSessionEvents">;
+      ts: number;
+      event: Extract<CodeSessionEvent, { type: T }>;
+    }
   | undefined
 > {
   const event = await ctx

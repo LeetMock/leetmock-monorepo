@@ -39,15 +39,15 @@ class TestResponseCodeSessionEventsGetLatestTestcaseChangeEvent(unittest.TestCas
                 error_message = '',
                 error_data = None,
                 value = convex_client.models.response_code_session_events_get_latest_testcase_change_event_value.Response_codeSessionEvents_getLatestTestcaseChangeEvent_value(
-                    event = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5(
-                        data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data(
+                    event = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_3.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_3(
+                        data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_3_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_3_data(
                             after = [
-                                convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data_after_inner(
+                                convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_3_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_3_data_after_inner(
                                     expected_output = null, 
                                     input = convex_client.models.input.input(), )
                                 ], 
                             before = [
-                                convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_5_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_5_data_after_inner(
+                                convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_3_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_3_data_after_inner(
                                     expected_output = null, 
                                     input = convex_client.models.input.input(), )
                                 ], ), 

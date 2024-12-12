@@ -1,7 +1,4 @@
-import { getInitials } from "@/lib/utils";
-import { useUser, useAuth } from "@clerk/clerk-react";
-import { LaptopIcon, LogOut, MoonIcon, SunIcon, UserIcon } from "lucide-react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,16 +11,19 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useUserProfile } from "@/hooks/use-user-profile";
+import { cn, getInitials } from "@/lib/utils";
+import { useAuth, useUser } from "@clerk/clerk-react";
+import { CreditCard, LaptopIcon, LogOut, MoonIcon, SunIcon, UserIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
-import { CreditCard } from "lucide-react";
 import { PriceTier, TierBadge } from "../app/(workspace)/dashboard/_components/tier-badge";
-import { useUserProfile } from "@/hooks/use-user-profile";
 
 export const UserDropdown: React.FC<{
   children: React.ReactNode;
   align?: "center" | "end" | "start";
-}> = ({ children, align }) => {
+  className?: string;
+}> = ({ children, align, className }) => {
   const { user } = useUser();
   const { signOut } = useAuth();
   const { theme, setTheme } = useTheme();
@@ -32,7 +32,12 @@ export const UserDropdown: React.FC<{
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none">{children}</DropdownMenuTrigger>
-      <DropdownMenuContent className="w-60" forceMount align={align} sideOffset={6}>
+      <DropdownMenuContent
+        className={cn("w-60", className)}
+        forceMount
+        align={align}
+        sideOffset={6}
+      >
         <div className="flex flex-col space-y-3 mt-3">
           <div className="flex flex-col items-center space-y-2">
             <Avatar>

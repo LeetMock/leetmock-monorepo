@@ -183,7 +183,11 @@ def convert_langchain_message_to_oai_message(
 
 def hash_msg(msg: llm.ChatMessage) -> str:
     s = f"{msg.role}-{msg.name}-{str(msg.content)}"
-    return str(int(hashlib.sha1(s.encode("utf-8")).hexdigest(), 16) % (10**8))
+    return get_text_hash(s)
+
+
+def get_text_hash(text: str) -> str:
+    return str(int(hashlib.sha1(text.encode("utf-8")).hexdigest(), 16) % (10**8))
 
 
 def convert_livekit_msgs_to_langchain_msgs(

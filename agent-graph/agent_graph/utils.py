@@ -3,6 +3,8 @@ from typing import Any, Dict, List, Type, TypeVar, cast
 from langchain_core.runnables.config import RunnableConfig
 from pydantic.v1 import BaseModel
 
+from langgraph.graph import StateGraph
+
 T = TypeVar("T")
 TState = TypeVar("TState", bound=BaseModel)
 TConfig = TypeVar("TConfig", bound=BaseModel)
@@ -80,3 +82,12 @@ def tasks_to_str(tasks: List[str]) -> str:
 
 def remove_tasks(tasks: List[str], task_to_remove: List[int]) -> List[str]:
     return [task for i, task in enumerate(tasks) if i not in task_to_remove]
+
+
+def with_noop_node(graph: StateGraph) -> StateGraph:
+    def noop(state: Any) -> Any:
+        return state
+
+    graph.add_node("noop", noop)
+    graph.set_entry_point("noop")
+    return graph

@@ -89,6 +89,13 @@ class TestQueryApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_eval_get_by_session_id_post(self) -> None:
+        """Test case for api_run_eval_get_by_session_id_post
+
+        Calls a query at the path eval.js:getBySessionId
+        """
+        pass
+
     def test_api_run_questions_get_all_post(self) -> None:
         """Test case for api_run_questions_get_all_post
 
@@ -121,6 +128,13 @@ class TestQueryApi(unittest.TestCase):
         """Test case for api_run_sessions_get_by_id_post
 
         Calls a query at the path sessions.js:getById
+        """
+        pass
+
+    def test_api_run_sessions_get_by_id_unauth_post(self) -> None:
+        """Test case for api_run_sessions_get_by_id_unauth_post
+
+        Calls a query at the path sessions.js:getById_unauth
         """
         pass
 

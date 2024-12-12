@@ -11,6 +11,7 @@ import { columns, SessionDoc } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
 
 import { Id } from "@/convex/_generated/dataModel";
+import { useConfig } from "@/hooks/use-config";
 import { useUser } from "@clerk/clerk-react";
 import { MoveRight } from "lucide-react";
 import { useMemo } from "react";
@@ -71,6 +72,8 @@ const InterviewCard = ({ activeSessionId, questionTitle }: InterviewCardProps) =
 
 const InterviewPage: React.FC = () => {
   const { user } = useUser();
+  const { showPriceBanner } = useConfig();
+
   const sessions = useQuery(api.sessions.getByUserId, { userId: user!.id });
   const activeSession = useQuery(api.sessions.getActiveSession, { userId: user!.id });
   const question = useQuery(api.questions.getById, { questionId: activeSession?.questionId });
@@ -82,8 +85,8 @@ const InterviewPage: React.FC = () => {
 
   return (
     <div className="flex flex-col">
-      <DashboardBreadcrumb className="py-4 px-6 bg-background/80 backdrop-blur-sm" />
-      <div className="flex flex-col space-y-6 px-6 pb-4">
+      <DashboardBreadcrumb className="h-12 px-6 bg-background/80 backdrop-blur-sm rounded-t-md" />
+      <div className="flex flex-col space-y-6 px-6 pb-4 pt-1">
         <div className="flex flex-col space-y-1">
           <span className="text-xl font-bold tracking-tight">Interviews</span>
           <span className="text-muted-foreground">
@@ -93,7 +96,7 @@ const InterviewPage: React.FC = () => {
         <div className="flex flex-col space-y-2">
           <InterviewCard activeSessionId={activeSession?._id} questionTitle={question?.title} />
         </div>
-        <div className="">
+        <div>
           <DataTable data={sessionList} columns={columns} />
         </div>
       </div>

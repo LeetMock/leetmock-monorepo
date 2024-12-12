@@ -1,31 +1,81 @@
 "use client";
 
-import { cn, formatTime } from "@/lib/utils";
-import { StopwatchIcon } from "@radix-ui/react-icons";
-import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
+import { Clock } from "lucide-react";
 import { HTMLAttributes } from "react";
 
 export interface TimerCountdownProps extends HTMLAttributes<HTMLDivElement> {
   timeLeft: number;
+  collapsed?: boolean;
+  totalTime?: number;
 }
 
-export const TimerCountdown = ({ timeLeft, className, ...props }: TimerCountdownProps) => {
-  const { theme } = useTheme();
+const getIndicatorColor = (timeLeft: number, totalTime: number = 3600) => {
+  const percentage = (timeLeft / totalTime) * 100;
+
+  if (percentage > 50) return "bg-green-500";
+  if (percentage > 25) return "bg-yellow-500";
+  return "bg-red-500";
+};
+
+export const TimerCountdown = ({
+  timeLeft,
+  className,
+  collapsed,
+  totalTime = 3600,
+  ...props
+}: TimerCountdownProps) => {
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  const indicatorColor = getIndicatorColor(timeLeft, totalTime);
+
+  if (collapsed) {
+    return (
+      <div
+        className={cn("flex flex-col items-center py-2 bg-muted/80 rounded-md", className)}
+        {...props}
+      >
+        <div className="relative">
+          <Clock className="w-3.5 h-3.5 text-muted-foreground mb-1" />
+          <div
+            className={cn("absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full", indicatorColor)}
+          />
+        </div>
+        <span className="text-[11px] tabular-nums">
+          {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div
       className={cn(
-        "flex items-center justify-center space-x-2 font-semibold",
-        "px-2 py-1 pr-1 rounded-sm select-none cursor-pointer text-sm",
-        theme === "dark" ? "bg-yellow-800/10" : "bg-yellow-50",
-        theme === "dark" ? "text-yellow-200" : "text-yellow-600",
-        theme === "dark" ? "border border-yellow-600" : "border border-yellow-300",
+        "flex items-center gap-3 p-2 bg-background rounded-lg shadow-sm border",
         className
       )}
       {...props}
     >
-      <StopwatchIcon className="w-[0.9rem] h-[0.9rem]" />
-      <span className="w-12 shrink-0">{formatTime(timeLeft)}</span>
+      <div className="flex items-center gap-2 w-full pr-1">
+        <Clock className="w-4 h-4 text-muted-foreground shrink-0" />
+        <div className="flex items-center gap-2 overflow-hidden justify-between flex-1">
+          <div className="flex items-baseline gap-1">
+            <div className="flex items-baseline">
+              <span className="text-sm font-semibold tabular-nums">
+                {String(minutes).padStart(2, "0")}
+              </span>
+              <span className="text-muted-foreground text-xs font-medium mx-0.5">m</span>
+            </div>
+            <div className="flex items-baseline">
+              <span className="text-sm font-semibold tabular-nums">
+                {String(seconds).padStart(2, "0")}
+              </span>
+              <span className="text-muted-foreground text-xs font-medium ml-0.5">s</span>
+            </div>
+          </div>
+          <div className={cn("w-1.5 h-1.5 rounded-full", indicatorColor)} />
+        </div>
+      </div>
     </div>
   );
 };

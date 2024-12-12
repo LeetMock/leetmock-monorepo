@@ -1,12 +1,10 @@
+import { Doc } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import TurndownService from "turndown";
 
 interface CodeQuestionPanelProps extends React.HTMLAttributes<HTMLDivElement> {
-  question: {
-    title: string;
-    content: string;
-  };
+  question: Doc<"questions">;
 }
 
 export const CodeQuestionPanel: React.FC<CodeQuestionPanelProps> = ({
@@ -20,7 +18,7 @@ export const CodeQuestionPanel: React.FC<CodeQuestionPanelProps> = ({
     br: "  \n",
   });
 
-  let markdownContent = turndownService.turndown(question.content);
+  let markdownContent = turndownService.turndown(question.question);
 
   // Post-processing
   markdownContent = markdownContent

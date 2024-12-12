@@ -3,6 +3,53 @@ export interface Language {
   label: string;
 }
 
+export enum InterviewStage {
+  Intro = "introduction",
+  Background = "background",
+  Coding = "coding",
+  Evaluation = "evaluation",
+  End = "end",
+}
+
+export enum StageView {
+  Chat = "chat",
+  Coding = "coding",
+}
+
+export enum VoiceProvider {
+  ElevenLabs = "elevenlabs",
+  OpenAI = "openai",
+}
+
+export type Voice = {
+  id: string;
+  name: string;
+  provider: VoiceProvider;
+};
+
+export type InterviewFlow = {
+  [InterviewStage.Intro]: boolean;
+  [InterviewStage.Background]: boolean;
+  [InterviewStage.Coding]: boolean;
+  [InterviewStage.Evaluation]: boolean;
+};
+
+export const STAGE_VIEW_MAPPING: Record<InterviewStage, StageView> = {
+  [InterviewStage.Intro]: StageView.Chat,
+  [InterviewStage.Background]: StageView.Chat,
+  [InterviewStage.Coding]: StageView.Coding,
+  [InterviewStage.Evaluation]: StageView.Chat,
+  [InterviewStage.End]: StageView.Chat,
+};
+
+export const STAGE_NAME_MAPPING: Record<InterviewStage, string> = {
+  [InterviewStage.Intro]: "Greetings",
+  [InterviewStage.Background]: "Background Discussion",
+  [InterviewStage.Coding]: "Coding Challenge",
+  [InterviewStage.Evaluation]: "Evaluation",
+  [InterviewStage.End]: "End",
+};
+
 export const LANGUAGES: Language[] = [
   { value: "python", label: "Python" },
   { value: "javascript", label: "JavaScript" },
@@ -11,15 +58,9 @@ export const LANGUAGES: Language[] = [
 ];
 
 export const AVAILABLE_LANGUAGES = ["python"];
-export const AVAILABLE_VOICES = ["Brian", "alloy"];
-
-export const VOICES: Language[] = [
-  { value: "nova", label: "Nova" },
-  { value: "alloy", label: "Alloy" },
-  { value: "echo", label: "Echo" },
-  { value: "fable", label: "Fable (British)" },
-  { value: "onyx", label: "Onyx" },
-  { value: "shimmer", label: "Shimmer" },
+export const AVAILABLE_VOICES: Voice[] = [
+  { id: "brian", name: "Brian", provider: VoiceProvider.ElevenLabs },
+  { id: "alloy", name: "Alloy", provider: VoiceProvider.OpenAI },
 ];
 
 export const BG_COLORS = [
@@ -39,7 +80,8 @@ interface CodeTemplate {
 }
 
 export const CODE_PREFIX: { [key: string]: string } = {
-  python: "from typing import List, Dict, Tuple, Optional, Union, Any\nimport math\nfrom data_structure import *\n",
+  python:
+    "from typing import List, Dict, Tuple, Optional, Union, Any\nimport math\nfrom data_structure import *\n",
   javascript: "",
   java: "",
   cpp: "",
@@ -121,8 +163,8 @@ from typing import List, Any
 
 class Solution:
     def ${functionName}(self, ${Object.entries(params)
-        .map(([param, type]) => `${param}: ${type}`)
-        .join(", ")}):
+      .map(([param, type]) => `${param}: ${type}`)
+      .join(", ")}):
         # TODO: Write your Python code here
         pass
 `.trim(),
@@ -145,8 +187,8 @@ import java.util.List;
 
 class Solution {
     public Object ${functionName}(${Object.entries(params)
-        .map(([param, type]) => `${type} ${param}`)
-        .join(", ")}) {
+      .map(([param, type]) => `${type} ${param}`)
+      .join(", ")}) {
         // TODO: Write your Java code here
         return null;
     }
@@ -161,8 +203,8 @@ class Solution {
 class Solution {
 public:
     int ${functionName}(${Object.entries(params)
-        .map(([param, type]) => `${type} ${param}`)
-        .join(", ")}) {
+      .map(([param, type]) => `${type} ${param}`)
+      .join(", ")}) {
         // TODO: Write your C++ code here
         return 0;
     }

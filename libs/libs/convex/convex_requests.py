@@ -1,8 +1,12 @@
 from libs.convex.convex_types import (
+    CodeSessionEvent,
+    RequestCommitCodeSessionEvent,
+    RequestCommitCodeSessionEventArgs,
     RequestGetSessionMetadata,
     RequestGetSessionMetadataArgs,
     RequestTestCodeCorrectness,
     RequestTestCodeCorrectnessArgs,
+    StageSwitchedEvent,
 )
 
 
@@ -20,3 +24,19 @@ def create_test_code_correctness_request(
         language=language, questionId=question_id, sessionId=session_id
     )
     return RequestTestCodeCorrectness(args=args)
+
+
+def create_commit_code_session_event_request(
+    session_id: str, stage: str
+) -> RequestCommitCodeSessionEvent:
+    args = RequestCommitCodeSessionEventArgs.from_dict(
+        {
+            "sessionId": session_id,
+            "event": {
+                "type": "stage_switched",
+                "data": {"stage": stage},
+            },
+        }
+    )
+    assert args is not None
+    return RequestCommitCodeSessionEvent(args=args)

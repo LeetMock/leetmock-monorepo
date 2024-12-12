@@ -38,10 +38,7 @@ from typing import Any, Callable, Coroutine, Generic, List, Type, TypeVar
 from agent_server.contexts.session import BaseSession
 from pydantic.v1 import BaseModel, PrivateAttr
 
-from libs.profiler import get_profiler
-
 logger = logging.getLogger(__name__)
-pf = get_profiler()
 
 TModel = TypeVar("TModel")
 TSession = TypeVar("TSession", bound=BaseSession)
@@ -107,7 +104,6 @@ class BaseEvent(BaseModel, Generic[TModel], ABC):
             event: The event data of type TModel to pass to callbacks
         """
 
-        pf.point(f"event.{self.event_name}.emit")
         asyncio.gather(
             *[callback(event) for callback in self._callbacks],
             return_exceptions=True,

@@ -37,21 +37,37 @@ class TestResponseActionsGetSessionMetadataValue(unittest.TestCase):
             return ResponseActionsGetSessionMetadataValue(
                 agent_thread_id = '',
                 assistant_id = '',
-                question_content = '',
-                question_id = '',
-                question_title = '',
-                session_id = '',
-                session_status = ''
-            )
-        else:
-            return ResponseActionsGetSessionMetadataValue(
-                agent_thread_id = '',
-                assistant_id = '',
+                interview_flow = [
+                    ''
+                    ],
+                interview_mode = '',
+                interview_type = '',
+                metadata = convex_client.models.metadata.metadata(),
+                programming_language = '',
                 question_content = '',
                 question_id = '',
                 question_title = '',
                 session_id = '',
                 session_status = '',
+                voice = ''
+            )
+        else:
+            return ResponseActionsGetSessionMetadataValue(
+                agent_thread_id = '',
+                assistant_id = '',
+                interview_flow = [
+                    ''
+                    ],
+                interview_mode = '',
+                interview_type = '',
+                metadata = convex_client.models.metadata.metadata(),
+                programming_language = '',
+                question_content = '',
+                question_id = '',
+                question_title = '',
+                session_id = '',
+                session_status = '',
+                voice = '',
         )
         """
 

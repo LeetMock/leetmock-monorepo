@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**event** | [**ResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValueEvent**](ResponseCodeSessionEventsGetLatestGroundTruthTestcaseExecutedEventValueEvent.md) |  | 
+**event** | [**RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5**](RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf5.md) |  | 
 **id** | **str** | ID from table \&quot;codeSessionEvents\&quot; | 
 **ts** | **float** |  | 
 

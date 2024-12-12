@@ -61,6 +61,7 @@ Got:
 {% endfor %}
 """
 
+
 def format_static_check_error(error: str) -> str:
     prompt = PromptTemplate.from_template(
         TESTCASE_STATIC_CHECK_ERROR_PROMPT, template_format="jinja2"

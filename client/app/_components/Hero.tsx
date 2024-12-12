@@ -1,0 +1,109 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
+import Logo from './Logo';
+import { useState, useEffect } from 'react';
+
+const Hero = () => {
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    setDimensions({
+      width: window.innerWidth,
+      height: window.innerHeight
+    });
+
+    const handleResize = () => {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  if (!isClient) {
+    return null;
+  }
+
+  return (
+    <div className="h-screen relative overflow-hidden bg-black flex items-center justify-center">
+      <div className="absolute inset-0 cyber-grid opacity-20"></div>
+
+      <div className="absolute inset-0">
+        {[...Array(50)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute text-blue-500/30 text-lg font-mono"
+            initial={{
+              x: Math.random() * dimensions.width,
+              y: -100,
+            }}
+            animate={{
+              y: dimensions.height + 100,
+            }}
+            transition={{
+              duration: 5 + Math.random() * 10,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          >
+            {String.fromCharCode(33 + Math.floor(Math.random() * 93))}
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="container mx-auto px-6 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center"
+        >
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 text-2xl md:text-3xl block mb-4">
+              AI Empowered
+            </span>
+            <div className="flex justify-center mb-4">
+              <Logo size="largest" />
+            </div>
+            <span className="text-white text-4xl md:text-5xl block mt-4">
+              Technical Mock Interviews Platform
+            </span>
+          </h1>
+          <p className="text-xl md:text-2xl text-blue-200 mb-12 max-w-3xl mx-auto">
+            Leverage the latest AI to master your interviews and land your dream job with confidence.
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-4">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                window.location.href = '/dashboard';
+              }}
+              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-cyan-600 transition-all shadow-[0_0_20px_rgba(0,195,255,0.5)] flex items-center"
+            >
+              Start Practicing Now <ArrowRight className="ml-2" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 bg-transparent border-2 border-blue-500/50 text-blue-400/50 rounded-lg font-semibold text-lg cursor-not-allowed backdrop-blur-sm"
+              disabled
+            >
+              Watch Demo (Coming Soon)
+            </motion.button>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+export default Hero;

@@ -9,7 +9,20 @@ const nextConfig = {
   reactStrictMode: true,
 
   images: {
-    domains: ["cdn-icons-png.flaticon.com", "i.pravatar.cc", "images.unsplash.com"],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn-icons-png.flaticon.com'
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.pravatar.cc'
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com'
+      }
+    ]
   },
 
   webpack: (config) => {

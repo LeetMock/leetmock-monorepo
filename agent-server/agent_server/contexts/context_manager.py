@@ -1,6 +1,9 @@
 import asyncio
 from typing import Generic, TypeVar
 
+from agent_graph.state_merger import AgentStateEmitter
+from agent_graph.storages.langgraph_cloud import LangGraphCloudStateStorage
+from agent_graph.types import EventMessageState
 from agent_server.contexts.session import BaseSession
 from agent_server.livekit.channel import ChanConfig, ChanValue
 from agent_server.livekit.validators import string_validator
@@ -11,18 +14,16 @@ from libs.convex.api import ConvexApi
 
 logger = get_logger(__name__)
 
-RECONNECT_MESSAGE = (
-    "(User has disconnected and reconnected back to the interview, you would say:)"
-)
 
 SESSION_ID_TOPIC = "session-id"
 
 TSession = TypeVar("TSession", bound=BaseSession)
+TState = TypeVar("TState", bound=EventMessageState)
 
 
-class AgentContextManager(Generic[TSession]):
+class AgentContextManager(Generic[TSession, TState]):
     """AgentContextManager coordinates the lifecycle and state management of an agent session.
-    
+
     This class manages the connection between a LiveKit job context, Convex API, and a session instance.
     It handles session initialization, chat context management, and state synchronization.
 
@@ -44,13 +45,20 @@ class AgentContextManager(Generic[TSession]):
         ```
     """
 
-    def __init__(self, ctx: JobContext, api: ConvexApi, session: TSession):
+    def __init__(
+        self,
+        ctx: JobContext,
+        api: ConvexApi,
+        session: TSession,
+        agent_state_emitter: AgentStateEmitter[TState],
+    ):
         """Initialize the AgentContextManager.
 
         Args:
             ctx (JobContext): The LiveKit job context
             api (ConvexApi): The Convex API client instance
             session (TSession): The session instance to manage
+            agent_state_emitter (StateMergerEventEmitter[TState]): The event emitter for agent state events
         """
 
         super().__init__()
@@ -59,10 +67,11 @@ class AgentContextManager(Generic[TSession]):
         self.api = api
 
         self._session = session
-        self._session_id_fut = asyncio.Future[str]()
+        self._agent_state_emitter = agent_state_emitter
 
         self._has_started = False
         self._start_lock = asyncio.Lock()
+        self._session_id_fut = asyncio.Future[str]()
 
     @property
     def session(self) -> TSession:
@@ -113,7 +122,14 @@ class AgentContextManager(Generic[TSession]):
         self._session_id_fut.set_result(result)
 
         # Setup the session with the session id
-        await self._session.start(result)
+        await self._session.start(result, self._agent_state_emitter)
+        # Connect the agent state emitter to the state storage
+        await self._agent_state_emitter.connect(
+            storage=LangGraphCloudStateStorage(
+                thread_id=self.session.session_metadata.agent_thread_id,
+                assistant_id=self.session.session_metadata.assistant_id,
+            )
+        )
 
     async def start(self):
         """Start the context manager and initialize all components.
@@ -136,3 +152,5 @@ class AgentContextManager(Generic[TSession]):
             self._has_started = True
             await self.ctx.connect()
             await self.setup()
+
+        return self

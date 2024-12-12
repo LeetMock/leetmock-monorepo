@@ -13,6 +13,7 @@ from agent_graph.state_merger import StateMerger
 from agent_graph.types import Step
 from agent_graph.utils import wrap_xml
 from agent_server.utils.logger import get_logger
+from agent_server.utils.messages import get_text_hash
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, AnyMessage
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
@@ -145,11 +146,16 @@ def create_llm_step_tracker(
         """Send a message to the state update queue"""
         state_update_queue.put_nowait(dict(messages=[message]))
 
+    def commit_step_finish_fn(_: None):
+        """Commit the step finish"""
+        state_update_queue.put_nowait(dict(completed_steps=[step.name]))
+
     def post_process_fn(result: TrackStep):
         """Post-process the step tracking result"""
         if result.completed:
             message = wrap_xml("thinking", result.thinking)
-            send_message_fn(AIMessage(content=message))
+            ai_message = AIMessage(content=message, id=get_text_hash(message))
+            send_message_fn(ai_message)
         return result.completed
 
     on_init_chain = (
@@ -180,6 +186,7 @@ def create_llm_step_tracker(
         RunnableLambda(lambda _: AIMessage(content=step_finish_message))
         # Send the message
         | RunnableLambda(send_message_fn)
+        | RunnableLambda(commit_step_finish_fn)
     ).with_config({"run_name": f"track_step_{step.name}:on_finish"})
 
     return StepTrackerConfig.from_runnables(

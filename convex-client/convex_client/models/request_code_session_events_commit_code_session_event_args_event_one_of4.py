@@ -17,8 +17,9 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictBool, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List
+from convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of4_data import RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -26,15 +27,15 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4(BaseModel):
     """
     RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4
     """ # noqa: E501
-    data: StrictBool
+    data: RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data
     type: StrictStr
     __properties: ClassVar[List[str]] = ["data", "type"]
 
     @field_validator('type')
     def type_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['question_displayed']):
-            raise ValueError("must be one of enum values ('question_displayed')")
+        if value not in set(['user_testcase_executed']):
+            raise ValueError("must be one of enum values ('user_testcase_executed')")
         return value
 
     model_config = ConfigDict(
@@ -76,6 +77,9 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of data
+        if self.data:
+            _dict['data'] = self.data.to_dict()
         return _dict
 
     @classmethod
@@ -88,7 +92,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "data": obj.get("data"),
+            "data": RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data.from_dict(obj["data"]) if obj.get("data") is not None else None,
             "type": obj.get("type")
         })
         return _obj

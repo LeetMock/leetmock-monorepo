@@ -1,91 +1,92 @@
 import { Id } from "@/convex/_generated/dataModel";
+import {
+  AVAILABLE_LANGUAGES,
+  AVAILABLE_VOICES,
+  InterviewFlow,
+  InterviewStage,
+} from "@/lib/constants";
 import { allDefined, isDefined } from "@/lib/utils";
 import { useMemo } from "react";
 import { create } from "zustand";
 
 export enum SessionType {
-  CodeInterview = 0,
-  SystemDesign = 1,
-  Behavioral = 2,
+  Coding = "coding",
+  SystemDesign = "system_design",
+  Behavioral = "behavioral",
 }
 
-export interface CodeInterviewState {
-  questionId: Id<"questions">;
+export enum SessionMode {
+  Practice = "practice",
+  Strict = "strict",
 }
 
-export interface CodeInterviewConfigState {
-  interviewFlow: string[];
+export interface SessionConfigState {
+  type?: SessionType;
+  questionId?: Id<"questions">;
+  interviewFlow: InterviewFlow;
   language: string;
   voice: string;
   interviewTime: number;
-  mode: "practice" | "strict";
+  mode: SessionMode;
 }
 
 interface SessionCreateModalState {
-  type?: SessionType;
-  codeInterview: Partial<CodeInterviewState>;
-  codeInterviewConfig: Partial<CodeInterviewConfigState>;
-  setType: (type: SessionType | undefined) => void;
-  updateCodeInterview: (params: Partial<CodeInterviewState>) => void;
-  updateCodeInterviewConfig: (params: Partial<CodeInterviewConfigState>) => void;
+  sessionConfig: SessionConfigState;
+  setSessionConfig: (params: Partial<SessionConfigState>) => void;
   reset: () => void;
 }
 
+const INITIAL_SESSION_CONFIG: SessionConfigState = {
+  language: AVAILABLE_LANGUAGES[0],
+  voice: AVAILABLE_VOICES[0].id,
+  interviewTime: 30,
+  mode: SessionMode.Practice,
+  interviewFlow: {
+    [InterviewStage.Intro]: true,
+    [InterviewStage.Background]: false,
+    [InterviewStage.Coding]: true,
+    [InterviewStage.Evaluation]: false,
+  },
+};
+
 export const useSessionCreateModalState = create<SessionCreateModalState>((set, get) => ({
-  type: undefined,
-  codeInterview: {},
-  codeInterviewConfig: {},
-  setType: (type) => set({ type }),
-  updateCodeInterview: (params: Partial<CodeInterviewState>) =>
-    set({ codeInterview: { ...get().codeInterview, ...params } }),
-  updateCodeInterviewConfig: (params: Partial<CodeInterviewConfigState>) =>
-    set({ codeInterviewConfig: { ...get().codeInterviewConfig, ...params } }),
-  reset: () => set({ type: undefined, codeInterview: {}, codeInterviewConfig: {} }),
+  sessionConfig: INITIAL_SESSION_CONFIG,
+  setSessionConfig: (params: Partial<SessionConfigState>) =>
+    set({ sessionConfig: { ...get().sessionConfig, ...params } }),
+  reset: () => set({ sessionConfig: INITIAL_SESSION_CONFIG }),
 }));
 
 export const useSessionCreateModal = () => {
-  const { type, setType, codeInterview, updateCodeInterview, codeInterviewConfig, updateCodeInterviewConfig, reset } = useSessionCreateModalState();
+  const { sessionConfig, setSessionConfig, reset } = useSessionCreateModalState();
+  const { type, questionId } = sessionConfig;
 
   const hasSetInterviewType = useMemo(() => isDefined(type), [type]);
-
   const hasSetProblem = useMemo(() => {
     if (!hasSetInterviewType) return false;
 
-    if (type === SessionType.CodeInterview) {
-      return isDefined(codeInterview.questionId);
+    if (type === SessionType.Coding) {
+      return isDefined(questionId);
     }
 
     return false;
-  }, [codeInterview, hasSetInterviewType, type]);
+  }, [questionId, hasSetInterviewType, type]);
 
   const hasConfiguredSession = useMemo(() => {
     if (!hasSetProblem) return false;
 
-    if (type === SessionType.CodeInterview) {
-      return allDefined(codeInterviewConfig);
+    if (type === SessionType.Coding) {
+      return allDefined(sessionConfig);
     }
 
     return false;
-  }, [codeInterviewConfig, type, hasSetProblem]);
-
-  const maxStep = useMemo(() => {
-    if (!hasSetInterviewType) return 0;
-    if (!hasSetProblem) return 1;
-    if (!hasConfiguredSession) return 2;
-    return 3;
-  }, [hasSetInterviewType, hasSetProblem, hasConfiguredSession]);
+  }, [sessionConfig, type, hasSetProblem]);
 
   return {
-    maxStep,
-    type,
-    codeInterview,
-    codeInterviewConfig,
+    sessionConfig,
     hasConfiguredSession,
     hasSetInterviewType,
     hasSetProblem,
-    setType,
-    updateCodeInterview,
-    updateCodeInterviewConfig,
+    setSessionConfig,
     reset,
   };
 };

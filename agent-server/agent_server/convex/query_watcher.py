@@ -14,7 +14,7 @@ Example:
     ```python
     # Create a watcher for a specific session
     session_state_watcher = QueryWatcher.from_query(
-        query="codeSessionStates:get", 
+        query="codeSessionStates:get",
         params={"sessionId": "session_123"},
         validator_cls=CodeSessionState,  # Generated from openapi-api-generator
     )
@@ -48,6 +48,7 @@ Note:
 """
 
 import asyncio
+import json
 import logging
 from inspect import iscoroutinefunction
 from typing import Any, Callable, Coroutine, Dict, Generic, List, Type, TypeVar
@@ -63,7 +64,7 @@ logger = logging.getLogger("convex")
 
 class QueryWatcher(BaseModel, Generic[TModel]):
     """A generic class for watching Convex queries and handling their updates.
-    
+
     This class provides real-time data synchronization with a Convex backend by watching
     specific queries and executing callbacks when the data changes.
 
@@ -131,7 +132,7 @@ class QueryWatcher(BaseModel, Generic[TModel]):
         the validated query result as its argument.
 
         Args:
-            callback (Callable[[TModel], Coroutine[Any, Any, None] | None]): 
+            callback (Callable[[TModel], Coroutine[Any, Any, None] | None]):
                 Function to call when data changes. Can be sync or async.
 
         Returns:
@@ -141,10 +142,11 @@ class QueryWatcher(BaseModel, Generic[TModel]):
             ```python
             async def handle_update(data: SessionModel):
                 print(f"Session updated: {data}")
-            
+
             watcher.on_update(handle_update)
             ```
         """
+
         async def wrapped_callback(result: TModel) -> None:
             try:
                 if iscoroutinefunction(callback):
@@ -185,6 +187,9 @@ class QueryWatcher(BaseModel, Generic[TModel]):
             try:
                 data = self.validator_cls.model_validate(raw_data)
             except Exception as e:
+                logger.error(
+                    f"Failed to validate data: {json.dumps(raw_data, indent=2)}"
+                )
                 logger.error(f"Error validating data: {e}")
                 continue
 
@@ -218,3 +223,9 @@ class QueryWatcher(BaseModel, Generic[TModel]):
             self._query_watch_task = asyncio.create_task(
                 self._run_query_watch_task(api)
             )
+
+
+def query_watcher(
+    query: str, params: Dict[str, Any], validator_cls: Type[TModel], dedup: bool = True
+) -> QueryWatcher[TModel]:
+    return QueryWatcher.from_query(query, params, validator_cls, dedup)

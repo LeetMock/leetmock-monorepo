@@ -1,4 +1,14 @@
-from livekit.plugins import elevenlabs
+from livekit.agents.tts import TTS
+from livekit.plugins import elevenlabs, openai
+
+
+def get_tts_engine(voice: str) -> TTS:
+    if voice == "brian":
+        return create_elevenlabs_tts()
+    elif voice == "alloy":
+        return create_openai_tts()
+    else:
+        raise ValueError(f"Invalid voice: {voice}")
 
 
 def create_elevenlabs_tts() -> elevenlabs.TTS:
@@ -16,3 +26,7 @@ def create_elevenlabs_tts() -> elevenlabs.TTS:
             ),
         ),
     )
+
+
+def create_openai_tts() -> openai.TTS:
+    return openai.TTS()

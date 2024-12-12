@@ -1,32 +1,38 @@
 import asyncio
 import time
 from abc import ABC, abstractmethod
-from typing import Literal, TypeVar
+from typing import Any, Generic, Literal, TypeVar
 
-from agent_server.convex.query_watcher import QueryWatcher
+from agent_graph.code_mock_staged_v1.graph import AgentState
+from agent_graph.state_merger import AgentStateEmitter
+from agent_graph.types import EventMessageState
+from agent_server.convex.query_watcher import query_watcher
 from agent_server.utils.logger import get_logger
 from livekit.agents.utils import EventEmitter
 from pydantic import BaseModel
 
 from libs.convex.api import ConvexApi
-from libs.convex.convex_requests import create_get_session_metadata_request
+from libs.convex.convex_requests import (
+    create_commit_code_session_event_request,
+    create_get_session_metadata_request,
+)
 from libs.convex.convex_types import (
     CodeSessionContentChangedEvent,
+    CodeSessionGroundTruthTestcaseExecutedEvent,
     CodeSessionState,
     CodeSessionTestcaseChangedEvent,
     CodeSessionUserTestcaseExecutedEvent,
     SessionMetadata,
-    CodeSessionGroundTruthTestcaseExecutedEvent
 )
 
 logger = get_logger(__name__)
 
 
 TEventTypes = TypeVar("TEventTypes", bound=str)
-TEvent = TypeVar("TEvent", bound=BaseModel)
+TState = TypeVar("TState", bound=EventMessageState)
 
 
-class BaseSession(EventEmitter[TEventTypes], ABC):
+class BaseSession(EventEmitter[TEventTypes], Generic[TEventTypes, TState], ABC):
     """BaseSession is a base class for managing session state & sync with convex.
     It inherits from EventEmitter to allow for event-based communication.
     """
@@ -47,11 +53,14 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def setup(self, session_id: str):
-        """Set up the session with the given session ID."""
+    async def setup(
+        self, session_id: str, agent_state_emitter: AgentStateEmitter[TState]
+    ):
         raise NotImplementedError
 
-    async def start(self, session_id: str):
+    async def start(
+        self, session_id: str, agent_state_emitter: AgentStateEmitter[TState]
+    ):
         """Start the session with the given session ID."""
         async with self._start_lock:
             if self._has_started:
@@ -61,12 +70,15 @@ class BaseSession(EventEmitter[TEventTypes], ABC):
                 return
 
             self._has_started = True
-            await self.setup(session_id)
+            await self.setup(session_id, agent_state_emitter)
 
 
 # A list of events that the code session can emit
 CodeSessionEventTypes = Literal[
-    "content_changed", "testcase_changed", "testcase_executed", "ground_truth_testcase_executed"
+    "content_changed",
+    "testcase_changed",
+    "testcase_executed",
+    "ground_truth_testcase_executed",
 ]
 
 # Queries to fetch the latest events from the convex backend
@@ -74,9 +86,12 @@ CODE_SESSION_STATE_QUERY = "codeSessionStates:get"
 CONTENT_CHANGED_QUERY = "codeSessionEvents:getLatestContentChangeEvent"
 TESTCASE_CHANGED_QUERY = "codeSessionEvents:getLatestTestcaseChangeEvent"
 USER_TESTCASE_EXECUTED_QUERY = "codeSessionEvents:getLatestUserTestcaseExecutedEvent"
-GROUND_TRUTH_TESTCASE_EXECUTED_QUERY = "codeSessionEvents:getLatestGroundTruthTestcaseExecutedEvent"
+GROUND_TRUTH_TESTCASE_EXECUTED_QUERY = (
+    "codeSessionEvents:getLatestGroundTruthTestcaseExecutedEvent"
+)
 
-class CodeSession(BaseSession[CodeSessionEventTypes]):
+
+class CodeSession(BaseSession[CodeSessionEventTypes, AgentState]):
     """A session manager for the whole interview coding session.
 
     CodeSession extends BaseSession to handle code-specific session events and state management.
@@ -88,7 +103,7 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
         testcase_changed: Emitted when testcase definitions are modified
         testcase_executed: Emitted when a testcase is executed
         ground_truth_testcase_executed: Emitted when the ground truth testcase is executed
-        
+
     Attributes:
         session_metadata (SessionMetadata): Metadata about the current session
         session_state (CodeSessionState): Current state of the code session
@@ -170,82 +185,56 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
         if not self._synced_future.done():
             self._synced_future.set_result(True)
 
-    def _handle_content_changed(self, event: CodeSessionContentChangedEvent):
-        """Handle code content change events.
+    def _create_event_handler(self, event_name: CodeSessionEventTypes):
+        def handler(event: Any):
+            if event.ts < self._start_time_ms:
+                logger.info(
+                    f"Code session {event_name} event is older than session start time."
+                    "Ignoring event."
+                )
+                return
 
-        Emits a 'content_changed' event if the event is not stale.
+            self.emit(event_name, event)
 
-        Args:
-            event (CodeSessionContentChangedEvent): The content change event
+        return handler
 
-        Note:
-            Events with timestamps before session start are ignored
+    def _create_handle_state_changed_task(self, prev: AgentState, curr: AgentState):
+        asyncio.create_task(self._handle_state_changed(prev, curr))
+
+    async def _handle_state_changed(self, prev: AgentState, next: AgentState):
+        """Handle updates to the code session state.
+
+        Updates the internal session state and completes the sync future
+        when the initial state is received.
         """
-        if event.ts < self._start_time_ms:
-            logger.info(
-                "Code session content changed event is older than session start time."
-                "Ignoring event."
+
+        await self._synced_future
+
+        curr_stage_idx = self.session_state.current_stage_idx
+        next_stage_idx = next.current_stage_idx
+
+        if curr_stage_idx != next_stage_idx:
+            assert (
+                self._session_id is not None
+            ), "Session ID must be set before committing events"
+
+            self._api.mutation_unsafe(
+                name="codeSessionEvents:commitCodeSessionEvent",
+                args={
+                    "sessionId": self._session_id,
+                    "event": {
+                        "type": "stage_switched",
+                        "data": {"stageIdx": next_stage_idx},
+                    },
+                },
             )
-            return
+            logger.info("Committed stage_switched code session event")
 
-        self.emit("content_changed", event)
-
-    def _handle_testcase_changed(self, event: CodeSessionTestcaseChangedEvent):
-        """Handle testcase definition change events.
-
-        Emits a 'testcase_changed' event if the event is not stale.
-
-        Args:
-            event (CodeSessionTestcaseChangedEvent): The testcase change event
-
-        Note:
-            Events with timestamps before session start are ignored
-        """
-        if event.ts < self._start_time_ms:
-            logger.info(
-                "Code session testcase changed event is older than session start time."
-                "Ignoring event."
-            )
-            return
-
-        self.emit("testcase_changed", event)
-
-    def _handle_user_testcase_executed(
-        self, event: CodeSessionUserTestcaseExecutedEvent
+    async def setup(
+        self,
+        session_id: str,
+        agent_state_emitter: AgentStateEmitter[AgentState],
     ):
-        """Handle user testcase execution events.
-
-        Emits a 'testcase_executed' event if the event is not stale.
-
-        Args:
-            event (CodeSessionUserTestcaseExecutedEvent): The testcase execution event
-
-        Note:
-            Events with timestamps before session start are ignored
-        """
-        if event.ts < self._start_time_ms:
-            logger.info(
-                "Code session user testcase executed event is older than session start time."
-                "Ignoring event."
-            )
-            return
-
-        self.emit("testcase_executed", event)
-
-    def _handle_ground_truth_testcase_executed(self, event: CodeSessionGroundTruthTestcaseExecutedEvent):
-        """Handle ground truth testcase execution events.
-
-        Emits a 'ground_truth_testcase_executed' event if the event is not stale.
-
-        Args:
-            event (CodeSessionGroundTruthTestcaseExecutedEvent): The testcase execution event
-
-        Note:
-            Events with timestamps before session start are ignored
-        """
-        self.emit("ground_truth_testcase_executed", event)
-
-    async def setup(self, session_id: str):
         """Set up the code session with the given session ID.
 
         This method:
@@ -276,7 +265,7 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
 
         self._session_metadata = response.value
 
-        session_state_watcher = QueryWatcher.from_query(
+        session_state_watcher = query_watcher(
             query=CODE_SESSION_STATE_QUERY,
             params={"sessionId": self._session_id},
             validator_cls=CodeSessionState,
@@ -286,25 +275,32 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
         session_state_watcher.watch(self._api)
         await self._synced_future
 
-        content_changed_watcher = QueryWatcher.from_query(
+        # Observe for agent state changes
+        agent_state_emitter.on("state_changed", self._create_handle_state_changed_task)
+        agent_state_emitter.on(
+            "state_initialized",
+            lambda s: self._create_handle_state_changed_task(None, s),
+        )
+
+        content_changed_watcher = query_watcher(
             query=CONTENT_CHANGED_QUERY,
             params={"codeSessionStateId": self.session_state.id},
             validator_cls=CodeSessionContentChangedEvent,
         )
 
-        testcase_changed_watcher = QueryWatcher.from_query(
+        testcase_changed_watcher = query_watcher(
             query=TESTCASE_CHANGED_QUERY,
             params={"codeSessionStateId": self.session_state.id},
             validator_cls=CodeSessionTestcaseChangedEvent,
         )
 
-        user_testcase_executed_watcher = QueryWatcher.from_query(
+        user_testcase_executed_watcher = query_watcher(
             query=USER_TESTCASE_EXECUTED_QUERY,
             params={"codeSessionStateId": self.session_state.id},
             validator_cls=CodeSessionUserTestcaseExecutedEvent,
         )
 
-        ground_truth_testcase_executed_watcher = QueryWatcher.from_query(
+        ground_truth_testcase_executed_watcher = query_watcher(
             query=GROUND_TRUTH_TESTCASE_EXECUTED_QUERY,
             params={"codeSessionStateId": self.session_state.id},
             validator_cls=CodeSessionGroundTruthTestcaseExecutedEvent,
@@ -312,14 +308,21 @@ class CodeSession(BaseSession[CodeSessionEventTypes]):
 
         # TODO: add more event types
 
-        content_changed_watcher.on_update(self._handle_content_changed)
+        content_changed_handler = self._create_event_handler("content_changed")
+        testcase_changed_handler = self._create_event_handler("testcase_changed")
+        user_testcase_executed_handler = self._create_event_handler("testcase_executed")
+        ground_truth_executed_handler = self._create_event_handler(
+            "ground_truth_testcase_executed"
+        )
+
+        content_changed_watcher.on_update(content_changed_handler)
         content_changed_watcher.watch(self._api)
 
-        testcase_changed_watcher.on_update(self._handle_testcase_changed)
+        testcase_changed_watcher.on_update(testcase_changed_handler)
         testcase_changed_watcher.watch(self._api)
 
-        user_testcase_executed_watcher.on_update(self._handle_user_testcase_executed)
+        user_testcase_executed_watcher.on_update(user_testcase_executed_handler)
         user_testcase_executed_watcher.watch(self._api)
 
-        ground_truth_testcase_executed_watcher.on_update(self._handle_ground_truth_testcase_executed)
+        ground_truth_testcase_executed_watcher.on_update(ground_truth_executed_handler)
         ground_truth_testcase_executed_watcher.watch(self._api)

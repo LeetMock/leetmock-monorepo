@@ -1,4 +1,4 @@
-import { FullScreenSection } from "@/components/FullScreenSection";
+import { FullScreenSection } from "@/components/full-screen-section";
 import { Hero } from "@/components/Hero";
 import PricingPage from "../pricing/page";
 

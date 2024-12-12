@@ -138,8 +138,24 @@ export const columns: ColumnDef<SessionDoc>[] = [
     id: "feedback",
     header: ({ column }) => <ColumnHeader column={column} title="Feedback" />,
     cell: ({ row }) => {
+      // Check if session has ended but evaluation is not ready
+      if (row.original.sessionEndTime && !row.original.evalReady) {
+        return (
+          <div className="flex items-center">
+            <span className="animate-pulse text-muted-foreground">Evaluating...</span>
+          </div>
+        );
+      }
       return (
-        <Button variant="secondary" size="sm">
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={async () => {
+            // setIsLoading(true);
+            // router.push(`/dashboard/interviews/${row.original._id}/evaluation`);
+          }}
+          className="transition-all active:scale-95"
+        >
           View Feedback
         </Button>
       );

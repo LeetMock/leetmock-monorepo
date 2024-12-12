@@ -3,6 +3,17 @@ import { v } from "convex/values";
 import { codeSessionEventSchema } from "./types";
 
 // Schema definition
+
+// Score detail schema
+export const scoreDetailSchema = {
+  testName: v.string(),
+  description: v.string(),
+  maxScore: v.number(),
+  comment: v.string(),
+  examples: v.array(v.string()),
+  score: v.number(),
+};
+
 const schema = defineEntSchema({
   userProfiles: defineEnt({
     role: v.union(v.literal("admin"), v.literal("user")),
@@ -31,6 +42,8 @@ const schema = defineEntSchema({
     questionId: v.id("questions"),
     agentThreadId: v.string(),
     assistantId: v.string(),
+    sessionStartTime: v.optional(v.number()),
+    sessionEndTime: v.optional(v.number()),
     sessionStatus: v.union(
       v.literal("not_started"),
       v.literal("in_progress"),
@@ -38,21 +51,18 @@ const schema = defineEntSchema({
     ),
     timeLimit: v.number(),
     voice: v.string(),
-    sessionStartTime: v.optional(v.number()),
-    sessionEndTime: v.optional(v.number()),
     interviewType: v.string(),
     interviewMode: v.union(v.literal("practice"), v.literal("strict")),
-    meta: v.object({
-      interviewFlow: v.array(v.string()),
-      programmingLanguage: v.union(v.string(), v.null()),
-      metaData: v.record(v.string(), v.any()),
-    }),
+    evalReady: v.boolean(),
+    interviewFlow: v.array(v.string()),
+    programmingLanguage: v.union(v.string(), v.null()),
+    metadata: v.record(v.string(), v.any()),
   })
     .edge("codeSessionState", { optional: true })
     .index("by_user_id", ["userId"])
     .index("by_user_id_and_status", ["userId", "sessionStatus"]),
   codeSessionStates: defineEnt({
-    displayQuestion: v.boolean(),
+    currentStageIdx: v.number(),
     editor: v.object({
       language: v.string(),
       content: v.string(),
@@ -63,10 +73,12 @@ const schema = defineEntSchema({
       isError: v.boolean(),
       executionTime: v.optional(v.number()),
     }),
-    testcases: v.array(v.object({
-      input: v.record(v.string(), v.any()),
-      expectedOutput: v.optional(v.any()),
-    })),
+    testcases: v.array(
+      v.object({
+        input: v.record(v.string(), v.any()),
+        expectedOutput: v.optional(v.any()),
+      })
+    ),
   })
     .deletion("soft")
     .edge("session")
@@ -99,6 +111,32 @@ const schema = defineEntSchema({
     code: v.string(),
     assignedRole: v.union(v.literal("admin"), v.literal("user")),
   }).index("by_code", ["code"]),
+  evaluations: defineEnt({
+    sessionId: v.id("sessions"),
+    overallFeedback: v.string(),
+    totalScore: v.number(),
+    scoreboards: v.object({
+      communication: v.object({
+        clarification: v.object(scoreDetailSchema),
+        thoughtProcess: v.object(scoreDetailSchema),
+      }),
+      problemSolving: v.object({
+        optimalSolution: v.object(scoreDetailSchema),
+        optimizationProcess: v.object(scoreDetailSchema),
+        questionSpecific: v.object(scoreDetailSchema),
+      }),
+      technicalCompetency: v.object({
+        syntaxError: v.object(scoreDetailSchema),
+        codeQuality: v.object(scoreDetailSchema),
+        codingSpeed: v.object(scoreDetailSchema),
+      }),
+      testing: v.object({
+        testCaseCoverage: v.object(scoreDetailSchema),
+        debugging: v.object(scoreDetailSchema),
+        testCaseDesign: v.object(scoreDetailSchema),
+      }),
+    }),
+  }).index("by_session_id", ["sessionId"]),
 });
 
 export const entDefinitions = getEntDefinitions(schema);

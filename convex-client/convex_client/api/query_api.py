@@ -25,11 +25,13 @@ from convex_client.models.request_code_session_states_get_editor_state import Re
 from convex_client.models.request_code_session_states_get_session_state_by_session_id import RequestCodeSessionStatesGetSessionStateBySessionId
 from convex_client.models.request_code_session_states_get_terminal_state import RequestCodeSessionStatesGetTerminalState
 from convex_client.models.request_code_session_states_get_test_cases_state import RequestCodeSessionStatesGetTestCasesState
+from convex_client.models.request_eval_get_by_session_id import RequestEvalGetBySessionId
 from convex_client.models.request_questions_get_all import RequestQuestionsGetAll
 from convex_client.models.request_questions_get_by_id import RequestQuestionsGetById
 from convex_client.models.request_sessions_exists import RequestSessionsExists
 from convex_client.models.request_sessions_get_active_session import RequestSessionsGetActiveSession
 from convex_client.models.request_sessions_get_by_id import RequestSessionsGetById
+from convex_client.models.request_sessions_get_by_id_unauth import RequestSessionsGetByIdUnauth
 from convex_client.models.request_sessions_get_by_user_id import RequestSessionsGetByUserId
 from convex_client.models.request_user_profiles_get_user_profile import RequestUserProfilesGetUserProfile
 from convex_client.models.response_code_session_events_get_latest_content_change_event import ResponseCodeSessionEventsGetLatestContentChangeEvent
@@ -41,11 +43,13 @@ from convex_client.models.response_code_session_states_get_editor_state import R
 from convex_client.models.response_code_session_states_get_session_state_by_session_id import ResponseCodeSessionStatesGetSessionStateBySessionId
 from convex_client.models.response_code_session_states_get_terminal_state import ResponseCodeSessionStatesGetTerminalState
 from convex_client.models.response_code_session_states_get_test_cases_state import ResponseCodeSessionStatesGetTestCasesState
+from convex_client.models.response_eval_get_by_session_id import ResponseEvalGetBySessionId
 from convex_client.models.response_questions_get_all import ResponseQuestionsGetAll
 from convex_client.models.response_questions_get_by_id import ResponseQuestionsGetById
 from convex_client.models.response_sessions_exists import ResponseSessionsExists
 from convex_client.models.response_sessions_get_active_session import ResponseSessionsGetActiveSession
 from convex_client.models.response_sessions_get_by_id import ResponseSessionsGetById
+from convex_client.models.response_sessions_get_by_id_unauth import ResponseSessionsGetByIdUnauth
 from convex_client.models.response_sessions_get_by_user_id import ResponseSessionsGetByUserId
 from convex_client.models.response_user_profiles_get_user_profile import ResponseUserProfilesGetUserProfile
 
@@ -2543,6 +2547,281 @@ class QueryApi:
 
 
     @validate_call
+    def api_run_eval_get_by_session_id_post(
+        self,
+        request_eval_get_by_session_id: RequestEvalGetBySessionId,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ResponseEvalGetBySessionId:
+        """Calls a query at the path eval.js:getBySessionId
+
+
+        :param request_eval_get_by_session_id: (required)
+        :type request_eval_get_by_session_id: RequestEvalGetBySessionId
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._api_run_eval_get_by_session_id_post_serialize(
+            request_eval_get_by_session_id=request_eval_get_by_session_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "ResponseEvalGetBySessionId",
+            '400': "object",
+            '500': "object",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    def api_run_eval_get_by_session_id_post_with_http_info(
+        self,
+        request_eval_get_by_session_id: RequestEvalGetBySessionId,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[ResponseEvalGetBySessionId]:
+        """Calls a query at the path eval.js:getBySessionId
+
+
+        :param request_eval_get_by_session_id: (required)
+        :type request_eval_get_by_session_id: RequestEvalGetBySessionId
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._api_run_eval_get_by_session_id_post_serialize(
+            request_eval_get_by_session_id=request_eval_get_by_session_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "ResponseEvalGetBySessionId",
+            '400': "object",
+            '500': "object",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def api_run_eval_get_by_session_id_post_without_preload_content(
+        self,
+        request_eval_get_by_session_id: RequestEvalGetBySessionId,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Calls a query at the path eval.js:getBySessionId
+
+
+        :param request_eval_get_by_session_id: (required)
+        :type request_eval_get_by_session_id: RequestEvalGetBySessionId
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._api_run_eval_get_by_session_id_post_serialize(
+            request_eval_get_by_session_id=request_eval_get_by_session_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "ResponseEvalGetBySessionId",
+            '400': "object",
+            '500': "object",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _api_run_eval_get_by_session_id_post_serialize(
+        self,
+        request_eval_get_by_session_id,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[str, Union[str, bytes]] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+        if request_eval_get_by_session_id is not None:
+            _body_params = request_eval_get_by_session_id
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+        # set the HTTP header `Content-Type`
+        if _content_type:
+            _header_params['Content-Type'] = _content_type
+        else:
+            _default_content_type = (
+                self.api_client.select_header_content_type(
+                    [
+                        'application/json'
+                    ]
+                )
+            )
+            if _default_content_type is not None:
+                _header_params['Content-Type'] = _default_content_type
+
+        # authentication setting
+        _auth_settings: List[str] = [
+            'bearerAuth'
+        ]
+
+        return self.api_client.param_serialize(
+            method='POST',
+            resource_path='/api/run/eval/getBySessionId',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
     def api_run_questions_get_all_post(
         self,
         request_questions_get_all: RequestQuestionsGetAll,
@@ -3902,6 +4181,281 @@ class QueryApi:
         return self.api_client.param_serialize(
             method='POST',
             resource_path='/api/run/sessions/getById',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
+    def api_run_sessions_get_by_id_unauth_post(
+        self,
+        request_sessions_get_by_id_unauth: RequestSessionsGetByIdUnauth,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ResponseSessionsGetByIdUnauth:
+        """Calls a query at the path sessions.js:getById_unauth
+
+
+        :param request_sessions_get_by_id_unauth: (required)
+        :type request_sessions_get_by_id_unauth: RequestSessionsGetByIdUnauth
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._api_run_sessions_get_by_id_unauth_post_serialize(
+            request_sessions_get_by_id_unauth=request_sessions_get_by_id_unauth,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "ResponseSessionsGetByIdUnauth",
+            '400': "object",
+            '500': "object",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    def api_run_sessions_get_by_id_unauth_post_with_http_info(
+        self,
+        request_sessions_get_by_id_unauth: RequestSessionsGetByIdUnauth,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[ResponseSessionsGetByIdUnauth]:
+        """Calls a query at the path sessions.js:getById_unauth
+
+
+        :param request_sessions_get_by_id_unauth: (required)
+        :type request_sessions_get_by_id_unauth: RequestSessionsGetByIdUnauth
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._api_run_sessions_get_by_id_unauth_post_serialize(
+            request_sessions_get_by_id_unauth=request_sessions_get_by_id_unauth,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "ResponseSessionsGetByIdUnauth",
+            '400': "object",
+            '500': "object",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def api_run_sessions_get_by_id_unauth_post_without_preload_content(
+        self,
+        request_sessions_get_by_id_unauth: RequestSessionsGetByIdUnauth,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Calls a query at the path sessions.js:getById_unauth
+
+
+        :param request_sessions_get_by_id_unauth: (required)
+        :type request_sessions_get_by_id_unauth: RequestSessionsGetByIdUnauth
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._api_run_sessions_get_by_id_unauth_post_serialize(
+            request_sessions_get_by_id_unauth=request_sessions_get_by_id_unauth,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "ResponseSessionsGetByIdUnauth",
+            '400': "object",
+            '500': "object",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _api_run_sessions_get_by_id_unauth_post_serialize(
+        self,
+        request_sessions_get_by_id_unauth,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[str, Union[str, bytes]] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+        if request_sessions_get_by_id_unauth is not None:
+            _body_params = request_sessions_get_by_id_unauth
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+        # set the HTTP header `Content-Type`
+        if _content_type:
+            _header_params['Content-Type'] = _content_type
+        else:
+            _default_content_type = (
+                self.api_client.select_header_content_type(
+                    [
+                        'application/json'
+                    ]
+                )
+            )
+            if _default_content_type is not None:
+                _header_params['Content-Type'] = _default_content_type
+
+        # authentication setting
+        _auth_settings: List[str] = [
+            'bearerAuth'
+        ]
+
+        return self.api_client.param_serialize(
+            method='POST',
+            resource_path='/api/run/sessions/getById_unauth',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,

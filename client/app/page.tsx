@@ -1,28 +1,36 @@
-"use client";
+import './globals.css'
+import Navbar from './_components/Navbar'
+import Hero from './_components/Hero'
+import Features from './_components/Features'
+import CoreFeatures from './_components/CoreFeatures'
+import Testimonials from './_components/Testimonials'
+import CallToAction from './_components/CallToAction'
 
-import { Urbanist } from "next/font/google";
-import { Stats } from "./_components/Stats";
-import { Features } from "./_components/Features";
-import { HeroSection } from "./_components/HeroSection";
-import { Testimonials } from "./_components/Testimonials";
-import { CallForActions } from "./_components/CallForActions";
-import { Blog } from "./_components/Blog";
-import AppHeader from "./_components/AppHeader";
-
-const urbanist = Urbanist({ subsets: ["latin"] });
-
-export default function Page() {
+function App() {
   return (
-    <div className={`!scroll-smooth ${urbanist.className}`}>
-      <AppHeader />
-      <div className="space-y-40 mb-40">
-        <HeroSection />
-        <Features />
-        <Stats />
-        <Testimonials />
-        <CallForActions />
-        <Blog />
+    <div className="min-h-screen bg-black">
+      <div className="relative z-50">
+        <Navbar />
       </div>
+      <main className="relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/20 to-black/50 pointer-events-none" />
+        
+        <Hero />
+        <section id="motivation" className="relative">
+          <Features />
+        </section>
+        <section id="core-advantages" className="relative">
+          <CoreFeatures />
+        </section>
+        <section id="testimonials" className="relative">
+          <Testimonials />
+        </section>
+        <section id="cta" className="relative">
+          <CallToAction />
+        </section>
+      </main>
     </div>
-  );
+  )
 }
+
+export default App

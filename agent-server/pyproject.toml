@@ -10,26 +10,26 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.12,<3.13"
-livekit-plugins-deepgram = ">=0.6.4"
-livekit-plugins-openai = ">=0.8.0"
-livekit-plugins-silero = ">=0.6.3"
-python-dotenv = "^1.0.1"
-langgraph = "^0.2.4"
-langgraph-sdk = "^0.1.27"
-matplotlib = "^3.9.2"
-nest-asyncio = "^1.6.0"
-debugpy = "^1.8.5"
-livekit = ">=0.17.0"
-pydantic = "^2.8.2"
-livekit-agents = ">=0.11.1"
-convex = "^0.6.0"
-openapi-generator-cli = "^4.3.1"
+livekit-plugins-deepgram = "0.6.11"
+livekit-plugins-openai = "0.10.7"
+livekit-plugins-silero = "0.7.3"
+python-dotenv = "1.0.1"
+langgraph = "0.2.54"
+langgraph-sdk = "0.1.42"
+matplotlib = "3.9.3"
+nest-asyncio = "1.6.0"
+debugpy = "1.8.9"
+livekit = "0.18.1"
+pydantic = "2.10.3"
+livekit-agents = "0.11.3"
+convex = "0.6.0"
+openapi-generator-cli = "4.3.1"
 convex_client = { path = "../convex-client", develop = true }
 libs = { path = "../libs", develop = true }
 agent-graph = { path = "../agent-graph", develop = true }
-livekit-plugins-elevenlabs = ">=0.7.5"
-elevenlabs = "^1.9.0"
-python-debouncer = "^0.1.5"
+livekit-plugins-elevenlabs = "0.7.7"
+elevenlabs = "1.13.2"
+python-debouncer = "0.1.5"
 psutil = "5.9.8"
 
 [tool.poetry.group.dev.dependencies]

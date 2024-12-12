@@ -20,9 +20,10 @@ TEntity = TypeVar("TEntity", bound=NamedEntity)
 
 
 class StageTypes(str, Enum):
-    INTRO = "intro"
+    INTRO = "introduction"
+    BACKGROUND = "background"
     CODING = "coding"
-    EVAL = "eval"
+    EVAL = "evaluation"
     END = "end"
 
 
@@ -41,18 +42,19 @@ class AgentConfig(BaseModel):
 
     temperature: float = Field(default=0.2)
 
+    stages: List[StageTypes] = Field(default=[])
+
 
 def get_next_stage(stage: StageTypes) -> StageTypes:
     """Get the next stage."""
 
-    if stage == StageTypes.INTRO:
-        return StageTypes.CODING
-    elif stage == StageTypes.CODING:
-        return StageTypes.EVAL
-    elif stage == StageTypes.EVAL:
-        return StageTypes.END
-    else:
-        raise ValueError(f"Invalid stage: {stage}")
+    return {
+        StageTypes.INTRO: StageTypes.BACKGROUND,
+        StageTypes.BACKGROUND: StageTypes.CODING,
+        StageTypes.CODING: StageTypes.EVAL,
+        StageTypes.EVAL: StageTypes.END,
+        StageTypes.END: StageTypes.END,
+    }[stage]
 
 
 def get_new_entities(
@@ -72,15 +74,10 @@ def get_first_unseen_entity(entities: List[TEntity], seen: List[str]) -> TEntity
     return None
 
 
-def format_stage_transition_messages(prev_stage: StageTypes, next_stage: StageTypes):
-    message = (
-        f"Now I have finished all the steps in stage {prev_stage}. I will move on to the next stage: {next_stage}. "
-        "But first, I need to something natual to kick off the conversation of current stage."
-    )
-
+def format_stage_transition_messages(curr_stage: StageTypes):
     return [
         AIMessage(
-            content=wrap_xml("thinking", message),
+            content=wrap_xml("thinking", STAGE_TRANSITION_MESSAGES[curr_stage]),
         )
     ]
 
@@ -204,6 +201,31 @@ def format_user_testcase_executed_notification_messages(
     ]
 
 
+START_ASK_BACKGROUND_QUESTION_PROMPT = """\
+I have finished all the necessary introduction questions. \
+From now on, I will stop asking any further introduction questions immediately!!!! \
+Now, I MUST make a smooth transition to the background stage. \
+(Try to inform candidate about the transition and kick off the conversation of background questions.)"""
+
+
+START_ASK_CODING_QUESTION_PROMPT = """\
+I have finished all the necessary background questions. \
+From now on, I will stop asking any further background questions immediately!!!! \
+Now, I MUST make a smooth transition to the coding stage. \
+(Try to inform candidate about the transition and kick off the conversation of coding problem.)"""
+
+
+FINISH_EVAL_PROMPT = """\
+Now I have finished evaluating the candidate's code. I will give them some feedback and ask if they have any questions for me."""
+
+
+STAGE_TRANSITION_MESSAGES = {
+    StageTypes.BACKGROUND: START_ASK_BACKGROUND_QUESTION_PROMPT,
+    StageTypes.CODING: START_ASK_CODING_QUESTION_PROMPT,
+    StageTypes.EVAL: FINISH_EVAL_PROMPT,
+}
+
+
 INTRO_STEPS: List[Step] = [
     Step.from_info(
         name="introduce_self",
@@ -217,6 +239,9 @@ INTRO_STEPS: List[Step] = [
         done_definition="Interviewer has finished asking about the candidate's background and experience.",
         required=True,
     ),
+]
+
+BACKGROUND_STEPS: List[Step] = [
     Step.from_info(
         name="ask_goals",
         desc="Ask the candidate about their career goals.",
@@ -349,7 +374,8 @@ def get_step_map() -> OrderedDict[StageTypes, List[Step]]:
     return OrderedDict(
         [
             (StageTypes.INTRO, INTRO_STEPS),
+            (StageTypes.BACKGROUND, BACKGROUND_STEPS),
             (StageTypes.CODING, CODING_STEPS),
-            # (StageTypes.EVAL, EVAL_STEPS),
+            (StageTypes.EVAL, EVAL_STEPS),
         ]
     )

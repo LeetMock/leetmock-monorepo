@@ -34,6 +34,7 @@ from typing import Any, Dict, List, Set
 
 from agent_graph.chains.emitters import emit_interval_fixed, emit_stop_after
 from agent_graph.chains.step_tracker import SignalEmitter, create_llm_step_tracker
+from agent_graph.code_mock_staged_v1.constants import AgentConfig
 from agent_graph.code_mock_staged_v1.graph import AgentState
 from agent_graph.llms import get_model
 from agent_graph.prompts import format_static_check_error, format_test_context
@@ -78,7 +79,7 @@ class ReminderEvent(BaseEvent[Reminder]):
     assistant: VoiceAssistant
 
     delay: float = Field(
-        default=24, description="The delay in seconds before sending the reminder."
+        default=20, description="The delay in seconds before sending the reminder."
     )
 
     repeated: bool = Field(
@@ -378,7 +379,9 @@ class StepTrackingEvent(BaseEvent[str]):
 
     state_merger: StateMerger[AgentState]
 
-    state_update_queue: asyncio.Queue[Dict]
+    agent_config: AgentConfig
+
+    state_update_q: asyncio.Queue[Dict]
 
     _step_queue: asyncio.Queue[Step] = PrivateAttr(default_factory=asyncio.Queue)
 
@@ -398,12 +401,12 @@ class StepTrackingEvent(BaseEvent[str]):
             step=step,
             state_merger=self.state_merger,
             llm=get_model("gpt-4o", temperature=0.1),
-            state_update_queue=self.state_update_queue,
+            state_update_queue=self.state_update_q,
             signal_emitter=signal_emitters,
         )
 
-    def _try_queue_next_steps(self, state: AgentState):
-        curr_stage = state.current_stage
+    def _try_queue_next_steps(self, _: AgentState, state: AgentState):
+        curr_stage = self.agent_config.stages[state.current_stage_idx]
         curr_steps = state.steps.get(curr_stage, [])
 
         for step in curr_steps:

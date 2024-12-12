@@ -12,7 +12,7 @@ export const get = query({
     _id: v.id("codeSessionStates"),
     _creationTime: v.number(),
     sessionId: v.id("sessions"),
-    displayQuestion: v.boolean(),
+    currentStageIdx: v.number(),
     editor: v.object({
       language: v.string(),
       content: v.string(),
