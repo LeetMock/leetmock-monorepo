@@ -23,8 +23,6 @@ class Session(TypedDict):
     interviewType: str
     evalReady: bool
     interviewMode: Literal["practice", "strict"]
-    meta: SessionMeta
-
 
 class EditorState(TypedDict):
     language: str
@@ -43,7 +41,7 @@ class TestCase(TypedDict):
 
 
 class SessionState(TypedDict):
-    stage: str
+    currentStageIdx: int
     editor: EditorState
     terminal: TerminalState
     testcases: List[TestCase]
