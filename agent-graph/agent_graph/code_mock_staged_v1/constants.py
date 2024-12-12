@@ -219,10 +219,15 @@ FINISH_EVAL_PROMPT = """\
 Now I have finished evaluating the candidate's code. I will give them some feedback and ask if they have any questions for me."""
 
 
+FINISH_INTERVIEW_PROMPT = """\
+Now candidate has finished the interview. Thank them for their time and interact for any questions they might have.
+"""
+
 STAGE_TRANSITION_MESSAGES = {
     StageTypes.BACKGROUND: START_ASK_BACKGROUND_QUESTION_PROMPT,
     StageTypes.CODING: START_ASK_CODING_QUESTION_PROMPT,
     StageTypes.EVAL: FINISH_EVAL_PROMPT,
+    StageTypes.END: FINISH_INTERVIEW_PROMPT,
 }
 
 
