@@ -33,8 +33,7 @@ import logging
 from typing import Any, Dict, List, Set
 
 from agent_graph.chains.emitters import emit_interval_fixed, emit_stop_after
-from agent_graph.chains.step_tracker import (SignalEmitter,
-                                             create_llm_step_tracker)
+from agent_graph.chains.step_tracker import SignalEmitter, create_llm_step_tracker
 from agent_graph.code_mock_staged_v1.constants import AgentConfig
 from agent_graph.code_mock_staged_v1.graph import AgentState
 from agent_graph.llms import get_model
@@ -50,11 +49,13 @@ from pydantic.v1 import BaseModel, Field, PrivateAttr
 
 from libs.convex.api import ConvexApi
 from libs.convex.convex_requests import create_test_code_correctness_request
-from libs.convex.convex_types import (CodeSessionContentChangedEvent,
-                                      CodeSessionState, SessionMetadata)
+from libs.convex.convex_types import (
+    CodeSessionContentChangedEvent,
+    CodeSessionState,
+    SessionMetadata,
+)
 from libs.helpers import static_check_with_mypy
 from libs.message_wrapper import MessageWrapper
-from libs.types import MessageWrapper
 
 logger = logging.getLogger(__name__)
 
