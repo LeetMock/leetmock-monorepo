@@ -18,3 +18,9 @@ podman run --env-file agent-server/.env -it -p 8081:8081 agent-server
 ```bash
 fly deploy -c fly.toml
 ```
+
+
+# Set environment variables
+```bash
+fly secrets set -a agent-server-winter-snow-3785 KEY=VALUE
+```

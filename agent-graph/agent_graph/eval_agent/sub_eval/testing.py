@@ -6,6 +6,11 @@ from agent_graph.eval_agent.prompts import testCaseDesign_prompt, debugging_prom
 from agent_graph.eval_agent.constant import SCORE_GUIDELINES, AgentState, DEFAULT_CONFIG
 from langchain_core.runnables import RunnableConfig
 from agent_graph.llms import get_model
+from convex import ConvexClient
+import os
+from typing import cast
+import convex_client
+from math import ceil
 
 
 class TestCaseDesignEvaluation(BaseModel):
@@ -21,10 +26,35 @@ class DebuggingEvaluation(BaseModel):
         description="Examples of candidate's debugging approaches"
     )
 
+configuration = convex_client.Configuration(host=os.getenv("CONVEX_URL") or "")
+CONVEX_URL = cast(str, os.getenv("CONVEX_URL"))
+
+client = ConvexClient(CONVEX_URL)
 
 def evaluate_test_case_coverage(state: AgentState, config: RunnableConfig) -> dict:
 
     TEST = "testCaseCoverage"
+
+    test_results = client.action(
+        "actions:runGroundTruthTest",
+        args={
+            "language": state.SESSION_STATE["editor"]["language"],
+            "canidateCode": state.SESSION_STATE["editor"]["content"],
+            "questionId": state.SESSION["questionId"],
+        },
+    )
+
+    total_points = len(test_results)
+    incorrect_testcases = []
+    correct_points = 0
+    for test_result in test_results:
+        if test_result["passed"]:
+            correct_points += 1
+        else:
+            incorrect_testcases.append(test_result)
+
+    percentage = correct_points / total_points
+
 
     MAX_POINTS = SCORE_GUIDELINES[TEST]["maxScore"]
     DESCRIPTION = SCORE_GUIDELINES[TEST]["description"]
@@ -32,9 +62,9 @@ def evaluate_test_case_coverage(state: AgentState, config: RunnableConfig) -> di
         "testName": TEST,
         "description": DESCRIPTION,
         "maxScore": MAX_POINTS,
-        "comment": "This test is not yet supported for now.",
+        "comment": "You Passed {} out of {} evaluation testcases.".format(correct_points, total_points),
         "examples": [],
-        "score": MAX_POINTS // 2,
+        "score": ceil(MAX_POINTS * percentage),
     }
 
     return {"scores": [score_detail]}

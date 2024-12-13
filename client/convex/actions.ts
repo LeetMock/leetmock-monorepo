@@ -171,12 +171,94 @@ export const runCode = action({
 
     return result
       ? {
-          status: !result.isError, //true if API call was successful
-          executionTime: result.executionTime,
-          isError: !!result.stderr, //true if there's an error in the code
-          output: result.stderr || result.stdout || "",
-        }
+        status: !result.isError, //true if API call was successful
+        executionTime: result.executionTime,
+        isError: !!result.stderr, //true if there's an error in the code
+        output: result.stderr || result.stdout || "",
+      }
       : undefined;
+  },
+});
+
+// a function that run groundtruh test on canidate's code
+export const runGroundTruthTest = action({
+  args: {
+    language: v.string(),
+    canidateCode: v.string(),
+    questionId: v.id("questions"),
+  },
+  handler: async (ctx, { language, canidateCode, questionId }) => {
+    // access question test cases
+    const question = await ctx.runQuery(api.questions.getById, { questionId });
+    if (!question) {
+      throw new Error("Question not found");
+    }
+
+    // change 'output' to 'expectedOutput'
+    const testCases = question.tests.map((test) => {
+      const { output, ...rest } = test;
+      return {
+        ...rest,
+        expectedOutput: output,
+      };
+    });
+
+    const BATCH_SIZE = 4;
+    const allTestResults: RunTestResult[] = [];
+
+    // Process test cases in batches
+    for (let i = 0; i < testCases.length; i += BATCH_SIZE) {
+      const batchTestCases = testCases.slice(i, i + BATCH_SIZE);
+      const testCode = generateTestCode(question, language, batchTestCases);
+      const payload = {
+        language,
+        stdin: "",
+        files: [
+          {
+            name: `tests.${getFileExtension(language)}`,
+            content: `${CODE_PREFIX[language]}\n${testCode}`,
+          },
+          {
+            name: `data_structure.${getFileExtension(language)}`,
+            content: DATA_STRUCTURES[language],
+          },
+          {
+            name: `solution.${getFileExtension(language)}`,
+            content: `${CODE_PREFIX[language]}\n${canidateCode}`,
+          },
+        ],
+      };
+
+      const maxRetries = 3;
+      let retryCount = 0;
+      let result;
+
+      while (retryCount < maxRetries) {
+        result = await executeCode(payload);
+        if (result.status === "success" && result.stdout) {
+          try {
+            const jsonMatch = result.stdout.match(/START_RESULTS_JSON\n([\s\S]*?)\nEND_RESULTS_JSON/);
+            if (jsonMatch && jsonMatch[1]) {
+              const batchResults: RunTestResult[] = JSON.parse(jsonMatch[1]);
+              allTestResults.push(...batchResults);
+              break; // Success, exit the retry loop
+            }
+          } catch (error) {
+            console.error("Error parsing test results:", error);
+          }
+        }
+
+        // If we get here, either the execution failed or parsing failed
+        retryCount++;
+        if (retryCount < maxRetries) {
+          console.log(`Retrying test execution (attempt ${retryCount + 1}/${maxRetries})...`);
+          await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retry
+        }
+      }
+    }
+
+    return allTestResults
+
   },
 });
 

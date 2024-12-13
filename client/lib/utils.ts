@@ -176,10 +176,12 @@ class TestSolution(unittest.TestCase):
   testCasesState.forEach((test, index) => {
     const inputArgs = Object.entries(params)
       .map(([param, paramType]) => {
+        const inputValue = test.input[param];
+        if (inputValue === "") return '""';
         if (paramType === "Optional[ListNode]" || paramType === "ListNode") {
-          return `arrayToListNode(${JSON.stringify(test.input[param])})`;
+          return `arrayToListNode(${JSON.stringify(inputValue)})`;
         }
-        return JSON.stringify(test.input[param]);
+        return JSON.stringify(inputValue);
       })
       .join(", ");
 
@@ -230,7 +232,7 @@ class TestSolution(unittest.TestCase):
                     "caseNumber": ${index + 1},
                     "passed": False,
                     "input": ${JSON.stringify(test.input)},
-                    "expected": ${JSON.stringify(test.expectedOutput)},
+                    "expected": ${expectedOutput},
                     "actual": None,
                     "error": traceback.format_exc(),
                     "stdout": output.getvalue()
