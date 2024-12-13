@@ -326,11 +326,11 @@ class GroundTruthTestcaseExecutedEvent(BaseEvent[Any]):
         2. Validates code with static type checking
         3. Emits results for agent processing
         """
-        # Register callback to run tests when code changes, debounced by 10 seconds
-        # self.session.on("content_changed", debounce(wait=10)(self.run_ground_truth_tests))
+        # Register callback to run tests when code changes, debounced by 5 seconds
+        self.session.on("content_changed", debounce(wait=5)(self.run_ground_truth_tests))
         
         # Start the periodic test execution task
-        asyncio.create_task(self.run_ground_truth_tests())
+        # asyncio.create_task(self.run_ground_truth_tests())
     
     def _static_code_check(self, code: str) -> str:
         return static_check_with_mypy(code)
