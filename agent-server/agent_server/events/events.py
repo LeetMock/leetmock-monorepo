@@ -33,7 +33,8 @@ import logging
 from typing import Any, Dict, List, Set
 
 from agent_graph.chains.emitters import emit_interval_fixed, emit_stop_after
-from agent_graph.chains.step_tracker import SignalEmitter, create_llm_step_tracker
+from agent_graph.chains.step_tracker import (SignalEmitter,
+                                             create_llm_step_tracker)
 from agent_graph.code_mock_staged_v1.constants import AgentConfig
 from agent_graph.code_mock_staged_v1.graph import AgentState
 from agent_graph.llms import get_model
@@ -49,11 +50,8 @@ from pydantic.v1 import BaseModel, Field, PrivateAttr
 
 from libs.convex.api import ConvexApi
 from libs.convex.convex_requests import create_test_code_correctness_request
-from libs.convex.convex_types import (
-    CodeSessionContentChangedEvent,
-    CodeSessionState,
-    SessionMetadata,
-)
+from libs.convex.convex_types import (CodeSessionContentChangedEvent,
+                                      CodeSessionState, SessionMetadata)
 from libs.helpers import static_check_with_mypy
 from libs.message_wrapper import MessageWrapper
 from libs.types import MessageWrapper
@@ -268,20 +266,23 @@ class GroundTruthTestcaseExecutedEvent(BaseEvent[Any]):
 
     convex_api: ConvexApi
 
+    delay: float = Field(
+        default=3, description="The delay in seconds before emitting the event."
+    )
+
     @property
     def event_name(self) -> str:
         return "ground_truth_testcase_executed"
 
     async def run_ground_truth_tests(self):
-
-        print("Running ground truth tests")
+        logger.info("Running ground truth tests")
         current_code = self.session.session_state.editor.content
 
         try:
             # Run static type checking first
             static_check_error = self._static_code_check(current_code)
             if static_check_error:
-                print(f"Emitting static check error: {static_check_error}")
+                logger.info(f"Emitting static check error: {static_check_error}")
                 # Emit formatted static check error and the graph should pick it up
                 self.emit(format_static_check_error(static_check_error))
             else:
@@ -318,10 +319,12 @@ class GroundTruthTestcaseExecutedEvent(BaseEvent[Any]):
         2. Validates code with static type checking
         3. Emits results for agent processing
         """
-        self.session.on(
-            "content_changed",
-            lambda _: asyncio.create_task(self.run_ground_truth_tests()),
-        )
+
+        @debounce(wait=self.delay)
+        def run_ground_truth_tests_task():
+            asyncio.create_task(self.run_ground_truth_tests())
+
+        self.session.on("content_changed", run_ground_truth_tests_task)
 
     def _static_code_check(self, code: str) -> str:
         return static_check_with_mypy(code)
