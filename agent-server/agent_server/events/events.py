@@ -273,50 +273,84 @@ class GroundTruthTestcaseExecutedEvent(BaseEvent[Any]):
     def event_name(self) -> str:
         return "ground_truth_testcase_executed"
             
-    async def run_ground_truth_tests(self):
-        while True:
-            if self._prev_code is None:
-                self._prev_code = self.session.session_state.editor.content
-            else:
-                current_code = self.session.session_state.editor.content
+    # async def run_ground_truth_tests(self):
+    #     while True:
+    #         if self._prev_code is None:
+    #             self._prev_code = self.session.session_state.editor.content
+    #         else:
+    #             current_code = self.session.session_state.editor.content
                 
-                if current_code == self._prev_code:
-                    logger.info("Code hasn't changed, skipping")
-                    await asyncio.sleep(self.delay)
-                    continue
-            try:
-                self._prev_code = current_code
+    #             if current_code == self._prev_code:
+    #                 logger.info("Code hasn't changed, skipping")
+    #                 await asyncio.sleep(self.delay)
+    #                 continue
+    #         try:
+    #             self._prev_code = current_code
                 
-                # Run static type checking first
-                static_check_error = self._static_code_check(current_code)
-                if static_check_error:
-                    print(f"Emitting static check error: {static_check_error}")
-                    # Emit formatted static check error and the graph should pick it up
-                    self.emit(format_static_check_error(static_check_error))
-                else:
-                    logger.info("No static check error, running tests")
-                    # Get current testcases
-                    request = create_test_code_correctness_request(
-                        language="python",
-                        code=self.session.session_state.editor.content,
-                        question_id=self.session.session_metadata.question_id,
-                        session_id=self.session.session_metadata.session_id,
-                    )
+    #             # Run static type checking first
+    #             static_check_error = self._static_code_check(current_code)
+    #             print(f"Static check error: {static_check_error}")
+    #             if static_check_error:
+    #                 print(f"Emitting static check error: {static_check_error}")
+    #                 # Emit formatted static check error and the graph should pick it up
+    #                 self.emit(format_static_check_error(static_check_error))
+    #             else:
+    #                 logger.info("No static check error, running tests")
+    #                 # Get current testcases
+    #                 request = create_test_code_correctness_request(
+    #                     language="python",
+    #                     code=self.session.session_state.editor.content,
+    #                     question_id=self.session.session_metadata.question_id,
+    #                     session_id=self.session.session_metadata.session_id,
+    #                 )
 
-                    response = self.convex_api.action.api_run_actions_run_tests_post(request)
+    #                 response = self.convex_api.action.api_run_actions_run_tests_post(request)
                     
-                    assert response.value is not None and response.value.test_results is not None, "No test results"
-                    testcase_results = response.value.test_results
+    #                 assert response.value is not None and response.value.test_results is not None, "No test results"
+    #                 testcase_results = response.value.test_results
                     
-                    # Emit formatted test results and the graph should pick it up
-                    self.emit(format_test_context(testcase_results))
-            except Exception as e:
-                if isinstance(e, AssertionError) and "No test results" in str(e):
-                    logger.info("No test results, skipping emit")
-                else:
-                    logger.error(f"Error running ground truth tests: {e}, retrying in {self.delay} seconds")
+    #                 # Emit formatted test results and the graph should pick it up
+    #                 self.emit(format_test_context(testcase_results))
+    #         except Exception as e:
+    #             if isinstance(e, AssertionError) and "No test results" in str(e):
+    #                 logger.info("No test results, skipping emit")
+    #             else:
+    #                 logger.error(f"Error running ground truth tests: {e}, retrying in {self.delay} seconds")
             
-            await asyncio.sleep(self.delay)  # Wait before retrying on error
+    #         await asyncio.sleep(self.delay)  # Wait before retrying on error
+
+    async def run_ground_truth_tests(self):
+        
+        print("Running ground truth tests")
+        current_code = self.session.session_state.editor.content
+         
+        try:
+            # Run static type checking first
+            static_check_error = self._static_code_check(current_code)
+            if static_check_error:
+                print(f"Emitting static check error: {static_check_error}")
+                # Emit formatted static check error and the graph should pick it up
+                self.emit(format_static_check_error(static_check_error))
+            else:
+                logger.info("No static check error, running tests")
+                # Get current testcases
+                request = create_test_code_correctness_request(
+                    language="python",
+                    code=self.session.session_state.editor.content,
+                    question_id=self.session.session_metadata.question_id,
+                    session_id=self.session.session_metadata.session_id,
+                )
+                response = self.convex_api.action.api_run_actions_run_tests_post(request)
+                assert response.value is not None and response.value.test_results is not None, "No test results"
+                testcase_results = response.value.test_results
+                
+                # Emit formatted test results and the graph should pick it up
+                self.emit(format_test_context(testcase_results))
+        except Exception as e:
+            if isinstance(e, AssertionError) and "No test results" in str(e):
+                logger.info("No test results, skipping emit")
+            else:
+                logger.error(f"Error running ground truth tests: {e}, retrying in {self.delay} seconds")
 
     def setup(self):
         """Set up the ground truth testcase execution event.
@@ -327,7 +361,7 @@ class GroundTruthTestcaseExecutedEvent(BaseEvent[Any]):
         3. Emits results for agent processing
         """
         # Register callback to run tests when code changes, debounced by 5 seconds
-        self.session.on("content_changed", debounce(wait=5)(self.run_ground_truth_tests))
+        self.session.on("content_changed", self.run_ground_truth_tests)
         
         # Start the periodic test execution task
         # asyncio.create_task(self.run_ground_truth_tests())
