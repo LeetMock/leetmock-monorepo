@@ -41,7 +41,7 @@ from livekit.plugins import deepgram, openai, silero
 from livekit.rtc import DataPacket
 
 from libs.convex.api import ConvexApi
-from libs.types import MessageWrapper
+from libs.message_wrapper import MessageWrapper
 
 logging.getLogger("openai._base_client").setLevel(logging.INFO)
 logger = get_logger(__name__)
@@ -177,7 +177,7 @@ async def entrypoint(ctx: JobContext):
             ReminderEvent(assistant=assistant, delay=20),
             CodeEditorChangedEvent(session=session, assistant=assistant),
             UserTestcaseExecutedEvent(session=session),
-            GroundTruthTestcaseExecutedEvent(session=session),
+            GroundTruthTestcaseExecutedEvent(session=session, convex_api=convex_api),
             UserMessageEvent(user_message_event_q=user_message_event_q),
             TestcaseChangedEvent(session=session),
             StepTrackingEvent(

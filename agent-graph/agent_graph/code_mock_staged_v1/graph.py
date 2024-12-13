@@ -29,10 +29,11 @@ from pydantic.v1 import Field
 
 from libs.convex.convex_types import (
     CodeSessionContentChangedEvent,
+    CodeSessionGroundTruthTestcaseExecutedEvent,
     CodeSessionTestcaseChangedEvent,
     CodeSessionUserTestcaseExecutedEvent,
 )
-from libs.types import MessageWrapper
+from libs.message_wrapper import MessageWrapper
 
 
 class AgentState(EventMessageState):
@@ -136,6 +137,10 @@ async def on_event(
             trigger=False,
             messages=format_content_changed_notification_messages(event_data),  # type: ignore
         )
+
+    if state.event == "ground_truth_testcase_executed":
+        # Update test context field of the agent state
+        return with_event_reset(trigger=False, test_context=state.event_data)
 
     return with_event_reset(trigger=False)
 
