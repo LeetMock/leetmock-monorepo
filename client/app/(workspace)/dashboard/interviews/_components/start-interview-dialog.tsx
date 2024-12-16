@@ -114,7 +114,7 @@ export const InterviewTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & 
         </CardTitle>
         <CardDescription className="text-base">{description}</CardDescription>
       </CardHeader>
-      <CardContent className="flex-grow">
+      <CardContent>
         <ul className="list-disc ml-[1.1rem] [&>li]:mt-2 text-muted-foreground">
           {bullets.map((bullet) => (
             <li key={bullet}>{bullet}</li>
@@ -148,7 +148,7 @@ export const InterviewTypeSelection: React.FC = () => {
   );
 };
 
-export const StartInterviewDialog: React.FC = () => {
+export const StartInterviewModal: React.FC = () => {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [startDialogOpen, setStartDialogOpen] = useState(false);
@@ -230,33 +230,75 @@ export const StartInterviewDialog: React.FC = () => {
     router,
   ]);
 
+  const triggerButton = useMemo(() => {
+    return (
+      <Button
+        variant="expandIcon"
+        size="lg"
+        Icon={() => <MoveRight className="w-4 h-4 mt-px" />}
+        iconPlacement="right"
+        onClick={() => setStartDialogOpen(true)}
+      >
+        Start Interview
+      </Button>
+    );
+  }, []);
+
+  const title = useMemo(() => {
+    return ["Choose Interview Type", "Select Coding Question", "Configure Your Interview"][
+      currentStep
+    ];
+  }, [currentStep]);
+
+  const description = useMemo(() => {
+    return [
+      "Select the type of interview you'd like to start.",
+      "Choose a coding problem that matches your preparation goals.",
+      "Customize your interview settings to match your preferences.",
+    ][currentStep];
+  }, [currentStep]);
+
+  const content = useMemo(() => {
+    return (
+      <>
+        {currentStep === 0 && <InterviewTypeSelection />}
+        <Wait data={{ questions }}>
+          {({ questions }) =>
+            currentStep === 1 && (
+              <div className="flex flex-col h-[calc(100vh-20rem)]">
+                <CodeQuestionViewer
+                  questions={questions}
+                  onQuestionSelected={(questionId) => {
+                    setSessionConfig({ questionId });
+                    setCurrentStep(1);
+                  }}
+                />
+              </div>
+            )
+          }
+        </Wait>
+        {currentStep === 2 && (
+          <div className="flex flex-col h-[calc(100vh-20rem)]">
+            <CodeInterviewConfig selectedQuestion={questions?.find((q) => q._id === questionId)} />
+          </div>
+        )}
+      </>
+    );
+  }, [currentStep, questions, setSessionConfig, questionId]);
+
   return (
     <>
+      {triggerButton}
       <Dialog open={startDialogOpen} onOpenChange={setStartDialogOpen}>
-        <DialogTrigger asChild>
-          <Button
-            variant="expandIcon"
-            size="lg"
-            Icon={() => <MoveRight className="w-4 h-4 mt-px" />}
-            iconPlacement="right"
-          >
-            Start Interview
-          </Button>
-        </DialogTrigger>
         <DialogContent
-          className={cn("sm:max-w-[1200px] sm:w-[90vw] sm:min-h-[50rem]", "flex flex-col gap-6")}
+          className={cn(
+            "max-w-[1200px] w-[90vw] min-h-[50rem] max-h-[90vh]",
+            "flex flex-col gap-6 overflow-y-auto"
+          )}
         >
           <DialogHeader>
-            <DialogTitle className="text-2xl">
-              {currentStep === 0 && "Choose Interview Type"}
-              {currentStep === 1 && "Select Coding Question"}
-              {currentStep === 2 && "Configure Your Interview"}
-            </DialogTitle>
-            <DialogDescription className="text-base">
-              {currentStep === 0 && "Select the type of interview you'd like to start."}
-              {currentStep === 1 && "Choose a coding problem that matches your preparation goals."}
-              {currentStep === 2 && "Customize your interview settings to match your preferences."}
-            </DialogDescription>
+            <DialogTitle className="text-2xl">{title}</DialogTitle>
+            <DialogDescription className="text-base">{description}</DialogDescription>
           </DialogHeader>
 
           <Stepper
@@ -264,29 +306,7 @@ export const StartInterviewDialog: React.FC = () => {
             currentStep={maxStep}
           />
 
-          {currentStep === 0 && <InterviewTypeSelection />}
-          <Wait data={{ questions }}>
-            {({ questions }) =>
-              currentStep === 1 && (
-                <div className="flex flex-col h-[calc(100vh-20rem)]">
-                  <CodeQuestionViewer
-                    questions={questions}
-                    onQuestionSelected={(questionId) => {
-                      setSessionConfig({ questionId });
-                      setCurrentStep(1);
-                    }}
-                  />
-                </div>
-              )
-            }
-          </Wait>
-          {currentStep === 2 && (
-            <div className="flex flex-col h-[calc(100vh-20rem)]">
-              <CodeInterviewConfig
-                selectedQuestion={questions?.find((q) => q._id === questionId)}
-              />
-            </div>
-          )}
+          {content}
           <div className="flex justify-between">
             <Button
               variant="ghost"

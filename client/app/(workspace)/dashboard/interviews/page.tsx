@@ -16,7 +16,7 @@ import { useUser } from "@clerk/clerk-react";
 import { MoveRight } from "lucide-react";
 import { useMemo } from "react";
 import { DashboardBreadcrumb } from "../_components/breadcrumb";
-import { StartInterviewDialog } from "./_components/start-interview-dialog";
+import { StartInterviewModal } from "./_components/start-interview-dialog";
 
 interface InterviewCardProps {
   activeSessionId: Id<"sessions"> | undefined;
@@ -62,7 +62,7 @@ const InterviewCard = ({ activeSessionId, questionTitle }: InterviewCardProps) =
               </Button>
             </Link>
           ) : (
-            <StartInterviewDialog />
+            <StartInterviewModal />
           )}
         </CardFooter>
       </div>
