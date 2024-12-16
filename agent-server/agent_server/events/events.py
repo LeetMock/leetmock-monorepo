@@ -426,7 +426,6 @@ class StepTrackingEvent(BaseEvent[str]):
 
             try:
                 await tracker.wait()
-                self.emit(step.name)
             except Exception as e:
                 logger.error(f"Error tracking step: {e}")
                 await asyncio.sleep(1)
