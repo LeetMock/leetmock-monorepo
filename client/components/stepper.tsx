@@ -2,14 +2,14 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
-interface StepperProps {
+interface StepperProps extends React.HTMLAttributes<HTMLDivElement> {
   steps: string[];
   currentStep: number;
 }
 
-export const Stepper: React.FC<StepperProps> = ({ steps, currentStep }) => {
+export const Stepper: React.FC<StepperProps> = ({ steps, currentStep, className, ...props }) => {
   return (
-    <div className="relative flex items-start justify-between">
+    <div className={cn("relative flex items-start justify-between", className)} {...props}>
       {steps.map((step, index) => {
         const isActive = index === currentStep;
         const isCompleted = index < currentStep;

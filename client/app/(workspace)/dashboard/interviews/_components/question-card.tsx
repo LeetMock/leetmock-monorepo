@@ -24,14 +24,16 @@ const getDifficultyText = (difficulty: number) => {
   return labels[difficulty] || "Unknown";
 };
 
-export const QuestionCard: React.FC<{
-  _id: Id<"questions">;
-  title: string;
-  difficulty: number;
-  category: string[];
-  onQuestionSelected: (id: Id<"questions">) => void;
-  isSelected: boolean;
-}> = ({ _id, title, difficulty, category, onQuestionSelected, isSelected }) => {
+export const QuestionCard: React.FC<
+  {
+    _id: Id<"questions">;
+    title: string;
+    difficulty: number;
+    category: string[];
+    onQuestionSelected: (id: Id<"questions">) => void;
+    isSelected: boolean;
+  } & React.HTMLAttributes<HTMLDivElement>
+> = ({ _id, title, difficulty, category, onQuestionSelected, isSelected, className, ...props }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const displayCategories = isExpanded ? category : category.slice(0, 2);
@@ -48,9 +50,11 @@ export const QuestionCard: React.FC<{
       className={cn(
         "flex-1 cursor-pointer hover:bg-gray-50 dark:bg-secondary shadow-sm rounded-lg",
         "block transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg",
-        isSelected && "ring-2 ring-blue-500 shadow-lg scale-105"
+        isSelected && "ring-2 ring-blue-500 shadow-lg scale-105",
+        className
       )}
       onClick={() => onQuestionSelected(_id)}
+      {...props}
     >
       <CardHeader className="flex flex-row items-start justify-between p-2">
         <CardTitle className="font-medium text-sm mb-0 line-clamp-2 mr-2 flex-grow">

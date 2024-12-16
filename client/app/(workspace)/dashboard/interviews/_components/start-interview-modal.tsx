@@ -8,17 +8,25 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import { Wait } from "@/components/wait";
 import { api } from "@/convex/_generated/api";
 import { SessionType, useSessionCreateModal } from "@/hooks/use-session-create-modal";
-import { allDefined, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useAction, useMutation, useQuery } from "convex/react";
 import { Code, Database, Lock, MoveRight, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { useMediaQuery } from "usehooks-ts";
 import { CodeInterviewConfig } from "./code-interview-config";
 import { CodeQuestionViewer } from "./code-question-viewer";
 
@@ -114,7 +122,7 @@ export const InterviewTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & 
         </CardTitle>
         <CardDescription className="text-base">{description}</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="hidden md:block">
         <ul className="list-disc ml-[1.1rem] [&>li]:mt-2 text-muted-foreground">
           {bullets.map((bullet) => (
             <li key={bullet}>{bullet}</li>
@@ -152,6 +160,7 @@ export const StartInterviewModal: React.FC = () => {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [startDialogOpen, setStartDialogOpen] = useState(false);
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const {
     sessionConfig,
@@ -265,74 +274,111 @@ export const StartInterviewModal: React.FC = () => {
         <Wait data={{ questions }}>
           {({ questions }) =>
             currentStep === 1 && (
-              <div className="flex flex-col h-[calc(100vh-20rem)]">
-                <CodeQuestionViewer
-                  questions={questions}
-                  onQuestionSelected={(questionId) => {
-                    setSessionConfig({ questionId });
-                    setCurrentStep(1);
-                  }}
-                />
-              </div>
+              <CodeQuestionViewer
+                questions={questions}
+                onQuestionSelected={(questionId) => {
+                  setSessionConfig({ questionId });
+                  setCurrentStep(1);
+                }}
+              />
             )
           }
         </Wait>
         {currentStep === 2 && (
-          <div className="flex flex-col h-[calc(100vh-20rem)]">
-            <CodeInterviewConfig selectedQuestion={questions?.find((q) => q._id === questionId)} />
-          </div>
+          <CodeInterviewConfig selectedQuestion={questions?.find((q) => q._id === questionId)} />
         )}
       </>
     );
   }, [currentStep, questions, setSessionConfig, questionId]);
 
+  console.log(isDesktop);
   return (
     <>
       {triggerButton}
-      <Dialog open={startDialogOpen} onOpenChange={setStartDialogOpen}>
-        <DialogContent
-          className={cn(
-            "max-w-[1200px] w-[90vw] min-h-[50rem] max-h-[90vh]",
-            "flex flex-col gap-6 overflow-y-auto"
-          )}
-        >
-          <DialogHeader>
-            <DialogTitle className="text-2xl">{title}</DialogTitle>
-            <DialogDescription className="text-base">{description}</DialogDescription>
-          </DialogHeader>
-
-          <Stepper
-            steps={["Select Interview Type", "Select Problem", "Configure Interview"]}
-            currentStep={maxStep}
-          />
-
-          {content}
-          <div className="flex justify-between">
-            <Button
-              variant="ghost"
-              disabled={currentStep <= 0}
-              onClick={() => setCurrentStep(currentStep - 1)}
-            >
-              Back
-            </Button>
-            {currentStep >= 2 ? (
-              <Button variant="shine" onClick={() => handleSessionCreate()}>
-                Start
-              </Button>
-            ) : (
-              <Button
-                variant="expandIcon"
-                iconPlacement="right"
-                Icon={() => <MoveRight className="w-4 h-4 mt-px" />}
-                disabled={currentStep >= maxStep}
-                onClick={() => setCurrentStep(currentStep + 1)}
-              >
-                Next
-              </Button>
+      {isDesktop ? (
+        <Dialog open={startDialogOpen} onOpenChange={setStartDialogOpen}>
+          <DialogContent
+            className={cn(
+              "max-w-[1200px] w-[90vw] min-h-[50rem] max-h-[90vh]",
+              "flex flex-col gap-6 overflow-y-auto"
             )}
-          </div>
-        </DialogContent>
-      </Dialog>
+          >
+            <DialogHeader>
+              <DialogTitle className="text-2xl">{title}</DialogTitle>
+              <DialogDescription className="text-base">{description}</DialogDescription>
+            </DialogHeader>
+
+            <Stepper
+              steps={["Select Interview Type", "Select Problem", "Configure Interview"]}
+              currentStep={maxStep}
+            />
+
+            {content}
+            <div className="flex justify-between">
+              <Button
+                variant="ghost"
+                disabled={currentStep <= 0}
+                onClick={() => setCurrentStep(currentStep - 1)}
+              >
+                Back
+              </Button>
+              {currentStep >= 2 ? (
+                <Button variant="shine" onClick={() => handleSessionCreate()}>
+                  Start
+                </Button>
+              ) : (
+                <Button
+                  variant="expandIcon"
+                  iconPlacement="right"
+                  Icon={() => <MoveRight className="w-4 h-4 mt-px" />}
+                  disabled={currentStep >= maxStep}
+                  onClick={() => setCurrentStep(currentStep + 1)}
+                >
+                  Next
+                </Button>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+      ) : (
+        <Drawer open={startDialogOpen} onOpenChange={setStartDialogOpen}>
+          <DrawerContent className="max-h-[90vh]">
+            <div className="flex flex-col gap-3 overflow-y-auto">
+              <DrawerHeader>
+                <DrawerTitle className="text-2xl">{title}</DrawerTitle>
+                <DrawerDescription className="text-base">{description}</DrawerDescription>
+              </DrawerHeader>
+
+              <div className="px-4 relative">{content}</div>
+
+              <DrawerFooter className="flex justify-between">
+                <Button
+                  variant="ghost"
+                  disabled={currentStep <= 0}
+                  onClick={() => setCurrentStep(currentStep - 1)}
+                >
+                  Back
+                </Button>
+                {currentStep >= 2 ? (
+                  <Button variant="shine" onClick={() => handleSessionCreate()}>
+                    Start
+                  </Button>
+                ) : (
+                  <Button
+                    variant="expandIcon"
+                    iconPlacement="right"
+                    Icon={() => <MoveRight className="w-4 h-4 mt-px" />}
+                    disabled={currentStep >= maxStep}
+                    onClick={() => setCurrentStep(currentStep + 1)}
+                  >
+                    Next
+                  </Button>
+                )}
+              </DrawerFooter>
+            </div>
+          </DrawerContent>
+        </Drawer>
+      )}
     </>
   );
 };

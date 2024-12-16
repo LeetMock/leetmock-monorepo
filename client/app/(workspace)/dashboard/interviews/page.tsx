@@ -16,7 +16,7 @@ import { useUser } from "@clerk/clerk-react";
 import { MoveRight } from "lucide-react";
 import { useMemo } from "react";
 import { DashboardBreadcrumb } from "../_components/breadcrumb";
-import { StartInterviewModal } from "./_components/start-interview-dialog";
+import { StartInterviewModal } from "./_components/start-interview-modal";
 
 interface InterviewCardProps {
   activeSessionId: Id<"sessions"> | undefined;

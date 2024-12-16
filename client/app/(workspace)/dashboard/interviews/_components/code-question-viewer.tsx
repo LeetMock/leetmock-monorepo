@@ -1,13 +1,13 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Id } from "@/convex/_generated/dataModel";
-import { cn } from "@/lib/utils";
-import { Dice3, LayoutGrid, List } from "lucide-react";
+import { Dice3 } from "lucide-react";
 import { useState } from "react";
 import { QuestionCard } from "./question-card";
+import { cn } from "@/lib/utils";
+import { useMediaQuery } from "usehooks-ts";
 
 interface Question {
   _id: Id<"questions">;
@@ -43,8 +43,8 @@ export const CodeQuestionViewer: React.FC<{
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDifficulties, setSelectedDifficulties] = useState<number[]>([]);
   const [searchTags, setSearchTags] = useState("");
-  const [isCardView, setIsCardView] = useState(true);
   const [selectedQuestionId, setSelectedQuestionId] = useState<Id<"questions"> | null>(null);
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const filteredQuestions = questions.filter((question) => {
     const titleMatch = question.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -75,23 +75,15 @@ export const CodeQuestionViewer: React.FC<{
     );
   };
 
-  const toggleView = () => setIsCardView(!isCardView);
-
   const handleQuestionSelect = (id: Id<"questions">) => {
     setSelectedQuestionId(id);
     onQuestionSelected(id);
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="h-16 shrink-0 border-b flex items-center justify-between px-4">
-        <span className="font-semibold">Question Selector</span>
-        <Button variant="ghost" size="icon" onClick={toggleView}>
-          {isCardView ? <List className="h-4 w-4" /> : <LayoutGrid className="h-4 w-4" />}
-        </Button>
-      </div>
-      <div className="grid grid-cols-4 gap-4 p-4">
-        <div className="col-span-1">
+    <div className={cn("flex flex-col", isDesktop && "flex-1")}>
+      <div className="flex flex-col gap-4 p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             type="text"
             placeholder="Search questions..."
@@ -99,8 +91,6 @@ export const CodeQuestionViewer: React.FC<{
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full"
           />
-        </div>
-        <div className="col-span-1">
           <Select>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select difficulty">
@@ -135,29 +125,30 @@ export const CodeQuestionViewer: React.FC<{
             </SelectContent>
           </Select>
         </div>
-        <Input
-          type="text"
-          placeholder="Search tags..."
-          value={searchTags}
-          onChange={(e) => setSearchTags(e.target.value)}
-          className="w-full"
-        />
-        <div className="col-span-1">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Input
+            type="text"
+            placeholder="Search tags..."
+            value={searchTags}
+            onChange={(e) => setSearchTags(e.target.value)}
+            className="w-full"
+          />
           <Button
             onClick={handleRandomSelect}
-            className="w-full"
+            className="w-full sm:w-auto"
             disabled={filteredQuestions.length === 0}
           >
-            <Dice3 className="w-4 h-4 mr-2" />
+            <Dice3 className="h-4 w-4 mr-2" />
             Random Pick
           </Button>
         </div>
       </div>
-      <div className="flex-grow overflow-y-auto p-4">
+
+      <div className="md:flex-grow overflow-y-auto p-4">
         {sortedQuestions.length === 0 ? (
           <p className="text-center">No questions available.</p>
-        ) : isCardView ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
             {sortedQuestions.map(({ _id, title, difficulty, category }) => (
               <QuestionCard
                 key={_id}
@@ -169,57 +160,6 @@ export const CodeQuestionViewer: React.FC<{
                 isSelected={_id === selectedQuestionId}
               />
             ))}
-          </div>
-        ) : (
-          <div className="overflow-x-auto rounded-lg border border-gray-700 dark:border-gray-800">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100 dark:bg-gray-800/50">
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-200 uppercase tracking-wider">
-                    Title
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-200 uppercase tracking-wider">
-                    Difficulty
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-200 uppercase tracking-wider">
-                    Category
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white dark:bg-gray-900/50 divide-y divide-gray-200 dark:divide-gray-800">
-                {sortedQuestions.map(({ _id, title, difficulty, category }, index) => (
-                  <tr
-                    key={_id}
-                    onClick={() => handleQuestionSelect(_id)}
-                    className={cn(
-                      "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/70 transition-colors",
-                      index % 2 === 0
-                        ? "bg-white dark:bg-gray-900/30"
-                        : "bg-gray-50 dark:bg-gray-800/30",
-                      _id === selectedQuestionId
-                        ? "bg-blue-50 dark:bg-blue-900/50 hover:bg-blue-100 dark:hover:bg-blue-800/70"
-                        : ""
-                    )}
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {title}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <DifficultyBubble difficulty={difficulty} />
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <div className="flex flex-wrap gap-1">
-                        {category.map((cat, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs px-2 py-0.5">
-                            {cat}
-                          </Badge>
-                        ))}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
         )}
       </div>
