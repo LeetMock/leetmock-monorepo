@@ -43,8 +43,58 @@ def extract_function_name(response: str, keyword) -> str:
     end_index = response.find(end_tag)
     return response[start_index:end_index]
 
+def convert_input_parameters(array_format):
+    """
+    Converts input parameters from array format to nested object format.
+    
+    Input format example:
+    {
+        "cpp": ["str1", "string", "str2", "string"],
+        "java": ["str1", "String", "str2", "String"]
+    }
+    
+    Output format example:
+    {
+        "cpp": {"str1": "string", "str2": "string"},
+        "java": {"str1": "String", "str2": "String"}
+    }
+    """
+    result = {}
+    
+    for language, params in array_format.items():
+        # Create a dictionary for this language
+        param_dict = {}
+        
+        # Process parameters in pairs (name, type)
+        for i in range(0, len(params), 2):
+            param_name = params[i]
+            param_type = params[i + 1]
+            param_dict[param_name] = param_type
+            
+        result[language] = param_dict
+    
+    return result
 
-if __name__ == "__main__":
-    jsonl2json(
-        "./output/processed_questions.jsonl", "./output/processed_questions.json"
-    )
+
+# convert json object from processed question to selected questions
+def convert_to_selected_questions(source_folder, target_folder):
+    with open(source_folder, "r") as f:
+        processed_questions = json.load(f)
+    
+    selected_questions = []
+    for question in processed_questions:
+        question["inputParameters"] = convert_input_parameters(question["inputParameters"])
+        selected_questions.append(question)
+
+    with open(target_folder, "w") as f:
+        json.dump(selected_questions, f, indent=2)
+    return selected_questions
+
+# if __name__ == "__main__":
+#     # jsonl2json(
+#     #     "./output/processed_questions.jsonl", "./output/processed_questions.json"
+#     # )
+
+#     source_folder = "./output/processed_questions.json"
+#     target_folder = "./output/new_selected_questions.json"
+#     convert_to_selected_questions(source_folder, target_folder)

@@ -1,0 +1,147 @@
+{
+    "category": ["Math", "String"],
+    "difficulty": 1,
+    "evalMode": "exactMatch",
+    "question": "<p>For two strings <code>s</code> and <code>t</code>, we say &quot;<code>t</code> divides <code>s</code>&quot; if and only if <code>s = t + t + t + ... + t + t</code> (i.e., <code>t</code> is concatenated with itself one or more times).</p>\n\n<p>Given two strings <code>str1</code> and <code>str2</code>, return <em>the largest string </em><code>x</code><em> such that </em><code>x</code><em> divides both </em><code>str1</code><em> and </em><code>str2</code>.</p>\n\n<p>&nbsp;</p>\n<p><strong class=\"example\">Example 1:</strong></p>\n\n<pre>\n<strong>Input:</strong> str1 = &quot;ABCABC&quot;, str2 = &quot;ABC&quot;\n<strong>Output:</strong> &quot;ABC&quot;\n</pre>\n\n<p><strong class=\"example\">Example 2:</strong></p>\n\n<pre>\n<strong>Input:</strong> str1 = &quot;ABABAB&quot;, str2 = &quot;ABAB&quot;\n<strong>Output:</strong> &quot;AB&quot;\n</pre>\n\n<p><strong class=\"example\">Example 3:</strong></p>\n\n<pre>\n<strong>Input:</strong> str1 = &quot;LEET&quot;, str2 = &quot;CODE&quot;\n<strong>Output:</strong> &quot;&quot;\n</pre>\n\n<p>&nbsp;</p>\n<p><strong>Constraints:</strong></p>\n\n<ul>\n\t<li><code>1 &lt;= str1.length, str2.length &lt;= 1000</code></li>\n\t<li><code>str1</code> and <code>str2</code> consist of English uppercase letters.</li>\n</ul>\n",
+    "functionName": "findLargestCommonDivisorString",
+    "inputParameters": {
+      "cpp": { "text1": "string", "text2": "string" },
+      "java": { "text1": "String", "text2": "String" },
+      "javascript": { "text1": "string", "text2": "string" },
+      "python": { "text1": "str", "text2": "str" }
+    },
+    "outputParameters": "string",
+    "tests": [
+      { "input": { "str1": "ABCABC", "str2": "ABC" }, "output": "ABC" },
+      { "input": { "str1": "ABABAB", "str2": "ABAB" }, "output": "AB" },
+      { "input": { "str1": "LEET", "str2": "CODE" }, "output": "" },
+      {
+        "input": { "str1": "TAUXXTAUXXTAUXXTAUXXTAUXX", "str2": "TAUXXTAUXXTAUXXTAUXX" },
+        "output": "TAUXX"
+      },
+      { "input": { "str1": "ABCDEF", "str2": "ABC" }, "output": "" },
+      { "input": { "str1": "AAAAAAAAA", "str2": "AAACCC" }, "output": "" },
+      { "input": { "str1": "ABABABAB", "str2": "ABAB" }, "output": "ABAB" },
+      { "input": { "str1": "X", "str2": "X" }, "output": "X" },
+      { "input": { "str1": "XXXX", "str2": "XX" }, "output": "XX" },
+      { "input": { "str1": "AAAAABBBBB", "str2": "ABABABAB" }, "output": "" }
+    ],
+    "title": "Greatest Common Divisor of Strings",
+    "metaData": {},
+    "solutions": {
+      "python": "class Solution:\n    def findLargestCommonDivisorString(self, str1: str, str2: str) -> str:\n        # Check if they have non-zero GCD string.\n        if str1 + str2 != str2 + str1:\n            return \"\"\n\n        # Get the GCD of the two lengths.\n        max_length = gcd(len(str1), len(str2))\n        return str1[:max_length]"
+    }
+  },
+
+
+  {
+    "category": [
+      "Math",
+      "String"
+    ],
+    "difficulty": 1,
+    "evalMode": "exactMatch",
+    "question": "<p>For two strings <code>s</code> and <code>t</code>, we say &quot;<code>t</code> divides <code>s</code>&quot; if and only if <code>s = t + t + t + ... + t + t</code> (i.e., <code>t</code> is concatenated with itself one or more times).</p>\n\n<p>Given two strings <code>str1</code> and <code>str2</code>, return <em>the largest string </em><code>x</code><em> such that </em><code>x</code><em> divides both </em><code>str1</code><em> and </em><code>str2</code>.</p>\n\n<p>&nbsp;</p>\n<p><strong class=\"example\">Example 1:</strong></p>\n\n<pre>\n<strong>Input:</strong> str1 = &quot;ABCABC&quot;, str2 = &quot;ABC&quot;\n<strong>Output:</strong> &quot;ABC&quot;\n</pre>\n\n<p><strong class=\"example\">Example 2:</strong></p>\n\n<pre>\n<strong>Input:</strong> str1 = &quot;ABABAB&quot;, str2 = &quot;ABAB&quot;\n<strong>Output:</strong> &quot;AB&quot;\n</pre>\n\n<p><strong class=\"example\">Example 3:</strong></p>\n\n<pre>\n<strong>Input:</strong> str1 = &quot;LEET&quot;, str2 = &quot;CODE&quot;\n<strong>Output:</strong> &quot;&quot;\n</pre>\n\n<p>&nbsp;</p>\n<p><strong>Constraints:</strong></p>\n\n<ul>\n\t<li><code>1 &lt;= str1.length, str2.length &lt;= 1000</code></li>\n\t<li><code>str1</code> and <code>str2</code> consist of English uppercase letters.</li>\n</ul>\n",
+    "solutions": {},
+    "functionName": "findLargestCommonDivisorString",
+    "inputParameters": {
+      "cpp": [
+        "str1",
+        "string",
+        "str2",
+        "string"
+      ],
+      "java": [
+        "str1",
+        "String",
+        "str2",
+        "String"
+      ],
+      "javascript": [
+        "str1",
+        "string",
+        "str2",
+        "string"
+      ],
+      "python": [
+        "str1",
+        "str",
+        "str2",
+        "str"
+      ]
+    },
+    "tests": [
+      {
+        "input": {
+          "str1": "ABCABC",
+          "str2": "ABC"
+        },
+        "output": "ABC"
+      },
+      {
+        "input": {
+          "str1": "ABABAB",
+          "str2": "ABAB"
+        },
+        "output": "AB"
+      },
+      {
+        "input": {
+          "str1": "LEET",
+          "str2": "CODE"
+        },
+        "output": ""
+      },
+      {
+        "input": {
+          "str1": "TAUXXTAUXXTAUXXTAUXXTAUXX",
+          "str2": "TAUXXTAUXXTAUXXTAUXX"
+        },
+        "output": "TAUXX"
+      },
+      {
+        "input": {
+          "str1": "ABCDEF",
+          "str2": "ABC"
+        },
+        "output": ""
+      },
+      {
+        "input": {
+          "str1": "AAAAAAAAA",
+          "str2": "AAACCC"
+        },
+        "output": ""
+      },
+      {
+        "input": {
+          "str1": "ABABABAB",
+          "str2": "ABAB"
+        },
+        "output": "ABAB"
+      },
+      {
+        "input": {
+          "str1": "X",
+          "str2": "X"
+        },
+        "output": "X"
+      },
+      {
+        "input": {
+          "str1": "XXXX",
+          "str2": "XX"
+        },
+        "output": "XX"
+      },
+      {
+        "input": {
+          "str1": "AAAAABBBBB",
+          "str2": "ABABABAB"
+        },
+        "output": ""
+      }
+    ],
+    "title": "Greatest Common Divisor of Strings",
+    "metaData": {}
+  },
