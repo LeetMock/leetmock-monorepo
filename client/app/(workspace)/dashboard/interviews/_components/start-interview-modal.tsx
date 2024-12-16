@@ -304,8 +304,8 @@ export const StartInterviewModal: React.FC = () => {
             )}
           >
             <DialogHeader>
-              <DialogTitle className="text-2xl">{title}</DialogTitle>
-              <DialogDescription className="text-base">{description}</DialogDescription>
+              <DialogTitle className="text-lg">{title}</DialogTitle>
+              <DialogDescription className="text-sm">{description}</DialogDescription>
             </DialogHeader>
 
             <Stepper
@@ -345,8 +345,8 @@ export const StartInterviewModal: React.FC = () => {
           <DrawerContent className="max-h-[90vh]">
             <div className="flex flex-col gap-3 overflow-y-auto">
               <DrawerHeader>
-                <DrawerTitle className="text-2xl">{title}</DrawerTitle>
-                <DrawerDescription className="text-base">{description}</DrawerDescription>
+                <DrawerTitle className="text-lg">{title}</DrawerTitle>
+                <DrawerDescription className="text-sm">{description}</DrawerDescription>
               </DrawerHeader>
 
               <div className="px-4 relative">{content}</div>
