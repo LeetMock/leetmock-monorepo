@@ -8,9 +8,9 @@ import React, { useState } from "react";
 
 const getDifficultyColor = (difficulty: number) => {
   const colors = {
-    1: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-    2: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-    3: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
+    1: "bg-green-100 text-green-800 dark:bg-green-300 dark:text-green-800",
+    2: "bg-yellow-100 text-yellow-800 dark:bg-yellow-300 dark:text-yellow-800",
+    3: "bg-red-100 text-red-800 dark:bg-red-300 dark:text-red-800",
   };
   return colors[difficulty] || "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200";
 };
@@ -48,23 +48,23 @@ export const QuestionCard: React.FC<
     <Card
       key={_id}
       className={cn(
-        "flex-1 cursor-pointer hover:bg-gray-50 dark:bg-secondary shadow-sm rounded-lg",
-        "block transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg",
-        isSelected && "ring-2 ring-blue-500 shadow-lg scale-105",
+        "flex-1 cursor-pointer shadow-sm rounded-lg dark:bg-zinc-900",
+        "block transition-all duration-200 ease-in-out transform hover:scale-[103%] hover:shadow-lg",
+        isSelected && "ring-2 ring-gray-800 dark:ring-gray-200 shadow-lg scale-[101%]",
         className
       )}
       onClick={() => onQuestionSelected(_id)}
       {...props}
     >
-      <CardHeader className="flex flex-row items-start justify-between p-2">
+      <CardHeader className="flex flex-row items-start justify-between p-2 relative">
         <CardTitle className="font-medium text-sm mb-0 line-clamp-2 mr-2 flex-grow">
           {title}
         </CardTitle>
         <Badge
           className={cn(
             getDifficultyColor(difficulty),
-            "text-[10px] px-1.5 py-0.5 min-w-[40px] text-center flex-shrink-0 font-medium rounded-full",
-            "pointer-events-none"
+            "text-[0.5rem] px-1.5 text-center flex-shrink-0 font-semibold rounded-sm",
+            "pointer-events-none absolute top-1 right-2.5 uppercase"
           )}
         >
           {getDifficultyText(difficulty)}
@@ -76,7 +76,7 @@ export const QuestionCard: React.FC<
             <Badge
               key={index}
               variant="secondary"
-              className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-200"
+              className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 dark:bg-zinc-800 dark:text-gray-100"
             >
               {element}
             </Badge>
@@ -84,7 +84,7 @@ export const QuestionCard: React.FC<
           {!isExpanded && remainingCategories > 0 && (
             <Badge
               variant="secondary"
-              className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-200"
+              className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 dark:bg-zinc-800 dark:text-gray-100"
             >
               +{remainingCategories} more
             </Badge>
