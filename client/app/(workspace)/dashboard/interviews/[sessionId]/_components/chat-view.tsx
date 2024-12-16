@@ -49,7 +49,7 @@ export const ChatView = ({ sessionId }: { sessionId: Id<"sessions"> }) => {
           <AudioRenderer />
         </div>
       </div>
-      <div className="w-[24rem] rounded-md shadow-lg">
+      <div className="w-[20rem] rounded-md shadow-lg">
         <SessionTranscripts sessionId={sessionId} />
       </div>
     </div>
