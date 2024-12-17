@@ -145,6 +145,7 @@ async def entrypoint(ctx: JobContext):
         llm=no_op_llm,
         tts=get_tts_engine(session.session_metadata.voice),
         before_llm_cb=before_llm_callback,
+        preemptive_synthesis=True,
     )
 
     # @assistant.on("metrics_collected")

@@ -12,7 +12,7 @@ interface TooltipProps {
 
 export const Tooltip: React.FC<TooltipProps> = ({ children, content }) => {
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={0}>
       <ShadcnTooltip>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
         <TooltipContent>{content}</TooltipContent>
