@@ -1,15 +1,16 @@
+from agent_server.telemetry import init_telemetry
+
+init_telemetry()
+
 import asyncio
-import hashlib
-import logging
 import os
 from datetime import datetime
 from typing import AsyncIterator, Dict
 
 import psutil
-from agent_graph.code_mock_staged_v1.constants import AgentConfig, get_step_map
+from agent_graph.code_mock_staged_v1.constants import AgentConfig
 from agent_graph.code_mock_staged_v1.graph import AgentState, create_graph
 from agent_graph.state_merger import StateMerger
-from agent_graph.storages.langgraph_cloud import LangGraphCloudStateStorage
 from agent_server.agent_streams import AgentStream
 from agent_server.agent_triggers import AgentTrigger
 from agent_server.contexts.context_manager import AgentContextManager
@@ -24,31 +25,25 @@ from agent_server.events.events import (
     UserTestcaseExecutedEvent,
 )
 from agent_server.livekit.streams import EchoStream, NoopLLM, NoopStream
-from agent_server.livekit.tts import create_elevenlabs_tts, get_tts_engine
+from agent_server.livekit.tts import get_tts_engine
 from agent_server.utils.logger import get_logger
-from agent_server.utils.messages import (
-    convert_chat_ctx_to_langchain_messages,
-    filter_langchain_messages,
-    livekit_to_langchain_message,
-)
+from agent_server.utils.messages import livekit_to_langchain_message
 from dotenv import find_dotenv, load_dotenv
 from livekit.agents import cli  # type: ignore
 from livekit.agents import JobContext, WorkerOptions, llm, utils
 from livekit.agents.llm import ChatMessage
 from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.agents.worker import Worker, _DefaultLoadCalc
-from livekit.plugins import deepgram, openai, silero
+from livekit.plugins import deepgram, silero
 from livekit.rtc import DataPacket
 
 from libs.convex.api import ConvexApi
 from libs.message_wrapper import MessageWrapper
 
-logging.getLogger("openai._base_client").setLevel(logging.INFO)
-logger = get_logger(__name__)
-
 load_dotenv(find_dotenv())
 
-AGENT_NAME = "code-mock-staged-v1"
+
+logger = get_logger(__name__)
 
 
 class CustomLoadCalc(_DefaultLoadCalc):
@@ -90,6 +85,8 @@ class CustomLoadCalc(_DefaultLoadCalc):
 
 
 async def entrypoint(ctx: JobContext):
+    AGENT_NAME = "code-mock-staged-v1"
+
     no_op_llm = NoopLLM()
     convex_api = ConvexApi(convex_url=os.getenv("CONVEX_URL") or "")
 
