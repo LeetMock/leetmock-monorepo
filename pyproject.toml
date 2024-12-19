@@ -13,6 +13,8 @@ convex-client = { path = "convex-client", develop = true }
 langgraph-cli = "^0.1.50"
 matplotlib = "^3.9.2"
 convex = "0.6.0"
+pydantic-ai = "^0.0.13"
+logfire = "^2.8.0"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"
