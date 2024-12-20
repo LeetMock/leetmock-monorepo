@@ -1,6 +1,6 @@
 set positional-arguments
 
-# Setup Fly.io secrets from .env.prod file
+# Setup Fly.io secrets and Convex env vars from .env.prod files
 setup:
     python3 scripts/setup_env.py
 
