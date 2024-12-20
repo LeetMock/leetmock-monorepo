@@ -198,7 +198,7 @@ export const runGroundTruthTest = action({
       stdout: v.union(v.string(), v.null()),
     })
   ),
-  handler: async (ctx, { language, canidateCode, questionId }) => {
+  handler: async (ctx, { language, code, questionId }) => {
     // access question test cases
     const question = await ctx.runQuery(api.questions.getById, { questionId });
     if (!question) {
@@ -235,7 +235,7 @@ export const runGroundTruthTest = action({
           },
           {
             name: `solution.${getFileExtension(language)}`,
-            content: `${CODE_PREFIX[language]}\n${canidateCode}`,
+            content: `${CODE_PREFIX[language]}\n${code}`,
           },
         ],
       };
