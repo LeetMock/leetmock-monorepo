@@ -49,11 +49,7 @@ from pydantic.v1 import BaseModel, Field, PrivateAttr
 
 from libs.convex.api import ConvexApi
 from libs.convex.convex_requests import create_test_code_correctness_request
-from libs.convex.convex_types import (
-    CodeSessionContentChangedEvent,
-    CodeSessionState,
-    SessionMetadata,
-)
+from libs.convex.convex_types import CodeSessionContentChangedEvent, TestcaseResult
 from libs.helpers import static_check_with_mypy
 from libs.message_wrapper import MessageWrapper
 
@@ -288,6 +284,7 @@ class GroundTruthTestcaseExecutedEvent(BaseEvent[Any]):
                 self.emit(format_static_check_error(static_check_error))
             else:
                 logger.info("No static check error, running tests")
+
                 # Get current testcases
                 request = create_test_code_correctness_request(
                     language="python",
@@ -306,6 +303,19 @@ class GroundTruthTestcaseExecutedEvent(BaseEvent[Any]):
 
                 # Emit formatted test results and the graph should pick it up
                 self.emit(format_test_context(testcase_results))
+
+                # TODO: fix bug in ground truth test execution and replace above with following
+                # response = self.convex_api.action_unsafe(
+                #     "actions:runGroundTruthTest",
+                #     {
+                #         "questionId": self.session.session_metadata.question_id,
+                #         "code": self.session.session_state.editor.content,
+                #         "language": "python",
+                #     },
+                # )
+                # run_code_result = [TestcaseResult(**testcase) for testcase in response]
+
+                # self.emit(format_test_context(run_code_result))
         except Exception as e:
             if isinstance(e, AssertionError) and "No test results" in str(e):
                 logger.info("No test results, skipping emit")
@@ -322,10 +332,13 @@ class GroundTruthTestcaseExecutedEvent(BaseEvent[Any]):
         """
 
         @debounce(wait=self.delay)
-        def run_ground_truth_tests_task():
-            asyncio.create_task(self.run_ground_truth_tests())
+        async def run_ground_truth_tests_debounced():
+            await self.run_ground_truth_tests()
 
-        self.session.on("content_changed", run_ground_truth_tests_task)
+        def create_run_ground_truth_tests_task():
+            asyncio.create_task(run_ground_truth_tests_debounced())
+
+        self.session.on("content_changed", create_run_ground_truth_tests_task)
 
     def _static_code_check(self, code: str) -> str:
         return static_check_with_mypy(code)
@@ -387,10 +400,10 @@ class StepTrackingEvent(BaseEvent[str]):
         return "step_tracking"
 
     def _get_llm_step_tracker(self, step: Step):
-        signal_emitters: List[SignalEmitter] = [emit_interval_fixed(interval=4)]
+        signal_emitters: List[SignalEmitter] = [emit_interval_fixed(interval=10)]
 
         if not step.required:
-            signal_emitters.append(emit_stop_after(duration=25))
+            signal_emitters.append(emit_stop_after(duration=60))
 
         return create_llm_step_tracker(
             step=step,

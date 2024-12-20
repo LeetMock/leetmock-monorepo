@@ -1,5 +1,7 @@
 from convex_client.models import (
     RequestActionsGetSessionMetadata,
+    RequestActionsRunGroundTruthTest,
+    RequestActionsRunGroundTruthTestArgs,
     RequestActionsRunTests,
     RequestActionsRunTestsArgs,
     RequestCodeSessionEventsCommitCodeSessionEvent,
@@ -48,3 +50,6 @@ RequestCommitCodeSessionEventArgs = RequestCodeSessionEventsCommitCodeSessionEve
 
 CodeSessionEvent = RequestCodeSessionEventsCommitCodeSessionEventArgsEvent
 StageSwitchedEvent = RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf2Data
+
+RequestTestCodeWithGroundTruth = RequestActionsRunGroundTruthTest
+RequestTestCodeWithGroundTruthArgs = RequestActionsRunGroundTruthTestArgs

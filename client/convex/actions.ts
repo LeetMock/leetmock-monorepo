@@ -184,7 +184,7 @@ export const runCode = action({
 export const runGroundTruthTest = action({
   args: {
     language: v.string(),
-    canidateCode: v.string(),
+    code: v.string(),
     questionId: v.id("questions"),
   },
   returns: v.array(

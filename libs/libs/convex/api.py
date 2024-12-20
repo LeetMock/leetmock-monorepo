@@ -28,8 +28,14 @@ class ConvexApi(BaseModel):
     def action(self) -> ActionApi:
         return self._action_api
 
+    def query_unsafe(self, name: str, args: FunctionArgs = None):
+        return self._convex_client.query(name, args)
+
     def mutation_unsafe(self, name: str, args: FunctionArgs = None):
         return self._convex_client.mutation(name, args)
+
+    def action_unsafe(self, name: str, args: FunctionArgs = None):
+        return self._convex_client.action(name, args)
 
     def subscribe(self, query: str, params: FunctionArgs) -> QuerySubscription:
         return self._convex_client.subscribe(query, params)
