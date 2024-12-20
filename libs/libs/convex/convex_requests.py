@@ -4,6 +4,7 @@ from libs.convex.convex_types import (
     RequestGetSessionMetadata,
     RequestGetSessionMetadataArgs,
     RequestTestCodeCorrectness,
+    RequestTestCodeCorrectnessArgs,
     RequestTestCodeWithGroundTruth,
     RequestTestCodeWithGroundTruthArgs,
 )
@@ -46,12 +47,11 @@ def create_test_code_with_ground_truth_request(
     code: str,
     question_id: str,
 ) -> RequestTestCodeWithGroundTruth:
-    print("create_test_code_with_ground_truth_request", language, code, question_id)
     args = RequestTestCodeWithGroundTruthArgs.from_dict(
         {
             "language": language,
             "questionId": question_id,
-            "candidateCode": code,
+            "code": code,
         }
     )
     assert args is not None
