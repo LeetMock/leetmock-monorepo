@@ -19,6 +19,11 @@ def read_env_file(env_file_path):
 
 def set_fly_secrets(env_vars):
     """Set environment variables as Fly.io secrets."""
+    # list existing env
+    command = "fly secrets list"
+    print("Existing secrets:")
+    subprocess.run(command, shell=True, check=True)
+
     print("\nFound environment variables:")
     pprint(env_vars, indent=2)
 
@@ -29,7 +34,8 @@ def set_fly_secrets(env_vars):
 
     print("\nSetting secrets...")
     for key, value in env_vars.items():
-        command = f'fly secret set {key}="{value}"'
+        command = f"fly secrets set {key}={value}"
+
         try:
             subprocess.run(command, shell=True, check=True)
             print(f"✓ Successfully set {key}")
