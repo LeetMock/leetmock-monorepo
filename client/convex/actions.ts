@@ -171,11 +171,11 @@ export const runCode = action({
 
     return result
       ? {
-        status: !result.isError, //true if API call was successful
-        executionTime: result.executionTime,
-        isError: !!result.stderr, //true if there's an error in the code
-        output: result.stderr || result.stdout || "",
-      }
+          status: !result.isError, //true if API call was successful
+          executionTime: result.executionTime,
+          isError: !!result.stderr, //true if there's an error in the code
+          output: result.stderr || result.stdout || "",
+        }
       : undefined;
   },
 });
@@ -237,7 +237,9 @@ export const runGroundTruthTest = action({
         result = await executeCode(payload);
         if (result.status === "success" && result.stdout) {
           try {
-            const jsonMatch = result.stdout.match(/START_RESULTS_JSON\n([\s\S]*?)\nEND_RESULTS_JSON/);
+            const jsonMatch = result.stdout.match(
+              /START_RESULTS_JSON\n([\s\S]*?)\nEND_RESULTS_JSON/
+            );
             if (jsonMatch && jsonMatch[1]) {
               const batchResults: RunTestResult[] = JSON.parse(jsonMatch[1]);
               allTestResults.push(...batchResults);
@@ -252,13 +254,12 @@ export const runGroundTruthTest = action({
         retryCount++;
         if (retryCount < maxRetries) {
           console.log(`Retrying test execution (attempt ${retryCount + 1}/${maxRetries})...`);
-          await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retry
+          await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2 seconds before retry
         }
       }
     }
 
-    return allTestResults
-
+    return allTestResults;
   },
 });
 

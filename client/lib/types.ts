@@ -20,16 +20,6 @@ export type RunTestResult = Array<{
   stdout: string | null;
 }>;
 
-export interface TestCaseResult {
-  caseNumber: number;
-  passed: boolean;
-  input: Record<string, any>;
-  expected: any;
-  actual: any;
-  error: string | null;
-  stdout: string | null;
-}
-
 export type CodeRunResult = {
   status: string;
   executionTime: number | undefined;
@@ -39,6 +29,16 @@ export type CodeRunResult = {
   exception: string | undefined;
   testResults?: RunTestResult;
 };
+
+export interface TestCaseResult {
+  caseNumber: number;
+  passed: boolean;
+  input: Record<string, any>;
+  expected: any;
+  actual: any;
+  error: string | null;
+  stdout: string | null;
+}
 
 export type Defined<T> = T extends null | undefined ? never : T;
 
