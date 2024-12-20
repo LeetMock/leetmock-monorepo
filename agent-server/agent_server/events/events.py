@@ -400,10 +400,10 @@ class StepTrackingEvent(BaseEvent[str]):
         return "step_tracking"
 
     def _get_llm_step_tracker(self, step: Step):
-        signal_emitters: List[SignalEmitter] = [emit_interval_fixed(interval=10)]
+        signal_emitters: List[SignalEmitter] = [emit_interval_fixed(interval=5)]
 
         if not step.required:
-            signal_emitters.append(emit_stop_after(duration=60))
+            signal_emitters.append(emit_stop_after(duration=30))
 
         return create_llm_step_tracker(
             step=step,
