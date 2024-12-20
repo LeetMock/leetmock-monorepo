@@ -149,3 +149,4 @@ test.ipynb
 
 # prod env
 .env.prod
+.vercel
