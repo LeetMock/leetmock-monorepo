@@ -143,3 +143,9 @@ test.ipynb
 
 # macOS system files
 .DS_Store
+
+# logfire
+.logfire
+
+# prod env
+.env.prod
