@@ -1,3 +1,7 @@
+from dotenv import find_dotenv, load_dotenv
+
+load_dotenv(find_dotenv())
+
 from agent_server.telemetry import init_telemetry
 
 init_telemetry()
@@ -28,7 +32,6 @@ from agent_server.livekit.streams import EchoStream, NoopLLM, NoopStream
 from agent_server.livekit.tts import get_tts_engine
 from agent_server.utils.logger import get_logger
 from agent_server.utils.messages import livekit_to_langchain_message
-from dotenv import find_dotenv, load_dotenv
 from livekit.agents import cli  # type: ignore
 from livekit.agents import JobContext, WorkerOptions, llm, utils
 from livekit.agents.llm import ChatMessage
@@ -39,9 +42,6 @@ from livekit.rtc import DataPacket
 
 from libs.convex.api import ConvexApi
 from libs.message_wrapper import MessageWrapper
-
-load_dotenv(find_dotenv())
-
 
 logger = get_logger(__name__)
 
