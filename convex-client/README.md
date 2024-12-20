@@ -98,6 +98,7 @@ Class | Method | HTTP request | Description
 *ActionApi* | [**api_run_actions_get_session_metadata_post**](docs/ActionApi.md#api_run_actions_get_session_metadata_post) | **POST** /api/run/actions/getSessionMetadata | Calls a action at the path actions.js:getSessionMetadata
 *ActionApi* | [**api_run_actions_get_token_post**](docs/ActionApi.md#api_run_actions_get_token_post) | **POST** /api/run/actions/getToken | Calls a action at the path actions.js:getToken
 *ActionApi* | [**api_run_actions_run_code_post**](docs/ActionApi.md#api_run_actions_run_code_post) | **POST** /api/run/actions/runCode | Calls a action at the path actions.js:runCode
+*ActionApi* | [**api_run_actions_run_ground_truth_test_post**](docs/ActionApi.md#api_run_actions_run_ground_truth_test_post) | **POST** /api/run/actions/runGroundTruthTest | Calls a action at the path actions.js:runGroundTruthTest
 *ActionApi* | [**api_run_actions_run_tests_post**](docs/ActionApi.md#api_run_actions_run_tests_post) | **POST** /api/run/actions/runTests | Calls a action at the path actions.js:runTests
 *ActionApi* | [**api_run_actions_trigger_eval_post**](docs/ActionApi.md#api_run_actions_trigger_eval_post) | **POST** /api/run/actions/triggerEval | Calls a action at the path actions.js:triggerEval
 *MutationApi* | [**api_run_admins_create_user_profile_post**](docs/MutationApi.md#api_run_admins_create_user_profile_post) | **POST** /api/run/admins/createUserProfile | Calls a mutation at the path admins.js:createUserProfile
@@ -136,6 +137,8 @@ Class | Method | HTTP request | Description
  - [RequestActionsGetToken](docs/RequestActionsGetToken.md)
  - [RequestActionsRunCode](docs/RequestActionsRunCode.md)
  - [RequestActionsRunCodeArgs](docs/RequestActionsRunCodeArgs.md)
+ - [RequestActionsRunGroundTruthTest](docs/RequestActionsRunGroundTruthTest.md)
+ - [RequestActionsRunGroundTruthTestArgs](docs/RequestActionsRunGroundTruthTestArgs.md)
  - [RequestActionsRunTests](docs/RequestActionsRunTests.md)
  - [RequestActionsRunTestsArgs](docs/RequestActionsRunTestsArgs.md)
  - [RequestActionsTriggerEval](docs/RequestActionsTriggerEval.md)
@@ -222,6 +225,7 @@ Class | Method | HTTP request | Description
  - [ResponseActionsGetSessionMetadataValue](docs/ResponseActionsGetSessionMetadataValue.md)
  - [ResponseActionsGetToken](docs/ResponseActionsGetToken.md)
  - [ResponseActionsRunCode](docs/ResponseActionsRunCode.md)
+ - [ResponseActionsRunGroundTruthTest](docs/ResponseActionsRunGroundTruthTest.md)
  - [ResponseActionsRunTests](docs/ResponseActionsRunTests.md)
  - [ResponseActionsRunTestsValue](docs/ResponseActionsRunTestsValue.md)
  - [ResponseActionsRunTestsValueTestResultsInner](docs/ResponseActionsRunTestsValueTestResultsInner.md)

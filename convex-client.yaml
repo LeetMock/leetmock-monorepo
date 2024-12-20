@@ -448,6 +448,37 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/actions/runGroundTruthTest:
+    post:
+      summary: Calls a action at the path actions.js:runGroundTruthTest
+      tags:
+        - action
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_actions.runGroundTruthTest"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_actions.runGroundTruthTest"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
   /api/run/actions/runTests:
     post:
       summary: Calls a action at the path actions.js:runTests
@@ -1531,6 +1562,42 @@ components:
               type: string
 
     Response_actions.runCode:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_actions.runGroundTruthTest:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - canidateCode
+            - language
+            - questionId
+          properties:
+            canidateCode:
+              type: string
+            language:
+              type: string
+            questionId:
+              type: string
+              description: ID from table "questions"
+
+    Response_actions.runGroundTruthTest:
       type: object
       required:
         - status

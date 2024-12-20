@@ -20,6 +20,8 @@ convex_client/models/request_actions_get_session_metadata.py
 convex_client/models/request_actions_get_token.py
 convex_client/models/request_actions_run_code.py
 convex_client/models/request_actions_run_code_args.py
+convex_client/models/request_actions_run_ground_truth_test.py
+convex_client/models/request_actions_run_ground_truth_test_args.py
 convex_client/models/request_actions_run_tests.py
 convex_client/models/request_actions_run_tests_args.py
 convex_client/models/request_actions_trigger_eval.py
@@ -106,6 +108,7 @@ convex_client/models/response_actions_get_session_metadata.py
 convex_client/models/response_actions_get_session_metadata_value.py
 convex_client/models/response_actions_get_token.py
 convex_client/models/response_actions_run_code.py
+convex_client/models/response_actions_run_ground_truth_test.py
 convex_client/models/response_actions_run_tests.py
 convex_client/models/response_actions_run_tests_value.py
 convex_client/models/response_actions_run_tests_value_test_results_inner.py
@@ -167,6 +170,8 @@ docs/RequestActionsGetSessionMetadata.md
 docs/RequestActionsGetToken.md
 docs/RequestActionsRunCode.md
 docs/RequestActionsRunCodeArgs.md
+docs/RequestActionsRunGroundTruthTest.md
+docs/RequestActionsRunGroundTruthTestArgs.md
 docs/RequestActionsRunTests.md
 docs/RequestActionsRunTestsArgs.md
 docs/RequestActionsTriggerEval.md
@@ -253,6 +258,7 @@ docs/ResponseActionsGetSessionMetadata.md
 docs/ResponseActionsGetSessionMetadataValue.md
 docs/ResponseActionsGetToken.md
 docs/ResponseActionsRunCode.md
+docs/ResponseActionsRunGroundTruthTest.md
 docs/ResponseActionsRunTests.md
 docs/ResponseActionsRunTestsValue.md
 docs/ResponseActionsRunTestsValueTestResultsInner.md
@@ -319,6 +325,8 @@ test/test_request_actions_get_session_metadata.py
 test/test_request_actions_get_token.py
 test/test_request_actions_run_code.py
 test/test_request_actions_run_code_args.py
+test/test_request_actions_run_ground_truth_test.py
+test/test_request_actions_run_ground_truth_test_args.py
 test/test_request_actions_run_tests.py
 test/test_request_actions_run_tests_args.py
 test/test_request_actions_trigger_eval.py
@@ -405,6 +413,7 @@ test/test_response_actions_get_session_metadata.py
 test/test_response_actions_get_session_metadata_value.py
 test/test_response_actions_get_token.py
 test/test_response_actions_run_code.py
+test/test_response_actions_run_ground_truth_test.py
 test/test_response_actions_run_tests.py
 test/test_response_actions_run_tests_value.py
 test/test_response_actions_run_tests_value_test_results_inner.py
