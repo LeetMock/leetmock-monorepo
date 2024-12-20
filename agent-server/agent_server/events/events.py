@@ -403,7 +403,7 @@ class StepTrackingEvent(BaseEvent[str]):
         signal_emitters: List[SignalEmitter] = [emit_interval_fixed(interval=5)]
 
         if not step.required:
-            signal_emitters.append(emit_stop_after(duration=30))
+            signal_emitters.append(emit_stop_after(duration=25))
 
         return create_llm_step_tracker(
             step=step,
