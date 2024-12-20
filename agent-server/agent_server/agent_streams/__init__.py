@@ -271,7 +271,6 @@ class AgentStream(BaseModel, Generic[TState]):
                     first_token_received = True
 
                 yield chunk_text
-                logger.info(f"Chunk text: {chunk_text}")
                 chunks.append(chunk_text)
 
         logger.info(f"Agent text stream: {''.join(chunks)}")
