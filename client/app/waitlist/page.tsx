@@ -18,7 +18,6 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 const WaitlistPage = () => {
   const [inviteCode, setInviteCode] = useState("");
   const { isSignedIn, isLoaded } = useUser();
-  const { userProfile, isLoaded: isUserProfileLoaded } = useUserProfile();
 
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -56,10 +55,6 @@ const WaitlistPage = () => {
 
   if (isLoaded && !isSignedIn) {
     return redirect("/auth?action=signin");
-  }
-
-  if (isUserProfileLoaded && userProfile) {
-    return redirect("/dashboard");
   }
 
   return (
