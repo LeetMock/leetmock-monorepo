@@ -25,6 +25,7 @@ CONVEX_REQUIRED_KEYS = set(
         "LANGGRAPH_API_URL",
         "RAPIDAPI_KEY",
         "STRIPE_KEY",
+        "CLERK_JWT_ISSUER_DOMAIN",
     ]
 )
 

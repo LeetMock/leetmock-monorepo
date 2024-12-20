@@ -3,10 +3,10 @@ import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 
 import { ConvexClientProvider } from "@/components/convex-client-provider";
-import { DevTool } from "@/components/dev-tool";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
+import { DevTool } from "@/components/dev-tool";
 
 const fontSans = FontSans({
   subsets: ["latin"],
