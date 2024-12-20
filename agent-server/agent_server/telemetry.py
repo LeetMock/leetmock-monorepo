@@ -5,8 +5,6 @@ import logfire
 
 def init_telemetry():
     logfire.configure()
-    logfire.instrument_aiohttp_client()
-    logfire.instrument_httpx()
     logfire.instrument_openai()
     logfire.instrument_system_metrics()
     logfire.install_auto_tracing(
