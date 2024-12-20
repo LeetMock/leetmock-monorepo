@@ -187,6 +187,17 @@ export const runGroundTruthTest = action({
     canidateCode: v.string(),
     questionId: v.id("questions"),
   },
+  returns: v.array(
+    v.object({
+      caseNumber: v.number(),
+      passed: v.boolean(),
+      input: v.record(v.string(), v.any()),
+      expected: v.any(),
+      actual: v.any(),
+      error: v.union(v.string(), v.null()),
+      stdout: v.union(v.string(), v.null()),
+    })
+  ),
   handler: async (ctx, { language, canidateCode, questionId }) => {
     // access question test cases
     const question = await ctx.runQuery(api.questions.getById, { questionId });
@@ -204,7 +215,7 @@ export const runGroundTruthTest = action({
     });
 
     const BATCH_SIZE = 4;
-    const allTestResults: RunTestResult[] = [];
+    const allTestResults: RunTestResult = [];
 
     // Process test cases in batches
     for (let i = 0; i < testCases.length; i += BATCH_SIZE) {
@@ -241,8 +252,8 @@ export const runGroundTruthTest = action({
               /START_RESULTS_JSON\n([\s\S]*?)\nEND_RESULTS_JSON/
             );
             if (jsonMatch && jsonMatch[1]) {
-              const batchResults: RunTestResult[] = JSON.parse(jsonMatch[1]);
-              allTestResults.push(...batchResults);
+              const batchResult: RunTestResult = JSON.parse(jsonMatch[1]);
+              allTestResults.push(...batchResult);
               break; // Success, exit the retry loop
             }
           } catch (error) {
