@@ -40,3 +40,7 @@ run-convex-local:
 # forward-stripe-event:
 #     echo "Forwarding stripe event to https://{{trim_start_match(convex-deployment, "dev:")}}.convex.site/stripe-webhook"
 #     stripe listen --forward-to https://{{trim_start_match(convex-deployment, "dev:")}}.convex.site/stripe-webhook
+
+# Setup Fly.io secrets from .env.prod file
+setup:
+    python3 scripts/setup_env.py
