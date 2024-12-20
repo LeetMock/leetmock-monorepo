@@ -1,5 +1,9 @@
 set positional-arguments
 
+# Setup Fly.io secrets and Convex env vars from .env.prod files
+setup:
+    python3 scripts/setup_env.py
+
 # Generate the convex client openapi client types
 gen-convex-client:
     npm config set registry https://registry.npmjs.org
@@ -40,3 +44,5 @@ run-convex-local:
 # forward-stripe-event:
 #     echo "Forwarding stripe event to https://{{trim_start_match(convex-deployment, "dev:")}}.convex.site/stripe-webhook"
 #     stripe listen --forward-to https://{{trim_start_match(convex-deployment, "dev:")}}.convex.site/stripe-webhook
+
+

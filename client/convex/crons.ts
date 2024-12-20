@@ -6,13 +6,13 @@ const crons = cronJobs();
 crons.interval(
   "Refresh minutes for yearly plans",
   { hours: 1 },
-  internal.userProfiles.refreshMinutesForYearlyPlansInternal,
+  internal.userProfiles.refreshMinutesForYearlyPlansInternal
 );
 
 crons.interval(
   "Check pending evaluations",
-  { minutes: 30 }, // Run every 5 minutes
-  internal.eval.checkPendingEvaluationsInternal,
+  { minutes: 5 }, // Run every 5 minutes
+  internal.eval.checkPendingEvaluationsInternal
 );
 
 export default crons;

@@ -17,7 +17,7 @@ def create_elevenlabs_tts() -> elevenlabs.TTS:
         voice=elevenlabs.Voice(
             id="UgBBYS2sOqTuMpoF3BR0",
             name="Mark - Natural Conversations",
-            category="cloned",
+            category="professional",
             settings=elevenlabs.VoiceSettings(
                 stability=0.3,
                 similarity_boost=0.5,
