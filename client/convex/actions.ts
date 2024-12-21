@@ -7,7 +7,12 @@ import { userAction } from "./functions";
 import { action } from "./_generated/server";
 
 import { CODE_PREFIX, DATA_STRUCTURES } from "@/lib/constants";
-import { CodeRunResult, RunCodeResult, RunTestResult, TokenResult } from "@/lib/types";
+import {
+  CodeRunResult,
+  RunCodeResult,
+  RunTestResult,
+  TokenResult,
+} from "@/lib/types";
 import {
   createToken,
   generateRandomAlphanumeric,
@@ -19,7 +24,10 @@ import { ConvexError, v } from "convex/values";
 
 import { retry } from "@lifeomic/attempt";
 
-async function executeCode(payload: any, maxRetries = 3): Promise<CodeRunResult> {
+async function executeCode(
+  payload: any,
+  maxRetries = 3
+): Promise<CodeRunResult> {
   const url = "https://onecompiler-apis.p.rapidapi.com/api/v1/run";
   const headers = {
     "Content-Type": "application/json",
@@ -136,7 +144,12 @@ export const getToken = action({
       canSubscribe: true,
     };
 
-    const token = await createToken(apiKey, apiSecret, { identity: userIdentity }, grant);
+    const token = await createToken(
+      apiKey,
+      apiSecret,
+      { identity: userIdentity },
+      grant
+    );
     const result: TokenResult = {
       identity: userIdentity,
       accessToken: token,
@@ -151,7 +164,10 @@ export const runCode = action({
     language: v.string(),
     code: v.string(),
   },
-  handler: async (ctx, { language, code }): Promise<RunCodeResult | undefined> => {
+  handler: async (
+    ctx,
+    { language, code }
+  ): Promise<RunCodeResult | undefined> => {
     const payload = {
       language,
       stdin: "",
@@ -180,7 +196,7 @@ export const runCode = action({
   },
 });
 
-// a function that run groundtruh test on canidate's code
+// a function that run groundtruh test on candidate's code
 export const runGroundTruthTest = action({
   args: {
     language: v.string(),
@@ -264,7 +280,9 @@ export const runGroundTruthTest = action({
         // If we get here, either the execution failed or parsing failed
         retryCount++;
         if (retryCount < maxRetries) {
-          console.log(`Retrying test execution (attempt ${retryCount + 1}/${maxRetries})...`);
+          console.log(
+            `Retrying test execution (attempt ${retryCount + 1}/${maxRetries})...`
+          );
           await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2 seconds before retry
         }
       }
@@ -303,9 +321,12 @@ export const runTests = action({
   }),
   handler: async (ctx, { language, sessionId, questionId }) => {
     // Retrieve editor state and test cases state using internal queries
-    const editorState = await ctx.runQuery(internal.codeSessionStates.getEditorStateInternal, {
-      sessionId,
-    });
+    const editorState = await ctx.runQuery(
+      internal.codeSessionStates.getEditorStateInternal,
+      {
+        sessionId,
+      }
+    );
     const testCasesState = await ctx.runQuery(
       internal.codeSessionStates.getTestCasesStateInternal,
       { sessionId }
@@ -344,7 +365,9 @@ export const runTests = action({
     const result = await executeCode(payload);
     if (result.status === "success" && result.stdout) {
       try {
-        const jsonMatch = result.stdout.match(/START_RESULTS_JSON\n([\s\S]*?)\nEND_RESULTS_JSON/);
+        const jsonMatch = result.stdout.match(
+          /START_RESULTS_JSON\n([\s\S]*?)\nEND_RESULTS_JSON/
+        );
         if (jsonMatch && jsonMatch[1]) {
           const parsedResults: RunTestResult = JSON.parse(jsonMatch[1]);
           console.log({
@@ -390,16 +413,24 @@ export const getSessionMetadata = action({
     metadata: v.record(v.string(), v.any()),
   }),
   handler: async (ctx, { sessionId }) => {
-    const session = await ctx.runQuery(internal.sessions.getByIdInternal, { sessionId });
+    const session = await ctx.runQuery(internal.sessions.getByIdInternal, {
+      sessionId,
+    });
     if (!isDefined(session)) {
-      throw new ConvexError({ name: "SessionNotFound", message: "Session not found" });
+      throw new ConvexError({
+        name: "SessionNotFound",
+        message: "Session not found",
+      });
     }
 
     const question = await ctx.runQuery(internal.questions.getByIdInternal, {
       questionId: session.questionId,
     });
     if (!isDefined(question)) {
-      throw new ConvexError({ name: "QuestionNotFound", message: "Question not found" });
+      throw new ConvexError({
+        name: "QuestionNotFound",
+        message: "Question not found",
+      });
     }
 
     const {
@@ -413,7 +444,11 @@ export const getSessionMetadata = action({
       programmingLanguage,
       metadata,
     } = session;
-    const { _id: questionId, title: questionTitle, question: questionContent } = question;
+    const {
+      _id: questionId,
+      title: questionTitle,
+      question: questionContent,
+    } = question;
 
     return {
       sessionId,

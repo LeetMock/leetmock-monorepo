@@ -8,7 +8,7 @@ Name | Type | Description | Notes
 **status** | **str** |  | 
 **error_message** | **str** |  | [optional] 
 **error_data** | **object** |  | [optional] 
-**value** | **object** |  | [optional] 
+**value** | [**List[ResponseActionsRunGroundTruthTestValueInner]**](ResponseActionsRunGroundTruthTestValueInner.md) |  | [optional] 
 
 ## Example
 

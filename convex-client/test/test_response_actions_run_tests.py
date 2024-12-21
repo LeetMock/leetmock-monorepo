@@ -46,7 +46,7 @@ class TestResponseActionsRunTests(unittest.TestCase):
                     stderr = '', 
                     stdout = '', 
                     test_results = [
-                        convex_client.models.response_actions_run_tests_value_test_results_inner.Response_actions_runTests_value_testResults_inner(
+                        convex_client.models.response_actions_run_ground_truth_test_value_inner.Response_actions_runGroundTruthTest_value_inner(
                             actual = null, 
                             case_number = 1.337, 
                             error = '', 

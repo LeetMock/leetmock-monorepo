@@ -35,13 +35,13 @@ class TestRequestActionsRunGroundTruthTestArgs(unittest.TestCase):
         model = RequestActionsRunGroundTruthTestArgs()
         if include_optional:
             return RequestActionsRunGroundTruthTestArgs(
-                canidate_code = '',
+                code = '',
                 language = '',
                 question_id = ''
             )
         else:
             return RequestActionsRunGroundTruthTestArgs(
-                canidate_code = '',
+                code = '',
                 language = '',
                 question_id = '',
         )

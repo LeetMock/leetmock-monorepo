@@ -36,14 +36,14 @@ class TestRequestActionsRunGroundTruthTest(unittest.TestCase):
         if include_optional:
             return RequestActionsRunGroundTruthTest(
                 args = convex_client.models.request_actions_run_ground_truth_test_args.Request_actions_runGroundTruthTest_args(
-                    canidate_code = '', 
+                    code = '', 
                     language = '', 
                     question_id = '', )
             )
         else:
             return RequestActionsRunGroundTruthTest(
                 args = convex_client.models.request_actions_run_ground_truth_test_args.Request_actions_runGroundTruthTest_args(
-                    canidate_code = '', 
+                    code = '', 
                     language = '', 
                     question_id = '', ),
         )

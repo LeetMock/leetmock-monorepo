@@ -22,9 +22,9 @@ from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing import Optional, Set
 from typing_extensions import Self
 
-class ResponseActionsRunTestsValueTestResultsInner(BaseModel):
+class ResponseActionsRunGroundTruthTestValueInner(BaseModel):
     """
-    ResponseActionsRunTestsValueTestResultsInner
+    ResponseActionsRunGroundTruthTestValueInner
     """ # noqa: E501
     actual: Optional[Any]
     case_number: Union[StrictFloat, StrictInt] = Field(alias="caseNumber")
@@ -53,7 +53,7 @@ class ResponseActionsRunTestsValueTestResultsInner(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of ResponseActionsRunTestsValueTestResultsInner from a JSON string"""
+        """Create an instance of ResponseActionsRunGroundTruthTestValueInner from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -98,7 +98,7 @@ class ResponseActionsRunTestsValueTestResultsInner(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of ResponseActionsRunTestsValueTestResultsInner from a dict"""
+        """Create an instance of ResponseActionsRunGroundTruthTestValueInner from a dict"""
         if obj is None:
             return None
 

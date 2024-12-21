@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**canidate_code** | **str** |  | 
+**code** | **str** |  | 
 **language** | **str** |  | 
 **question_id** | **str** | ID from table \&quot;questions\&quot; | 
 

@@ -109,9 +109,9 @@ convex_client/models/response_actions_get_session_metadata_value.py
 convex_client/models/response_actions_get_token.py
 convex_client/models/response_actions_run_code.py
 convex_client/models/response_actions_run_ground_truth_test.py
+convex_client/models/response_actions_run_ground_truth_test_value_inner.py
 convex_client/models/response_actions_run_tests.py
 convex_client/models/response_actions_run_tests_value.py
-convex_client/models/response_actions_run_tests_value_test_results_inner.py
 convex_client/models/response_actions_trigger_eval.py
 convex_client/models/response_admins_create_user_profile.py
 convex_client/models/response_admins_patch_user_subscription.py
@@ -259,9 +259,9 @@ docs/ResponseActionsGetSessionMetadataValue.md
 docs/ResponseActionsGetToken.md
 docs/ResponseActionsRunCode.md
 docs/ResponseActionsRunGroundTruthTest.md
+docs/ResponseActionsRunGroundTruthTestValueInner.md
 docs/ResponseActionsRunTests.md
 docs/ResponseActionsRunTestsValue.md
-docs/ResponseActionsRunTestsValueTestResultsInner.md
 docs/ResponseActionsTriggerEval.md
 docs/ResponseAdminsCreateUserProfile.md
 docs/ResponseAdminsPatchUserSubscription.md
@@ -414,9 +414,9 @@ test/test_response_actions_get_session_metadata_value.py
 test/test_response_actions_get_token.py
 test/test_response_actions_run_code.py
 test/test_response_actions_run_ground_truth_test.py
+test/test_response_actions_run_ground_truth_test_value_inner.py
 test/test_response_actions_run_tests.py
 test/test_response_actions_run_tests_value.py
-test/test_response_actions_run_tests_value_test_results_inner.py
 test/test_response_actions_trigger_eval.py
 test/test_response_admins_create_user_profile.py
 test/test_response_admins_patch_user_subscription.py

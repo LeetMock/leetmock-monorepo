@@ -1,6 +1,6 @@
 # convex_client.ActionApi
 
-All URIs are relative to *https://posh-chihuahua-941.convex.cloud*
+All URIs are relative to *https://strong-starling-42.convex.cloud*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -29,10 +29,10 @@ from convex_client.models.response_actions_create_agent_thread import ResponseAc
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://strong-starling-42.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -108,10 +108,10 @@ from convex_client.models.response_actions_get_session_metadata import ResponseA
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://strong-starling-42.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -187,10 +187,10 @@ from convex_client.models.response_actions_get_token import ResponseActionsGetTo
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://strong-starling-42.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -266,10 +266,10 @@ from convex_client.models.response_actions_run_code import ResponseActionsRunCod
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://strong-starling-42.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -345,10 +345,10 @@ from convex_client.models.response_actions_run_ground_truth_test import Response
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://strong-starling-42.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -424,10 +424,10 @@ from convex_client.models.response_actions_run_tests import ResponseActionsRunTe
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://strong-starling-42.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -503,10 +503,10 @@ from convex_client.models.response_actions_trigger_eval import ResponseActionsTr
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://strong-starling-42.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters

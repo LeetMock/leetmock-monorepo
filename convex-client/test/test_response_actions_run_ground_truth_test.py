@@ -38,7 +38,16 @@ class TestResponseActionsRunGroundTruthTest(unittest.TestCase):
                 status = 'success',
                 error_message = '',
                 error_data = None,
-                value = None
+                value = [
+                    convex_client.models.response_actions_run_ground_truth_test_value_inner.Response_actions_runGroundTruthTest_value_inner(
+                        actual = null, 
+                        case_number = 1.337, 
+                        error = '', 
+                        expected = null, 
+                        input = convex_client.models.input.input(), 
+                        passed = True, 
+                        stdout = '', )
+                    ]
             )
         else:
             return ResponseActionsRunGroundTruthTest(
