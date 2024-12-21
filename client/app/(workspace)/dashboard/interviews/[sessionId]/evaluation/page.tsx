@@ -23,7 +23,6 @@ import { MetricHeader } from "./_components/metric-header";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-
 type Criterion = {
   id: number;
   description: string;
@@ -34,7 +33,9 @@ type Criterion = {
 const InterviewEvaluationPage = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const evaluation = useQuery(api.eval.getBySessionId, { sessionId: sessionId as Id<"sessions"> });
-  const session_state = useQuery(api.codeSessionStates.getSessionStateBySessionId, { sessionId: sessionId as Id<"sessions"> });
+  const session_state = useQuery(api.codeSessionStates.getSessionStateBySessionId, {
+    sessionId: sessionId as Id<"sessions">,
+  });
   const [activeTab, setActiveTab] = useState("communication");
   const tabsRef = useRef<HTMLDivElement>(null);
   const [maxScore, setMaxScore] = useState(100);
@@ -46,39 +47,45 @@ const InterviewEvaluationPage = () => {
     return { totalScore, maxScore, percentage };
   };
 
-  const radarData = useMemo(() =>
-    evaluation?.scoreboards
-      ? Object.entries(evaluation.scoreboards).map(([category, metrics]) => {
-        const { percentage } = calculateScores(metrics as Record<string, { score: number; maxScore: number }>);
-        return {
-          category: category.charAt(0).toUpperCase() + category.slice(1),
-          score: percentage,
-          fullMark: 100,
-        };
-      })
-      : [],
+  const radarData = useMemo(
+    () =>
+      evaluation?.scoreboards
+        ? Object.entries(evaluation.scoreboards).map(([category, metrics]) => {
+            const { percentage } = calculateScores(
+              metrics as Record<string, { score: number; maxScore: number }>
+            );
+            return {
+              category: category.charAt(0).toUpperCase() + category.slice(1),
+              score: percentage,
+              fullMark: 100,
+            };
+          })
+        : [],
     [evaluation?.scoreboards]
   );
 
-  const pillarScores = useMemo(() =>
-    evaluation?.scoreboards
-      ? Object.entries(evaluation.scoreboards).map(([name, metrics]) => {
-        const { totalScore, maxScore } = calculateScores(metrics as Record<string, { score: number; maxScore: number }>);
-        const displayNames: Record<string, string> = {
-          communication: "Communication",
-          problemSolving: "Problem Solving",
-          technicalCompetency: "Technical",
-          testing: "Testing",
-        };
+  const pillarScores = useMemo(
+    () =>
+      evaluation?.scoreboards
+        ? Object.entries(evaluation.scoreboards).map(([name, metrics]) => {
+            const { totalScore, maxScore } = calculateScores(
+              metrics as Record<string, { score: number; maxScore: number }>
+            );
+            const displayNames: Record<string, string> = {
+              communication: "Communication",
+              problemSolving: "Problem Solving",
+              technicalCompetency: "Technical",
+              testing: "Testing",
+            };
 
-        return {
-          name: displayNames[name] || name,
-          internalName: name,
-          score: totalScore,
-          maxScore: maxScore,
-        };
-      })
-      : [],
+            return {
+              name: displayNames[name] || name,
+              internalName: name,
+              score: totalScore,
+              maxScore: maxScore,
+            };
+          })
+        : [],
     [evaluation?.scoreboards]
   );
 
@@ -120,13 +127,10 @@ const InterviewEvaluationPage = () => {
 
         {Object.entries(metrics).map(([metric, data]) => (
           <motion.div key={metric} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <Card className="p-4 hover:shadow-md transition-all duration-200">
+            <Card className="p-4 shadow-none transition-all duration-200 bg-background dark:bg-zinc-900">
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <MetricHeader
-                    title={metric}
-                    description={data.description}
-                  />
+                  <MetricHeader title={metric} description={data.description} />
                   <div className="flex items-center gap-2">
                     <span
                       className={cn(
@@ -144,9 +148,7 @@ const InterviewEvaluationPage = () => {
                 </div>
 
                 <div className="prose dark:prose-invert max-w-none text-base">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {data.comment}
-                  </ReactMarkdown>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{data.comment}</ReactMarkdown>
                 </div>
                 {/* <p className="text-base leading-relaxed mt-2">{data.comment}</p> */}
                 <div className="space-y-3 mt-4 border-l-2 border-blue-500/20 dark:border-blue-400/20">
@@ -168,15 +170,24 @@ const InterviewEvaluationPage = () => {
                         <ReactMarkdown
                           remarkPlugins={[remarkGfm]}
                           components={{
-                            code: ({ inline, className, children, ...props }: { inline?: boolean } & any) => {
+                            code: ({
+                              inline,
+                              className,
+                              children,
+                              ...props
+                            }: { inline?: boolean } & any) => {
                               const codeText = String(children).trim();
-                              const shouldBeInline = inline || (codeText.length < 15 && !codeText.includes('\n'));
+                              const shouldBeInline =
+                                inline || (codeText.length < 15 && !codeText.includes("\n"));
 
                               return (
-                                <code className={cn(
-                                  "px-1.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-sm",
-                                  !shouldBeInline && "block p-3 rounded-lg"
-                                )} {...props}>
+                                <code
+                                  className={cn(
+                                    "px-1.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-sm",
+                                    !shouldBeInline && "block p-3 rounded-lg"
+                                  )}
+                                  {...props}
+                                >
                                   {children}
                                 </code>
                               );
@@ -258,7 +269,7 @@ const InterviewEvaluationPage = () => {
           <ScoreRadarChart data={radarData} />
         </div>
         <motion.div variants={item} className="h-[500px]">
-          <Card className="h-full flex flex-col bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
+          <Card className="h-full flex flex-col bg-background">
             <div className="p-4 border-b backdrop-blur-sm">
               <h3 className="font-semibold">Code Submission</h3>
             </div>
@@ -270,6 +281,7 @@ const InterviewEvaluationPage = () => {
                   margin: 0,
                   borderRadius: "0.5rem",
                   fontSize: "0.875rem",
+                  height: "100%",
                 }}
               >
                 {session_state?.editor.content}
@@ -280,7 +292,7 @@ const InterviewEvaluationPage = () => {
       </motion.div>
 
       <motion.div variants={item} ref={tabsRef}>
-        <Card className="p-6 bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
+        <Card className="p-6 bg-background">
           <h3 className="text-xl font-semibold mb-4">Detailed Evaluation</h3>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="w-full justify-start bg-transparent flex flex-wrap gap-2">
@@ -316,7 +328,7 @@ const InterviewEvaluationPage = () => {
             </TabsList>
             <AnimatePresence mode="wait">
               {Object.entries(evaluation.scoreboards).map(([category, metrics]) => (
-                <TabsContent key={category} value={category} className="mt-6">
+                <TabsContent key={category} value={category} className="mt-10">
                   {renderMetricContent(metrics as Record<string, any>, category)}
                 </TabsContent>
               ))}

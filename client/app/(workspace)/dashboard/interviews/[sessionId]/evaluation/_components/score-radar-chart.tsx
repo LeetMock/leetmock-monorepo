@@ -28,7 +28,7 @@ export const ScoreRadarChart = ({ data }: ScoreRadarChartProps) => {
       transition={{ duration: 0.5 }}
       className="h-full"
     >
-      <Card className="h-full flex flex-col bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
+      <Card className="h-full flex flex-col bg-background">
         <div className="p-4 border-b backdrop-blur-sm">
           <h3 className="font-semibold">Performance Overview</h3>
         </div>
