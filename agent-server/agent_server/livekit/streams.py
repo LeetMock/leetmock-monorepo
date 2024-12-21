@@ -54,7 +54,7 @@ class NoopStream(llm.LLMStream):
 
     @classmethod
     def from_chat_ctx(cls, chat_ctx: llm.ChatContext) -> Self:
-        return cls(chat_ctx=chat_ctx)
+        return cls(chat_ctx=chat_ctx, fnc_ctx=None)
 
     async def _run(self):
         pass
@@ -90,7 +90,7 @@ class EchoStream(llm.LLMStream):
     def from_chat_ctx(
         cls, text_stream: AsyncIterator[str], chat_ctx: llm.ChatContext
     ) -> Self:
-        return cls(text_stream=text_stream, chat_ctx=chat_ctx)
+        return cls(text_stream=text_stream, chat_ctx=chat_ctx, fnc_ctx=None)
 
     async def _run(self):
         pass
