@@ -101,26 +101,14 @@ export const checkPendingEvaluationsInternal = internalMutation({
   args: {},
   handler: async (ctx) => {
     const now = Date.now();
-    const fifteenMinutesAgo = now - 15 * 60 * 1000;
-    const twoHoursAgo = now - 2 * 60 * 60 * 1000;
+    const sessions = await ctx.table("sessions", "by_eval_ready_and_status", (q) =>
+      q.eq("evalReady", false).eq("sessionStatus", "completed")
+    );
 
-    const sessions = await ctx
-      .table("sessions")
-      .filter((q) =>
-        q.and(
-          q.gte(q.field("sessionEndTime"), twoHoursAgo),
-          q.lte(q.field("sessionEndTime"), fifteenMinutesAgo),
-          q.eq(q.field("evalReady"), false),
-          q.eq(q.field("sessionStatus"), "completed")
-        )
-      );
-    console.log(sessions);
     for (const session of sessions) {
-      if (isDefined(session._id)) {
-        await ctx.scheduler.runAfter(0, internal.eval.triggerEvalAction, {
-          sessionId: session._id,
-        });
-      }
+      await ctx.scheduler.runAfter(0, internal.eval.triggerEvalAction, {
+        sessionId: session._id,
+      });
     }
   },
 });

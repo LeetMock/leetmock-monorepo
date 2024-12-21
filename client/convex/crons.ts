@@ -9,10 +9,10 @@ crons.interval(
   internal.userProfiles.refreshMinutesForYearlyPlansInternal
 );
 
-// crons.interval(
-//   "Check pending evaluations",
-//   { minutes: 30 }, // Run every 5 minutes
-//   internal.eval.checkPendingEvaluationsInternal,
-// );
+crons.interval(
+  "Check pending evaluations",
+  { minutes: 5 }, // Run every 5 minutes
+  internal.eval.checkPendingEvaluationsInternal
+);
 
 export default crons;

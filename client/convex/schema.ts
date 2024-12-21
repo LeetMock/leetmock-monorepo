@@ -60,7 +60,8 @@ const schema = defineEntSchema({
   })
     .edge("codeSessionState", { optional: true })
     .index("by_user_id", ["userId"])
-    .index("by_user_id_and_status", ["userId", "sessionStatus"]),
+    .index("by_user_id_and_status", ["userId", "sessionStatus"])
+    .index("by_eval_ready_and_status", ["evalReady", "sessionStatus"]),
   codeSessionStates: defineEnt({
     currentStageIdx: v.number(),
     editor: v.object({
