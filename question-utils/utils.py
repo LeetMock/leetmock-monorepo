@@ -84,6 +84,7 @@ def convert_to_selected_questions(source_folder, target_folder):
     selected_questions = []
     for question in processed_questions:
         question["inputParameters"] = convert_input_parameters(question["inputParameters"])
+        question["outputParameters"] = ""
         selected_questions.append(question)
 
     with open(target_folder, "w") as f:
@@ -95,6 +96,9 @@ def convert_to_selected_questions(source_folder, target_folder):
 #     #     "./output/processed_questions.jsonl", "./output/processed_questions.json"
 #     # )
 
-#     source_folder = "./output/processed_questions.json"
-#     target_folder = "./output/new_selected_questions.json"
-#     convert_to_selected_questions(source_folder, target_folder)
+# source_folder = "./output/processed_questions.json"
+# target_folder = "./output/new_selected_questions.json"
+# convert_to_selected_questions(source_folder, target_folder)
+source_folder = "./output/new_selected_questions.json"
+target_folder = "./output/new_selected_questions.jsonl"
+json2jsonl(source_folder, target_folder)

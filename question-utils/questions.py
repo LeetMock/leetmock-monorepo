@@ -21,6 +21,7 @@ class Question:
     solutions: Any
     functionName: str
     inputParameters: Dict[str, List[str]]
+    outputParameters: str
     tests: List[Test]
     title: str
     metaData: Dict[any, any]
@@ -42,7 +43,8 @@ class Question:
             'inputParameters': self.inputParameters,
             'tests': [test.__dict__() for test in self.tests],
             'title': self.title,
-            'metaData': self.metaData
+            'metaData': self.metaData,
+            'outputParameters': self.outputParameters
         }
 
 def load_questions(json_data: List[Dict]) -> List[Question]:

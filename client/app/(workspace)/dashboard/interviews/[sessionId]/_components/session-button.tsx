@@ -61,9 +61,10 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
 
     await disconnect();
     const promise = endSession({ sessionId: session._id });
-    const evalPromise = triggerEval({ sessionId: session._id });
+    // const evalPromise = triggerEval({ sessionId: session._id });
 
-    toast.promise(Promise.all([promise, evalPromise]), {
+    // toast.promise(Promise.all([promise, evalPromise]), {
+    toast.promise(Promise.all([promise]), {
       loading: "Ending interview...",
       success: "Interview ended successfully! 🎉",
       error: "Failed to end interview",

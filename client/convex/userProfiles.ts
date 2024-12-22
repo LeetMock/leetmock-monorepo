@@ -13,7 +13,15 @@ export const getUserProfileInternal = internalQuery({
 
 export const getUserProfile = userQuery({
   handler: async (ctx) => {
-    const profile = await ctx.table("userProfiles").get("userId", ctx.user.subject);
+    // Check if user is authenticated
+    const identity = await ctx.auth.getUserIdentity();
+
+    // Return early if no authenticated user
+    if (!identity) {
+      return { profile: undefined };
+    }
+
+    const profile = await ctx.table("userProfiles").get("userId", identity.subject);
 
     if (!isDefined(profile)) {
       return { profile: undefined };
