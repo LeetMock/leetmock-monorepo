@@ -1,11 +1,13 @@
-from typing import List, OrderedDict, cast
+from typing import List, OrderedDict, Set, cast
 
 from agent_graph.code_mock_staged_v1.constants import (
     AgentConfig,
     StageTypes,
     Step,
+    get_stage_confirmation_tool_call_state_patch,
 )
 from agent_graph.code_mock_staged_v1.prompts import INTRO_BACKGROUND_PROMPT
+from agent_graph.code_mock_staged_v1.schemas import ConfirmStageCompletion
 from agent_graph.llms import get_model
 from agent_graph.types import EventMessageState
 from agent_graph.utils import custom_data, get_configurable
@@ -25,9 +27,15 @@ from pydantic.v1 import Field
 class BackgroundStageState(EventMessageState):
     """State for the background stage of the agent."""
 
+    completed_steps: Set[str] = Field(default_factory=set)
+
     steps: OrderedDict[StageTypes, List[Step]] = Field(
         default_factory=lambda: OrderedDict()
     )
+
+    current_stage_idx: int = Field(default=0)
+
+    has_tool_call: bool = Field(default=False)
 
 
 # --------------------- stage subgraph nodes --------------------- #
@@ -46,20 +54,35 @@ async def assistant(
         ]
     )
 
-    chain = prompt | get_model(
+    llm = get_model(
         model_name=agent_config.fast_model,
         temperature=agent_config.temperature,
-    ).bind(stop=["SILENT", "<thinking>"])
+    )
+
+    if agent_config.transition_confirmation_enabled:
+        llm = llm.bind_tools([ConfirmStageCompletion])
+
+    chain = prompt | llm.bind(stop=["SILENT", "<thinking>"])
 
     content = ""
+    tool_call_detected = False
     async for chunk in chain.astream(
         {
             "messages": state.messages,
             "steps": state.steps[StageTypes.BACKGROUND],
         }
     ):
-        content += cast(str, chunk.content)
-        writer(custom_data("assistant", chunk.content))
+        if "tool_calls" in chunk.additional_kwargs:
+            tool_call_detected = True
+            break
+        else:
+            content += cast(str, chunk.content)
+            writer(custom_data("assistant", chunk.content))
+
+    if tool_call_detected:
+        return get_stage_confirmation_tool_call_state_patch(
+            StageTypes.BACKGROUND, chunk, state
+        )
 
     # If the assistant doesn't say anything, we should return a SILENT message
     if len(content.strip()) == 0:

@@ -53,3 +53,15 @@ class TrackSignals(BaseModel):
     )
 
     # TODO: conversation suggestion
+
+
+class ConfirmStageCompletion(BaseModel):
+    """
+    Confirm if the stage is completed based on the conversation history.
+
+    Call this tool whenever the following three conditions are met:
+    1. Interviewer prompted/asked candidate if he/she wants to move forward to the next stage.
+    2. Candidate confirmed that he/she would like to move forward to the next stage.
+    """
+
+    pass

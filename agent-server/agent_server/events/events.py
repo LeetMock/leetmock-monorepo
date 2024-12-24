@@ -30,7 +30,7 @@ Example:
 
 import asyncio
 import logging
-from typing import Any, Dict, List, Set
+from typing import Any, Callable, Dict, List, Set
 
 from agent_graph.chains.emitters import emit_interval_fixed, emit_stop_after
 from agent_graph.chains.step_tracker import SignalEmitter, create_llm_step_tracker
@@ -42,6 +42,7 @@ from agent_graph.state_merger import StateMerger
 from agent_graph.types import Step
 from agent_server.contexts.session import CodeSession, CodeSessionEventTypes
 from agent_server.events import BaseEvent
+from agent_server.utils.messages import MessageCompressor
 from debouncer import debounce
 from livekit.agents.voice_assistant import VoiceAssistant
 from pydantic import StrictStr
@@ -49,7 +50,7 @@ from pydantic.v1 import BaseModel, Field, PrivateAttr
 
 from libs.convex.api import ConvexApi
 from libs.convex.convex_requests import create_test_code_correctness_request
-from libs.convex.convex_types import CodeSessionContentChangedEvent, TestcaseResult
+from libs.convex.convex_types import CodeSessionContentChangedEvent
 from libs.helpers import static_check_with_mypy
 from libs.message_wrapper import MessageWrapper
 
@@ -60,6 +61,43 @@ class Reminder(BaseModel):
     """Empty model representing a reminder event."""
 
     pass
+
+
+class ConditionedStateChangeEvent(BaseEvent[AgentState]):
+    """Event for monitoring conditioned state changes."""
+
+    state_merger: StateMerger[AgentState]
+
+    conditioned_value: Callable[[AgentState], Any] = Field(
+        default=lambda state: state,
+        description="A function that takes an AgentState and returns a value to condition on.",
+    )
+
+    _prev_conditioned_value: Any = PrivateAttr(default=None)
+
+    _has_prev_conditioned_value: bool = PrivateAttr(default=False)
+
+    @property
+    def event_name(self) -> str:
+        return "conditioned_state_change"
+
+    def _handle_state_changed(self, _: Any, state: AgentState):
+        if not self._has_prev_conditioned_value:
+            return
+
+        prev_conditioned_value = self._prev_conditioned_value
+        curr_conditioned_value = self.conditioned_value(state)
+
+        if prev_conditioned_value != curr_conditioned_value:
+            self.emit(state)
+
+    def _handle_state_inited(self, initial_state: AgentState):
+        self._prev_conditioned_value = self.conditioned_value(initial_state)
+        self._has_prev_conditioned_value = True
+
+    def setup(self):
+        self.state_merger.on("state_initialized", self._handle_state_inited)
+        self.state_merger.on("state_changed", self._handle_state_change)
 
 
 class ReminderEvent(BaseEvent[Reminder]):
