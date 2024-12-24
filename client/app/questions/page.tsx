@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
-import { useQuery, useMutation } from "convex/react";
-import { PlusCircle, Pencil, Trash2, Loader2, Eye, Search } from "lucide-react";
+import { useQuery, useMutation, useAction } from "convex/react";
+import { PlusCircle, Pencil, Trash2, Loader2, Eye, Search, Download } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import {
     Dialog,
@@ -43,6 +43,11 @@ import {
 import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import TurndownService from "turndown";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import Editor from "@monaco-editor/react";
+import { PlayIcon } from "lucide-react";
+import { useTheme } from "next-themes";
+
 
 interface Parameter {
     name: string;
@@ -74,6 +79,7 @@ interface TabValidation {
     basic: boolean;
     parameters: boolean;
     testcases: boolean;
+    validation: boolean;
 }
 
 type TabId = keyof TabValidation;
@@ -106,6 +112,31 @@ const formatQuestionContent = (htmlContent: string) => {
         .replace(/\n{3,}/g, "\n\n");
 };
 
+// Add this helper function near other utility functions
+const formatTestResults = (results: any[]) => {
+    // Overview section
+    const totalTests = results.length;
+    const passedTests = results.filter(r => r.passed).length;
+    const overview = `Test Summary:\n` +
+        `${passedTests}/${totalTests} tests passed\n` +
+        `${'-'.repeat(20)}\n`;
+
+    // Detailed results
+    const details = results.map((result, index) => {
+        const status = result.passed ? '✓ PASS' : '✗ FAIL';
+        const statusClass = result.passed ? 'color: #22c55e' : 'color: #ef4444';
+
+        return `Test Case ${result.caseNumber}: ${status}\n` +
+            `Input: ${JSON.stringify(result.input)}\n` +
+            `Expected: ${JSON.stringify(result.expected)}\n` +
+            (result.error ? `Error: ${result.error}\n` :
+                `Actual: ${JSON.stringify(result.actual)}\n`) +
+            `${'-'.repeat(20)}\n`;
+    }).join('\n');
+
+    return `${overview}\n${details}`;
+};
+
 export default function QuestionsPage() {
     const router = useRouter();
     const questions = useQuery(api.questions.getAll);
@@ -118,9 +149,13 @@ export default function QuestionsPage() {
     const [editingQuestion, setEditingQuestion] = useState<Doc<"questions"> | null>(null);
     const [previewQuestion, setPreviewQuestion] = useState<Doc<"questions"> | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [validationCode, setValidationCode] = useState<string>("");
+    const [validationOutput, setValidationOutput] = useState<string>("");
+    const [isValidating, setIsValidating] = useState(false);
     const [testcases, setTestcases] = useState<Testcase[]>([
         { input: {}, output: null },
     ]);
+    const [validationLanguages, setValidationLanguages] = useState<string[]>([]);
     const [parameters, setParameters] = useState<Parameter[]>([
         {
             name: "",
@@ -144,6 +179,7 @@ export default function QuestionsPage() {
         basic: false,
         parameters: false,
         testcases: false,
+        validation: false,
     });
 
     // Add this state near other state declarations
@@ -158,11 +194,13 @@ export default function QuestionsPage() {
     // Add this near other state declarations
     const [evalMode, setEvalMode] = useState<EvalMode>("exactMatch");
 
+    // Add this state near other state declarations
+    const [validationLanguage, setValidationLanguage] = useState<string>("python");
 
     // Add this query to get user profile
     const userProfile = useQuery(api.userProfiles.getUserProfile);
 
-
+    const { theme } = useTheme();
 
     const categories = useMemo(() => {
         if (!questions) return [];
@@ -188,6 +226,8 @@ export default function QuestionsPage() {
             return matchesSearch && matchesCategory && matchesDifficulty;
         });
     }, [questions, filters]);
+
+    const runGroundTruthTest = useAction(api.actions.runGroundTruthTest);
 
     const validateBasicInfo = (formData: FormData): boolean => {
         const title = formData.get("title") as string;
@@ -224,6 +264,7 @@ export default function QuestionsPage() {
             basic: isBasicValid,
             parameters: isParametersValid,
             testcases: isTestcasesValid,
+            validation: false,
         });
 
         if (!isBasicValid || !isParametersValid || !isTestcasesValid) {
@@ -246,7 +287,10 @@ export default function QuestionsPage() {
                 functionName: basicInfo.functionName,
                 category: basicInfo.category.split(",").map(c => c.trim()),
                 tests: testcases,
-                solutions: {},
+                solutions: {
+                    ...editingQuestion?.solutions,
+                    [validationLanguage]: validationCode
+                },
                 inputParameters: {
                     cpp: parameters.reduce((acc, param) => {
                         acc[param.name] = param.types.cpp;
@@ -275,11 +319,12 @@ export default function QuestionsPage() {
                     questionId: editingQuestion._id,
                     ...questionData
                 });
+                toast.success("Question updated successfully");
             } else {
                 await createQuestion(questionData);
+                setIsCreateDialogOpen(false);
+                setEditingQuestion(null);
             }
-            setIsCreateDialogOpen(false);
-            setEditingQuestion(null);
         } catch (error) {
             toast.error("Failed to save question, " + error);
         } finally {
@@ -301,19 +346,59 @@ export default function QuestionsPage() {
         setTestcases([...testcases, { input: {}, output: null }]);
     };
 
-    const handleTestcaseChange = (index: number, field: string, value: string) => {
-        const updatedTestcases = [...testcases];
+    const parseValueByType = (value: string, type: string) => {
         try {
-            const parsedValue = JSON.parse(value);
-            if (field === "input") {
-                updatedTestcases[index].input = parsedValue;
-            } else {
-                updatedTestcases[index].output = parsedValue;
+            // Handle array/list types first
+            if (type.includes("List[") || type.includes("[]") || type.includes("vector")) {
+                const parsedArray = JSON.parse(value);
+                // Handle specific array types
+                if (type.includes("float") || type.includes("Float")) {
+                    return parsedArray.map(Number);
+                } else if (type.includes("int") || type.includes("integer")) {
+                    return parsedArray.map((v: any) => parseInt(v, 10));
+                } else if (type.includes("bool") || type.includes("boolean")) {
+                    return parsedArray.map((v: any) => Boolean(v));
+                }
+                return parsedArray;
             }
-            setTestcases(updatedTestcases);
+
+            // Handle scalar types
+            if (type.includes("integer") || type.includes("int")) {
+                return parseInt(value, 10);
+            } else if (type.includes("float") || type.includes("Float")) {
+                return parseFloat(value);
+            } else if (type.includes("boolean") || type.includes("bool")) {
+                return value.toLowerCase() === "true";
+            }
+            return value; // Default to string
         } catch (error) {
-            console.error("Invalid JSON format");
+            return value; // Return original value if parsing fails
         }
+    };
+
+    const handleTestcaseChange = (index: number, paramName: string, value: string) => {
+        const updatedTestcases = [...testcases];
+        if (paramName === "output") {
+            updatedTestcases[index].output = parseValueByType(value, selectedOutputType);
+        } else {
+            const parameter = parameters.find(p => p.name === paramName);
+            if (parameter) {
+                // Allow negative sign input
+                if (value === "-" || value === "") {
+                    updatedTestcases[index].input = {
+                        ...updatedTestcases[index].input,
+                        [paramName]: value
+                    };
+                } else {
+                    const paramType = parameter.types[validationLanguage];
+                    updatedTestcases[index].input = {
+                        ...updatedTestcases[index].input,
+                        [paramName]: parseValueByType(value, paramType)
+                    };
+                }
+            }
+        }
+        setTestcases(updatedTestcases);
     };
 
     const formatJSON = (obj: any): string => {
@@ -468,6 +553,17 @@ export default function QuestionsPage() {
 
             // Set eval mode
             setEvalMode(editingQuestion.evalMode);
+
+            // Set available validation languages
+            if (editingQuestion.solutions) {
+                setValidationLanguages(Object.keys(editingQuestion.solutions));
+                // Set default language if available
+                if (Object.keys(editingQuestion.solutions).length > 0) {
+                    const defaultLang = Object.keys(editingQuestion.solutions)[0];
+                    setValidationLanguage(defaultLang);
+                    setValidationCode(editingQuestion.solutions[defaultLang] || "");
+                }
+            }
         } else {
             // Reset all states to default
             setBasicInfo({
@@ -513,17 +609,95 @@ export default function QuestionsPage() {
         return null;
     }
 
+    // Add this function to handle the export
+    const handleExport = () => {
+        const questionsData = questions?.map(q => ({
+            category: q.category,
+            difficulty: q.difficulty,
+            evalMode: q.evalMode,
+            question: q.question,
+            functionName: q.functionName,
+            inputParameters: q.inputParameters,
+            outputParameters: q.outputParameters,
+            tests: q.tests,
+            title: q.title,
+            metaData: q.metaData || {},
+            solutions: q.solutions || {}
+        }));
+
+        // Create a Blob with the JSON data
+        const blob = new Blob([JSON.stringify(questionsData, null, 2)], { type: 'application/json' });
+
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'selected_questions.json';
+
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+
+        // Cleanup
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    };
+
+    // Update the validation output setting in handleRunValidation
+    const handleRunValidation = async () => {
+        if (!validationCode.trim()) {
+            toast.error("Please enter validation code");
+            return;
+        }
+
+        setIsValidating(true);
+        try {
+            const results = await runGroundTruthTest({
+                code: validationCode,
+                language: validationLanguage,
+                questionId: editingQuestion?._id as Id<"questions">
+            });
+
+            setValidationOutput(formatTestResults(results));
+        } catch (error) {
+            toast.error("Validation failed: " + error);
+            setValidationOutput(String(error));
+        } finally {
+            setIsValidating(false);
+        }
+    };
+
+    const resetValidationStates = () => {
+        setValidationCode("");
+        setValidationOutput("");
+        setValidationLanguage("python");
+    };
+
     return (
         <div className="p-6 space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold">Questions Management</h1>
-                <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-                    <DialogTrigger asChild>
-                        <Button onClick={() => setEditingQuestion(null)}>
-                            <PlusCircle className="w-4 h-4 mr-2" />
-                            Add Question
-                        </Button>
-                    </DialogTrigger>
+                <Dialog open={isCreateDialogOpen} onOpenChange={(open) => {
+                    setIsCreateDialogOpen(open);
+                    if (!open) {
+                        setEditingQuestion(null);
+                        resetValidationStates();
+                    }
+                }}>
+                    <div className="flex justify-between items-center">
+                        <div className="flex gap-2">
+                            <Button onClick={() => handleExport()}>
+                                <Download className="w-4 h-4 mr-2" />
+                                Export
+                            </Button>
+                            <DialogTrigger asChild>
+                                <Button onClick={() => setEditingQuestion(null)}>
+                                    <PlusCircle className="w-4 h-4 mr-2" />
+                                    Add Question
+                                </Button>
+                            </DialogTrigger>
+                        </div>
+                    </div>
                     <DialogContent className="sm:max-w-[800px]">
                         <DialogHeader>
                             <DialogTitle>
@@ -535,21 +709,15 @@ export default function QuestionsPage() {
                                 <TabsList>
                                     <TabsTrigger value="basic" className="relative">
                                         Basic Info
-                                        {!tabValidation.basic && (
-                                            <span className="absolute -top-1 -right-1 h-2 w-2 bg-destructive rounded-full" />
-                                        )}
                                     </TabsTrigger>
                                     <TabsTrigger value="parameters" className="relative">
                                         Parameters
-                                        {!tabValidation.parameters && (
-                                            <span className="absolute -top-1 -right-1 h-2 w-2 bg-destructive rounded-full" />
-                                        )}
                                     </TabsTrigger>
                                     <TabsTrigger value="testcases" className="relative">
                                         Test Cases
-                                        {!tabValidation.testcases && (
-                                            <span className="absolute -top-1 -right-1 h-2 w-2 bg-destructive rounded-full" />
-                                        )}
+                                    </TabsTrigger>
+                                    <TabsTrigger value="validation" className="relative">
+                                        Validation
                                     </TabsTrigger>
                                 </TabsList>
                                 <TabsContent value="basic" className="space-y-4 max-h-[60vh] overflow-y-auto pr-4">
@@ -808,29 +976,42 @@ export default function QuestionsPage() {
                                                         <Label>{param.name}</Label>
                                                         <Input
                                                             value={testcase.input[param.name] || ""}
-                                                            onChange={(e) => {
-                                                                const updatedTestcases = [...testcases];
-                                                                updatedTestcases[index].input = {
-                                                                    ...updatedTestcases[index].input,
-                                                                    [param.name]: e.target.value
-                                                                };
-                                                                setTestcases(updatedTestcases);
-                                                            }}
+                                                            onChange={(e) => handleTestcaseChange(index, param.name, e.target.value)}
                                                             placeholder={`Enter ${getGenericType(param.types)}`}
+                                                            type="text"
                                                         />
                                                     </div>
                                                 ))}
 
                                                 <div className="space-y-2">
                                                     <Label>Expected Output</Label>
-                                                    <Input
-                                                        value={testcase.output || ""}
-                                                        onChange={(e) => {
-                                                            const updatedTestcases = [...testcases];
-                                                            updatedTestcases[index].output = e.target.value;
-                                                            setTestcases(updatedTestcases);
-                                                        }}
-                                                    />
+                                                    {selectedOutputType.toLowerCase().includes('bool') ? (
+                                                        <Select
+                                                            value={String(testcase.output)}
+                                                            onValueChange={(value) => {
+                                                                const updatedTestcases = [...testcases];
+                                                                updatedTestcases[index].output = value === 'true';
+                                                                setTestcases(updatedTestcases);
+                                                            }}
+                                                        >
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder="Select value" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectItem value="true">true</SelectItem>
+                                                                <SelectItem value="false">false</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    ) : (
+                                                        <Input
+                                                            value={testcase.output || ""}
+                                                            onChange={(e) => {
+                                                                const updatedTestcases = [...testcases];
+                                                                updatedTestcases[index].output = parseValueByType(e.target.value, selectedOutputType);
+                                                                setTestcases(updatedTestcases);
+                                                            }}
+                                                        />
+                                                    )}
                                                 </div>
                                             </div>
                                         </Card>
@@ -838,6 +1019,86 @@ export default function QuestionsPage() {
                                     <Button type="button" variant="outline" onClick={handleAddTestcase}>
                                         Add Test Case
                                     </Button>
+                                </TabsContent>
+                                <TabsContent value="validation" className="space-y-4 max-h-[80vh] overflow-y-auto pr-4">
+                                    <div className="grid grid-rows-2 gap-4 h-[800px]">
+                                        {/* Top Section - Code Editor */}
+                                        <Card className="p-4 flex flex-col">
+                                            <div className="flex justify-between items-center mb-4">
+                                                <h3 className="font-medium">Validation Code</h3>
+                                                <div className="flex items-center gap-2">
+                                                    <Select
+                                                        value={validationLanguage}
+                                                        onValueChange={(lang) => {
+                                                            setValidationLanguage(lang);
+                                                            if (editingQuestion?.solutions) {
+                                                                setValidationCode(editingQuestion.solutions[lang] || "");
+                                                            }
+                                                        }}
+                                                    >
+                                                        <SelectTrigger className="w-[150px]">
+                                                            <SelectValue placeholder="Select language" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {validationLanguages.map((lang) => (
+                                                                <SelectItem key={lang} value={lang}>
+                                                                    {lang}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+                                            </div>
+                                            <div className="flex-1 relative min-h-0 overflow-x-auto">
+                                                <Editor
+                                                    className="absolute inset-0"
+                                                    language={validationLanguage || "python"}
+                                                    theme={theme === "dark" ? "vs-dark" : "vs-light"}
+                                                    value={validationCode}
+                                                    options={{
+                                                        fontSize: 14,
+                                                        lineNumbers: "on",
+                                                        roundedSelection: false,
+                                                        scrollBeyondLastLine: false,
+                                                        minimap: {
+                                                            enabled: false,
+                                                        },
+                                                        wordWrap: "off",
+                                                    }}
+                                                    onChange={(value) => setValidationCode(value || "")}
+                                                />
+                                            </div>
+                                        </Card>
+
+                                        {/* Bottom Section - Output Panel */}
+                                        <Card className="p-4 flex flex-col">
+                                            <div className="flex justify-between items-center mb-4">
+                                                <h3 className="font-medium">Test Results</h3>
+                                                <Button
+                                                    variant="outline-blue"
+                                                    className="h-8"
+                                                    onClick={handleRunValidation}
+                                                    disabled={isValidating}
+                                                >
+                                                    {isValidating ? (
+                                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                                    ) : (
+                                                        <>
+                                                            <PlayIcon className="h-3.5 w-3.5 mr-1" />
+                                                            <span>Run Tests</span>
+                                                        </>
+                                                    )}
+                                                </Button>
+                                            </div>
+                                            <div className="flex-1 min-h-0">
+                                                <ScrollArea className="h-full border rounded-md bg-muted/50">
+                                                    <pre className="p-4 text-sm whitespace-pre overflow-x-auto min-w-full">
+                                                        {validationOutput}
+                                                    </pre>
+                                                </ScrollArea>
+                                            </div>
+                                        </Card>
+                                    </div>
                                 </TabsContent>
                             </Tabs>
                             <div className="flex justify-between items-center gap-3">
