@@ -187,11 +187,11 @@ export const runCode = action({
 
     return result
       ? {
-          status: !result.isError, //true if API call was successful
-          executionTime: result.executionTime,
-          isError: !!result.stderr, //true if there's an error in the code
-          output: result.stderr || result.stdout || "",
-        }
+        status: !result.isError, //true if API call was successful
+        executionTime: result.executionTime,
+        isError: !!result.stderr, //true if there's an error in the code
+        output: result.stderr || result.stdout || "",
+      }
       : undefined;
   },
 });
@@ -230,12 +230,13 @@ export const runGroundTruthTest = action({
       };
     });
 
-    const BATCH_SIZE = 4;
+    let currentBatchSize = 4; // Start with original batch size
     const allTestResults: RunTestResult = [];
+    let globalCaseNumber = 0; // Track the overall test case number
 
-    // Process test cases in batches
-    for (let i = 0; i < testCases.length; i += BATCH_SIZE) {
-      const batchTestCases = testCases.slice(i, i + BATCH_SIZE);
+    // Process test cases with dynamic batch size
+    for (let i = 0; i < testCases.length;) {
+      const batchTestCases = testCases.slice(i, i + currentBatchSize);
       const testCode = generateTestCode(question, language, batchTestCases);
       const payload = {
         language,
@@ -258,10 +259,10 @@ export const runGroundTruthTest = action({
 
       const maxRetries = 3;
       let retryCount = 0;
-      let result;
+      let success = false;
 
       while (retryCount < maxRetries) {
-        result = await executeCode(payload);
+        const result = await executeCode(payload);
         if (result.status === "success" && result.stdout) {
           try {
             const jsonMatch = result.stdout.match(
@@ -269,21 +270,39 @@ export const runGroundTruthTest = action({
             );
             if (jsonMatch && jsonMatch[1]) {
               const batchResult: RunTestResult = JSON.parse(jsonMatch[1]);
-              allTestResults.push(...batchResult);
-              break; // Success, exit the retry loop
+              // Adjust case numbers to be consecutive
+              const adjustedResults = batchResult.map(result => ({
+                ...result,
+                caseNumber: ++globalCaseNumber
+              }));
+              allTestResults.push(...adjustedResults);
+              success = true;
+              break;
             }
           } catch (error) {
             console.error("Error parsing test results:", error);
           }
         }
 
-        // If we get here, either the execution failed or parsing failed
         retryCount++;
         if (retryCount < maxRetries) {
-          console.log(
-            `Retrying test execution (attempt ${retryCount + 1}/${maxRetries})...`
-          );
-          await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2 seconds before retry
+          console.log(`Retrying test execution (attempt ${retryCount + 1}/${maxRetries})...`);
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+        }
+      }
+
+      if (success) {
+        // Move to next batch if successful
+        i += currentBatchSize;
+      } else {
+        // Reduce batch size and retry from current position if all retries failed
+        currentBatchSize = Math.max(1, Math.floor(currentBatchSize / 2));
+        console.log(`Reducing batch size to ${currentBatchSize} and retrying...`);
+
+        if (currentBatchSize === 1 && retryCount === maxRetries) {
+          // If we're already at batch size 1 and still failing, move to next test case
+          console.error(`Failed to process test case at index ${i} even with batch size 1`);
+          i += 1;
         }
       }
     }

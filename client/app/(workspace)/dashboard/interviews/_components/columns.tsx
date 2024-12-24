@@ -39,7 +39,7 @@ export type SessionDoc = Doc<"sessions"> & {
   };
 };
 
-const FeedbackButton = ({ sessionId }: { sessionId: Id<"sessions"> }) => {
+const FeedbackButton = ({ sessionId, sessionStatus }: { sessionId: Id<"sessions">, sessionStatus: "not_started" | "in_progress" | "completed" }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -47,18 +47,21 @@ const FeedbackButton = ({ sessionId }: { sessionId: Id<"sessions"> }) => {
     setIsLoading(true);
     router.push(`/dashboard/interviews/${sessionId}/evaluation`);
   };
-
-  return (
-    <Button
-      variant="secondary"
-      size="sm"
-      onClick={handleClick}
-      className="transition-all active:scale-95"
-      disabled={isLoading}
-    >
-      {isLoading ? "Loading..." : "View Feedback"}
-    </Button>
-  );
+  if (sessionStatus === "completed") {
+    return (
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={handleClick}
+        className="transition-all active:scale-95"
+        disabled={isLoading}
+      >
+        {isLoading ? "Loading..." : "View Feedback"}
+      </Button>
+    );
+  } else {
+    return null;
+  }
 };
 
 export const columns: ColumnDef<SessionDoc>[] = [
@@ -169,7 +172,7 @@ export const columns: ColumnDef<SessionDoc>[] = [
           </div>
         );
       }
-      return <FeedbackButton sessionId={row.original._id} />;
+      return <FeedbackButton sessionId={row.original._id} sessionStatus={row.original.sessionStatus} />;
     },
   },
   {
