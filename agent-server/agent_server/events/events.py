@@ -33,6 +33,7 @@ import logging
 from typing import Any, Callable, Dict, List, Set
 
 from agent_graph.chains.emitters import emit_interval_fixed, emit_stop_after
+from agent_graph.chains.stage_transition import create_stage_transiton_chain
 from agent_graph.chains.step_tracker import SignalEmitter, create_llm_step_tracker
 from agent_graph.code_mock_staged_v1.constants import AgentConfig
 from agent_graph.code_mock_staged_v1.graph import AgentState
@@ -42,6 +43,7 @@ from agent_graph.state_merger import StateMerger
 from agent_graph.types import Step
 from agent_server.contexts.session import CodeSession, CodeSessionEventTypes
 from agent_server.events import BaseEvent
+from agent_server.utils.messages import MessageCompressor
 from debouncer import debounce
 from livekit.agents.voice_assistant import VoiceAssistant
 from pydantic import StrictStr
@@ -49,7 +51,7 @@ from pydantic.v1 import BaseModel, Field, PrivateAttr
 
 from libs.convex.api import ConvexApi
 from libs.convex.convex_requests import create_test_code_correctness_request
-from libs.convex.convex_types import CodeSessionContentChangedEvent, TestcaseResult
+from libs.convex.convex_types import CodeSessionContentChangedEvent
 from libs.helpers import static_check_with_mypy
 from libs.message_wrapper import MessageWrapper
 
@@ -494,12 +496,34 @@ class StageTransitionConfirmationEvent(BaseEvent[str]):
 
     state_merger: StateMerger[AgentState]
 
+    message_compressor: MessageCompressor
+
     @property
     def event_name(self) -> str:
         return "stage_transition_confirmation"
 
-    def _handle_state_changed(self, state: AgentState):
-        pass
+    async def _handle_state_changed(self, state: AgentState):
+        self.message_compressor.update(state.messages)
+        messages = self.message_compressor.get_messages()
+
+        if state.current_stage_idx == len(self.agent_config.stages) - 1:
+            return
+
+        stage_map = list(state.steps.items())
+        curr_stage_name = stage_map[state.current_stage_idx][0].value
+        next_stage_name = stage_map[state.current_stage_idx + 1][0].value
+
+        chain = create_stage_transiton_chain(self.agent_config)
+        result = await chain.ainvoke(
+            {
+                "messages": messages,
+                "curr_stage_name": curr_stage_name,
+                "next_stage_name": next_stage_name,
+            }
+        )
+
+        if result.should_transition:
+            self.emit(curr_stage_name)
 
     def setup(self):
         if not self.agent_config.transition_confirmation_enabled:
@@ -510,4 +534,4 @@ class StageTransitionConfirmationEvent(BaseEvent[str]):
             conditioned_value=lambda state: len(state.messages),
         )
 
-        e.register_callback()
+        e.register_callback(self._handle_state_changed)
