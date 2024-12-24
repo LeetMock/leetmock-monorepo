@@ -183,8 +183,16 @@ async def on_trigger(state: AgentState):
 async def decide_next_stage(state: AgentState, config: RunnableConfig):
     agent_config = get_configurable(AgentConfig, config)
 
+    round_until_next_confirmation = (
+        4
+        if state.tool_call_detected == True and state.round_until_next_confirmation == 0
+        else state.round_until_next_confirmation
+    )
+
     if state.current_stage_idx >= len(agent_config.stages):
-        return dict(trigger=False)
+        return dict(
+            trigger=False, round_until_next_confirmation=round_until_next_confirmation
+        )
 
     stages = agent_config.stages
     current_stage = stages[state.current_stage_idx]
@@ -195,7 +203,10 @@ async def decide_next_stage(state: AgentState, config: RunnableConfig):
 
     # If not all steps are completed, stay in the current stage
     if not completed_stage_steps:
-        return dict(trigger=False)
+        return dict(
+            trigger=False,
+            round_until_next_confirmation=round_until_next_confirmation,
+        )
 
     # Move to the next stage
     next_stage = (
@@ -209,12 +220,6 @@ async def decide_next_stage(state: AgentState, config: RunnableConfig):
         format_stage_transition_messages(next_stage)
         if current_stage != next_stage
         else []
-    )
-
-    round_until_next_confirmation = (
-        4
-        if state.tool_call == True and state.round_until_next_confirmation == 0
-        else state.round_until_next_confirmation
     )
 
     return dict(
