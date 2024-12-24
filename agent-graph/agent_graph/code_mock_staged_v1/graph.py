@@ -4,6 +4,7 @@ from typing import List, OrderedDict, Set, cast
 from agent_graph.code_mock_staged_v1.constants import (
     AgentConfig,
     StageTypes,
+    create_transition_confirmation_step,
     format_content_changed_notification_messages,
     format_stage_transition_messages,
     format_testcase_changed_notification_messages,
@@ -71,13 +72,26 @@ class AgentState(EventMessageState):
 
 
 # --------------------- agent graph nodes --------------------- #
-async def init_state(_: AgentState):
+async def init_state(_: AgentState, config: RunnableConfig):
+    agent_config = get_configurable(AgentConfig, config)
+
+    default_step_map = get_step_map()
+    stages = [(name, steps) for name, steps in default_step_map.items()]
+
+    # Add transition confirmation steps if enabled
+    if agent_config.transition_confirmation_enabled:
+        for i in range(len(stages) - 1):
+            curr_stage, next_stage = stages[i][0], stages[i + 1][0]
+            stages[i][1].append(
+                create_transition_confirmation_step(curr_stage, next_stage)
+            )
+
     return dict(
         initialized=True,
         current_stage_idx=0,
         messages=[HumanMessage(content=JOIN_CALL_MESSAGE)],
         events=EVENT_DESCRIPTORS,
-        steps=get_step_map(),
+        steps=OrderedDict(stages),
         completed_steps=set(),
     )
 

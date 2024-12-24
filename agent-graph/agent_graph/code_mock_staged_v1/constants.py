@@ -44,6 +44,8 @@ class AgentConfig(BaseModel):
 
     stages: List[StageTypes] = Field(default=[])
 
+    transition_confirmation_enabled: bool = Field(default=False)
+
 
 def get_next_stage(stage: StageTypes) -> StageTypes:
     """Get the next stage."""
@@ -383,4 +385,15 @@ def get_step_map() -> OrderedDict[StageTypes, List[Step]]:
             (StageTypes.CODING, CODING_STEPS),
             (StageTypes.EVAL, EVAL_STEPS),
         ]
+    )
+
+
+def create_transition_confirmation_step(
+    curr_stage: StageTypes, next_stage: StageTypes
+) -> Step:
+    return Step.from_info(
+        name=f"ask_candidate_readiness_for_{next_stage.value}",
+        desc=f"Ask the candidate if they are ready to move on to the {next_stage.value} stage.",
+        done_definition=f"Interviewer has finished asking the candidate if they are ready to move on to the {next_stage.value} stage.",
+        required=True,
     )

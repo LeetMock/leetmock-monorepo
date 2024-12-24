@@ -30,7 +30,7 @@ Example:
 
 import asyncio
 import logging
-from typing import Any, Dict, List, Set
+from typing import Any, Callable, Dict, List, Set
 
 from agent_graph.chains.emitters import emit_interval_fixed, emit_stop_after
 from agent_graph.chains.step_tracker import SignalEmitter, create_llm_step_tracker
@@ -60,6 +60,43 @@ class Reminder(BaseModel):
     """Empty model representing a reminder event."""
 
     pass
+
+
+class ConditionedStateChangeEvent(BaseEvent[AgentState]):
+    """Event for monitoring conditioned state changes."""
+
+    state_merger: StateMerger[AgentState]
+
+    conditioned_value: Callable[[AgentState], Any] = Field(
+        default=lambda state: state,
+        description="A function that takes an AgentState and returns a value to condition on.",
+    )
+
+    _prev_conditioned_value: Any = PrivateAttr(default=None)
+
+    _has_prev_conditioned_value: bool = PrivateAttr(default=False)
+
+    @property
+    def event_name(self) -> str:
+        return "conditioned_state_change"
+
+    def _handle_state_changed(self, _: Any, state: AgentState):
+        if not self._has_prev_conditioned_value:
+            return
+
+        prev_conditioned_value = self._prev_conditioned_value
+        curr_conditioned_value = self.conditioned_value(state)
+
+        if prev_conditioned_value != curr_conditioned_value:
+            self.emit(state)
+
+    def _handle_state_inited(self, initial_state: AgentState):
+        self._prev_conditioned_value = self.conditioned_value(initial_state)
+        self._has_prev_conditioned_value = True
+
+    def setup(self):
+        self.state_merger.on("state_initialized", self._handle_state_inited)
+        self.state_merger.on("state_changed", self._handle_state_change)
 
 
 class ReminderEvent(BaseEvent[Reminder]):
@@ -448,3 +485,29 @@ class StepTrackingEvent(BaseEvent[str]):
     def setup(self):
         self.state_merger.on("state_changed", self._try_queue_next_steps)
         asyncio.create_task(self._track_agent_steps_task())
+
+
+class StageTransitionConfirmationEvent(BaseEvent[str]):
+    """Event for checking if a stage is complete."""
+
+    agent_config: AgentConfig
+
+    state_merger: StateMerger[AgentState]
+
+    @property
+    def event_name(self) -> str:
+        return "stage_transition_confirmation"
+
+    def _handle_state_changed(self, state: AgentState):
+        pass
+
+    def setup(self):
+        if not self.agent_config.transition_confirmation_enabled:
+            return
+
+        e = ConditionedStateChangeEvent(
+            state_merger=self.state_merger,
+            conditioned_value=lambda state: len(state.messages),
+        )
+
+        e.register_callback()
