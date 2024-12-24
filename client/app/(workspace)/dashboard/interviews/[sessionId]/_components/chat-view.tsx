@@ -49,7 +49,7 @@ export const ChatView = ({ sessionId }: { sessionId: Id<"sessions"> }) => {
           <AudioRenderer />
         </div>
       </div>
-      <div className="w-[20rem] rounded-md shadow-lg">
+      <div className="w-[20rem] shadow-lg">
         <SessionTranscripts sessionId={sessionId} />
       </div>
     </div>
@@ -110,7 +110,7 @@ export const SessionTranscripts = ({ sessionId }: { sessionId: Id<"sessions"> })
   }, [messages]);
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-background/50 rounded-2xl backdrop-blur-sm">
+    <div className="relative h-full w-full overflow-hidden bg-background/50 rounded-lg backdrop-blur-sm">
       <div className="absolute inset-0 overflow-y-auto px-4 space-y-4">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 w-full h-full">

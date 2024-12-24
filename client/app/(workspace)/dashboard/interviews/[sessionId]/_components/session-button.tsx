@@ -89,7 +89,7 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
         variant="ringHover"
         className={cn(
           !isDefined(session) && "hidden",
-          "h-9 rounded-md text-sm text-[0.8rem] px-3 min-w-24 flex items-center",
+          "h-8 rounded-md text-sm text-[0.8rem] px-3 min-w-24 flex items-center",
           connectionState === ConnectionState.Connected
             ? "bg-red-500 text-white hover:bg-red-600 hover:ring-red-500"
             : "bg-blue-500 text-white hover:bg-blue-600 hover:ring-blue-500"

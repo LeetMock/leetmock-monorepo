@@ -78,7 +78,7 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
       {/* Sidebar */}
       <WorkspaceSidebar sessionId={sessionId} />
       <div className="flex flex-col justify-center items-center flex-1 bg-accent">
-        <div className={cn("w-full h-14 flex items-center px-2 relative")}>
+        <div className={cn("w-full flex items-center p-2 relative")}>
           {collapsed && (
             <Tooltip content="Expand">
               <Button
