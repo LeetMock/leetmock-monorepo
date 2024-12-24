@@ -109,6 +109,7 @@ async def assistant(
     session_metadata = SessionMetadata(**state.session_metadata)
     coding_steps = set(map(lambda step: step.name, state.steps[StageTypes.CODING]))
 
+    tool_call_detected = False
     async for chunk in chain.astream(
         {
             "events": state.events,
@@ -123,12 +124,16 @@ async def assistant(
         }
     ):
         if "tool_calls" in chunk.additional_kwargs:
-            return get_stage_confirmation_tool_call_state_patch(
-                StageTypes.CODING, chunk, state
-            )
+            tool_call_detected = True
+            break
         else:
             content += cast(str, chunk.content)
             writer(custom_data("assistant", chunk.content))
+
+    if tool_call_detected:
+        return get_stage_confirmation_tool_call_state_patch(
+            StageTypes.CODING, chunk, state
+        )
 
     # If the assistant doesn't say anything, we should return a SILENT message
     if len(content.strip()) == 0:
