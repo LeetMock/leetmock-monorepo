@@ -223,6 +223,7 @@ def get_stage_confirmation_tool_call_state_patch(
         tool_call_detected=True,
         completed_steps=completed_steps,
         current_stage_idx=state.current_stage_idx + 1,
+        round_until_next_confirmation=5,
     )
 
 

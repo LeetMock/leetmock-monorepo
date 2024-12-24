@@ -37,6 +37,10 @@ class EvalStageState(EventMessageState):
 
     tool_call_detected: bool = Field(default=False)
 
+    round_until_next_confirmation: int = Field(
+        default=0, description="Round until next confirmation"
+    )
+
 
 # --------------------- stage subgraph nodes --------------------- #
 async def assistant(
@@ -57,7 +61,10 @@ async def assistant(
         temperature=agent_config.temperature,
     )
 
-    if agent_config.transition_confirmation_enabled and not state.tool_call_detected:
+    if (
+        agent_config.transition_confirmation_enabled
+        and state.round_until_next_confirmation == 0
+    ):
         llm = llm.bind_tools([ConfirmStageCompletion])
 
     chain = prompt | llm.bind(stop=["SILENT", "<thinking>"])

@@ -168,14 +168,8 @@ async def on_event(
 
 
 async def on_trigger(state: AgentState):
-    tool_call_detected = state.tool_call_detected
-
-    # If the round until next confirmation is 0, reset the tool call detected flag
-    if state.round_until_next_confirmation - 1 == 0:
-        tool_call_detected = False
-
     return with_trigger_reset(
-        tool_call_detected=tool_call_detected,
+        tool_call_detected=False,
         round_until_next_confirmation=max(0, state.round_until_next_confirmation - 1),
     )
 
@@ -183,16 +177,8 @@ async def on_trigger(state: AgentState):
 async def decide_next_stage(state: AgentState, config: RunnableConfig):
     agent_config = get_configurable(AgentConfig, config)
 
-    round_until_next_confirmation = (
-        4
-        if state.tool_call_detected == True and state.round_until_next_confirmation == 0
-        else state.round_until_next_confirmation
-    )
-
     if state.current_stage_idx >= len(agent_config.stages):
-        return dict(
-            trigger=False, round_until_next_confirmation=round_until_next_confirmation
-        )
+        return dict(trigger=False)
 
     stages = agent_config.stages
     current_stage = stages[state.current_stage_idx]
@@ -203,10 +189,7 @@ async def decide_next_stage(state: AgentState, config: RunnableConfig):
 
     # If not all steps are completed, stay in the current stage
     if not completed_stage_steps:
-        return dict(
-            trigger=False,
-            round_until_next_confirmation=round_until_next_confirmation,
-        )
+        return dict(trigger=False)
 
     # Move to the next stage
     next_stage = (
@@ -223,10 +206,7 @@ async def decide_next_stage(state: AgentState, config: RunnableConfig):
     )
 
     return dict(
-        current_stage_idx=state.current_stage_idx + 1,
-        trigger=False,
-        messages=messages,
-        round_until_next_confirmation=round_until_next_confirmation,
+        current_stage_idx=state.current_stage_idx + 1, trigger=False, messages=messages
     )
 
 
