@@ -149,6 +149,38 @@ import traceback
 import sys
 from io import StringIO
 
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def arrayToListNode(arr):
+    if not arr:
+        return None
+    head = ListNode(arr[0])
+    current = head
+    for val in arr[1:]:
+        current.next = ListNode(val)
+        current = current.next
+    return head
+
+def listToArray(head):
+    result = []
+    current = head
+    while current:
+        result.append(current.val)
+        current = current.next
+    return result
+
+def compare_lists(list1, list2):
+    if list1 is None and list2 is None:
+        return True
+    if list1 is None or list2 is None:
+        return False
+    if len(list1) != len(list2):
+        return False
+    return all(str(a) == str(b) for a, b in zip(list1, list2))
+
 class CaptureOutput:
     def __init__(self):
         self.stdout = StringIO()
@@ -198,14 +230,14 @@ class TestSolution(unittest.TestCase):
         case "exactMatch":
           comparisonCode = `passed = (result == expected)`;
           break;
-        case "ListNodeIter":
-          comparisonCode = `passed = (listToArray(result) == expected)`;
+        case "listNodeIter":
+          comparisonCode = `passed = listToArray(result) == expected`;
           break;
-        case "SortedMatch":
-          comparisonCode = `passed = (sorted(result) == sorted(expected))`;
+        case "sortedMatch":
+          comparisonCode = `passed = compare_lists(sorted(result), sorted(expected))`;
           break;
         default:
-          comparisonCode = `passed = (result == expected)`;
+          comparisonCode = `passed = compare_lists(result, expected)`;
       }
     }
 

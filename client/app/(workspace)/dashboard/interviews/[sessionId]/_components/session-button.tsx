@@ -61,9 +61,10 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
 
     await disconnect();
     const promise = endSession({ sessionId: session._id });
-    const evalPromise = triggerEval({ sessionId: session._id });
+    // const evalPromise = triggerEval({ sessionId: session._id });
 
-    toast.promise(Promise.all([promise, evalPromise]), {
+    // toast.promise(Promise.all([promise, evalPromise]), {
+    toast.promise(Promise.all([promise]), {
       loading: "Ending interview...",
       success: "Interview ended successfully! 🎉",
       error: "Failed to end interview",
@@ -88,7 +89,7 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
         variant="ringHover"
         className={cn(
           !isDefined(session) && "hidden",
-          "h-9 rounded-md text-sm text-[0.8rem] px-3 min-w-24 flex items-center",
+          "h-8 rounded-md text-sm text-[0.8rem] px-3 min-w-24 flex items-center",
           connectionState === ConnectionState.Connected
             ? "bg-red-500 text-white hover:bg-red-600 hover:ring-red-500"
             : "bg-blue-500 text-white hover:bg-blue-600 hover:ring-blue-500"
