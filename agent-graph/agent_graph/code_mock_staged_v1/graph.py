@@ -70,6 +70,10 @@ class AgentState(EventMessageState):
         description="Test context for the agent",
     )
 
+    has_tool_call: bool = Field(
+        default=False, description="Whether the agent contain tool call"
+    )
+
 
 # --------------------- agent graph nodes --------------------- #
 async def init_state(_: AgentState, config: RunnableConfig):
@@ -156,12 +160,10 @@ async def on_event(
         # Update test context field of the agent state
         return with_event_reset(trigger=False, test_context=state.event_data)
 
-    return with_event_reset(trigger=False)
-
 
 async def on_trigger(state: AgentState):
     # Router node that redirect to the correct stage
-    return with_trigger_reset()
+    return with_trigger_reset(has_tool_call=False)
 
 
 async def decide_next_stage(state: AgentState, config: RunnableConfig):
@@ -226,6 +228,12 @@ async def select_stage(state: AgentState, config: RunnableConfig):
     return agent_config.stages[state.current_stage_idx]
 
 
+async def retrigger_on_tool_call(state: AgentState):
+    if state.has_tool_call:
+        return "on_trigger"
+    return END
+
+
 def create_graph():
     return (
         StateGraph(AgentState, AgentConfig)
@@ -265,7 +273,11 @@ def create_graph():
         .add_edge(StageTypes.BACKGROUND, "decide_next_stage")
         .add_edge(StageTypes.CODING, "decide_next_stage")
         .add_edge(StageTypes.EVAL, "decide_next_stage")
-        .add_edge("decide_next_stage", END)
+        .add_conditional_edges(
+            source="decide_next_stage",
+            path=retrigger_on_tool_call,
+            path_map=["on_trigger", END],
+        )
     )
 
 

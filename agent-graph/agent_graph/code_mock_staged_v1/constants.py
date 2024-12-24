@@ -1,10 +1,12 @@
+import logging
 from enum import Enum
 from typing import List, OrderedDict, TypeVar
 
 from agent_graph.event_descriptors import CodingEventType
 from agent_graph.types import NamedEntity, Signal, Step
 from agent_graph.utils import wrap_xml
-from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
+from langchain_core.messages import AIMessage, AIMessageChunk, AnyMessage, HumanMessage
+from livekit.agents import AgentState
 from pydantic.v1 import BaseModel, Field
 
 from libs.convex.convex_types import (
@@ -17,6 +19,8 @@ from libs.convex.convex_types import (
 from libs.diffs import get_unified_diff
 
 TEntity = TypeVar("TEntity", bound=NamedEntity)
+
+logger = logging.getLogger(__name__)
 
 
 class StageTypes(str, Enum):
@@ -201,6 +205,25 @@ def format_user_testcase_executed_notification_messages(
             )
         )
     ]
+
+
+def get_stage_confirmation_tool_call_state_patch(
+    stage_type: StageTypes, chunk: AIMessageChunk, state: AgentState
+):
+    logger.info(
+        f"Tool call detected: {chunk.additional_kwargs['tool_calls'][0]['function']['name']}"
+    )
+
+    completed_steps = state.completed_steps
+    completed_steps = set.union(
+        completed_steps, [step.name for step in state.steps[stage_type]]
+    )
+
+    return dict(
+        has_tool_call=True,
+        completed_steps=completed_steps,
+        current_stage_idx=state.current_stage_idx + 1,
+    )
 
 
 START_ASK_BACKGROUND_QUESTION_PROMPT = """\

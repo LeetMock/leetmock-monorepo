@@ -406,29 +406,3 @@ Now, analyze the conversation history and determine if there are any new signal(
 - Ignore any unprofessional part of the conversation.
 
 Below is the conversation between you and the candidate."""
-
-
-STAGE_TRANSITION_CONFIRMATION_PROMPT = """\
-## Instructions
-
-You are an AI conversation bookkeeper, you are very good at analyzing conversation content between AI interviewer and human candidate. \
-You will be keeping track whether you should transition to the next stage of the interview.
-
-Currently you are in the stage with name: `{{curr_stage_name}}`. The next stage is called `{{next_stage_name}}`.
-
-Below is the conversation history between you and the candidate:
-
-<conversation-history>
-{% for message in messages %}
-<{{message.type}}-message>
-{{message.content}}
-</{{message.type}}-message>
-{% endfor %}
-</conversation-history>
-
-The transition can be taken place if the following two conditions are met:
-1. Interviewer prompted/asked candidate if he/she wants to move forward to the next stage.
-2. Candidate confirmed that he/she would like to move forward to the next stage.
-
-Now, analyze the conversation history and determine if the transition should be taken place.
-"""
