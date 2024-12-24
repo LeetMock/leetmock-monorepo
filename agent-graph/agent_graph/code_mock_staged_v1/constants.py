@@ -220,7 +220,7 @@ def get_stage_confirmation_tool_call_state_patch(
     )
 
     return dict(
-        has_tool_call=True,
+        tool_call_detected=True,
         completed_steps=completed_steps,
         current_stage_idx=state.current_stage_idx + 1,
     )

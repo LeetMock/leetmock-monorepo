@@ -23,7 +23,9 @@ from agent_graph.prompts import JOIN_CALL_MESSAGE, RECONNECT_MESSAGE
 from agent_graph.types import EventMessageState, Step
 from agent_graph.utils import get_configurable, with_event_reset, with_trigger_reset
 from langchain_core.messages import HumanMessage
+from langchain_core.messages.tool import tool_call
 from langchain_core.runnables import RunnableConfig
+from langchain_core.tools import tool
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 from pydantic.v1 import Field
@@ -70,8 +72,12 @@ class AgentState(EventMessageState):
         description="Test context for the agent",
     )
 
-    has_tool_call: bool = Field(
+    tool_call_detected: bool = Field(
         default=False, description="Whether the agent contain tool call"
+    )
+
+    round_until_next_confirmation: int = Field(
+        default=0, description="Round until next confirmation"
     )
 
 
@@ -162,8 +168,16 @@ async def on_event(
 
 
 async def on_trigger(state: AgentState):
-    # Router node that redirect to the correct stage
-    return with_trigger_reset(has_tool_call=False)
+    tool_call_detected = state.tool_call_detected
+
+    # If the round until next confirmation is 0, reset the tool call detected flag
+    if state.round_until_next_confirmation - 1 == 0:
+        tool_call_detected = False
+
+    return with_trigger_reset(
+        tool_call_detected=tool_call_detected,
+        round_until_next_confirmation=max(0, state.round_until_next_confirmation - 1),
+    )
 
 
 async def decide_next_stage(state: AgentState, config: RunnableConfig):
@@ -197,8 +211,17 @@ async def decide_next_stage(state: AgentState, config: RunnableConfig):
         else []
     )
 
+    round_until_next_confirmation = (
+        4
+        if state.tool_call == True and state.round_until_next_confirmation == 0
+        else state.round_until_next_confirmation
+    )
+
     return dict(
-        current_stage_idx=state.current_stage_idx + 1, trigger=False, messages=messages
+        current_stage_idx=state.current_stage_idx + 1,
+        trigger=False,
+        messages=messages,
+        round_until_next_confirmation=round_until_next_confirmation,
     )
 
 
@@ -229,7 +252,7 @@ async def select_stage(state: AgentState, config: RunnableConfig):
 
 
 async def retrigger_on_tool_call(state: AgentState):
-    if state.has_tool_call:
+    if state.tool_call_detected:
         return "on_trigger"
     return END
 

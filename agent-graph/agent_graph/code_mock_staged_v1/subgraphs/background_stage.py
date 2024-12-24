@@ -35,7 +35,7 @@ class BackgroundStageState(EventMessageState):
 
     current_stage_idx: int = Field(default=0)
 
-    has_tool_call: bool = Field(default=False)
+    tool_call_detected: bool = Field(default=False)
 
 
 # --------------------- stage subgraph nodes --------------------- #
@@ -59,7 +59,7 @@ async def assistant(
         temperature=agent_config.temperature,
     )
 
-    if agent_config.transition_confirmation_enabled:
+    if agent_config.transition_confirmation_enabled and not state.tool_call_detected:
         llm = llm.bind_tools([ConfirmStageCompletion])
 
     chain = prompt | llm.bind(stop=["SILENT", "<thinking>"])
