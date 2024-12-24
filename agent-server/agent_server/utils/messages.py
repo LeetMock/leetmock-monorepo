@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import string
+from abc import ABC, abstractmethod
 from typing import Any, Dict, List, cast
 
 from langchain_core.messages import (
@@ -21,6 +22,49 @@ from openai.types.chat import (
     ChatCompletionToolMessageParam,
     ChatCompletionUserMessageParam,
 )
+from pydantic import Field
+from pydantic.v1 import BaseModel, PrivateAttr, root_validator
+
+
+class MessageCompressor(BaseModel, ABC):
+    """Base class for message compressors."""
+
+    _messages: List[AnyMessage] = PrivateAttr(default_factory=list)
+
+    @abstractmethod
+    def update(self, messages: List[AnyMessage]):
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_messages(self) -> List[AnyMessage]:
+        raise NotImplementedError
+
+
+class DynamicLengthMessageCompressor(MessageCompressor):
+    """A message compressor that dynamically adjusts the length of the messages based on the number of messages."""
+
+    min_length: int = Field(..., description="The minimum length of the messages")
+
+    max_length: int = Field(..., description="The maximum length of the messages")
+
+    _pivot: int = PrivateAttr(default=0)
+
+    @root_validator(pre=True)
+    def validate_lengths(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        min_length: int = cast(int, values.get("min_length"))
+        max_length: int = cast(int, values.get("max_length"))
+
+        assert min_length <= max_length, "min_length must be less than max_length"
+        return values
+
+    def update(self, messages: List[AnyMessage]):
+        self._messages = messages
+
+        if len(self._messages) - self._pivot > self.max_length:
+            self._pivot = len(self._messages) - self.min_length
+
+    def get_messages(self) -> List[AnyMessage]:
+        return self._messages[self._pivot :]
 
 
 def livekit_to_langchain_message(
@@ -201,13 +245,13 @@ def convert_livekit_msgs_to_langchain_msgs(
         if isinstance(msg.content, str):
             content = msg.content
         elif isinstance(msg.content, list):
-            content = []
+            content = []  # type: ignore
             for item in msg.content:
                 if isinstance(item, str):
-                    content.append(item)
+                    content.append(item)  # type: ignore
                 elif isinstance(item, llm.ChatImage):
                     # For now, we'll just add a placeholder for images
-                    content.append("[IMAGE]")
+                    content.append("[IMAGE]")  # type: ignore
             content = " ".join(content)
         else:
             content = str(msg.content)  # Fallback for any other type

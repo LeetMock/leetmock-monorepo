@@ -158,6 +158,7 @@ async def entrypoint(ctx: JobContext):
         # smart_model="claude-3-5-sonnet-latest",
         convex_url=convex_api.convex_url,
         stages=session.session_metadata.interview_flow,
+        transition_confirmation_enabled=True,
     )
 
     agent_stream = AgentStream(
@@ -182,11 +183,11 @@ async def entrypoint(ctx: JobContext):
             GroundTruthTestcaseExecutedEvent(session=session, convex_api=convex_api),
             UserMessageEvent(user_message_event_q=user_message_event_q),
             TestcaseChangedEvent(session=session),
-            StepTrackingEvent(
-                state_merger=state_merger,
-                agent_config=agent_config,
-                state_update_q=state_update_q,
-            ),
+            # StepTrackingEvent(
+            #     state_merger=state_merger,
+            #     agent_config=agent_config,
+            #     state_update_q=state_update_q,
+            # ),
         ],
     )
 

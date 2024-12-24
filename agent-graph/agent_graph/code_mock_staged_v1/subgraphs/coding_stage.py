@@ -1,20 +1,20 @@
+import logging
 import time
-from collections import defaultdict
-from typing import Dict, List, Literal, OrderedDict, Set, cast
+from typing import List, Literal, OrderedDict, Set, cast
 
 from agent_graph.code_mock_staged_v1.constants import (
     AgentConfig,
-    Signal,
     StageTypes,
     Step,
+    get_stage_confirmation_tool_call_state_patch,
 )
 from agent_graph.code_mock_staged_v1.prompts import (
     CODING_CONTEXT_SUFFIX_PROMPT,
     CODING_PROMPT,
 )
+from agent_graph.code_mock_staged_v1.schemas import ConfirmStageCompletion
 from agent_graph.event_descriptors import EventDescriptor
 from agent_graph.llms import get_model
-from agent_graph.prompts import format_test_context
 from agent_graph.types import EventMessageState
 from agent_graph.utils import custom_data, get_configurable
 from langchain_core.messages import AIMessage, HumanMessage
@@ -30,8 +30,9 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import StreamWriter
 from pydantic.v1 import Field
 
-from libs.convex.api import ConvexApi
 from libs.convex.convex_types import CodeSessionState, SessionMetadata
+
+logger = logging.getLogger(__name__)
 
 
 class CodingStageState(EventMessageState):
@@ -49,6 +50,9 @@ class CodingStageState(EventMessageState):
         default=None,
     )
 
+    current_stage_idx: int = Field(default=0)
+
+    has_tool_call: bool = Field(default=False)
 
 
 async def interrupter(_: CodingStageState):
@@ -90,16 +94,22 @@ async def assistant(
         ]
     )
 
-    chain = prompt | get_model(
+    llm = get_model(
         model_name=agent_config.smart_model,
         temperature=agent_config.temperature,
-    ).bind(stop=["SILENT", "<thinking>"])
+    )
+
+    if agent_config.transition_confirmation_enabled:
+        llm = llm.bind_tools([ConfirmStageCompletion])
+
+    chain = prompt | llm.bind(stop=["SILENT", "<thinking>"])
 
     content = ""
     session_state = CodeSessionState(**state.session_state)
     session_metadata = SessionMetadata(**state.session_metadata)
     coding_steps = set(map(lambda step: step.name, state.steps[StageTypes.CODING]))
 
+    tool_call_detected = False
     async for chunk in chain.astream(
         {
             "events": state.events,
@@ -113,8 +123,17 @@ async def assistant(
             "upcoming_messages": upcoming_messages,
         }
     ):
-        content += cast(str, chunk.content)
-        writer(custom_data("assistant", chunk.content))
+        if "tool_calls" in chunk.additional_kwargs:
+            tool_call_detected = True
+            break
+        else:
+            content += cast(str, chunk.content)
+            writer(custom_data("assistant", chunk.content))
+
+    if tool_call_detected:
+        return get_stage_confirmation_tool_call_state_patch(
+            StageTypes.CODING, chunk, state
+        )
 
     # If the assistant doesn't say anything, we should return a SILENT message
     if len(content.strip()) == 0:
@@ -135,7 +154,6 @@ async def decide_pre_generation_activities(
     # If the user has not typed for 2 seconds, add a message indicating that the user is typing
     if time_diff < 2:
         edges.append("interrupter")
-
 
     # If no other activities are needed, directly call the assistant
     if len(edges) == 0:
