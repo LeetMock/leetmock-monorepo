@@ -55,10 +55,10 @@ import convex_client
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://posh-chihuahua-941.convex.cloud
+# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://posh-chihuahua-941.convex.cloud"
+    host = "https://strong-starling-42.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -90,7 +90,7 @@ with convex_client.ApiClient(configuration) as api_client:
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://posh-chihuahua-941.convex.cloud*
+All URIs are relative to *https://strong-starling-42.convex.cloud*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
@@ -226,9 +226,9 @@ Class | Method | HTTP request | Description
  - [ResponseActionsGetToken](docs/ResponseActionsGetToken.md)
  - [ResponseActionsRunCode](docs/ResponseActionsRunCode.md)
  - [ResponseActionsRunGroundTruthTest](docs/ResponseActionsRunGroundTruthTest.md)
+ - [ResponseActionsRunGroundTruthTestValueInner](docs/ResponseActionsRunGroundTruthTestValueInner.md)
  - [ResponseActionsRunTests](docs/ResponseActionsRunTests.md)
  - [ResponseActionsRunTestsValue](docs/ResponseActionsRunTestsValue.md)
- - [ResponseActionsRunTestsValueTestResultsInner](docs/ResponseActionsRunTestsValueTestResultsInner.md)
  - [ResponseActionsTriggerEval](docs/ResponseActionsTriggerEval.md)
  - [ResponseAdminsCreateUserProfile](docs/ResponseAdminsCreateUserProfile.md)
  - [ResponseAdminsPatchUserSubscription](docs/ResponseAdminsPatchUserSubscription.md)

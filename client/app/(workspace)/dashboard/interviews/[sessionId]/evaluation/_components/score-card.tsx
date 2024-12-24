@@ -116,7 +116,7 @@ export const ScoreCard = ({
             </motion.div>
           </div>
 
-          <div className="p-6 lg:col-span-3">
+          <div className="p-6 lg:col-span-3 bg-background">
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}

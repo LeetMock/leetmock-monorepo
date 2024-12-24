@@ -19,7 +19,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional, Union
-from convex_client.models.response_actions_run_tests_value_test_results_inner import ResponseActionsRunTestsValueTestResultsInner
+from convex_client.models.response_actions_run_ground_truth_test_value_inner import ResponseActionsRunGroundTruthTestValueInner
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -33,7 +33,7 @@ class ResponseActionsRunTestsValue(BaseModel):
     status: StrictStr
     stderr: Optional[StrictStr] = None
     stdout: Optional[StrictStr] = None
-    test_results: Optional[List[ResponseActionsRunTestsValueTestResultsInner]] = Field(default=None, alias="testResults")
+    test_results: Optional[List[ResponseActionsRunGroundTruthTestValueInner]] = Field(default=None, alias="testResults")
     __properties: ClassVar[List[str]] = ["exception", "executionTime", "isError", "status", "stderr", "stdout", "testResults"]
 
     model_config = ConfigDict(
@@ -100,7 +100,7 @@ class ResponseActionsRunTestsValue(BaseModel):
             "status": obj.get("status"),
             "stderr": obj.get("stderr"),
             "stdout": obj.get("stdout"),
-            "testResults": [ResponseActionsRunTestsValueTestResultsInner.from_dict(_item) for _item in obj["testResults"]] if obj.get("testResults") is not None else None
+            "testResults": [ResponseActionsRunGroundTruthTestValueInner.from_dict(_item) for _item in obj["testResults"]] if obj.get("testResults") is not None else None
         })
         return _obj
 

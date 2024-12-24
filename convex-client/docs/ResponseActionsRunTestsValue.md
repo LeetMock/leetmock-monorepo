@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 **status** | **str** |  | 
 **stderr** | **str** |  | [optional] 
 **stdout** | **str** |  | [optional] 
-**test_results** | [**List[ResponseActionsRunTestsValueTestResultsInner]**](ResponseActionsRunTestsValueTestResultsInner.md) |  | [optional] 
+**test_results** | [**List[ResponseActionsRunGroundTruthTestValueInner]**](ResponseActionsRunGroundTruthTestValueInner.md) |  | [optional] 
 
 ## Example
 

@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.response_actions_run_tests_value_test_results_inner import ResponseActionsRunTestsValueTestResultsInner
+from convex_client.models.response_actions_run_ground_truth_test_value_inner import ResponseActionsRunGroundTruthTestValueInner
 
-class TestResponseActionsRunTestsValueTestResultsInner(unittest.TestCase):
-    """ResponseActionsRunTestsValueTestResultsInner unit test stubs"""
+class TestResponseActionsRunGroundTruthTestValueInner(unittest.TestCase):
+    """ResponseActionsRunGroundTruthTestValueInner unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,16 +25,16 @@ class TestResponseActionsRunTestsValueTestResultsInner(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> ResponseActionsRunTestsValueTestResultsInner:
-        """Test ResponseActionsRunTestsValueTestResultsInner
+    def make_instance(self, include_optional) -> ResponseActionsRunGroundTruthTestValueInner:
+        """Test ResponseActionsRunGroundTruthTestValueInner
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `ResponseActionsRunTestsValueTestResultsInner`
+        # uncomment below to create an instance of `ResponseActionsRunGroundTruthTestValueInner`
         """
-        model = ResponseActionsRunTestsValueTestResultsInner()
+        model = ResponseActionsRunGroundTruthTestValueInner()
         if include_optional:
-            return ResponseActionsRunTestsValueTestResultsInner(
+            return ResponseActionsRunGroundTruthTestValueInner(
                 actual = None,
                 case_number = 1.337,
                 error = '',
@@ -44,7 +44,7 @@ class TestResponseActionsRunTestsValueTestResultsInner(unittest.TestCase):
                 stdout = ''
             )
         else:
-            return ResponseActionsRunTestsValueTestResultsInner(
+            return ResponseActionsRunGroundTruthTestValueInner(
                 actual = None,
                 case_number = 1.337,
                 error = '',
@@ -55,8 +55,8 @@ class TestResponseActionsRunTestsValueTestResultsInner(unittest.TestCase):
         )
         """
 
-    def testResponseActionsRunTestsValueTestResultsInner(self):
-        """Test ResponseActionsRunTestsValueTestResultsInner"""
+    def testResponseActionsRunGroundTruthTestValueInner(self):
+        """Test ResponseActionsRunGroundTruthTestValueInner"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

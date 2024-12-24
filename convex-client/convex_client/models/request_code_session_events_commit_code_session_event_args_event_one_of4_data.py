@@ -19,7 +19,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Any, ClassVar, Dict, List
-from convex_client.models.response_actions_run_tests_value_test_results_inner import ResponseActionsRunTestsValueTestResultsInner
+from convex_client.models.response_actions_run_ground_truth_test_value_inner import ResponseActionsRunGroundTruthTestValueInner
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -27,7 +27,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(BaseMode
     """
     RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data
     """ # noqa: E501
-    test_results: List[ResponseActionsRunTestsValueTestResultsInner] = Field(alias="testResults")
+    test_results: List[ResponseActionsRunGroundTruthTestValueInner] = Field(alias="testResults")
     __properties: ClassVar[List[str]] = ["testResults"]
 
     model_config = ConfigDict(
@@ -88,7 +88,7 @@ class RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4Data(BaseMode
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "testResults": [ResponseActionsRunTestsValueTestResultsInner.from_dict(_item) for _item in obj["testResults"]] if obj.get("testResults") is not None else None
+            "testResults": [ResponseActionsRunGroundTruthTestValueInner.from_dict(_item) for _item in obj["testResults"]] if obj.get("testResults") is not None else None
         })
         return _obj
 

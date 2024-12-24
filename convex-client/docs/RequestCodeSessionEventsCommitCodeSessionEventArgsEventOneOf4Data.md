@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**test_results** | [**List[ResponseActionsRunTestsValueTestResultsInner]**](ResponseActionsRunTestsValueTestResultsInner.md) |  | 
+**test_results** | [**List[ResponseActionsRunGroundTruthTestValueInner]**](ResponseActionsRunGroundTruthTestValueInner.md) |  | 
 
 ## Example
 

@@ -33,11 +33,11 @@ from agent_server.livekit.tts import get_tts_engine
 from agent_server.utils.logger import get_logger
 from agent_server.utils.messages import livekit_to_langchain_message
 from livekit.agents import cli  # type: ignore
-from livekit.agents import JobContext, WorkerOptions, llm, utils
+from livekit.agents import JobContext, JobProcess, WorkerOptions, llm, utils
 from livekit.agents.llm import ChatMessage
-from livekit.agents.voice_assistant import VoiceAssistant
+from livekit.agents.voice_assistant import VoicePipelineAgent
 from livekit.agents.worker import Worker, _DefaultLoadCalc
-from livekit.plugins import deepgram, silero
+from livekit.plugins import deepgram, silero, turn_detector
 from livekit.rtc import DataPacket
 
 from libs.convex.api import ConvexApi
@@ -84,6 +84,10 @@ class CustomLoadCalc(_DefaultLoadCalc):
         return cls._instance._get_avg()
 
 
+def prewarm(proc: JobProcess):
+    proc.userdata["vad"] = silero.VAD.load()
+
+
 async def entrypoint(ctx: JobContext):
     AGENT_NAME = "code-mock-staged-v1"
 
@@ -112,13 +116,13 @@ async def entrypoint(ctx: JobContext):
     )
     await ctx_manager.start()
 
-    async def before_llm_callback(_: VoiceAssistant, chat_ctx: llm.ChatContext):
+    async def before_llm_callback(_: VoicePipelineAgent, chat_ctx: llm.ChatContext):
         """This callback is executed before the LLM is called. In the actual implementation,
         we use this callback to override the default behavior of LLM since we are using the customized
         Event Based Agent.
 
         Args:
-            _ (VoiceAssistant): The voice assistant instance
+            _ (VoicePipelineAgent): The voice assistant instance
             chat_ctx (llm.ChatContext): The chat context
 
         Returns:
@@ -132,17 +136,17 @@ async def entrypoint(ctx: JobContext):
         text_stream = await user_message_response_q.get()
 
         if text_stream is not None:
-            return EchoStream(text_stream=text_stream, chat_ctx=chat_ctx)
+            return EchoStream.from_chat_ctx(text_stream=text_stream, chat_ctx=chat_ctx)
         else:
-            return NoopStream(chat_ctx=chat_ctx)
+            return NoopStream.from_chat_ctx(chat_ctx=chat_ctx)
 
-    assistant = VoiceAssistant(
-        vad=silero.VAD.load(),
+    assistant = VoicePipelineAgent(
+        vad=ctx.proc.userdata["vad"],
         stt=deepgram.STT(),
         llm=no_op_llm,
         tts=get_tts_engine(session.session_metadata.voice),
         before_llm_cb=before_llm_callback,
-        preemptive_synthesis=True,
+        turn_detector=turn_detector.EOUModel(),
     )
 
     # @assistant.on("metrics_collected")
@@ -215,6 +219,7 @@ async def entrypoint(ctx: JobContext):
 if __name__ == "__main__":
     cli.run_app(
         WorkerOptions(
+            prewarm_fnc=prewarm,
             entrypoint_fnc=entrypoint,
             host="0.0.0.0",
             port=8081,

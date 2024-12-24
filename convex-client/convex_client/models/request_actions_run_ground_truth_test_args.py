@@ -26,10 +26,10 @@ class RequestActionsRunGroundTruthTestArgs(BaseModel):
     """
     RequestActionsRunGroundTruthTestArgs
     """ # noqa: E501
-    canidate_code: StrictStr = Field(alias="canidateCode")
+    code: StrictStr
     language: StrictStr
     question_id: StrictStr = Field(description="ID from table \"questions\"", alias="questionId")
-    __properties: ClassVar[List[str]] = ["canidateCode", "language", "questionId"]
+    __properties: ClassVar[List[str]] = ["code", "language", "questionId"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -82,7 +82,7 @@ class RequestActionsRunGroundTruthTestArgs(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "canidateCode": obj.get("canidateCode"),
+            "code": obj.get("code"),
             "language": obj.get("language"),
             "questionId": obj.get("questionId")
         })

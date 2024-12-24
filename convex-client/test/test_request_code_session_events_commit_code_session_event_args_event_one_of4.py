@@ -37,7 +37,7 @@ class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4(unittest
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4(
                 data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_4_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_4_data(
                     test_results = [
-                        convex_client.models.response_actions_run_tests_value_test_results_inner.Response_actions_runTests_value_testResults_inner(
+                        convex_client.models.response_actions_run_ground_truth_test_value_inner.Response_actions_runGroundTruthTest_value_inner(
                             actual = null, 
                             case_number = 1.337, 
                             error = '', 
@@ -52,7 +52,7 @@ class TestRequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4(unittest
             return RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf4(
                 data = convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_4_data.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_4_data(
                     test_results = [
-                        convex_client.models.response_actions_run_tests_value_test_results_inner.Response_actions_runTests_value_testResults_inner(
+                        convex_client.models.response_actions_run_ground_truth_test_value_inner.Response_actions_runGroundTruthTest_value_inner(
                             actual = null, 
                             case_number = 1.337, 
                             error = '', 

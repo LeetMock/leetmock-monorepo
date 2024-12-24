@@ -1,16 +1,16 @@
-from langchain_core.prompts import PromptTemplate
-from langchain_core.output_parsers import JsonOutputParser
-from langchain_core.pydantic_v1 import BaseModel, Field
-from typing import List
-from agent_graph.eval_agent.prompts import testCaseDesign_prompt, debugging_prompt
-from agent_graph.eval_agent.constant import SCORE_GUIDELINES, AgentState, DEFAULT_CONFIG
-from langchain_core.runnables import RunnableConfig
+import os
+from math import ceil
+from typing import List, cast
+
+import convex_client
+from agent_graph.eval_agent.constant import DEFAULT_CONFIG, SCORE_GUIDELINES, AgentState
+from agent_graph.eval_agent.prompts import debugging_prompt, testCaseDesign_prompt
 from agent_graph.llms import get_model
 from convex import ConvexClient
-import os
-from typing import cast
-import convex_client
-from math import ceil
+from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.prompts import PromptTemplate
+from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain_core.runnables import RunnableConfig
 
 
 class TestCaseDesignEvaluation(BaseModel):
@@ -26,10 +26,12 @@ class DebuggingEvaluation(BaseModel):
         description="Examples of candidate's debugging approaches"
     )
 
+
 configuration = convex_client.Configuration(host=os.getenv("CONVEX_URL") or "")
 CONVEX_URL = cast(str, os.getenv("CONVEX_URL"))
 
 client = ConvexClient(CONVEX_URL)
+
 
 def evaluate_test_case_coverage(state: AgentState, config: RunnableConfig) -> dict:
 
@@ -39,7 +41,7 @@ def evaluate_test_case_coverage(state: AgentState, config: RunnableConfig) -> di
         "actions:runGroundTruthTest",
         args={
             "language": state.SESSION_STATE["editor"]["language"],
-            "canidateCode": state.SESSION_STATE["editor"]["content"],
+            "code": state.SESSION_STATE["editor"]["content"],
             "questionId": state.SESSION["questionId"],
         },
     )
@@ -55,14 +57,15 @@ def evaluate_test_case_coverage(state: AgentState, config: RunnableConfig) -> di
 
     percentage = correct_points / total_points
 
-
     MAX_POINTS = SCORE_GUIDELINES[TEST]["maxScore"]
     DESCRIPTION = SCORE_GUIDELINES[TEST]["description"]
     score_detail = {
         "testName": TEST,
         "description": DESCRIPTION,
         "maxScore": MAX_POINTS,
-        "comment": "You Passed {} out of {} evaluation testcases.".format(correct_points, total_points),
+        "comment": "You Passed {} out of {} evaluation testcases.".format(
+            correct_points, total_points
+        ),
         "examples": [],
         "score": ceil(MAX_POINTS * percentage),
     }
