@@ -52,6 +52,11 @@ class AgentState(EventMessageState):
         description="Current stage index of the agent",
     )
 
+    interview_flow: List[str] = Field(
+        default_factory=list,
+        description="The interview flow stages sequence",
+    )
+
     events: List[EventDescriptor] = Field(
         default_factory=list,
         description="Event descriptors for the agent",
@@ -82,10 +87,10 @@ class AgentState(EventMessageState):
 
 
 # --------------------- agent graph nodes --------------------- #
-async def init_state(_: AgentState, config: RunnableConfig):
+async def init_state(state: AgentState, config: RunnableConfig):
     agent_config = get_configurable(AgentConfig, config)
-
-    default_step_map = get_step_map()
+    
+    default_step_map = get_step_map(state.interview_flow)
     stages = [(name, steps) for name, steps in default_step_map.items()]
 
     # Add transition confirmation steps if enabled

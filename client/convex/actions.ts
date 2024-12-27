@@ -381,30 +381,46 @@ export const runTests = action({
       ],
     };
 
-    const result = await executeCode(payload);
-    if (result.status === "success" && result.stdout) {
-      try {
-        const jsonMatch = result.stdout.match(
-          /START_RESULTS_JSON\n([\s\S]*?)\nEND_RESULTS_JSON/
-        );
-        if (jsonMatch && jsonMatch[1]) {
-          const parsedResults: RunTestResult = JSON.parse(jsonMatch[1]);
-          console.log({
-            ...result,
-            testResults: parsedResults,
-          });
-          return {
-            ...result,
-            testResults: parsedResults,
-          };
+    const maxRetries = 3;
+    let retryCount = 0;
+
+    while (retryCount < maxRetries) {
+      const execResult = await executeCode(payload);
+      if (execResult.status === "success" && execResult.stdout) {
+        try {
+          const jsonMatch = execResult.stdout.match(
+            /START_RESULTS_JSON\n([\s\S]*?)\nEND_RESULTS_JSON/
+          );
+          if (jsonMatch && jsonMatch[1]) {
+            const parsedResults: RunTestResult = JSON.parse(jsonMatch[1]);
+            return {
+              status: execResult.status,
+              executionTime: execResult.executionTime,
+              stdout: execResult.stdout,
+              stderr: execResult.stderr,
+              isError: execResult.isError,
+              exception: execResult.exception,
+              testResults: parsedResults,
+            };
+          }
+        } catch (error) {
+          console.error("Error parsing test results:", error);
         }
-      } catch (error) {
-        console.error("Error parsing test results:", error);
+      }
+
+      retryCount++;
+      if (retryCount < maxRetries) {
+        console.log(`Retrying test execution (attempt ${retryCount + 1}/${maxRetries})...`);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       }
     }
 
-    console.log("result", result);
-    return result;
+    // Return a properly structured error response when all retries fail
+    return {
+      status: "error",
+      isError: true,
+      exception: "Failed to execute tests after all retries"
+    };
   },
 });
 

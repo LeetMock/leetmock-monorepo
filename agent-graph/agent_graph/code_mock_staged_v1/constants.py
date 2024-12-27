@@ -30,7 +30,6 @@ class StageTypes(str, Enum):
     EVAL = "evaluation"
     END = "end"
 
-
 class AgentConfig(BaseModel):
     """Config for the agent.
 
@@ -401,15 +400,41 @@ EVAL_SIGNALS: List[Signal] = [
 ]
 
 
-def get_step_map() -> OrderedDict[StageTypes, List[Step]]:
-    return OrderedDict(
-        [
-            (StageTypes.INTRO, INTRO_STEPS),
-            (StageTypes.BACKGROUND, BACKGROUND_STEPS),
-            (StageTypes.CODING, CODING_STEPS),
-            (StageTypes.EVAL, EVAL_STEPS),
-        ]
-    )
+def get_step_map(interview_flow: List[str]) -> OrderedDict[StageTypes, List[Step]]:
+    """Get step map based on interview flow.
+    
+    Args:
+        interview_flow: List of stage names in the interview flow
+        
+    Returns:
+        OrderedDict mapping stages to their steps
+    """
+    # Map string stage names to enum values
+    stage_name_to_enum = {
+        "introduction": StageTypes.INTRO,
+        "background": StageTypes.BACKGROUND, 
+        "coding": StageTypes.CODING,
+        "evaluation": StageTypes.EVAL,
+        "end": StageTypes.END
+    }
+
+    # Map enum values to step lists
+    stage_to_steps = {
+        StageTypes.INTRO: INTRO_STEPS,
+        StageTypes.BACKGROUND: BACKGROUND_STEPS, 
+        StageTypes.CODING: CODING_STEPS,
+        StageTypes.EVAL: EVAL_STEPS
+    }
+
+    # Build ordered dict with only stages in interview flow
+    step_map = OrderedDict()
+    for stage_name in interview_flow:
+        if stage_name == "end":
+            continue
+        stage_enum = stage_name_to_enum[stage_name]
+        step_map[stage_enum] = stage_to_steps[stage_enum]
+
+    return step_map
 
 
 def create_transition_confirmation_step(

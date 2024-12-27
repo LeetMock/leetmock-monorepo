@@ -177,6 +177,10 @@ class AgentStream(BaseModel, Generic[TState]):
         state.trigger = False
         state.session_metadata = self.session.session_metadata.dict()
         state.session_state = self.session.session_state.dict()
+        state.interview_flow = self.session.session_metadata.interview_flow
+        #
+
+        logger.info(f"Notifying agent with event XXX: {state.interview_flow}")
 
         should_trigger = False
         async for mode, part in self._stateless_graph_stream(state):
