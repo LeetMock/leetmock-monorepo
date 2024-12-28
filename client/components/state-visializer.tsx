@@ -32,11 +32,11 @@ const isSpecialObject = (value: any): value is SpecialObject => {
 
 const MessageView: React.FC<{ message: any }> = ({ message }) => {
   return (
-    <div className="bg-gray-100 dark:bg-gray-800/50 p-3 rounded-lg mb-2 border border-gray-200 dark:border-gray-700">
-      <div className="font-semibold text-gray-900 dark:text-gray-100">{message.kwargs.type}</div>
-      <div className="text-sm text-gray-700 dark:text-gray-300 mt-1">{message.kwargs.content}</div>
+    <div className="bg-gray-100 dark:bg-gray-800/50 p-3 rounded-lg mb-2 border border-gray-200 dark:border-zinc-700">
+      <div className="font-semibold text-gray-900 dark:text-zinc-100">{message.kwargs.type}</div>
+      <div className="text-sm text-gray-700 dark:text-zinc-300 mt-1">{message.kwargs.content}</div>
       {message.kwargs.id && (
-        <div className="text-xs text-gray-500 dark:text-gray-400 mt-2 font-mono">
+        <div className="text-xs text-gray-500 dark:text-zinc-400 mt-2 font-mono">
           ID: {message.kwargs.id}
         </div>
       )}
@@ -105,10 +105,10 @@ const JsonView: React.FC<{ data: JsonValue; level?: number }> = ({ data, level =
   }
 
   return (
-    <div className="pl-4 border-l border-gray-200 dark:border-gray-700">
+    <div className="pl-4 border-l border-gray-200 dark:border-zinc-700">
       {Object.entries(data).map(([key, value]) => (
         <div key={key} className="py-1">
-          <span className="text-gray-500 dark:text-gray-400">{key}: </span>
+          <span className="text-gray-500 dark:text-zinc-400">{key}: </span>
           <JsonView data={value} level={level + 1} />
         </div>
       ))}
@@ -119,7 +119,7 @@ const JsonView: React.FC<{ data: JsonValue; level?: number }> = ({ data, level =
 const NullValueCard: React.FC = () => {
   return (
     <div className="flex items-center justify-center h-[50px]">
-      <div className="text-lg font-mono text-gray-400 dark:text-gray-500 px-3 py-1.5 rounded-md inline-block italic">
+      <div className="text-lg font-mono text-gray-400 dark:text-zinc-500 px-3 py-1.5 rounded-md inline-block italic">
         null
       </div>
     </div>
@@ -149,14 +149,14 @@ const PrimitiveValueCard: React.FC<{ value: string | number | boolean | null }> 
 
     if (typeof value === "number") {
       return (
-        <div className="text-lg font-mono bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-3 py-1.5 rounded-md inline-block">
+        <div className="text-lg font-mono bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-3 py-1.5 rounded-md inline-block">
           {value}
         </div>
       );
     }
 
     return (
-      <div className="text-lg font-mono bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-md inline-block">
+      <div className="text-lg font-mono bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-zinc-300 px-3 py-1.5 rounded-md inline-block">
         "{value}"
       </div>
     );
@@ -232,15 +232,17 @@ export const StateVisualizer: React.FC<StateVisualizerProps> = ({ state }) => {
     <div className="w-full max-w-[1400px] pb-8">
       {Object.keys(state).length === 0 ? (
         <Card>
-          <CardContent className="text-center text-gray-500 p-4">Loading state...</CardContent>
+          <CardContent className="text-center text-gray-500 dark:text-zinc-400 p-4">
+            Loading state...
+          </CardContent>
         </Card>
       ) : (
         <div className="flex gap-2">
           {/* Left side - Toggle Panel */}
-          <Card className="w-[220px] p-3 sticky top-4 h-fit">
+          <Card className="w-[220px] p-3 sticky top-4 h-fit border-gray-200 dark:border-zinc-800">
             <div className="space-y-1">
-              <div className="flex items-center justify-between py-1.5 border-b">
-                <span className="text-sm font-medium">Show All Fields</span>
+              <div className="flex items-center justify-between py-1.5 border-b border-gray-200 dark:border-zinc-700">
+                <span className="text-sm font-medium dark:text-zinc-100">Show All Fields</span>
                 <Switch
                   checked={selectedFields.length === Object.keys(state).length}
                   onCheckedChange={toggleAll}
@@ -251,10 +253,10 @@ export const StateVisualizer: React.FC<StateVisualizerProps> = ({ state }) => {
                   key={key}
                   className={cn(
                     "flex items-center justify-between py-1.5 px-2 rounded-md",
-                    selectedFields.includes(key) && "bg-gray-100 dark:bg-gray-800"
+                    selectedFields.includes(key) && "bg-gray-100 dark:bg-zinc-800"
                   )}
                 >
-                  <span className="text-xs truncate mr-2">{key}</span>
+                  <span className="text-xs truncate mr-2 dark:text-zinc-300">{key}</span>
                   <Switch
                     checked={selectedFields.includes(key)}
                     onCheckedChange={() => handleToggle(key)}
