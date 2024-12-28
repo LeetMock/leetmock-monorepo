@@ -195,7 +195,6 @@ async def entrypoint(ctx: JobContext):
     # The agent trigger needs to start before the assistant so it setup the event listeners
     # for any events requiring assistant as a dependency. Otherwise, some of the events from
     # assistant might not be captured properly.
-
     agent_trigger.start()
     assistant.start(ctx.room)
 
