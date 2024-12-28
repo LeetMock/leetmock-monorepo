@@ -16,6 +16,7 @@ export const scoreDetailSchema = {
 
 const schema = defineEntSchema({
   userProfiles: defineEnt({
+    email: v.string(),
     role: v.union(v.literal("admin"), v.literal("user")),
     subscription: v.union(
       v.literal("free"),
@@ -34,7 +35,6 @@ const schema = defineEntSchema({
     refreshDate: v.optional(v.number()),
   })
     .field("userId", v.string(), { unique: true }) // user id should be unique
-    .field("email", v.string(), { unique: true }) // index by email by default
     .index("by_role", ["role"])
     .index("by_interval", ["interval"]),
   sessions: defineEnt({
@@ -138,6 +138,10 @@ const schema = defineEntSchema({
       }),
     }),
   }).index("by_session_id", ["sessionId"]),
+  agentStates: defineEnt({
+    state: v.any(),
+    lastUpdated: v.number(),
+  }).field("sessionId", v.id("sessions"), { unique: true }),
 });
 
 export const entDefinitions = getEntDefinitions(schema);
