@@ -5,6 +5,10 @@ export const getBySessionId = query({
   args: {
     sessionId: v.id("sessions"),
   },
+  returns: v.object({
+    state: v.any(),
+    lastUpdated: v.number(),
+  }),
   handler: async (ctx, { sessionId }) => {
     return await ctx
       .table("agentStates", "sessionId", (q) => q.eq("sessionId", sessionId))
