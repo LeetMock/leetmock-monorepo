@@ -45,6 +45,68 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/questions/createQuestion:
+    post:
+      summary: Calls a mutation at the path questions.js:createQuestion
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_questions.createQuestion"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_questions.createQuestion"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/questions/deleteQuestion:
+    post:
+      summary: Calls a mutation at the path questions.js:deleteQuestion
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_questions.deleteQuestion"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_questions.deleteQuestion"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
   /api/run/questions/getAll:
     post:
       summary: Calls a query at the path questions.js:getAll
@@ -94,6 +156,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Response_questions.getById"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/questions/updateQuestion:
+    post:
+      summary: Calls a mutation at the path questions.js:updateQuestion
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_questions.updateQuestion"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_questions.updateQuestion"
         "400":
           description: Failed operation
           content:
@@ -1037,6 +1130,68 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/agentStates/getBySessionId:
+    post:
+      summary: Calls a query at the path agentStates.js:getBySessionId
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_agentStates.getBySessionId"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_agentStates.getBySessionId"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/agentStates/setBySessionId:
+    post:
+      summary: Calls a mutation at the path agentStates.js:setBySessionId
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_agentStates.setBySessionId"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_agentStates.setBySessionId"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -1093,6 +1248,113 @@ components:
                     - "user"
 
     Response_inviteCodes.createInviteCode:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_questions.createQuestion:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - category
+            - difficulty
+            - evalMode
+            - functionName
+            - inputParameters
+            - outputParameters
+            - question
+            - solutions
+            - tests
+            - title
+          properties:
+            category:
+              type: array
+              items:
+                type: string
+            difficulty:
+              type: number
+            evalMode:
+              oneOf:
+                - type: string
+                  enum:
+                    - "exactMatch"
+                - type: string
+                  enum:
+                    - "listNodeIter"
+                - type: string
+                  enum:
+                    - "sortedMatch"
+            functionName:
+              type: string
+            inputParameters:
+              type: object
+            metaData:
+              type: object
+            outputParameters:
+              type: string
+            question:
+              type: string
+            solutions:
+              type: object
+            tests:
+              type: array
+              items:
+                type: object
+                required:
+                  - input
+                  - output
+                properties:
+                  input: {}
+                  output: {}
+            title:
+              type: string
+
+    Response_questions.createQuestion:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_questions.deleteQuestion:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - questionId
+          properties:
+            questionId:
+              type: string
+              description: ID from table "questions"
+
+    Response_questions.deleteQuestion:
       type: object
       required:
         - status
@@ -1174,6 +1436,77 @@ components:
               description: ID from table "questions"
 
     Response_questions.getByIdInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_questions.updateQuestion:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - questionId
+          properties:
+            category:
+              type: array
+              items:
+                type: string
+            difficulty:
+              type: number
+            evalMode:
+              oneOf:
+                - type: string
+                  enum:
+                    - "exactMatch"
+                - type: string
+                  enum:
+                    - "listNodeIter"
+                - type: string
+                  enum:
+                    - "sortedMatch"
+            functionName:
+              type: string
+            inputParameters:
+              type: object
+            metaData:
+              type: object
+            outputParameters:
+              type: string
+            question:
+              type: string
+            questionId:
+              type: string
+              description: ID from table "questions"
+            solutions:
+              type: object
+            tests:
+              type: array
+              items:
+                type: object
+                required:
+                  - input
+                  - output
+                properties:
+                  input: {}
+                  output: {}
+            title:
+              type: string
+
+    Response_questions.updateQuestion:
       type: object
       required:
         - status
@@ -3354,6 +3687,76 @@ components:
               description: ID from table "sessions"
 
     Response_eval.triggerEvalAction:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_agentStates.getBySessionId:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_agentStates.getBySessionId:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value:
+          type: object
+          required:
+            - lastUpdated
+            - state
+          properties:
+            lastUpdated:
+              type: number
+            state: {}
+
+    Request_agentStates.setBySessionId:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+            - state
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+            state: {}
+
+    Response_agentStates.setBySessionId:
       type: object
       required:
         - status

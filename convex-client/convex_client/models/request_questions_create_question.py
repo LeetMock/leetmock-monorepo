@@ -19,15 +19,15 @@ import json
 
 from pydantic import BaseModel, ConfigDict
 from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_questions_delete_question_args import RequestQuestionsDeleteQuestionArgs
+from convex_client.models.request_questions_create_question_args import RequestQuestionsCreateQuestionArgs
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestQuestionsGetByIdInternal(BaseModel):
+class RequestQuestionsCreateQuestion(BaseModel):
     """
-    RequestQuestionsGetByIdInternal
+    RequestQuestionsCreateQuestion
     """ # noqa: E501
-    args: RequestQuestionsDeleteQuestionArgs
+    args: RequestQuestionsCreateQuestionArgs
     __properties: ClassVar[List[str]] = ["args"]
 
     model_config = ConfigDict(
@@ -48,7 +48,7 @@ class RequestQuestionsGetByIdInternal(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestQuestionsGetByIdInternal from a JSON string"""
+        """Create an instance of RequestQuestionsCreateQuestion from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -76,7 +76,7 @@ class RequestQuestionsGetByIdInternal(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestQuestionsGetByIdInternal from a dict"""
+        """Create an instance of RequestQuestionsCreateQuestion from a dict"""
         if obj is None:
             return None
 
@@ -84,7 +84,7 @@ class RequestQuestionsGetByIdInternal(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "args": RequestQuestionsDeleteQuestionArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
+            "args": RequestQuestionsCreateQuestionArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
         })
         return _obj
 

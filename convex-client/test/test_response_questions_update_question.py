@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.request_questions_get_by_id_internal_args import RequestQuestionsGetByIdInternalArgs
+from convex_client.models.response_questions_update_question import ResponseQuestionsUpdateQuestion
 
-class TestRequestQuestionsGetByIdInternalArgs(unittest.TestCase):
-    """RequestQuestionsGetByIdInternalArgs unit test stubs"""
+class TestResponseQuestionsUpdateQuestion(unittest.TestCase):
+    """ResponseQuestionsUpdateQuestion unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,26 +25,29 @@ class TestRequestQuestionsGetByIdInternalArgs(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> RequestQuestionsGetByIdInternalArgs:
-        """Test RequestQuestionsGetByIdInternalArgs
+    def make_instance(self, include_optional) -> ResponseQuestionsUpdateQuestion:
+        """Test ResponseQuestionsUpdateQuestion
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `RequestQuestionsGetByIdInternalArgs`
+        # uncomment below to create an instance of `ResponseQuestionsUpdateQuestion`
         """
-        model = RequestQuestionsGetByIdInternalArgs()
+        model = ResponseQuestionsUpdateQuestion()
         if include_optional:
-            return RequestQuestionsGetByIdInternalArgs(
-                question_id = ''
+            return ResponseQuestionsUpdateQuestion(
+                status = 'success',
+                error_message = '',
+                error_data = None,
+                value = None
             )
         else:
-            return RequestQuestionsGetByIdInternalArgs(
-                question_id = '',
+            return ResponseQuestionsUpdateQuestion(
+                status = 'success',
         )
         """
 
-    def testRequestQuestionsGetByIdInternalArgs(self):
-        """Test RequestQuestionsGetByIdInternalArgs"""
+    def testResponseQuestionsUpdateQuestion(self):
+        """Test ResponseQuestionsUpdateQuestion"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

@@ -18,17 +18,17 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict
-from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_questions_delete_question_args import RequestQuestionsDeleteQuestionArgs
+from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestQuestionsGetByIdInternal(BaseModel):
+class RequestQuestionsCreateQuestionArgsTestsInner(BaseModel):
     """
-    RequestQuestionsGetByIdInternal
+    RequestQuestionsCreateQuestionArgsTestsInner
     """ # noqa: E501
-    args: RequestQuestionsDeleteQuestionArgs
-    __properties: ClassVar[List[str]] = ["args"]
+    input: Optional[Any]
+    output: Optional[Any]
+    __properties: ClassVar[List[str]] = ["input", "output"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -48,7 +48,7 @@ class RequestQuestionsGetByIdInternal(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestQuestionsGetByIdInternal from a JSON string"""
+        """Create an instance of RequestQuestionsCreateQuestionArgsTestsInner from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -69,14 +69,21 @@ class RequestQuestionsGetByIdInternal(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of args
-        if self.args:
-            _dict['args'] = self.args.to_dict()
+        # set to None if input (nullable) is None
+        # and model_fields_set contains the field
+        if self.input is None and "input" in self.model_fields_set:
+            _dict['input'] = None
+
+        # set to None if output (nullable) is None
+        # and model_fields_set contains the field
+        if self.output is None and "output" in self.model_fields_set:
+            _dict['output'] = None
+
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestQuestionsGetByIdInternal from a dict"""
+        """Create an instance of RequestQuestionsCreateQuestionArgsTestsInner from a dict"""
         if obj is None:
             return None
 
@@ -84,7 +91,8 @@ class RequestQuestionsGetByIdInternal(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "args": RequestQuestionsDeleteQuestionArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
+            "input": obj.get("input"),
+            "output": obj.get("output")
         })
         return _obj
 

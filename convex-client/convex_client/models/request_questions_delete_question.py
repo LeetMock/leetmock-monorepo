@@ -23,9 +23,9 @@ from convex_client.models.request_questions_delete_question_args import RequestQ
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestQuestionsGetByIdInternal(BaseModel):
+class RequestQuestionsDeleteQuestion(BaseModel):
     """
-    RequestQuestionsGetByIdInternal
+    RequestQuestionsDeleteQuestion
     """ # noqa: E501
     args: RequestQuestionsDeleteQuestionArgs
     __properties: ClassVar[List[str]] = ["args"]
@@ -48,7 +48,7 @@ class RequestQuestionsGetByIdInternal(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestQuestionsGetByIdInternal from a JSON string"""
+        """Create an instance of RequestQuestionsDeleteQuestion from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -76,7 +76,7 @@ class RequestQuestionsGetByIdInternal(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestQuestionsGetByIdInternal from a dict"""
+        """Create an instance of RequestQuestionsDeleteQuestion from a dict"""
         if obj is None:
             return None
 

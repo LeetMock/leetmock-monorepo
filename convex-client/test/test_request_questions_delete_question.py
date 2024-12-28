@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.request_questions_get_by_id_internal import RequestQuestionsGetByIdInternal
+from convex_client.models.request_questions_delete_question import RequestQuestionsDeleteQuestion
 
-class TestRequestQuestionsGetByIdInternal(unittest.TestCase):
-    """RequestQuestionsGetByIdInternal unit test stubs"""
+class TestRequestQuestionsDeleteQuestion(unittest.TestCase):
+    """RequestQuestionsDeleteQuestion unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,28 +25,28 @@ class TestRequestQuestionsGetByIdInternal(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> RequestQuestionsGetByIdInternal:
-        """Test RequestQuestionsGetByIdInternal
+    def make_instance(self, include_optional) -> RequestQuestionsDeleteQuestion:
+        """Test RequestQuestionsDeleteQuestion
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `RequestQuestionsGetByIdInternal`
+        # uncomment below to create an instance of `RequestQuestionsDeleteQuestion`
         """
-        model = RequestQuestionsGetByIdInternal()
+        model = RequestQuestionsDeleteQuestion()
         if include_optional:
-            return RequestQuestionsGetByIdInternal(
+            return RequestQuestionsDeleteQuestion(
                 args = convex_client.models.request_questions_delete_question_args.Request_questions_deleteQuestion_args(
                     question_id = '', )
             )
         else:
-            return RequestQuestionsGetByIdInternal(
+            return RequestQuestionsDeleteQuestion(
                 args = convex_client.models.request_questions_delete_question_args.Request_questions_deleteQuestion_args(
                     question_id = '', ),
         )
         """
 
-    def testRequestQuestionsGetByIdInternal(self):
-        """Test RequestQuestionsGetByIdInternal"""
+    def testRequestQuestionsDeleteQuestion(self):
+        """Test RequestQuestionsDeleteQuestion"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

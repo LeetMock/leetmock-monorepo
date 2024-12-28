@@ -26,6 +26,13 @@ class TestQueryApi(unittest.TestCase):
     def tearDown(self) -> None:
         pass
 
+    def test_api_run_agent_states_get_by_session_id_post(self) -> None:
+        """Test case for api_run_agent_states_get_by_session_id_post
+
+        Calls a query at the path agentStates.js:getBySessionId
+        """
+        pass
+
     def test_api_run_code_session_events_get_latest_content_change_event_post(self) -> None:
         """Test case for api_run_code_session_events_get_latest_content_change_event_post
 
