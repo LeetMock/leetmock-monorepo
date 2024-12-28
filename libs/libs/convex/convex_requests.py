@@ -1,4 +1,8 @@
+from typing import Any, Dict
+
 from libs.convex.convex_types import (
+    RequestAgentStatesGetBySessionId,
+    RequestAgentStatesSetBySessionId,
     RequestCommitCodeSessionEvent,
     RequestCommitCodeSessionEventArgs,
     RequestGetSessionMetadata,
@@ -56,3 +60,28 @@ def create_test_code_with_ground_truth_request(
     )
     assert args is not None
     return RequestTestCodeWithGroundTruth(args=args)
+
+
+def create_get_agent_state_by_session_id_request(
+    session_id: str,
+) -> RequestAgentStatesGetBySessionId:
+    return RequestAgentStatesGetBySessionId.from_dict(
+        {
+            "args": {
+                "sessionId": session_id,
+            }
+        }
+    )
+
+
+def create_set_agent_state_by_session_id_request(
+    session_id: str, state: Dict[str, Any]
+) -> RequestAgentStatesSetBySessionId:
+    return RequestAgentStatesSetBySessionId.from_dict(
+        {
+            "args": {
+                "sessionId": session_id,
+                "state": state,
+            }
+        }
+    )

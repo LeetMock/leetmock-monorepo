@@ -139,7 +139,7 @@ const schema = defineEntSchema({
     }),
   }).index("by_session_id", ["sessionId"]),
   agentStates: defineEnt({
-    state: v.any(),
+    state: v.optional(v.any()),
     lastUpdated: v.number(),
   }).field("sessionId", v.id("sessions"), { unique: true }),
 });

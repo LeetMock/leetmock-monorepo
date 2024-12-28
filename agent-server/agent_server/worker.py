@@ -111,6 +111,7 @@ async def entrypoint(ctx: JobContext):
     ctx_manager: AgentContextManager = AgentContextManager(
         ctx=ctx,
         api=convex_api,
+        state_type=AgentState,
         session=session,
         agent_state_emitter=state_merger,
     )

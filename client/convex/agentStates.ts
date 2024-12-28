@@ -6,13 +6,18 @@ export const getBySessionId = query({
     sessionId: v.id("sessions"),
   },
   returns: v.object({
-    state: v.any(),
+    state: v.optional(v.any()),
     lastUpdated: v.number(),
   }),
   handler: async (ctx, { sessionId }) => {
-    return await ctx
+    const result = await ctx
       .table("agentStates", "sessionId", (q) => q.eq("sessionId", sessionId))
       .firstX();
+
+    return {
+      state: result.state,
+      lastUpdated: result.lastUpdated,
+    };
   },
 });
 
@@ -26,6 +31,9 @@ export const setBySessionId = mutation({
       .table("agentStates", "sessionId", (q) => q.eq("sessionId", sessionId))
       .firstX();
 
-    await state.replace(newState);
+    await state.patch({
+      state: newState,
+      lastUpdated: Date.now(),
+    });
   },
 });

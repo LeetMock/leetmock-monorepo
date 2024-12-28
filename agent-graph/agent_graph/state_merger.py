@@ -3,10 +3,9 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Generic, Literal, Type, TypeVar
 
 from agent_graph.storages import StateStorage
-from agent_graph.utils import with_noop_node
+from agent_graph.utils import DEFAULT_CONFIG, with_noop_node
 from agent_server.utils.logger import get_logger
 from debouncer import debounce
-from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph.state import CompiledStateGraph, StateGraph
 from livekit.agents.utils import EventEmitter
@@ -16,8 +15,6 @@ logger = get_logger(__name__)
 
 TState = TypeVar("TState", bound=BaseModel)
 EventTypes = Literal["state_changed", "state_initialized"]
-
-CONFIG = RunnableConfig(configurable={"thread_id": "1"})
 
 
 class AgentStateEmitter(EventEmitter[EventTypes], Generic[TState], ABC):
@@ -113,9 +110,9 @@ class StateMerger(AgentStateEmitter[TState]):
 
     async def _merge_initial_state(self, state: TState | Dict[str, Any]):
         if isinstance(state, dict) and len(state) == 0:
-            state_dict = self.state_graph.get_state(config=CONFIG).values
+            state_dict = self.state_graph.get_state(config=DEFAULT_CONFIG).values
         else:
-            state_dict = await self.state_graph.ainvoke(state, config=CONFIG)
+            state_dict = await self.state_graph.ainvoke(state, config=DEFAULT_CONFIG)
 
         state = self.state_type(**state_dict)
         self._cached_state = state
@@ -127,7 +124,7 @@ class StateMerger(AgentStateEmitter[TState]):
         if isinstance(state, dict) and len(state) == 0:
             return await self.get_state()
 
-        state_dict = await self.state_graph.ainvoke(state, config=CONFIG)
+        state_dict = await self.state_graph.ainvoke(state, config=DEFAULT_CONFIG)
         state = self.state_type(**state_dict)
 
         self.flush(state_dict)
