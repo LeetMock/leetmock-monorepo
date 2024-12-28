@@ -186,7 +186,6 @@ const useStateComparison = (state: { [key: string]: JsonValue }) => {
 const highlightAnimation = {
   initial: { backgroundColor: "transparent" },
   animate: { backgroundColor: ["#93c5fd33", "#93c5fd66", "transparent"] },
-  transition: { duration: 0.8, ease: "easeOut" },
 };
 
 const StateCard: React.FC<{ title: string; data: JsonValue; highlight?: boolean }> = ({
@@ -205,6 +204,7 @@ const StateCard: React.FC<{ title: string; data: JsonValue; highlight?: boolean 
         initial="initial"
         animate={highlight ? "animate" : "initial"}
         variants={highlightAnimation}
+        transition={{ duration: 0.8, ease: "easeOut" }}
         className="rounded-lg"
       >
         <Card className="w-full mb-2">
@@ -224,6 +224,7 @@ const StateCard: React.FC<{ title: string; data: JsonValue; highlight?: boolean 
       initial="initial"
       animate={highlight ? "animate" : "initial"}
       variants={highlightAnimation}
+      transition={{ duration: 0.8, ease: "easeOut" }}
       className="rounded-lg"
     >
       <Card className="w-full mb-2">
