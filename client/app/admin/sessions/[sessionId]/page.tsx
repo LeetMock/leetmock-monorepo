@@ -8,6 +8,7 @@ import { isDefined } from "@/lib/utils";
 import { useQuery } from "convex/react";
 import { useParams } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
+import { formatDistanceToNow } from "date-fns";
 
 export default function Home() {
   const [state, setState] = useState({});
@@ -15,13 +16,6 @@ export default function Home() {
   const agentStateSnapshot = useQuery(api.agentStates.getBySessionId, {
     sessionId: sessionId as Id<"sessions">,
   });
-
-  //   useEffect(() => {
-  //     // Simulate loading state from an API
-  //     setTimeout(() => {
-  //       setState(fakeState);
-  //     }, 1000);
-  //   }, []);
 
   const lastUpdated = useMemo(() => {
     if (!isDefined(agentStateSnapshot)) return undefined;
@@ -36,6 +30,23 @@ export default function Home() {
     return state;
   }, [agentStateSnapshot]);
 
+  const [now, setNow] = useState(new Date());
+
+  // Update the current time every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const formattedLastUpdated = useMemo(() => {
+    if (!lastUpdated) return null;
+    const date = new Date(lastUpdated);
+    return formatDistanceToNow(date, { addSuffix: true });
+  }, [lastUpdated]); // Include now to trigger re-render
+
   return (
     <main className="flex min-h-screen flex-col p-8">
       <div className="mb-8">
@@ -46,10 +57,10 @@ export default function Home() {
             </h1>
             <p className="text-sm text-muted-foreground mt-1">Session ID: {sessionId}</p>
           </div>
-          {lastUpdated && (
+          {formattedLastUpdated && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground bg-gray-50 dark:bg-gray-800/50 px-4 py-2 rounded-md">
               <div className="size-2 rounded-full bg-green-500 animate-pulse" />
-              Last updated: {new Date(lastUpdated).toLocaleString()}
+              Last updated {formattedLastUpdated}
             </div>
           )}
         </div>
