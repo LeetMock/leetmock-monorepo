@@ -8,7 +8,7 @@ import { isDefined } from "@/lib/utils";
 import { useQuery } from "convex/react";
 import { useParams } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, differenceInSeconds } from "date-fns";
 
 export default function Home() {
   const [state, setState] = useState({});
@@ -44,8 +44,14 @@ export default function Home() {
   const formattedLastUpdated = useMemo(() => {
     if (!lastUpdated) return null;
     const date = new Date(lastUpdated);
+    const secondsAgo = differenceInSeconds(new Date(), date);
+
+    if (secondsAgo < 60) {
+      return `${secondsAgo} second${secondsAgo === 1 ? "" : "s"} ago`;
+    }
+
     return formatDistanceToNow(date, { addSuffix: true });
-  }, [lastUpdated]); // Include now to trigger re-render
+  }, [lastUpdated]);
 
   return (
     <main className="flex min-h-screen flex-col p-8">
@@ -68,7 +74,7 @@ export default function Home() {
       </div>
 
       <Wait data={{ agentState }}>
-        {({ agentState }) => <StateVisualizer state={agentState || {}} />}
+        {({ agentState }) => <StateVisualizer state={agentState} />}
       </Wait>
     </main>
   );

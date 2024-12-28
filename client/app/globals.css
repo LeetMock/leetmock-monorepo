@@ -108,6 +108,19 @@
       rgba(var(--background), 1)
     );
   }
+
+  @keyframes highlight {
+    0% {
+      background-color: rgba(147, 197, 253, 0.3); /* blue-200 with opacity */
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+
+  .animate-highlight {
+    animation: highlight 2s ease-out;
+  }
 }
 
 .glow-text {

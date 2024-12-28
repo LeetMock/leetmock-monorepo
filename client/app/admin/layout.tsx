@@ -1,4 +1,5 @@
 "use client";
+
 import { DashboardHeader } from "@/app/(workspace)/dashboard/_components/dashboard-header";
 
 export default function QuestionsLayout({ children }: { children: React.ReactNode }) {

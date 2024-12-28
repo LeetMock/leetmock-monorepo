@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { cn, isDefined } from "@/lib/utils";
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
 type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 
@@ -165,16 +166,34 @@ const PrimitiveValueCard: React.FC<{ value: string | number | boolean | null }> 
   return <div className="flex items-center justify-center h-[100px]">{getValueDisplay()}</div>;
 };
 
-const StateCard: React.FC<{ title: string; data: JsonValue }> = ({ title, data }) => {
-  const isSimpleContent = React.useMemo(() => {
-    if (typeof data !== "object" || data === null) return true;
-    if (Array.isArray(data) && data.length <= 3) return true;
-    if (typeof data === "object" && Object.keys(data).length <= 3) return true;
-    return false;
-  }, [data]);
+const useStateComparison = (state: { [key: string]: JsonValue }) => {
+  const prevStateRef = useRef<{ [key: string]: JsonValue }>({});
+  const changedFields = useRef<Set<string>>(new Set());
 
-  const contentHeight = isSimpleContent ? "h-[50px]" : "h-[700px]";
+  useEffect(() => {
+    changedFields.current.clear();
+    Object.keys({ ...state, ...prevStateRef.current }).forEach((key) => {
+      if (JSON.stringify(state[key]) !== JSON.stringify(prevStateRef.current[key])) {
+        changedFields.current.add(key);
+      }
+    });
+    prevStateRef.current = state;
+  }, [state]);
 
+  return changedFields.current;
+};
+
+const highlightAnimation = {
+  initial: { backgroundColor: "transparent" },
+  animate: { backgroundColor: ["#93c5fd33", "#93c5fd66", "transparent"] },
+  transition: { duration: 0.8, ease: "easeOut" },
+};
+
+const StateCard: React.FC<{ title: string; data: JsonValue; highlight?: boolean }> = ({
+  title,
+  data,
+  highlight,
+}) => {
   if (
     typeof data === "string" ||
     typeof data === "number" ||
@@ -182,33 +201,56 @@ const StateCard: React.FC<{ title: string; data: JsonValue }> = ({ title, data }
     !isDefined(data)
   ) {
     return (
+      <motion.div
+        initial="initial"
+        animate={highlight ? "animate" : "initial"}
+        variants={highlightAnimation}
+        className="rounded-lg"
+      >
+        <Card className="w-full mb-2">
+          <CardHeader className="py-3">
+            <CardTitle className="text-sm font-medium">{title}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PrimitiveValueCard value={data} />
+          </CardContent>
+        </Card>
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div
+      initial="initial"
+      animate={highlight ? "animate" : "initial"}
+      variants={highlightAnimation}
+      className="rounded-lg"
+    >
       <Card className="w-full mb-2">
         <CardHeader className="py-3">
           <CardTitle className="text-sm font-medium">{title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <PrimitiveValueCard value={data} />
+          <div className="w-full rounded-md max-h-[500px] overflow-auto max-w-[1000px]">
+            <JsonView data={data} />
+          </div>
         </CardContent>
       </Card>
-    );
-  }
-
-  return (
-    <Card className="w-full mb-2">
-      <CardHeader className="py-3">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className={cn("w-full rounded-md border p-3 max-h-[500px] overflow-y-auto")}>
-          <JsonView data={data} />
-        </div>
-      </CardContent>
-    </Card>
+    </motion.div>
   );
 };
 
 export const StateVisualizer: React.FC<StateVisualizerProps> = ({ state }) => {
-  const [selectedFields, setSelectedFields] = React.useState<string[]>(Object.keys(state));
+  const [selectedFields, setSelectedFields] = React.useState<string[]>(() => {
+    const cachedFields = localStorage.getItem("selectedFields");
+    return cachedFields ? JSON.parse(cachedFields) : Object.keys(state);
+  });
+
+  const changedFields = useStateComparison(state);
+
+  useEffect(() => {
+    localStorage.setItem("selectedFields", JSON.stringify(selectedFields));
+  }, [selectedFields]);
 
   const handleToggle = (value: string) => {
     setSelectedFields((prev) => {
@@ -249,19 +291,26 @@ export const StateVisualizer: React.FC<StateVisualizerProps> = ({ state }) => {
                 />
               </div>
               {Object.keys(state).map((key) => (
-                <div
+                <motion.div
                   key={key}
-                  className={cn(
-                    "flex items-center justify-between py-1.5 px-2 rounded-md",
-                    selectedFields.includes(key) && "bg-gray-100 dark:bg-zinc-800"
-                  )}
+                  initial="initial"
+                  animate={changedFields.has(key) ? "animate" : "initial"}
+                  variants={highlightAnimation}
+                  className="rounded-lg"
                 >
-                  <span className="text-xs truncate mr-2 dark:text-zinc-300">{key}</span>
-                  <Switch
-                    checked={selectedFields.includes(key)}
-                    onCheckedChange={() => handleToggle(key)}
-                  />
-                </div>
+                  <div
+                    className={cn(
+                      "flex items-center justify-between py-1.5 px-2 rounded-md",
+                      selectedFields.includes(key) && "bg-gray-100 dark:bg-zinc-800"
+                    )}
+                  >
+                    <span className="text-xs truncate mr-2 dark:text-zinc-300">{key}</span>
+                    <Switch
+                      checked={selectedFields.includes(key)}
+                      onCheckedChange={() => handleToggle(key)}
+                    />
+                  </div>
+                </motion.div>
               ))}
             </div>
           </Card>
@@ -271,7 +320,7 @@ export const StateVisualizer: React.FC<StateVisualizerProps> = ({ state }) => {
             {Object.entries(state)
               .filter(([key]) => selectedFields.includes(key))
               .map(([key, value]) => (
-                <StateCard key={key} title={key} data={value} />
+                <StateCard key={key} title={key} data={value} highlight={changedFields.has(key)} />
               ))}
           </div>
         </div>
