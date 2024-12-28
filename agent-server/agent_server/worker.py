@@ -177,7 +177,7 @@ async def entrypoint(ctx: JobContext):
         stream=agent_stream,
         state_update_q=state_update_q,
         events=[
-            ReminderEvent(assistant=assistant, delay=20),
+            ReminderEvent(assistant=assistant, delay=90),
             CodeEditorChangedEvent(session=session, assistant=assistant),
             UserTestcaseExecutedEvent(session=session),
             GroundTruthTestcaseExecutedEvent(session=session, convex_api=convex_api),

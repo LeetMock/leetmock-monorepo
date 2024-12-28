@@ -9,7 +9,7 @@ interface LogoProps {
 
 export const Logo: React.FC<LogoProps> = ({ className, showText = true }) => {
   return (
-    <Link href="/" className={cn("flex items-center gap-2.5", className)}>
+    <Link href="/dashboard/interviews" className={cn("flex items-center gap-2.5", className)}>
       <div aria-hidden="true" className="flex items-center">
         <Image
           src="/logo.png"
