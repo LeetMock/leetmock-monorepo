@@ -16,7 +16,6 @@ export const scoreDetailSchema = {
 
 const schema = defineEntSchema({
   userProfiles: defineEnt({
-    email: v.string(),
     role: v.union(v.literal("admin"), v.literal("user")),
     subscription: v.union(
       v.literal("free"),
@@ -34,6 +33,7 @@ const schema = defineEntSchema({
     subscriptionStatus: v.optional(v.string()),
     refreshDate: v.optional(v.number()),
   })
+    .field("email", v.string(), { unique: true })
     .field("userId", v.string(), { unique: true }) // user id should be unique
     .index("by_role", ["role"])
     .index("by_interval", ["interval"]),
