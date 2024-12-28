@@ -40,6 +40,13 @@ class TestMutationApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_agent_states_set_by_session_id_post(self) -> None:
+        """Test case for api_run_agent_states_set_by_session_id_post
+
+        Calls a mutation at the path agentStates.js:setBySessionId
+        """
+        pass
+
     def test_api_run_code_session_events_commit_code_session_event_post(self) -> None:
         """Test case for api_run_code_session_events_commit_code_session_event_post
 
@@ -58,6 +65,27 @@ class TestMutationApi(unittest.TestCase):
         """Test case for api_run_invite_codes_apply_invite_code_post
 
         Calls a mutation at the path inviteCodes.js:applyInviteCode
+        """
+        pass
+
+    def test_api_run_questions_create_question_post(self) -> None:
+        """Test case for api_run_questions_create_question_post
+
+        Calls a mutation at the path questions.js:createQuestion
+        """
+        pass
+
+    def test_api_run_questions_delete_question_post(self) -> None:
+        """Test case for api_run_questions_delete_question_post
+
+        Calls a mutation at the path questions.js:deleteQuestion
+        """
+        pass
+
+    def test_api_run_questions_update_question_post(self) -> None:
+        """Test case for api_run_questions_update_question_post
+
+        Calls a mutation at the path questions.js:updateQuestion
         """
         pass
 

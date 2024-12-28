@@ -35,12 +35,12 @@ class TestRequestQuestionsGetByIdInternal(unittest.TestCase):
         model = RequestQuestionsGetByIdInternal()
         if include_optional:
             return RequestQuestionsGetByIdInternal(
-                args = convex_client.models.request_questions_get_by_id_internal_args.Request_questions_getByIdInternal_args(
+                args = convex_client.models.request_questions_delete_question_args.Request_questions_deleteQuestion_args(
                     question_id = '', )
             )
         else:
             return RequestQuestionsGetByIdInternal(
-                args = convex_client.models.request_questions_get_by_id_internal_args.Request_questions_getByIdInternal_args(
+                args = convex_client.models.request_questions_delete_question_args.Request_questions_deleteQuestion_args(
                     question_id = '', ),
         )
         """

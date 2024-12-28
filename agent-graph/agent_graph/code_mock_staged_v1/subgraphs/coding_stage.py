@@ -34,6 +34,10 @@ from libs.convex.convex_types import CodeSessionState, SessionMetadata
 
 logger = logging.getLogger(__name__)
 
+from typing import Annotated
+
+from agent_graph.reducers import merge_unique
+
 
 class CodingStageState(EventMessageState):
     """State for the coding stage of the agent."""
@@ -44,7 +48,7 @@ class CodingStageState(EventMessageState):
         default_factory=lambda: OrderedDict()
     )
 
-    completed_steps: Set[str] = Field(default_factory=set)
+    completed_steps: Annotated[List[str], merge_unique] = Field(default_factory=list)
 
     test_context: str | None = Field(
         default=None,
@@ -121,7 +125,7 @@ async def assistant(
         {
             "events": state.events,
             "steps": state.steps[StageTypes.CODING],
-            "completed_steps": state.completed_steps.intersection(coding_steps),
+            "completed_steps": set(state.completed_steps).intersection(coding_steps),
             "content": session_state.editor.content,
             "language": session_state.editor.language,
             "question": session_metadata.question_content,

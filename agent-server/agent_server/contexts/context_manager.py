@@ -1,8 +1,8 @@
 import asyncio
-from typing import Generic, TypeVar
+from typing import Generic, Type, TypeVar
 
 from agent_graph.state_merger import AgentStateEmitter
-from agent_graph.storages.langgraph_cloud import LangGraphCloudStateStorage
+from agent_graph.storages.convex import ConvexStateStorage
 from agent_graph.types import EventMessageState
 from agent_server.contexts.session import BaseSession
 from agent_server.livekit.channel import ChanConfig, ChanValue
@@ -49,6 +49,7 @@ class AgentContextManager(Generic[TSession, TState]):
         self,
         ctx: JobContext,
         api: ConvexApi,
+        state_type: Type[TState],
         session: TSession,
         agent_state_emitter: AgentStateEmitter[TState],
     ):
@@ -65,7 +66,7 @@ class AgentContextManager(Generic[TSession, TState]):
 
         self.ctx = ctx
         self.api = api
-
+        self.state_type = state_type
         self._session = session
         self._agent_state_emitter = agent_state_emitter
 
@@ -125,9 +126,10 @@ class AgentContextManager(Generic[TSession, TState]):
         await self._session.start(result, self._agent_state_emitter)
         # Connect the agent state emitter to the state storage
         await self._agent_state_emitter.connect(
-            storage=LangGraphCloudStateStorage(
-                thread_id=self.session.session_metadata.agent_thread_id,
-                assistant_id=self.session.session_metadata.assistant_id,
+            storage=ConvexStateStorage(
+                session_id=self.session_id,
+                state_type=self.state_type,
+                convex_api=self.api,
             )
         )
 

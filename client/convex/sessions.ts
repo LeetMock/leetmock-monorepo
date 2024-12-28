@@ -240,6 +240,12 @@ export const createCodeSession = userMutation({
       },
     });
 
+    await ctx.table("agentStates").insert({
+      sessionId,
+      state: undefined,
+      lastUpdated: Date.now(),
+    });
+
     return sessionId;
   },
 });

@@ -1,4 +1,4 @@
-from typing import List, OrderedDict, Set, cast
+from typing import Annotated, List, OrderedDict, Set, cast
 
 from agent_graph.code_mock_staged_v1.constants import (
     AgentConfig,
@@ -9,6 +9,7 @@ from agent_graph.code_mock_staged_v1.constants import (
 from agent_graph.code_mock_staged_v1.prompts import EVAL_PROMPT
 from agent_graph.code_mock_staged_v1.schemas import ConfirmStageCompletion
 from agent_graph.llms import get_model
+from agent_graph.reducers import merge_unique
 from agent_graph.types import EventMessageState
 from agent_graph.utils import custom_data, get_configurable
 from langchain_core.messages import AIMessage
@@ -27,7 +28,7 @@ from pydantic.v1 import Field
 class EvalStageState(EventMessageState):
     """State for the intro stage of the agent."""
 
-    completed_steps: Set[str] = Field(default_factory=set)
+    completed_steps: Annotated[List[str], merge_unique] = Field(default_factory=list)
 
     steps: OrderedDict[StageTypes, List[Step]] = Field(
         default_factory=lambda: OrderedDict()

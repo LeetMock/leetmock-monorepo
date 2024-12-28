@@ -1,13 +1,16 @@
 from typing import Any, Dict, List, Type, TypeVar, cast
 
 from langchain_core.runnables.config import RunnableConfig
-from pydantic.v1 import BaseModel
-
+from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph
+from pydantic.v1 import BaseModel
 
 T = TypeVar("T")
 TState = TypeVar("TState", bound=BaseModel)
 TConfig = TypeVar("TConfig", bound=BaseModel)
+
+
+DEFAULT_CONFIG = RunnableConfig(configurable={"thread_id": "1"})
 
 
 def custom_data(id: str, data: Any):
@@ -91,3 +94,14 @@ def with_noop_node(graph: StateGraph) -> StateGraph:
     graph.add_node("noop", noop)
     graph.set_entry_point("noop")
     return graph
+
+
+def get_state_graph_initial_state_dict(state_type: Type[TState]) -> Dict[str, Any]:
+    graph = StateGraph(state_type)
+    graph = with_noop_node(graph)
+
+    return (
+        graph.compile(checkpointer=MemorySaver())
+        .get_state(config=DEFAULT_CONFIG)
+        .values
+    )

@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**args** | [**RequestQuestionsGetByIdInternalArgs**](RequestQuestionsGetByIdInternalArgs.md) |  | 
+**args** | [**RequestQuestionsDeleteQuestionArgs**](RequestQuestionsDeleteQuestionArgs.md) |  | 
 
 ## Example
 

@@ -19,7 +19,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict
 from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_questions_get_by_id_internal_args import RequestQuestionsGetByIdInternalArgs
+from convex_client.models.request_questions_delete_question_args import RequestQuestionsDeleteQuestionArgs
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -27,7 +27,7 @@ class RequestQuestionsGetByIdInternal(BaseModel):
     """
     RequestQuestionsGetByIdInternal
     """ # noqa: E501
-    args: RequestQuestionsGetByIdInternalArgs
+    args: RequestQuestionsDeleteQuestionArgs
     __properties: ClassVar[List[str]] = ["args"]
 
     model_config = ConfigDict(
@@ -84,7 +84,7 @@ class RequestQuestionsGetByIdInternal(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "args": RequestQuestionsGetByIdInternalArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
+            "args": RequestQuestionsDeleteQuestionArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
         })
         return _obj
 
