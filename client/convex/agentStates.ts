@@ -6,7 +6,7 @@ export const getBySessionId = query({
     sessionId: v.id("sessions"),
   },
   returns: v.object({
-    state: v.optional(v.any()),
+    state: v.optional(v.string()),
     lastUpdated: v.number(),
   }),
   handler: async (ctx, { sessionId }) => {
@@ -24,7 +24,7 @@ export const getBySessionId = query({
 export const setBySessionId = mutation({
   args: {
     sessionId: v.id("sessions"),
-    state: v.any(),
+    state: v.string(),
   },
   handler: async (ctx, { sessionId, state: newState }) => {
     const state = await ctx

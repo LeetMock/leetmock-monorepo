@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pydantic.v1 import BaseModel
+from langchain_core.load.serializable import Serializable
 
 
 class CodingEventType(str, Enum):
@@ -13,9 +13,13 @@ class CodingEventType(str, Enum):
     USER_DEFINED_TEST_CASE_EXECUTED = "user_defined_test_case_executed"
 
 
-class EventDescriptor(BaseModel):
+class EventDescriptor(Serializable):
     name: CodingEventType
     description: str
+
+    @classmethod
+    def is_lc_serializable(cls) -> bool:
+        return True
 
 
 EVENT_DESCRIPTORS = [

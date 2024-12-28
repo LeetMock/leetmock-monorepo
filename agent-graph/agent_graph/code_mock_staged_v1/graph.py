@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import List, OrderedDict, Set, cast
+from typing import Annotated, Dict, List, OrderedDict, Set, cast
 
 from agent_graph.code_mock_staged_v1.constants import (
     AgentConfig,
@@ -20,6 +20,7 @@ from agent_graph.code_mock_staged_v1.subgraphs import (
 )
 from agent_graph.event_descriptors import EVENT_DESCRIPTORS, EventDescriptor
 from agent_graph.prompts import JOIN_CALL_MESSAGE, RECONNECT_MESSAGE
+from agent_graph.reducers import merge_unique
 from agent_graph.types import EventMessageState, Step
 from agent_graph.utils import get_configurable, with_event_reset, with_trigger_reset
 from langchain_core.messages import HumanMessage
@@ -67,8 +68,8 @@ class AgentState(EventMessageState):
         description="Steps for the agent",
     )
 
-    completed_steps: Set[str] = Field(
-        default_factory=set,
+    completed_steps: Annotated[List[str], merge_unique] = Field(
+        default_factory=list,
         description="Completed steps for the agent",
     )
 
@@ -89,7 +90,7 @@ class AgentState(EventMessageState):
 # --------------------- agent graph nodes --------------------- #
 async def init_state(state: AgentState, config: RunnableConfig):
     agent_config = get_configurable(AgentConfig, config)
-    
+
     default_step_map = get_step_map(state.interview_flow)
     stages = [(name, steps) for name, steps in default_step_map.items()]
 
@@ -107,7 +108,7 @@ async def init_state(state: AgentState, config: RunnableConfig):
         messages=[HumanMessage(content=JOIN_CALL_MESSAGE)],
         events=EVENT_DESCRIPTORS,
         steps=OrderedDict(stages),
-        completed_steps=set(),
+        completed_steps=[],
     )
 
 
@@ -122,8 +123,7 @@ async def on_event(
 
     if state.event == "step_tracking":
         step_name = cast(str, state.event_data)
-        state.completed_steps.add(step_name)
-        return with_event_reset(trigger=False, completed_steps=state.completed_steps)
+        return with_event_reset(trigger=False, completed_steps=[step_name])
 
     if state.event == "user_message":
         messages = cast(MessageWrapper, state.event_data).messages
@@ -190,7 +190,7 @@ async def decide_next_stage(state: AgentState, config: RunnableConfig):
 
     # Check if all steps in the current stage are completed
     stage_steps = set([step.name for step in state.steps[current_stage]])
-    completed_stage_steps = len(stage_steps - state.completed_steps) == 0
+    completed_stage_steps = len(stage_steps - set(state.completed_steps)) == 0
 
     # If not all steps are completed, stay in the current stage
     if not completed_stage_steps:

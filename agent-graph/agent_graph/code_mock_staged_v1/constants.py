@@ -29,6 +29,7 @@ class StageTypes(str, Enum):
     EVAL = "evaluation"
     END = "end"
 
+
 class AgentConfig(BaseModel):
     """Config for the agent.
 
@@ -212,14 +213,9 @@ def get_stage_confirmation_tool_call_state_patch(
         f"Tool call detected: {chunk.additional_kwargs['tool_calls'][0]['function']['name']}"
     )
 
-    completed_steps = state.completed_steps
-    completed_steps = set.union(
-        completed_steps, [step.name for step in state.steps[stage_type]]
-    )
-
     return dict(
         tool_call_detected=True,
-        completed_steps=completed_steps,
+        completed_steps=[step.name for step in state.steps[stage_type]],
         current_stage_idx=state.current_stage_idx + 1,
         round_until_next_confirmation=5,
     )
@@ -401,28 +397,28 @@ EVAL_SIGNALS: List[Signal] = [
 
 def get_step_map(interview_flow: List[str]) -> OrderedDict[StageTypes, List[Step]]:
     """Get step map based on interview flow.
-    
+
     Args:
         interview_flow: List of stage names in the interview flow
-        
+
     Returns:
         OrderedDict mapping stages to their steps
     """
     # Map string stage names to enum values
     stage_name_to_enum = {
         "introduction": StageTypes.INTRO,
-        "background": StageTypes.BACKGROUND, 
+        "background": StageTypes.BACKGROUND,
         "coding": StageTypes.CODING,
         "evaluation": StageTypes.EVAL,
-        "end": StageTypes.END
+        "end": StageTypes.END,
     }
 
     # Map enum values to step lists
     stage_to_steps = {
         StageTypes.INTRO: INTRO_STEPS,
-        StageTypes.BACKGROUND: BACKGROUND_STEPS, 
+        StageTypes.BACKGROUND: BACKGROUND_STEPS,
         StageTypes.CODING: CODING_STEPS,
-        StageTypes.EVAL: EVAL_STEPS
+        StageTypes.EVAL: EVAL_STEPS,
     }
 
     # Build ordered dict with only stages in interview flow
