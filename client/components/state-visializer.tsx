@@ -158,7 +158,7 @@ const PrimitiveValueCard: React.FC<{ value: string | number | boolean | null }> 
 
     return (
       <div className="text-lg font-mono bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-zinc-300 px-3 py-1.5 rounded-md inline-block">
-        "{value}"
+        &quot;{value}&quot;
       </div>
     );
   };
