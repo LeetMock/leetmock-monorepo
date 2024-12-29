@@ -19,6 +19,7 @@ from agent_graph.storages.langgraph_cloud import LangGraphCloudStateStorage
 from agent_graph.utils import get_configurable
 from convex import ConvexClient
 from langchain_core.messages import AnyMessage, HumanMessage
+from agent_graph.storages.convex import ConvexStateStorage
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
@@ -57,9 +58,10 @@ async def initialize_agent(state: AgentState, config: RunnableConfig) -> dict:
     )
     # logger.info(f"Question details: {question_details}")
 
-    state_storage = LangGraphCloudStateStorage(
-        thread_id=session_details["agentThreadId"],
-        assistant_id=session_details["assistantId"],
+    state_storage = ConvexStateStorage(
+        session_id=session_id,
+        state_type=AgentState,
+        convex_api=client,
     )
 
     values = await state_storage.get_state()
@@ -68,9 +70,15 @@ async def initialize_agent(state: AgentState, config: RunnableConfig) -> dict:
     messages_history = values["messages"]
     messages = []
     for message in messages_history:
-        if "<thinking>" not in message["content"]:
-            messages.append(message["type"] + ": " + message["content"])
+        if "<thinking>" not in message["kwargs"]["content"]:
+            if "AIMessage" in message["id"]:
+                messages.append(f"AI: {message['kwargs']['content']}")
 
+            elif "HumanMessage" in message["id"]:
+                messages.append(f"Human: {message['kwargs']['content']}")
+
+            else:
+                pass
     # logger.info(f"Messages history: {messages}")
 
     initial_state["SESSION"] = session_details
