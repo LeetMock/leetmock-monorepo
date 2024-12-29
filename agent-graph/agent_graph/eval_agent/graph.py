@@ -1,7 +1,7 @@
 import logging
 import os
 from collections import defaultdict
-from typing import cast
+from typing import List, cast
 
 import convex_client
 from agent_graph.code_mock_staged_v1.graph import AgentState as CodeMockAgentState
@@ -19,11 +19,11 @@ from agent_graph.prompts import JOIN_CALL_MESSAGE
 from agent_graph.storages.convex import ConvexStateStorage
 from agent_graph.utils import get_configurable
 from convex import ConvexClient
-from langchain_core.messages import AnyMessage, HumanMessage
+from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
-from langgraph.graph import END, START, StateGraph, add_messages
+from langgraph.graph import END, START, StateGraph
 from pydantic.v1 import BaseModel, Field
 
 from libs.convex.api import ConvexApi
@@ -71,18 +71,16 @@ async def initialize_agent(state: AgentState, config: RunnableConfig) -> dict:
     values = await state_storage.get_state()
 
     # Extracting the messages history from the state
-    messages_history = values["messages"]
+    messages_history: List[AnyMessage] = values["messages"]
     messages = []
     for message in messages_history:
-        if "<thinking>" not in message["kwargs"]["content"]:
-            if "AIMessage" in message["id"]:
-                messages.append(f"AI: {message['kwargs']['content']}")
+        if "<thinking>" in message.content:
+            continue
 
-            elif "HumanMessage" in message["id"]:
-                messages.append(f"Human: {message['kwargs']['content']}")
-
-            else:
-                pass
+        if isinstance(message, AIMessage):
+            messages.append(f"AI: {message.content}")
+        elif isinstance(message, HumanMessage):
+            messages.append(f"Human: {message.content}")
     # logger.info(f"Messages history: {messages}")
 
     initial_state["SESSION"] = session_details

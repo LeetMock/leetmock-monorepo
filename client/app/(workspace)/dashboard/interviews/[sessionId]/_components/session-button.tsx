@@ -68,7 +68,7 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
       success: "Interview ended successfully! 🎉",
       error: "Failed to end interview",
     });
-  }, [connectionState, disconnect, endSession, session]);
+  }, [connectionState, disconnect, endSession, session, triggerEval]);
 
   const buttonIcon = useMemo(() => {
     if (connectionState === ConnectionState.Connecting) {
