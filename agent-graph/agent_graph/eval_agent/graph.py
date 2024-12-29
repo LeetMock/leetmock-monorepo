@@ -25,6 +25,7 @@ from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph, add_messages
 from pydantic.v1 import BaseModel, Field
+from libs.convex.api import ConvexApi
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -34,6 +35,7 @@ configuration = convex_client.Configuration(host=os.getenv("CONVEX_URL") or "")
 CONVEX_URL = cast(str, os.getenv("CONVEX_URL"))
 
 client = ConvexClient(CONVEX_URL)
+convex_api = ConvexApi(convex_url=os.getenv("CONVEX_URL") or "")
 
 
 async def initialize_agent(state: AgentState, config: RunnableConfig) -> dict:
@@ -61,7 +63,7 @@ async def initialize_agent(state: AgentState, config: RunnableConfig) -> dict:
     state_storage = ConvexStateStorage(
         session_id=session_id,
         state_type=AgentState,
-        convex_api=client,
+        convex_api=convex_api,
     )
 
     values = await state_storage.get_state()
