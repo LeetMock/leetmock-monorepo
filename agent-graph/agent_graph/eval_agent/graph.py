@@ -36,6 +36,7 @@ configuration = convex_client.Configuration(host=os.getenv("CONVEX_URL") or "")
 CONVEX_URL = cast(str, os.getenv("CONVEX_URL"))
 
 client = ConvexClient(CONVEX_URL)
+convex_api = ConvexApi(convex_url=os.getenv("CONVEX_URL") or "")
 
 
 async def initialize_agent(state: AgentState, config: RunnableConfig) -> dict:
@@ -73,9 +74,15 @@ async def initialize_agent(state: AgentState, config: RunnableConfig) -> dict:
     messages_history = values["messages"]
     messages = []
     for message in messages_history:
-        if "<thinking>" not in message["content"]:
-            messages.append(message["type"] + ": " + message["content"])
+        if "<thinking>" not in message["kwargs"]["content"]:
+            if "AIMessage" in message["id"]:
+                messages.append(f"AI: {message['kwargs']['content']}")
 
+            elif "HumanMessage" in message["id"]:
+                messages.append(f"Human: {message['kwargs']['content']}")
+
+            else:
+                pass
     # logger.info(f"Messages history: {messages}")
 
     initial_state["SESSION"] = session_details

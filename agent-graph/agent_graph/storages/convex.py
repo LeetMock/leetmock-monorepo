@@ -1,9 +1,8 @@
-from ast import dump
+import logging
 from typing import Any, Dict, Type, cast
 
 from agent_graph.storages import StateStorage
 from agent_graph.utils import get_state_graph_initial_state_dict
-from agent_server.utils.logger import get_logger
 from langchain_core.load import dumps, loads
 from pydantic.v1 import BaseModel, Field
 
@@ -13,7 +12,7 @@ from libs.convex.convex_requests import (
     create_set_agent_state_by_session_id_request,
 )
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ConvexStateStorage(StateStorage):
