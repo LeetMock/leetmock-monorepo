@@ -4,6 +4,7 @@ from collections import defaultdict
 from typing import cast
 
 import convex_client
+from agent_graph.code_mock_staged_v1.graph import AgentState as CodeMockAgentState
 from agent_graph.eval_agent.constant import (
     DEFAULT_CONFIG,
     INITIAL_AGENT_STATE,
@@ -15,7 +16,7 @@ from agent_graph.eval_agent.prompts import overall_prompt
 from agent_graph.eval_agent.sub_eval import EVALUATION_TESTS
 from agent_graph.llms import get_model
 from agent_graph.prompts import JOIN_CALL_MESSAGE
-from agent_graph.storages.langgraph_cloud import LangGraphCloudStateStorage
+from agent_graph.storages.convex import ConvexStateStorage
 from agent_graph.utils import get_configurable
 from convex import ConvexClient
 from langchain_core.messages import AnyMessage, HumanMessage
@@ -24,6 +25,8 @@ from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph, add_messages
 from pydantic.v1 import BaseModel, Field
+
+from libs.convex.api import ConvexApi
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -57,9 +60,11 @@ async def initialize_agent(state: AgentState, config: RunnableConfig) -> dict:
     )
     # logger.info(f"Question details: {question_details}")
 
-    state_storage = LangGraphCloudStateStorage(
-        thread_id=session_details["agentThreadId"],
-        assistant_id=session_details["assistantId"],
+    convex_api = ConvexApi(convex_url=CONVEX_URL)
+    state_storage = ConvexStateStorage(
+        session_id=session_id,
+        state_type=CodeMockAgentState,
+        convex_api=convex_api,
     )
 
     values = await state_storage.get_state()
