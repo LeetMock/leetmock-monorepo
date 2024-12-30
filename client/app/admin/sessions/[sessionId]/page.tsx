@@ -55,7 +55,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col p-8">
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400 bg-clip-text text-transparent">
               Agent Graph State
@@ -69,7 +69,6 @@ export default function Home() {
             </div>
           )}
         </div>
-        <div className="h-[1px] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800" />
       </div>
 
       <Wait data={{ agentState }}>
