@@ -52,17 +52,6 @@ export default function Home() {
     return formatDistanceToNow(date, { addSuffix: true });
   }, [lastUpdated, now]);
 
-  const modifiedAgentState = useMemo(() => {
-    if (!isDefined(agentState)) return undefined;
-    agentState.current_stage_idx = Math.floor(Math.random() * 100);
-
-    // randomize message list
-    agentState.lastMessage =
-      agentState.messages[Math.floor(Math.random() * agentState.messages.length)];
-
-    return agentState;
-  }, [agentState, now]);
-
   return (
     <main className="flex min-h-screen flex-col p-8">
       <div className="mb-8">
@@ -83,7 +72,7 @@ export default function Home() {
         <div className="h-[1px] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800" />
       </div>
 
-      <Wait data={{ agentState: modifiedAgentState }}>
+      <Wait data={{ agentState }}>
         {({ agentState }) => <StateVisualizer state={agentState} />}
       </Wait>
     </main>
