@@ -217,6 +217,62 @@ const StateCard: React.FC<{ title: string; data: JsonValue; highlight?: boolean 
   );
 };
 
+const PrimitiveStateCard: React.FC<{
+  title: string;
+  data: string | number | boolean | null;
+  highlight?: boolean;
+}> = ({ title, data, highlight }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const isLongString = typeof data === "string" && data.length > 100;
+
+  return (
+    <motion.div
+      initial="initial"
+      animate={highlight ? "animate" : "initial"}
+      variants={highlightAnimation}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="rounded-lg"
+    >
+      <Card className="w-full mb-2">
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium">{title}</span>
+            {isLongString && (
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="text-xs text-gray-500 hover:text-gray-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+              >
+                {isExpanded ? "Show less" : "Show more"}
+              </button>
+            )}
+          </div>
+          {typeof data === "string" ? (
+            <div
+              className={cn(
+                "font-mono text-sm whitespace-pre-wrap break-words text-green-600 dark:text-green-400",
+                !isExpanded && isLongString && "line-clamp-3"
+              )}
+            >
+              {data.trim()}
+            </div>
+          ) : (
+            <span
+              className={cn(
+                "font-mono text-sm",
+                typeof data === "number" && "text-blue-600 dark:text-blue-400",
+                typeof data === "boolean" && "text-purple-600 dark:text-purple-400",
+                data === null && "text-gray-500 dark:text-gray-400"
+              )}
+            >
+              {data === null ? "null" : String(data)}
+            </span>
+          )}
+        </div>
+      </Card>
+    </motion.div>
+  );
+};
+
 export const StateVisualizer: React.FC<StateVisualizerProps> = ({ state }) => {
   const [selectedFields, setSelectedFields] = React.useState<string[]>(() => {
     const cachedFields = localStorage.getItem("selectedFields");
@@ -245,6 +301,10 @@ export const StateVisualizer: React.FC<StateVisualizerProps> = ({ state }) => {
     } else {
       setSelectedFields(Object.keys(state));
     }
+  };
+
+  const isPrimitive = (value: JsonValue): value is string | number | boolean | null => {
+    return typeof value !== "object" || value === null;
   };
 
   return (
@@ -296,9 +356,23 @@ export const StateVisualizer: React.FC<StateVisualizerProps> = ({ state }) => {
           <div className="flex-1 space-y-2 pb-8">
             {Object.entries(state)
               .filter(([key]) => selectedFields.includes(key))
-              .map(([key, value]) => (
-                <StateCard key={key} title={key} data={value} highlight={changedFields.has(key)} />
-              ))}
+              .map(([key, value]) =>
+                isPrimitive(value) ? (
+                  <PrimitiveStateCard
+                    key={key}
+                    title={key}
+                    data={value}
+                    highlight={changedFields.has(key)}
+                  />
+                ) : (
+                  <StateCard
+                    key={key}
+                    title={key}
+                    data={value}
+                    highlight={changedFields.has(key)}
+                  />
+                )
+              )}
           </div>
         </div>
       )}
