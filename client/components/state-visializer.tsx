@@ -7,30 +7,8 @@ import { cn } from "@/lib/utils";
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown, ChevronRight, Bot, User } from "lucide-react";
-
-type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
-
-interface SpecialObject {
-  lc: number;
-  type: string;
-  id: string[];
-  kwargs: { [key: string]: JsonValue };
-}
-
-interface StateVisualizerProps {
-  state: { [key: string]: JsonValue };
-}
-
-const isSpecialObject = (value: any): value is SpecialObject => {
-  return (
-    value &&
-    typeof value === "object" &&
-    "lc" in value &&
-    "type" in value &&
-    "id" in value &&
-    "kwargs" in value
-  );
-};
+import type { JsonValue, StateVisualizerProps } from "@/lib/types";
+import { isSpecialObject } from "@/lib/utils";
 
 const MessageView: React.FC<{ message: any; isFirst: boolean; isLast: boolean }> = ({
   message,

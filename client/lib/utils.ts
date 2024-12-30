@@ -3,7 +3,7 @@ import type { AccessTokenOptions, VideoGrant } from "livekit-server-sdk";
 import { AccessToken } from "livekit-server-sdk";
 import { twMerge } from "tailwind-merge";
 import { BG_COLORS } from "./constants";
-import { type DefinedObject, type Testcase } from "./types";
+import { JsonValue, SpecialObject, type DefinedObject, type Testcase } from "./types";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -137,6 +137,39 @@ function toPythonBoolean(value: any): string {
   }
   return value ? "True" : "False";
 }
+
+export const isSpecialObject = (value: any): value is SpecialObject => {
+  return (
+    value &&
+    typeof value === "object" &&
+    "lc" in value &&
+    "type" in value &&
+    "id" in value &&
+    "kwargs" in value
+  );
+};
+
+export const isPrimitive = (value: any) => {
+  return typeof value !== "object" || value === null;
+};
+
+export const unwrapSpecialObject = (value: any): JsonValue => {
+  if (isSpecialObject(value)) {
+    return value.kwargs;
+  }
+
+  if (isPrimitive(value)) {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => unwrapSpecialObject(item));
+  }
+
+  return Object.fromEntries(
+    Object.entries(value).map(([key, value]) => [key, unwrapSpecialObject(value)])
+  );
+};
 
 function generatePythonTestCode(question: Question, testCasesState: Testcase[]): string {
   const { functionName, inputParameters, evalMode, outputParameters } = question;

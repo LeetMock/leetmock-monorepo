@@ -52,3 +52,22 @@ export interface Testcase {
   input: Record<string, any>;
   expectedOutput?: any;
 }
+
+export type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [key: string]: JsonValue };
+
+export interface SpecialObject {
+  lc: number;
+  type: string;
+  id: string[];
+  kwargs: { [key: string]: JsonValue };
+}
+
+export interface StateVisualizerProps {
+  state: { [key: string]: JsonValue };
+}

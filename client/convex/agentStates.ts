@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./functions";
+import { isDefined, unwrapSpecialObject } from "@/lib/utils";
 
 export const getBySessionId = query({
   args: {
@@ -18,6 +19,24 @@ export const getBySessionId = query({
       state: result.state,
       lastUpdated: result.lastUpdated,
     };
+  },
+});
+
+export const getStructuredStateBySessionId = query({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  handler: async (ctx, { sessionId }) => {
+    const result = await ctx
+      .table("agentStates", "sessionId", (q) => q.eq("sessionId", sessionId))
+      .firstX();
+
+    if (!isDefined(result.state)) {
+      return undefined;
+    }
+
+    const stateJson = JSON.parse(result.state);
+    return unwrapSpecialObject(stateJson);
   },
 });
 
