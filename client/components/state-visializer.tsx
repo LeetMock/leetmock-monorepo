@@ -202,13 +202,16 @@ const StateCard: React.FC<{ title: string; data: JsonValue; highlight?: boolean 
             {title}
           </CardTitle>
         </CardHeader>
-        {isExpanded && (
-          <CardContent>
-            <div className="w-full rounded-md max-h-[500px] overflow-auto">
-              <JsonView data={data} />
-            </div>
-          </CardContent>
-        )}
+        <CardContent>
+          <div
+            className={cn(
+              "w-full rounded-md overflow-auto border p-4 transition-all duration-300",
+              isExpanded ? "max-h-[700px]" : "max-h-[200px]"
+            )}
+          >
+            <JsonView data={data} />
+          </div>
+        </CardContent>
       </Card>
     </motion.div>
   );

@@ -35,7 +35,7 @@ export default function Home() {
   useEffect(() => {
     const interval = setInterval(() => {
       setNow(new Date());
-    }, 1000);
+    }, 700);
 
     return () => clearInterval(interval);
   }, []);
@@ -43,14 +43,20 @@ export default function Home() {
   const formattedLastUpdated = useMemo(() => {
     if (!lastUpdated) return null;
     const date = new Date(lastUpdated);
-    const secondsAgo = differenceInSeconds(new Date(), date);
+    const secondsAgo = differenceInSeconds(now, date);
 
     if (secondsAgo < 60) {
       return `${secondsAgo} second${secondsAgo === 1 ? "" : "s"} ago`;
     }
 
     return formatDistanceToNow(date, { addSuffix: true });
-  }, [lastUpdated]);
+  }, [lastUpdated, now]);
+
+  const modifiedAgentState = useMemo(() => {
+    if (!isDefined(agentState)) return undefined;
+    agentState.current_stage_idx = Math.floor(Math.random() * 100);
+    return agentState;
+  }, [agentState, now]);
 
   return (
     <main className="flex min-h-screen flex-col p-8">
@@ -72,7 +78,7 @@ export default function Home() {
         <div className="h-[1px] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800" />
       </div>
 
-      <Wait data={{ agentState }}>
+      <Wait data={{ agentState: modifiedAgentState }}>
         {({ agentState }) => <StateVisualizer state={agentState} />}
       </Wait>
     </main>
