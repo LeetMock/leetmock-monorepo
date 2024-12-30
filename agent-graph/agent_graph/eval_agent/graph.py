@@ -6,7 +6,6 @@ from typing import List, cast
 import convex_client
 from agent_graph.code_mock_staged_v1.graph import AgentState as CodeMockAgentState
 from agent_graph.eval_agent.constant import (
-    DEFAULT_CONFIG,
     INITIAL_AGENT_STATE,
     SCORE_GUIDELINES,
     AgentConfig,
@@ -15,7 +14,6 @@ from agent_graph.eval_agent.constant import (
 from agent_graph.eval_agent.prompts import overall_prompt
 from agent_graph.eval_agent.sub_eval import EVALUATION_TESTS
 from agent_graph.llms import get_model
-from agent_graph.prompts import JOIN_CALL_MESSAGE
 from agent_graph.storages.convex import ConvexStateStorage
 from agent_graph.utils import get_configurable
 from convex import ConvexClient
@@ -24,7 +22,6 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
-from pydantic.v1 import BaseModel, Field
 
 from libs.convex.api import ConvexApi
 
@@ -39,29 +36,26 @@ client = ConvexClient(CONVEX_URL)
 convex_api = ConvexApi(convex_url=os.getenv("CONVEX_URL") or "")
 
 
-async def initialize_agent(state: AgentState, config: RunnableConfig) -> dict:
+async def initialize_agent(state: AgentState):
+    """Initialize the agent state"""
+
     initial_state = INITIAL_AGENT_STATE.copy()
     session_id = state.session_id
     initial_state["session_id"] = session_id
 
     # Get session details using getById query
-
     session_details = client.query(
         "sessions:getById_unauth", args={"sessionId": session_id}
     )
-    # logger.info(f"Session details: {session_details}")
 
     session_state = client.query(
         "codeSessionStates:getSessionStateBySessionId", args={"sessionId": session_id}
     )
-    # logger.info(f"Session state: {session_state}")
 
     question_details = client.query(
         "questions:getById", args={"questionId": session_details["questionId"]}
     )
-    # logger.info(f"Question details: {question_details}")
 
-    convex_api = ConvexApi(convex_url=CONVEX_URL)
     state_storage = ConvexStateStorage(
         session_id=session_id,
         state_type=CodeMockAgentState,
@@ -90,7 +84,9 @@ async def initialize_agent(state: AgentState, config: RunnableConfig) -> dict:
     return initial_state
 
 
-def final_evaluation(state: AgentState, config: RunnableConfig) -> dict:
+async def final_evaluation(state: AgentState, config: RunnableConfig):
+    """Final evaluation of the agent"""
+
     agent_config = get_configurable(AgentConfig, config)
 
     final_scores = defaultdict(dict)
@@ -134,8 +130,7 @@ def final_evaluation(state: AgentState, config: RunnableConfig) -> dict:
     logger.info(f"Previous evaluations: {previous_evals}")
 
     # Execute chain
-    feedback = chain.invoke({"previous_evaluations": "\n".join(previous_evals)})
-    logger.info(f"Feedback: {feedback}")
+    feedback = await chain.ainvoke({"previous_evaluations": "\n".join(previous_evals)})
 
     # write to convex db
     client.mutation(
