@@ -3,8 +3,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { cn, isDefined } from "@/lib/utils";
-import React, { useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
+import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
@@ -73,7 +73,14 @@ const JsonView: React.FC<{ data: JsonValue; level?: number }> = ({ data, level =
   const toggleExpand = () => setIsExpanded(!isExpanded);
 
   if (typeof data !== "object" || data === null) {
-    return <span className="text-blue-600 dark:text-blue-400">{JSON.stringify(data)}</span>;
+    return (
+      <span
+        className="text-blue-600 dark:text-blue-400 break-words"
+        style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+      >
+        {JSON.stringify(data)}
+      </span>
+    );
   }
 
   if (Array.isArray(data)) {
@@ -145,55 +152,6 @@ const JsonView: React.FC<{ data: JsonValue; level?: number }> = ({ data, level =
   );
 };
 
-const NullValueCard: React.FC = () => {
-  return (
-    <div className="flex items-center justify-center h-[50px]">
-      <div className="text-lg font-mono text-gray-400 dark:text-zinc-500 px-3 py-1.5 rounded-md inline-block italic">
-        null
-      </div>
-    </div>
-  );
-};
-
-const PrimitiveValueCard: React.FC<{ value: string | number | boolean | null }> = ({ value }) => {
-  if (value === null) {
-    return <NullValueCard />;
-  }
-
-  const getValueDisplay = () => {
-    if (typeof value === "boolean") {
-      return (
-        <div
-          className={cn(
-            "text-lg font-mono px-3 py-1.5 rounded-md inline-block",
-            value
-              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
-              : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
-          )}
-        >
-          {value.toString()}
-        </div>
-      );
-    }
-
-    if (typeof value === "number") {
-      return (
-        <div className="text-lg font-mono bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-3 py-1.5 rounded-md inline-block">
-          {value}
-        </div>
-      );
-    }
-
-    return (
-      <div className="text-lg font-mono bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-zinc-300 px-3 py-1.5 rounded-md inline-block">
-        &quot;{value}&quot;
-      </div>
-    );
-  };
-
-  return <div className="flex items-center justify-center h-[100px]">{getValueDisplay()}</div>;
-};
-
 const useStateComparison = (state: { [key: string]: JsonValue }) => {
   const prevStateRef = useRef<{ [key: string]: JsonValue }>({});
   const changedFields = useRef<Set<string>>(new Set());
@@ -221,31 +179,9 @@ const StateCard: React.FC<{ title: string; data: JsonValue; highlight?: boolean 
   data,
   highlight,
 }) => {
-  if (
-    typeof data === "string" ||
-    typeof data === "number" ||
-    typeof data === "boolean" ||
-    !isDefined(data)
-  ) {
-    return (
-      <motion.div
-        initial="initial"
-        animate={highlight ? "animate" : "initial"}
-        variants={highlightAnimation}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="rounded-lg"
-      >
-        <Card className="w-full mb-2">
-          <CardHeader className="py-3">
-            <CardTitle className="text-sm font-medium">{title}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <PrimitiveValueCard value={data} />
-          </CardContent>
-        </Card>
-      </motion.div>
-    );
-  }
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleExpand = () => setIsExpanded(!isExpanded);
 
   return (
     <motion.div
@@ -256,14 +192,23 @@ const StateCard: React.FC<{ title: string; data: JsonValue; highlight?: boolean 
       className="rounded-lg"
     >
       <Card className="w-full mb-2">
-        <CardHeader className="py-3">
-          <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <CardHeader className="py-3 cursor-pointer" onClick={toggleExpand}>
+          <CardTitle className="text-sm font-medium flex items-center">
+            {isExpanded ? (
+              <ChevronDown className="h-4 w-4 mr-2" />
+            ) : (
+              <ChevronRight className="h-4 w-4 mr-2" />
+            )}
+            {title}
+          </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="w-full rounded-md max-h-[500px] overflow-auto">
-            <JsonView data={data} />
-          </div>
-        </CardContent>
+        {isExpanded && (
+          <CardContent>
+            <div className="w-full rounded-md max-h-[500px] overflow-auto">
+              <JsonView data={data} />
+            </div>
+          </CardContent>
+        )}
       </Card>
     </motion.div>
   );
@@ -310,7 +255,7 @@ export const StateVisualizer: React.FC<StateVisualizerProps> = ({ state }) => {
       ) : (
         <div className="flex gap-2">
           {/* Left side - Toggle Panel */}
-          <Card className="w-[220px] p-3 sticky top-4 h-fit border-gray-200 dark:border-zinc-800">
+          <Card className="w-[220px] p-3 sticky top-4 h-fit">
             <div className="space-y-1">
               <div className="flex items-center justify-between py-1.5 border-b border-gray-200 dark:border-zinc-700">
                 <span className="text-sm font-medium dark:text-zinc-100">Show All Fields</span>

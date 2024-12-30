@@ -11,7 +11,6 @@ import { useState, useEffect, useMemo } from "react";
 import { formatDistanceToNow, differenceInSeconds } from "date-fns";
 
 export default function Home() {
-  const [state, setState] = useState({});
   const { sessionId } = useParams();
   const agentStateSnapshot = useQuery(api.agentStates.getBySessionId, {
     sessionId: sessionId as Id<"sessions">,
