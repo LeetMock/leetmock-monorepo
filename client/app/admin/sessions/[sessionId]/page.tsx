@@ -52,14 +52,6 @@ export default function Home() {
     return formatDistanceToNow(date, { addSuffix: true });
   }, [lastUpdated, now]);
 
-  const modifiedState = useMemo(() => {
-    if (!isDefined(agentState)) return undefined;
-    agentState.myString = `
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-  `;
-    return agentState;
-  }, [agentState]);
-
   return (
     <main className="flex min-h-screen flex-col p-8">
       <div className="mb-8">
@@ -79,7 +71,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor i
         </div>
       </div>
 
-      <Wait data={{ agentState: modifiedState }}>
+      <Wait data={{ agentState }}>
         {({ agentState }) => <StateVisualizer state={agentState} />}
       </Wait>
     </main>

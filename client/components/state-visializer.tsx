@@ -6,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, Bot, User } from "lucide-react";
 
 type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 
@@ -32,16 +32,54 @@ const isSpecialObject = (value: any): value is SpecialObject => {
   );
 };
 
-const MessageView: React.FC<{ message: any }> = ({ message }) => {
+const MessageView: React.FC<{ message: any; isFirst: boolean; isLast: boolean }> = ({
+  message,
+  isFirst,
+  isLast,
+}) => {
+  const isAI = message.kwargs.type === "ai";
+
   return (
-    <div className="bg-gray-100 dark:bg-gray-800/50 p-3 rounded-lg mb-2 border border-gray-200 dark:border-zinc-700">
-      <div className="font-semibold text-gray-900 dark:text-zinc-100">{message.kwargs.type}</div>
-      <div className="text-sm text-gray-700 dark:text-zinc-300 mt-1">{message.kwargs.content}</div>
-      {message.kwargs.id && (
-        <div className="text-xs text-gray-500 dark:text-zinc-400 mt-2 font-mono">
-          ID: {message.kwargs.id}
-        </div>
+    <div
+      className={cn(
+        "flex gap-3 p-4",
+        isAI ? "bg-gray-50 dark:bg-zinc-900/50" : "bg-white dark:bg-zinc-900",
+        isFirst && "rounded-t-lg",
+        isLast && "rounded-b-lg"
       )}
+    >
+      <div
+        className={cn(
+          "size-8 rounded-md flex items-center justify-center shrink-0",
+          isAI ? "bg-blue-500" : "bg-gray-100 dark:bg-zinc-800"
+        )}
+      >
+        {isAI ? (
+          <Bot className="size-5 text-white" />
+        ) : (
+          <User className="size-5 text-gray-600 dark:text-zinc-400" />
+        )}
+      </div>
+      <div className="flex-1 space-y-1">
+        <div className="flex items-center gap-2">
+          <span
+            className={cn(
+              "text-sm font-medium",
+              isAI ? "text-blue-600 dark:text-blue-400" : "text-gray-700 dark:text-zinc-300"
+            )}
+          >
+            {message.kwargs.type}
+          </span>
+          {message.kwargs.id && (
+            <span className="text-xs text-gray-500 dark:text-zinc-500 font-mono">
+              {message.kwargs.id}
+            </span>
+          )}
+        </div>
+        <div className="text-sm text-gray-600 dark:text-zinc-300 whitespace-pre-wrap">
+          {message.kwargs.content}
+        </div>
+      </div>
     </div>
   );
 };
@@ -58,9 +96,14 @@ const MessageListView: React.FC<{ messages: any[] }> = ({ messages }) => {
   }, [messages]);
 
   return (
-    <div className="space-y-3">
+    <div className="rounded-lg border divide-y dark:divide-zinc-800">
       {messages.map((message, index) => (
-        <MessageView key={index} message={message} />
+        <MessageView
+          key={index}
+          message={message}
+          isFirst={index === 0}
+          isLast={index === messages.length - 1}
+        />
       ))}
       <div ref={messagesEndRef} />
     </div>
@@ -108,7 +151,7 @@ const JsonView: React.FC<{ data: JsonValue; level?: number }> = ({ data, level =
 
   if (isSpecialObject(data)) {
     if (data.id[2] === "messages") {
-      return <MessageView message={data} />;
+      return <MessageView message={data} isFirst={true} isLast={true} />;
     }
     return (
       <div>
@@ -205,7 +248,7 @@ const StateCard: React.FC<{ title: string; data: JsonValue; highlight?: boolean 
         <CardContent>
           <div
             className={cn(
-              "w-full rounded-md overflow-auto border p-4 transition-all duration-300",
+              "w-full rounded-md overflow-auto transition-all duration-300",
               isExpanded ? "max-h-[700px]" : "max-h-[200px]"
             )}
           >
