@@ -166,6 +166,7 @@ const useStateComparison = (state: { [key: string]: JsonValue }) => {
     prevStateRef.current = state;
   }, [state]);
 
+  console.log(changedFields.current);
   return changedFields.current;
 };
 

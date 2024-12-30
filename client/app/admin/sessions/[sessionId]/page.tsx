@@ -35,7 +35,7 @@ export default function Home() {
   useEffect(() => {
     const interval = setInterval(() => {
       setNow(new Date());
-    }, 700);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -55,6 +55,11 @@ export default function Home() {
   const modifiedAgentState = useMemo(() => {
     if (!isDefined(agentState)) return undefined;
     agentState.current_stage_idx = Math.floor(Math.random() * 100);
+
+    // randomize message list
+    agentState.lastMessage =
+      agentState.messages[Math.floor(Math.random() * agentState.messages.length)];
+
     return agentState;
   }, [agentState, now]);
 
