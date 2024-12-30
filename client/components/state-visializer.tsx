@@ -6,6 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { cn, isDefined } from "@/lib/utils";
 import React, { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import { ChevronDown, ChevronRight } from "lucide-react";
 
 type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 
@@ -67,6 +68,10 @@ const MessageListView: React.FC<{ messages: any[] }> = ({ messages }) => {
 };
 
 const JsonView: React.FC<{ data: JsonValue; level?: number }> = ({ data, level = 0 }) => {
+  const [isExpanded, setIsExpanded] = React.useState(level < 2);
+
+  const toggleExpand = () => setIsExpanded(!isExpanded);
+
   if (typeof data !== "object" || data === null) {
     return <span className="text-blue-600 dark:text-blue-400">{JSON.stringify(data)}</span>;
   }
@@ -76,12 +81,20 @@ const JsonView: React.FC<{ data: JsonValue; level?: number }> = ({ data, level =
       return <MessageListView messages={data} />;
     }
     return (
-      <div className="pl-4 border-l border-gray-300 max-w-[50rem]">
-        {data.map((item, index) => (
-          <div key={index} className="py-1">
-            <JsonView data={item} level={level + 1} />
+      <div>
+        <div onClick={toggleExpand} className="cursor-pointer inline-flex items-center">
+          {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          <span className="ml-1">Array[{data.length}]</span>
+        </div>
+        {isExpanded && (
+          <div className="pl-4 border-l border-gray-300">
+            {data.map((item, index) => (
+              <div key={index} className="py-1">
+                <JsonView data={item} level={level + 1} />
+              </div>
+            ))}
           </div>
-        ))}
+        )}
       </div>
     );
   }
@@ -91,28 +104,43 @@ const JsonView: React.FC<{ data: JsonValue; level?: number }> = ({ data, level =
       return <MessageView message={data} />;
     }
     return (
-      <div className="pl-4 border-l border-gray-300 max-w-[50rem]">
-        <Badge variant="outline" className="mb-2">
-          {data.id.join(".")}
-        </Badge>
-        {Object.entries(data.kwargs).map(([key, value]) => (
-          <div key={key} className="py-1">
-            <span className="text-gray-500">{key}: </span>
-            <JsonView data={value} level={level + 1} />
+      <div>
+        <div onClick={toggleExpand} className="cursor-pointer inline-flex items-center">
+          {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          <Badge variant="outline" className="ml-1">
+            {data.id.join(".")}
+          </Badge>
+        </div>
+        {isExpanded && (
+          <div className="pl-4 border-l border-gray-300">
+            {Object.entries(data.kwargs).map(([key, value]) => (
+              <div key={key} className="py-1">
+                <span className="text-gray-500">{key}: </span>
+                <JsonView data={value} level={level + 1} />
+              </div>
+            ))}
           </div>
-        ))}
+        )}
       </div>
     );
   }
 
   return (
-    <div className="pl-4 border-l border-gray-200 dark:border-zinc-700">
-      {Object.entries(data).map(([key, value]) => (
-        <div key={key} className="py-1">
-          <span className="text-gray-500 dark:text-zinc-400">{key}: </span>
-          <JsonView data={value} level={level + 1} />
+    <div>
+      <div onClick={toggleExpand} className="cursor-pointer inline-flex items-center">
+        {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        <span className="ml-1">Object</span>
+      </div>
+      {isExpanded && (
+        <div className="pl-4 border-l border-gray-200 dark:border-zinc-700">
+          {Object.entries(data).map(([key, value]) => (
+            <div key={key} className="py-1">
+              <span className="text-gray-500 dark:text-zinc-400">{key}: </span>
+              <JsonView data={value} level={level + 1} />
+            </div>
+          ))}
         </div>
-      ))}
+      )}
     </div>
   );
 };
@@ -232,7 +260,7 @@ const StateCard: React.FC<{ title: string; data: JsonValue; highlight?: boolean 
           <CardTitle className="text-sm font-medium">{title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="w-full rounded-md max-h-[500px] overflow-auto max-w-[1000px]">
+          <div className="w-full rounded-md max-h-[500px] overflow-auto">
             <JsonView data={data} />
           </div>
         </CardContent>
