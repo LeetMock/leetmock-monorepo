@@ -43,3 +43,30 @@ export const applyInviteCode = userMutation({
     });
   },
 });
+
+export const createDefaultUserProfile = userMutation({
+  args: {
+    email: v.string(),
+  },
+  handler: async (ctx, { email }) => {
+    const profile = await ctx.table("userProfiles").get("userId", ctx.user.subject);
+
+    if (isDefined(profile)) {
+      console.log("User already exists");
+      return;
+    }
+
+    const userId = ctx.user.subject;
+    const role = "waitlist";
+    const subscription = "free";
+    const minutesRemaining = FREE_PLAN_MINUTES_ONLY_ONCE;
+
+    await ctx.table("userProfiles").insert({
+      userId,
+      role,
+      email,
+      subscription,
+      minutesRemaining,
+    });
+  },
+});

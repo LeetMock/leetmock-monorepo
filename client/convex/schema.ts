@@ -16,7 +16,7 @@ export const scoreDetailSchema = {
 
 const schema = defineEntSchema({
   userProfiles: defineEnt({
-    role: v.union(v.literal("admin"), v.literal("user")),
+    role: v.union(v.literal("admin"), v.literal("user"), v.literal("waitlist")),
     subscription: v.union(
       v.literal("free"),
       v.literal("basic"),
