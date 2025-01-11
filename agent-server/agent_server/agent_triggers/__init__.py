@@ -32,6 +32,7 @@ from typing import Any, Dict, List, Tuple
 from agent_server.agent_streams import AgentStream
 from agent_server.events import BaseEvent
 from langchain_core.messages import AnyMessage
+from livekit.agents.pipeline.pipeline_agent import VoicePipelineAgent
 from pydantic import BaseModel, Field, PrivateAttr
 
 from libs.timestamp import Timestamp
@@ -53,6 +54,8 @@ class AgentTrigger(BaseModel):
         _started (bool): Flag indicating if the trigger has been started
     """
 
+    assistant: VoicePipelineAgent = Field(..., description="The assistant to trigger")
+
     stream: AgentStream = Field(..., description="The agent stream to trigger")
 
     state_update_q: asyncio.Queue[Dict] = Field(
@@ -72,11 +75,14 @@ class AgentTrigger(BaseModel):
 
     def __init__(
         self,
+        assistant: VoicePipelineAgent,
         stream: AgentStream,
         events: List[BaseEvent],
         state_update_q: asyncio.Queue[Dict],
     ):
-        super().__init__(stream=stream, state_update_q=state_update_q)
+        super().__init__(
+            assistant=assistant, stream=stream, state_update_q=state_update_q
+        )
 
         self._events = events
         self._timestamp = Timestamp()
@@ -87,6 +93,7 @@ class AgentTrigger(BaseModel):
 
     def interrupt(self):
         """Interrupts the current agent action by refreshing the timestamp."""
+        self.assistant.interrupt()
         self._timestamp.refresh()
 
     async def trigger(self):

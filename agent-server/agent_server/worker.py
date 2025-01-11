@@ -176,6 +176,7 @@ async def entrypoint(ctx: JobContext):
     )
 
     agent_trigger = AgentTrigger(
+        assistant=assistant,
         stream=agent_stream,
         state_update_q=state_update_q,
         events=[
