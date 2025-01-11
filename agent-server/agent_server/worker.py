@@ -23,7 +23,6 @@ from agent_server.events.events import (
     CodeEditorChangedEvent,
     GroundTruthTestcaseExecutedEvent,
     ReminderEvent,
-    StepTrackingEvent,
     TestcaseChangedEvent,
     UserMessageEvent,
     UserTestcaseExecutedEvent,
@@ -35,7 +34,7 @@ from agent_server.utils.messages import livekit_to_langchain_message
 from livekit.agents import cli  # type: ignore
 from livekit.agents import JobContext, JobProcess, WorkerOptions, llm, utils
 from livekit.agents.llm import ChatMessage
-from livekit.agents.voice_assistant import VoicePipelineAgent
+from livekit.agents.pipeline.pipeline_agent import VoicePipelineAgent
 from livekit.agents.worker import Worker, _DefaultLoadCalc
 from livekit.plugins import deepgram, silero, turn_detector
 from livekit.rtc import DataPacket
@@ -90,6 +89,8 @@ def prewarm(proc: JobProcess):
 
 async def entrypoint(ctx: JobContext):
     AGENT_NAME = "code-mock-staged-v1"
+
+    logger.info(f"Convex URL: {os.environ['CONVEX_URL']}")
 
     no_op_llm = NoopLLM()
     convex_api = ConvexApi(convex_url=os.getenv("CONVEX_URL") or "")
