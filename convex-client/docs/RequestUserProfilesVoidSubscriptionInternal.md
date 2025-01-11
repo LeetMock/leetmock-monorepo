@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**args** | [**RequestUserProfilesVoidSubscriptionInternalArgs**](RequestUserProfilesVoidSubscriptionInternalArgs.md) |  | 
+**args** | [**RequestInviteCodesCreateDefaultUserProfileArgs**](RequestInviteCodesCreateDefaultUserProfileArgs.md) |  | 
 
 ## Example
 

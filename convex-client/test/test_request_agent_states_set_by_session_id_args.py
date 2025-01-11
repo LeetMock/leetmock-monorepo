@@ -36,12 +36,12 @@ class TestRequestAgentStatesSetBySessionIdArgs(unittest.TestCase):
         if include_optional:
             return RequestAgentStatesSetBySessionIdArgs(
                 session_id = '',
-                state = None
+                state = ''
             )
         else:
             return RequestAgentStatesSetBySessionIdArgs(
                 session_id = '',
-                state = None,
+                state = '',
         )
         """
 

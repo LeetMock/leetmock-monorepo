@@ -107,6 +107,7 @@ Class | Method | HTTP request | Description
 *MutationApi* | [**api_run_code_session_events_commit_code_session_event_post**](docs/MutationApi.md#api_run_code_session_events_commit_code_session_event_post) | **POST** /api/run/codeSessionEvents/commitCodeSessionEvent | Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
 *MutationApi* | [**api_run_eval_insert_evaluation_post**](docs/MutationApi.md#api_run_eval_insert_evaluation_post) | **POST** /api/run/eval/insertEvaluation | Calls a mutation at the path eval.js:insertEvaluation
 *MutationApi* | [**api_run_invite_codes_apply_invite_code_post**](docs/MutationApi.md#api_run_invite_codes_apply_invite_code_post) | **POST** /api/run/inviteCodes/applyInviteCode | Calls a mutation at the path inviteCodes.js:applyInviteCode
+*MutationApi* | [**api_run_invite_codes_create_default_user_profile_post**](docs/MutationApi.md#api_run_invite_codes_create_default_user_profile_post) | **POST** /api/run/inviteCodes/createDefaultUserProfile | Calls a mutation at the path inviteCodes.js:createDefaultUserProfile
 *MutationApi* | [**api_run_questions_create_question_post**](docs/MutationApi.md#api_run_questions_create_question_post) | **POST** /api/run/questions/createQuestion | Calls a mutation at the path questions.js:createQuestion
 *MutationApi* | [**api_run_questions_delete_question_post**](docs/MutationApi.md#api_run_questions_delete_question_post) | **POST** /api/run/questions/deleteQuestion | Calls a mutation at the path questions.js:deleteQuestion
 *MutationApi* | [**api_run_questions_update_question_post**](docs/MutationApi.md#api_run_questions_update_question_post) | **POST** /api/run/questions/updateQuestion | Calls a mutation at the path questions.js:updateQuestion
@@ -114,6 +115,7 @@ Class | Method | HTTP request | Description
 *MutationApi* | [**api_run_sessions_end_session_post**](docs/MutationApi.md#api_run_sessions_end_session_post) | **POST** /api/run/sessions/endSession | Calls a mutation at the path sessions.js:endSession
 *MutationApi* | [**api_run_sessions_start_session_post**](docs/MutationApi.md#api_run_sessions_start_session_post) | **POST** /api/run/sessions/startSession | Calls a mutation at the path sessions.js:startSession
 *QueryApi* | [**api_run_agent_states_get_by_session_id_post**](docs/QueryApi.md#api_run_agent_states_get_by_session_id_post) | **POST** /api/run/agentStates/getBySessionId | Calls a query at the path agentStates.js:getBySessionId
+*QueryApi* | [**api_run_agent_states_get_structured_state_by_session_id_post**](docs/QueryApi.md#api_run_agent_states_get_structured_state_by_session_id_post) | **POST** /api/run/agentStates/getStructuredStateBySessionId | Calls a query at the path agentStates.js:getStructuredStateBySessionId
 *QueryApi* | [**api_run_code_session_events_get_latest_content_change_event_post**](docs/QueryApi.md#api_run_code_session_events_get_latest_content_change_event_post) | **POST** /api/run/codeSessionEvents/getLatestContentChangeEvent | Calls a query at the path codeSessionEvents.js:getLatestContentChangeEvent
 *QueryApi* | [**api_run_code_session_events_get_latest_ground_truth_testcase_executed_event_post**](docs/QueryApi.md#api_run_code_session_events_get_latest_ground_truth_testcase_executed_event_post) | **POST** /api/run/codeSessionEvents/getLatestGroundTruthTestcaseExecutedEvent | Calls a query at the path codeSessionEvents.js:getLatestGroundTruthTestcaseExecutedEvent
 *QueryApi* | [**api_run_code_session_events_get_latest_testcase_change_event_post**](docs/QueryApi.md#api_run_code_session_events_get_latest_testcase_change_event_post) | **POST** /api/run/codeSessionEvents/getLatestTestcaseChangeEvent | Calls a query at the path codeSessionEvents.js:getLatestTestcaseChangeEvent
@@ -152,6 +154,7 @@ Class | Method | HTTP request | Description
  - [RequestAdminsPatchUserSubscription](docs/RequestAdminsPatchUserSubscription.md)
  - [RequestAdminsPatchUserSubscriptionArgs](docs/RequestAdminsPatchUserSubscriptionArgs.md)
  - [RequestAgentStatesGetBySessionId](docs/RequestAgentStatesGetBySessionId.md)
+ - [RequestAgentStatesGetStructuredStateBySessionId](docs/RequestAgentStatesGetStructuredStateBySessionId.md)
  - [RequestAgentStatesSetBySessionId](docs/RequestAgentStatesSetBySessionId.md)
  - [RequestAgentStatesSetBySessionIdArgs](docs/RequestAgentStatesSetBySessionIdArgs.md)
  - [RequestCodeSessionEventsCommitCodeSessionEvent](docs/RequestCodeSessionEventsCommitCodeSessionEvent.md)
@@ -193,6 +196,8 @@ Class | Method | HTTP request | Description
  - [RequestEvalTriggerEvalAction](docs/RequestEvalTriggerEvalAction.md)
  - [RequestInviteCodesApplyInviteCode](docs/RequestInviteCodesApplyInviteCode.md)
  - [RequestInviteCodesApplyInviteCodeArgs](docs/RequestInviteCodesApplyInviteCodeArgs.md)
+ - [RequestInviteCodesCreateDefaultUserProfile](docs/RequestInviteCodesCreateDefaultUserProfile.md)
+ - [RequestInviteCodesCreateDefaultUserProfileArgs](docs/RequestInviteCodesCreateDefaultUserProfileArgs.md)
  - [RequestInviteCodesCreateInviteCode](docs/RequestInviteCodesCreateInviteCode.md)
  - [RequestInviteCodesCreateInviteCodeArgs](docs/RequestInviteCodesCreateInviteCodeArgs.md)
  - [RequestInviteCodesCreateInviteCodeArgsAssignedRole](docs/RequestInviteCodesCreateInviteCodeArgsAssignedRole.md)
@@ -234,7 +239,6 @@ Class | Method | HTTP request | Description
  - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval.md)
  - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.md)
  - [RequestUserProfilesVoidSubscriptionInternal](docs/RequestUserProfilesVoidSubscriptionInternal.md)
- - [RequestUserProfilesVoidSubscriptionInternalArgs](docs/RequestUserProfilesVoidSubscriptionInternalArgs.md)
  - [ResponseActionsCreateAgentThread](docs/ResponseActionsCreateAgentThread.md)
  - [ResponseActionsGetSessionMetadata](docs/ResponseActionsGetSessionMetadata.md)
  - [ResponseActionsGetSessionMetadataValue](docs/ResponseActionsGetSessionMetadataValue.md)
@@ -249,6 +253,7 @@ Class | Method | HTTP request | Description
  - [ResponseAdminsPatchUserSubscription](docs/ResponseAdminsPatchUserSubscription.md)
  - [ResponseAgentStatesGetBySessionId](docs/ResponseAgentStatesGetBySessionId.md)
  - [ResponseAgentStatesGetBySessionIdValue](docs/ResponseAgentStatesGetBySessionIdValue.md)
+ - [ResponseAgentStatesGetStructuredStateBySessionId](docs/ResponseAgentStatesGetStructuredStateBySessionId.md)
  - [ResponseAgentStatesSetBySessionId](docs/ResponseAgentStatesSetBySessionId.md)
  - [ResponseCodeSessionEventsCommitCodeSessionEvent](docs/ResponseCodeSessionEventsCommitCodeSessionEvent.md)
  - [ResponseCodeSessionEventsGetLatestContentChangeEvent](docs/ResponseCodeSessionEventsGetLatestContentChangeEvent.md)
@@ -274,6 +279,7 @@ Class | Method | HTTP request | Description
  - [ResponseEvalInsertEvaluation](docs/ResponseEvalInsertEvaluation.md)
  - [ResponseEvalTriggerEvalAction](docs/ResponseEvalTriggerEvalAction.md)
  - [ResponseInviteCodesApplyInviteCode](docs/ResponseInviteCodesApplyInviteCode.md)
+ - [ResponseInviteCodesCreateDefaultUserProfile](docs/ResponseInviteCodesCreateDefaultUserProfile.md)
  - [ResponseInviteCodesCreateInviteCode](docs/ResponseInviteCodesCreateInviteCode.md)
  - [ResponseQuestionsCreateQuestion](docs/ResponseQuestionsCreateQuestion.md)
  - [ResponseQuestionsDeleteQuestion](docs/ResponseQuestionsDeleteQuestion.md)

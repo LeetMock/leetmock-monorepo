@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.request_user_profiles_void_subscription_internal import RequestUserProfilesVoidSubscriptionInternal
+from convex_client.models.request_invite_codes_create_default_user_profile import RequestInviteCodesCreateDefaultUserProfile
 
-class TestRequestUserProfilesVoidSubscriptionInternal(unittest.TestCase):
-    """RequestUserProfilesVoidSubscriptionInternal unit test stubs"""
+class TestRequestInviteCodesCreateDefaultUserProfile(unittest.TestCase):
+    """RequestInviteCodesCreateDefaultUserProfile unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,28 +25,28 @@ class TestRequestUserProfilesVoidSubscriptionInternal(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> RequestUserProfilesVoidSubscriptionInternal:
-        """Test RequestUserProfilesVoidSubscriptionInternal
+    def make_instance(self, include_optional) -> RequestInviteCodesCreateDefaultUserProfile:
+        """Test RequestInviteCodesCreateDefaultUserProfile
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `RequestUserProfilesVoidSubscriptionInternal`
+        # uncomment below to create an instance of `RequestInviteCodesCreateDefaultUserProfile`
         """
-        model = RequestUserProfilesVoidSubscriptionInternal()
+        model = RequestInviteCodesCreateDefaultUserProfile()
         if include_optional:
-            return RequestUserProfilesVoidSubscriptionInternal(
+            return RequestInviteCodesCreateDefaultUserProfile(
                 args = convex_client.models.request_invite_codes_create_default_user_profile_args.Request_inviteCodes_createDefaultUserProfile_args(
                     email = '', )
             )
         else:
-            return RequestUserProfilesVoidSubscriptionInternal(
+            return RequestInviteCodesCreateDefaultUserProfile(
                 args = convex_client.models.request_invite_codes_create_default_user_profile_args.Request_inviteCodes_createDefaultUserProfile_args(
                     email = '', ),
         )
         """
 
-    def testRequestUserProfilesVoidSubscriptionInternal(self):
-        """Test RequestUserProfilesVoidSubscriptionInternal"""
+    def testRequestInviteCodesCreateDefaultUserProfile(self):
+        """Test RequestInviteCodesCreateDefaultUserProfile"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

@@ -23,9 +23,9 @@ from convex_client.models.request_invite_codes_create_default_user_profile_args 
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestUserProfilesVoidSubscriptionInternal(BaseModel):
+class RequestInviteCodesCreateDefaultUserProfile(BaseModel):
     """
-    RequestUserProfilesVoidSubscriptionInternal
+    RequestInviteCodesCreateDefaultUserProfile
     """ # noqa: E501
     args: RequestInviteCodesCreateDefaultUserProfileArgs
     __properties: ClassVar[List[str]] = ["args"]
@@ -48,7 +48,7 @@ class RequestUserProfilesVoidSubscriptionInternal(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestUserProfilesVoidSubscriptionInternal from a JSON string"""
+        """Create an instance of RequestInviteCodesCreateDefaultUserProfile from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -76,7 +76,7 @@ class RequestUserProfilesVoidSubscriptionInternal(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestUserProfilesVoidSubscriptionInternal from a dict"""
+        """Create an instance of RequestInviteCodesCreateDefaultUserProfile from a dict"""
         if obj is None:
             return None
 

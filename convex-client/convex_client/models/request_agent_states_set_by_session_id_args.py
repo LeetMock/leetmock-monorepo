@@ -18,7 +18,7 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
+from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -27,7 +27,7 @@ class RequestAgentStatesSetBySessionIdArgs(BaseModel):
     RequestAgentStatesSetBySessionIdArgs
     """ # noqa: E501
     session_id: StrictStr = Field(description="ID from table \"sessions\"", alias="sessionId")
-    state: Optional[Any]
+    state: StrictStr
     __properties: ClassVar[List[str]] = ["sessionId", "state"]
 
     model_config = ConfigDict(
@@ -69,11 +69,6 @@ class RequestAgentStatesSetBySessionIdArgs(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # set to None if state (nullable) is None
-        # and model_fields_set contains the field
-        if self.state is None and "state" in self.model_fields_set:
-            _dict['state'] = None
-
         return _dict
 
     @classmethod

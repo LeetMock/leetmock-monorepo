@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **session_id** | **str** | ID from table \&quot;sessions\&quot; | 
-**state** | **object** |  | 
+**state** | **str** |  | 
 
 ## Example
 

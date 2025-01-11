@@ -36,12 +36,11 @@ class TestResponseAgentStatesGetBySessionIdValue(unittest.TestCase):
         if include_optional:
             return ResponseAgentStatesGetBySessionIdValue(
                 last_updated = 1.337,
-                state = None
+                state = ''
             )
         else:
             return ResponseAgentStatesGetBySessionIdValue(
                 last_updated = 1.337,
-                state = None,
         )
         """
 

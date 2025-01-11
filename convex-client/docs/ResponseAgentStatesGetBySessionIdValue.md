@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **last_updated** | **float** |  | 
-**state** | **object** |  | 
+**state** | **str** |  | [optional] 
 
 ## Example
 

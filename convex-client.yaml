@@ -45,6 +45,37 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/inviteCodes/createDefaultUserProfile:
+    post:
+      summary: Calls a mutation at the path inviteCodes.js:createDefaultUserProfile
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_inviteCodes.createDefaultUserProfile"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_inviteCodes.createDefaultUserProfile"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
   /api/run/questions/createQuestion:
     post:
       summary: Calls a mutation at the path questions.js:createQuestion
@@ -1161,6 +1192,37 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/agentStates/getStructuredStateBySessionId:
+    post:
+      summary: Calls a query at the path agentStates.js:getStructuredStateBySessionId
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_agentStates.getStructuredStateBySessionId"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_agentStates.getStructuredStateBySessionId"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
   /api/run/agentStates/setBySessionId:
     post:
       summary: Calls a mutation at the path agentStates.js:setBySessionId
@@ -1213,6 +1275,35 @@ components:
               type: string
 
     Response_inviteCodes.applyInviteCode:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_inviteCodes.createDefaultUserProfile:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - email
+          properties:
+            email:
+              type: string
+
+    Response_inviteCodes.createDefaultUserProfile:
       type: object
       required:
         - status
@@ -3734,11 +3825,41 @@ components:
           type: object
           required:
             - lastUpdated
-            - state
           properties:
             lastUpdated:
               type: number
-            state: {}
+            state:
+              type: string
+
+    Request_agentStates.getStructuredStateBySessionId:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_agentStates.getStructuredStateBySessionId:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
 
     Request_agentStates.setBySessionId:
       type: object
@@ -3754,7 +3875,8 @@ components:
             sessionId:
               type: string
               description: ID from table "sessions"
-            state: {}
+            state:
+              type: string
 
     Response_agentStates.setBySessionId:
       type: object

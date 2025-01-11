@@ -17,18 +17,17 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, StrictStr
 from typing import Any, ClassVar, Dict, List
-from convex_client.models.request_invite_codes_create_default_user_profile_args import RequestInviteCodesCreateDefaultUserProfileArgs
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RequestUserProfilesVoidSubscriptionInternal(BaseModel):
+class RequestInviteCodesCreateDefaultUserProfileArgs(BaseModel):
     """
-    RequestUserProfilesVoidSubscriptionInternal
+    RequestInviteCodesCreateDefaultUserProfileArgs
     """ # noqa: E501
-    args: RequestInviteCodesCreateDefaultUserProfileArgs
-    __properties: ClassVar[List[str]] = ["args"]
+    email: StrictStr
+    __properties: ClassVar[List[str]] = ["email"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -48,7 +47,7 @@ class RequestUserProfilesVoidSubscriptionInternal(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RequestUserProfilesVoidSubscriptionInternal from a JSON string"""
+        """Create an instance of RequestInviteCodesCreateDefaultUserProfileArgs from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -69,14 +68,11 @@ class RequestUserProfilesVoidSubscriptionInternal(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of args
-        if self.args:
-            _dict['args'] = self.args.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RequestUserProfilesVoidSubscriptionInternal from a dict"""
+        """Create an instance of RequestInviteCodesCreateDefaultUserProfileArgs from a dict"""
         if obj is None:
             return None
 
@@ -84,7 +80,7 @@ class RequestUserProfilesVoidSubscriptionInternal(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "args": RequestInviteCodesCreateDefaultUserProfileArgs.from_dict(obj["args"]) if obj.get("args") is not None else None
+            "email": obj.get("email")
         })
         return _obj
 

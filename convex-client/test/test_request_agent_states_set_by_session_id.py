@@ -37,13 +37,13 @@ class TestRequestAgentStatesSetBySessionId(unittest.TestCase):
             return RequestAgentStatesSetBySessionId(
                 args = convex_client.models.request_agent_states_set_by_session_id_args.Request_agentStates_setBySessionId_args(
                     session_id = '', 
-                    state = null, )
+                    state = '', )
             )
         else:
             return RequestAgentStatesSetBySessionId(
                 args = convex_client.models.request_agent_states_set_by_session_id_args.Request_agentStates_setBySessionId_args(
                     session_id = '', 
-                    state = null, ),
+                    state = '', ),
         )
         """
 

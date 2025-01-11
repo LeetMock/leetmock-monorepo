@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.response_agent_states_get_by_session_id import ResponseAgentStatesGetBySessionId
+from convex_client.models.response_agent_states_get_structured_state_by_session_id import ResponseAgentStatesGetStructuredStateBySessionId
 
-class TestResponseAgentStatesGetBySessionId(unittest.TestCase):
-    """ResponseAgentStatesGetBySessionId unit test stubs"""
+class TestResponseAgentStatesGetStructuredStateBySessionId(unittest.TestCase):
+    """ResponseAgentStatesGetStructuredStateBySessionId unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,31 +25,29 @@ class TestResponseAgentStatesGetBySessionId(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> ResponseAgentStatesGetBySessionId:
-        """Test ResponseAgentStatesGetBySessionId
+    def make_instance(self, include_optional) -> ResponseAgentStatesGetStructuredStateBySessionId:
+        """Test ResponseAgentStatesGetStructuredStateBySessionId
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `ResponseAgentStatesGetBySessionId`
+        # uncomment below to create an instance of `ResponseAgentStatesGetStructuredStateBySessionId`
         """
-        model = ResponseAgentStatesGetBySessionId()
+        model = ResponseAgentStatesGetStructuredStateBySessionId()
         if include_optional:
-            return ResponseAgentStatesGetBySessionId(
+            return ResponseAgentStatesGetStructuredStateBySessionId(
                 status = 'success',
                 error_message = '',
                 error_data = None,
-                value = convex_client.models.response_agent_states_get_by_session_id_value.Response_agentStates_getBySessionId_value(
-                    last_updated = 1.337, 
-                    state = '', )
+                value = None
             )
         else:
-            return ResponseAgentStatesGetBySessionId(
+            return ResponseAgentStatesGetStructuredStateBySessionId(
                 status = 'success',
         )
         """
 
-    def testResponseAgentStatesGetBySessionId(self):
-        """Test ResponseAgentStatesGetBySessionId"""
+    def testResponseAgentStatesGetStructuredStateBySessionId(self):
+        """Test ResponseAgentStatesGetStructuredStateBySessionId"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

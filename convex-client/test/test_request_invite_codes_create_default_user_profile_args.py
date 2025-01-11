@@ -14,10 +14,10 @@
 
 import unittest
 
-from convex_client.models.request_user_profiles_void_subscription_internal_args import RequestUserProfilesVoidSubscriptionInternalArgs
+from convex_client.models.request_invite_codes_create_default_user_profile_args import RequestInviteCodesCreateDefaultUserProfileArgs
 
-class TestRequestUserProfilesVoidSubscriptionInternalArgs(unittest.TestCase):
-    """RequestUserProfilesVoidSubscriptionInternalArgs unit test stubs"""
+class TestRequestInviteCodesCreateDefaultUserProfileArgs(unittest.TestCase):
+    """RequestInviteCodesCreateDefaultUserProfileArgs unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,26 +25,26 @@ class TestRequestUserProfilesVoidSubscriptionInternalArgs(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> RequestUserProfilesVoidSubscriptionInternalArgs:
-        """Test RequestUserProfilesVoidSubscriptionInternalArgs
+    def make_instance(self, include_optional) -> RequestInviteCodesCreateDefaultUserProfileArgs:
+        """Test RequestInviteCodesCreateDefaultUserProfileArgs
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `RequestUserProfilesVoidSubscriptionInternalArgs`
+        # uncomment below to create an instance of `RequestInviteCodesCreateDefaultUserProfileArgs`
         """
-        model = RequestUserProfilesVoidSubscriptionInternalArgs()
+        model = RequestInviteCodesCreateDefaultUserProfileArgs()
         if include_optional:
-            return RequestUserProfilesVoidSubscriptionInternalArgs(
+            return RequestInviteCodesCreateDefaultUserProfileArgs(
                 email = ''
             )
         else:
-            return RequestUserProfilesVoidSubscriptionInternalArgs(
+            return RequestInviteCodesCreateDefaultUserProfileArgs(
                 email = '',
         )
         """
 
-    def testRequestUserProfilesVoidSubscriptionInternalArgs(self):
-        """Test RequestUserProfilesVoidSubscriptionInternalArgs"""
+    def testRequestInviteCodesCreateDefaultUserProfileArgs(self):
+        """Test RequestInviteCodesCreateDefaultUserProfileArgs"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

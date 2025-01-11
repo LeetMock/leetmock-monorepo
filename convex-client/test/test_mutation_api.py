@@ -68,6 +68,13 @@ class TestMutationApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_invite_codes_create_default_user_profile_post(self) -> None:
+        """Test case for api_run_invite_codes_create_default_user_profile_post
+
+        Calls a mutation at the path inviteCodes.js:createDefaultUserProfile
+        """
+        pass
+
     def test_api_run_questions_create_question_post(self) -> None:
         """Test case for api_run_questions_create_question_post
 
