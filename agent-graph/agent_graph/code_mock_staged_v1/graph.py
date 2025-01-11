@@ -29,7 +29,7 @@ from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import tool
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
-from pydantic.v1 import Field
+from pydantic import Field
 
 from libs.convex.convex_types import (
     CodeSessionContentChangedEvent,
@@ -64,7 +64,7 @@ class AgentState(EventMessageState):
     )
 
     steps: OrderedDict[StageTypes, List[Step]] = Field(
-        default_factory=lambda: defaultdict(list),
+        default_factory=lambda: OrderedDict(),
         description="Steps for the agent",
     )
 

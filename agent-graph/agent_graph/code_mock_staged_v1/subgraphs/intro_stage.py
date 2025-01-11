@@ -24,7 +24,7 @@ from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import StreamWriter
-from pydantic.v1 import Field
+from pydantic import Field
 
 
 class IntroStageState(EventMessageState):
@@ -74,6 +74,7 @@ async def assistant(
 
     content = ""
     tool_call_detected = False
+    function_name = ""
     async for chunk in chain.astream(
         {
             "messages": state.messages,
@@ -82,6 +83,7 @@ async def assistant(
     ):
         if "tool_calls" in chunk.additional_kwargs:
             tool_call_detected = True
+            function_name = chunk.additional_kwargs["tool_calls"][0]["function"]["name"]
             break
         else:
             content += cast(str, chunk.content)
@@ -89,7 +91,7 @@ async def assistant(
 
     if tool_call_detected:
         return get_stage_confirmation_tool_call_state_patch(
-            StageTypes.INTRO, chunk, state
+            StageTypes.INTRO, function_name, state
         )
 
     # If the assistant doesn't say anything, we should return a SILENT message

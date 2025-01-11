@@ -9,10 +9,10 @@ init_telemetry()
 import asyncio
 import os
 from datetime import datetime
-from typing import AsyncIterator, Dict
+from typing import AsyncIterator, Dict, List, cast
 
 import psutil
-from agent_graph.code_mock_staged_v1.constants import AgentConfig
+from agent_graph.code_mock_staged_v1.constants import AgentConfig, StageTypes
 from agent_graph.code_mock_staged_v1.graph import AgentState, create_graph
 from agent_graph.state_merger import StateMerger
 from agent_server.agent_streams import AgentStream
@@ -156,10 +156,10 @@ async def entrypoint(ctx: JobContext):
     #     logger.info(f"[metrics_collected] {metrics}")
 
     agent_config = AgentConfig(
-        # fast_model="claude-3-5-haiku-latest",
-        # smart_model="claude-3-5-sonnet-latest",
+        fast_model="gpt-4o-mini",
+        smart_model="gpt-4o-mini",
         convex_url=convex_api.convex_url,
-        stages=session.session_metadata.interview_flow,
+        stages=session.session_metadata.interview_flow,  # type: ignore
         transition_confirmation_enabled=True,
     )
 

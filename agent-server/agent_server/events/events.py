@@ -42,11 +42,9 @@ from agent_graph.state_merger import StateMerger
 from agent_graph.types import Step
 from agent_server.contexts.session import CodeSession, CodeSessionEventTypes
 from agent_server.events import BaseEvent
-from agent_server.utils.messages import MessageCompressor
 from debouncer import debounce
 from livekit.agents.voice_assistant import VoiceAssistant
-from pydantic import StrictStr
-from pydantic.v1 import BaseModel, Field, PrivateAttr
+from pydantic import BaseModel, Field, PrivateAttr, StrictStr
 
 from libs.convex.api import ConvexApi
 from libs.convex.convex_requests import create_test_code_correctness_request

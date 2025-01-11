@@ -4,7 +4,7 @@ from typing import Any, Dict, Type, cast
 from agent_graph.storages import StateStorage
 from agent_graph.utils import get_state_graph_initial_state_dict
 from langchain_core.load import dumps, loads
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 from libs.convex.api import ConvexApi
 from libs.convex.convex_requests import (

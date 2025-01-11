@@ -3,11 +3,10 @@ from typing import Annotated, Any, Dict, List, TypeVar
 from langchain_core.load.serializable import Serializable
 from langchain_core.messages import AnyMessage
 from langgraph.graph import add_messages
-from pydantic import BaseModel as BaseModelV2
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
-TState = TypeVar("TState", bound=BaseModelV2)
-TMetadata = TypeVar("TMetadata", bound=BaseModelV2)
+TState = TypeVar("TState", bound=BaseModel)
+TMetadata = TypeVar("TMetadata", bound=BaseModel)
 
 
 class EventMessageState(BaseModel):

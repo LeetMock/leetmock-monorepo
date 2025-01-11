@@ -3,7 +3,7 @@ from typing import Any, Dict, cast
 
 from agent_graph.storages import StateStorage
 from langgraph_sdk import get_client
-from pydantic.v1 import Field
+from pydantic import Field
 
 LG_CLIENT = get_client(url=os.getenv("LANGGRAPH_API_URL"))
 

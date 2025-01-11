@@ -33,10 +33,10 @@ import asyncio
 import logging
 from abc import ABC, abstractmethod
 from inspect import iscoroutinefunction
-from typing import Any, Callable, Coroutine, Generic, List, Type, TypeVar
+from typing import Any, Callable, Coroutine, Generic, List, TypeVar
 
 from agent_server.contexts.session import BaseSession
-from pydantic.v1 import BaseModel, PrivateAttr
+from pydantic import BaseModel, PrivateAttr
 
 logger = logging.getLogger(__name__)
 

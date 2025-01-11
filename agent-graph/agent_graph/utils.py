@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Type, TypeVar, cast
 from langchain_core.runnables.config import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph
-from pydantic.v1 import BaseModel
+from pydantic import BaseModel
 
 T = TypeVar("T")
 TState = TypeVar("TState", bound=BaseModel)

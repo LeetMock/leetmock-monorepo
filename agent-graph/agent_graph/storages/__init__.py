@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, TypeVar
 
-from pydantic.v1 import BaseModel
+from pydantic import BaseModel
 
 TState = TypeVar("TState", bound=BaseModel)
 

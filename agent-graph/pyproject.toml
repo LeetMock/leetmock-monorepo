@@ -10,19 +10,20 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.12,<3.13"
-langchain-anthropic = "^0.1.20"
+langchain-anthropic = ">=0.1.20"
 tavily-python = "^0.3.5"
-langchain-community = "^0.2.9"
-langchain-openai = "^0.1.17"
+langchain-community = ">=0.2.9"
+langchain-openai = ">=0.1.17"
 convex = "^0.6.0"
 langchainhub = "^0.1.20"
 python-dotenv = "^1.0.1"
 langgraph = "^0.2.44"
 libs = { path = "../libs", develop = true }
 convex_client = { path = "../convex-client", develop = true }
-langchain-core = "^0.2.30"
+langchain-core = ">=0.3.27"
 jinja2 = "^3.1.4"
 langgraph-cli = "^0.1.52"
+langchain-fireworks = "^0.2.6"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -9,7 +9,7 @@ from debouncer import debounce
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph.state import CompiledStateGraph, StateGraph
 from livekit.agents.utils import EventEmitter
-from pydantic.v1 import BaseModel
+from pydantic import BaseModel
 
 logger = get_logger(__name__)
 

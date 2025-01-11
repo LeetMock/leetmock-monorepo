@@ -5,11 +5,10 @@ import json
 import logging
 import time
 from contextlib import contextmanager
-from datetime import datetime
 from pathlib import Path
 from typing import List, Literal
 
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 

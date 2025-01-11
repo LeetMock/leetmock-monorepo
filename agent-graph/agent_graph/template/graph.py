@@ -7,7 +7,7 @@ from agent_graph.template.stage_subgraph import (
 from langchain_core.messages import AnyMessage, HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph, add_messages
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 
 class AgentState(BaseModel):

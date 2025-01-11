@@ -22,8 +22,7 @@ from openai.types.chat import (
     ChatCompletionToolMessageParam,
     ChatCompletionUserMessageParam,
 )
-from pydantic import Field
-from pydantic.v1 import BaseModel, PrivateAttr, root_validator
+from pydantic import BaseModel, Field, PrivateAttr, root_validator
 
 
 class MessageCompressor(BaseModel, ABC):

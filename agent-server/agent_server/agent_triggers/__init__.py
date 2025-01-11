@@ -31,10 +31,9 @@ from typing import Any, Dict, List, Tuple
 
 from agent_server.agent_streams import AgentStream
 from agent_server.events import BaseEvent
-from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
-from pydantic.v1 import BaseModel, Field, PrivateAttr
+from langchain_core.messages import AnyMessage
+from pydantic import BaseModel, Field, PrivateAttr
 
-from libs.message_wrapper import MessageWrapper
 from libs.timestamp import Timestamp
 
 logger = logging.getLogger(__name__)

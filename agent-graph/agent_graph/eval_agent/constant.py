@@ -1,7 +1,7 @@
 import operator
 from typing import Annotated, Any, Dict, List, Literal, Optional, TypedDict
 
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 
 class SessionMeta(TypedDict):
@@ -24,6 +24,7 @@ class Session(TypedDict):
     evalReady: bool
     interviewMode: Literal["practice", "strict"]
 
+
 class EditorState(TypedDict):
     language: str
     content: str
@@ -45,6 +46,7 @@ class SessionState(TypedDict):
     editor: EditorState
     terminal: TerminalState
     testcases: List[TestCase]
+
 
 class Question(TypedDict):
     category: List[str]
@@ -120,9 +122,7 @@ class AgentConfig(BaseModel):
     temperature: float = Field(default=1)
 
 
-DEFAULT_CONFIG = AgentConfig(
-    fast_model="o1-mini", smart_model="o1-mini", temperature=1
-)
+DEFAULT_CONFIG = AgentConfig(fast_model="o1-mini", smart_model="o1-mini", temperature=1)
 
 
 class AgentState(BaseModel):
