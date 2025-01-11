@@ -198,10 +198,12 @@ class CodeSession(BaseSession[CodeSessionEventTypes, AgentState]):
 
         return handler
 
-    def _create_handle_state_changed_task(self, prev: AgentState, curr: AgentState):
+    def _create_handle_state_changed_task(
+        self, prev: AgentState | None, curr: AgentState
+    ):
         asyncio.create_task(self._handle_state_changed(prev, curr))
 
-    async def _handle_state_changed(self, prev: AgentState, next: AgentState):
+    async def _handle_state_changed(self, prev: AgentState | None, next: AgentState):
         """Handle updates to the code session state.
 
         Updates the internal session state and completes the sync future

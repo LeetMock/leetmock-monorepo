@@ -17,4 +17,4 @@ def init_telemetry():
     #     min_duration=0.05,
     # )
 
-    basicConfig(handlers=[logfire.LogfireLoggingHandler()])
+    # basicConfig(handlers=[logfire.LogfireLoggingHandler()])
