@@ -156,8 +156,8 @@ async def entrypoint(ctx: JobContext):
     #     logger.info(f"[metrics_collected] {metrics}")
 
     agent_config = AgentConfig(
-        fast_model="gpt-4o-mini",
-        smart_model="gpt-4o-mini",
+        # fast_model="gpt-4o-mini",
+        # smart_model="gpt-4o-mini",
         convex_url=convex_api.convex_url,
         stages=session.session_metadata.interview_flow,  # type: ignore
         transition_confirmation_enabled=True,
