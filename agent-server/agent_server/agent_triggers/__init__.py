@@ -91,11 +91,6 @@ class AgentTrigger(BaseModel):
         # Attach event handlers to all events
         self._attach_event_handlers()
 
-    def interrupt(self):
-        """Interrupts the current agent action by refreshing the timestamp."""
-        # self.assistant.interrupt()
-        self._timestamp.refresh()
-
     async def trigger(self):
         """Triggers the agent manually by adding a trigger event to the queue."""
         await self._event_q.put(("trigger", None))
@@ -138,7 +133,11 @@ class AgentTrigger(BaseModel):
         Args:
             is_user_message: Whether the trigger was caused by a user message
         """
-        self.interrupt()
+        if not is_user_message:
+            self.assistant.interrupt()
+
+        self._timestamp.refresh()
+
         logger.info(f"Triggering agent with timestamp: {self._timestamp}")
         await self.stream.trigger_agent(self._timestamp, is_user_message)
 
