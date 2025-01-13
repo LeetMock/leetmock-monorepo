@@ -93,7 +93,7 @@ class AgentTrigger(BaseModel):
 
     def interrupt(self):
         """Interrupts the current agent action by refreshing the timestamp."""
-        self.assistant.interrupt()
+        # self.assistant.interrupt()
         self._timestamp.refresh()
 
     async def trigger(self):
