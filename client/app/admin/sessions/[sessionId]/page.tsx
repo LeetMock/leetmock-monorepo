@@ -6,12 +6,20 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { isDefined } from "@/lib/utils";
 import { useQuery } from "convex/react";
-import { useParams } from "next/navigation";
+import { useParams, notFound } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
 import { formatDistanceToNow, differenceInSeconds } from "date-fns";
 
 export default function Home() {
   const { sessionId } = useParams();
+  const sessionExists = useQuery(api.sessions.exists, {
+    sessionId: sessionId as string
+  });
+
+  if (sessionExists === false) {
+    notFound();
+  }
+
   const agentStateSnapshot = useQuery(api.agentStates.getBySessionId, {
     sessionId: sessionId as Id<"sessions">,
   });

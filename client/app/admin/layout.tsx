@@ -4,6 +4,7 @@ import { DashboardHeader } from "@/app/(workspace)/dashboard/_components/dashboa
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { isDefined } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { userProfile, isLoaded } = useUserProfile();
@@ -14,7 +15,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   if (!isDefined(userProfile) || userProfile.role !== "admin") {
-    router.push("/dashboard");
+    notFound();
   }
 
   return (

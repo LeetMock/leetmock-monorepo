@@ -6,6 +6,7 @@ import { useQuery } from "convex/react";
 import { useParams } from "next/navigation";
 import React, { useMemo } from "react";
 import { Workspace } from "./_components/workspace";
+import { notFound } from "next/navigation";
 
 const InterviewPage: React.FC = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -17,7 +18,7 @@ const InterviewPage: React.FC = () => {
     }
 
     if (sessionExists === false) {
-      return <div>Session not found</div>;
+      notFound();
     }
 
     return <Workspace sessionId={sessionId as Id<"sessions">} />;
