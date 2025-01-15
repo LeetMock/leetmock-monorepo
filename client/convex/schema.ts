@@ -59,6 +59,7 @@ const schema = defineEntSchema({
     programmingLanguage: v.union(v.string(), v.null()),
     metadata: v.record(v.string(), v.any()),
   })
+    .field("modelName", v.string(), { default: "gpt-4o" })
     .edge("codeSessionState", { optional: true })
     .index("by_user_id", ["userId"])
     .index("by_user_id_and_status", ["userId", "sessionStatus"])

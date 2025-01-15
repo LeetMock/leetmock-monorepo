@@ -1626,6 +1626,7 @@ components:
             - interviewFlow
             - interviewMode
             - interviewType
+            - modelName
             - programmingLanguage
             - questionId
             - timeLimit
@@ -1658,6 +1659,8 @@ components:
                 - type: string
                   enum:
                     - "behavioral"
+            modelName:
+              type: string
             programmingLanguage:
               type: string
             questionId:
@@ -2446,6 +2449,7 @@ components:
             - interviewMode
             - interviewType
             - metadata
+            - modelName
             - programmingLanguage
             - questionContent
             - questionId
@@ -2468,6 +2472,8 @@ components:
               type: string
             metadata:
               type: object
+            modelName:
+              type: string
             programmingLanguage:
               type: string
               nullable: true

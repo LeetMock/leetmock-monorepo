@@ -170,7 +170,8 @@ export const StartInterviewModal: React.FC = () => {
     setSessionConfig,
     reset,
   } = useSessionCreateModal();
-  const { type, questionId, interviewFlow, language, voice, interviewTime, mode } = sessionConfig;
+  const { type, questionId, interviewFlow, language, voice, interviewTime, mode, modelName } =
+    sessionConfig;
 
   const maxStep = useMemo(() => {
     if (!hasSetInterviewType) return 0;
@@ -211,6 +212,7 @@ export const StartInterviewModal: React.FC = () => {
           programmingLanguage: language,
           timeLimit: interviewTime,
           voice: voice,
+          modelName: modelName,
         });
       })
       .then((sessionId) => {
@@ -234,6 +236,7 @@ export const StartInterviewModal: React.FC = () => {
     language,
     interviewTime,
     voice,
+    modelName,
     createSession,
     reset,
     router,

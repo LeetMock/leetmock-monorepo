@@ -47,6 +47,7 @@ class TestResponseActionsGetSessionMetadata(unittest.TestCase):
                     interview_mode = '', 
                     interview_type = '', 
                     metadata = convex_client.models.metadata.metadata(), 
+                    model_name = '', 
                     programming_language = '', 
                     question_content = '', 
                     question_id = '', 

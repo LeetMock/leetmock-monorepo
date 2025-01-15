@@ -33,11 +33,12 @@ class RequestSessionsCreateCodeSessionArgs(BaseModel):
     interview_flow: List[StrictStr] = Field(alias="interviewFlow")
     interview_mode: RequestSessionsCreateCodeSessionArgsInterviewMode = Field(alias="interviewMode")
     interview_type: RequestSessionsCreateCodeSessionArgsInterviewType = Field(alias="interviewType")
+    model_name: StrictStr = Field(alias="modelName")
     programming_language: StrictStr = Field(alias="programmingLanguage")
     question_id: StrictStr = Field(description="ID from table \"questions\"", alias="questionId")
     time_limit: Union[StrictFloat, StrictInt] = Field(alias="timeLimit")
     voice: StrictStr
-    __properties: ClassVar[List[str]] = ["agentThreadId", "assistantId", "interviewFlow", "interviewMode", "interviewType", "programmingLanguage", "questionId", "timeLimit", "voice"]
+    __properties: ClassVar[List[str]] = ["agentThreadId", "assistantId", "interviewFlow", "interviewMode", "interviewType", "modelName", "programmingLanguage", "questionId", "timeLimit", "voice"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -101,6 +102,7 @@ class RequestSessionsCreateCodeSessionArgs(BaseModel):
             "interviewFlow": obj.get("interviewFlow"),
             "interviewMode": RequestSessionsCreateCodeSessionArgsInterviewMode.from_dict(obj["interviewMode"]) if obj.get("interviewMode") is not None else None,
             "interviewType": RequestSessionsCreateCodeSessionArgsInterviewType.from_dict(obj["interviewType"]) if obj.get("interviewType") is not None else None,
+            "modelName": obj.get("modelName"),
             "programmingLanguage": obj.get("programmingLanguage"),
             "questionId": obj.get("questionId"),
             "timeLimit": obj.get("timeLimit"),

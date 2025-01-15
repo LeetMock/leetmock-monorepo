@@ -17,17 +17,21 @@ import {
   STAGE_NAME_MAPPING,
 } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import React, { useCallback } from "react";
-import { QuestionCard } from "./question-card";
-import { useMediaQuery } from "usehooks-ts";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
+import React, { useCallback } from "react";
+import { useMediaQuery } from "usehooks-ts";
+import { QuestionCard } from "./question-card";
 
 const INTERVIEW_DURATIONS = [15, 30, 45, 60, 75, 90];
+
 const REQUIRED_STAGES = [InterviewStage.Intro, InterviewStage.Coding];
+
 const SESSION_MODE_NAME_MAPPING = {
   [SessionMode.Practice]: "Practice Mode",
   [SessionMode.Strict]: "Strict Mode",
 };
+
+const MODEL_NAMES = ["gpt-4o", "claude-3.5-sonnet", "deepseek-v3"];
 
 interface CodeInterviewConfigProps {
   selectedQuestion?: Doc<"questions">;
@@ -35,7 +39,7 @@ interface CodeInterviewConfigProps {
 
 export const CodeInterviewConfig: React.FC<CodeInterviewConfigProps> = ({ selectedQuestion }) => {
   const { sessionConfig, setSessionConfig } = useSessionCreateModalState();
-  const { interviewFlow, language, voice, interviewTime, mode } = sessionConfig;
+  const { interviewFlow, language, voice, interviewTime, modelName, mode } = sessionConfig;
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const toggleStage = useCallback(
@@ -129,25 +133,48 @@ export const CodeInterviewConfig: React.FC<CodeInterviewConfigProps> = ({ select
         </div>
       </div>
 
-      <div className="space-y-4">
-        <Label htmlFor="interview-time" className="text-sm font-semibold text-muted-foreground">
-          Interview Duration (minutes)
-        </Label>
-        <Select
-          value={interviewTime.toString()}
-          onValueChange={(value) => setSessionConfig({ interviewTime: Number(value) })}
-        >
-          <SelectTrigger id="interview-time" className="w-full max-w-xs">
-            <SelectValue placeholder="Select duration" />
-          </SelectTrigger>
-          <SelectContent>
-            {INTERVIEW_DURATIONS.map((duration) => (
-              <SelectItem key={duration} value={duration.toString()}>
-                {duration} minutes
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <Label htmlFor="interview-time" className="text-sm font-semibold text-muted-foreground">
+            Interview Duration (minutes)
+          </Label>
+          <Select
+            value={interviewTime.toString()}
+            onValueChange={(value) => setSessionConfig({ interviewTime: Number(value) })}
+          >
+            <SelectTrigger id="interview-time" className="w-full max-w-xs">
+              <SelectValue placeholder="Select duration" />
+            </SelectTrigger>
+            <SelectContent>
+              {INTERVIEW_DURATIONS.map((duration) => (
+                <SelectItem key={duration} value={duration.toString()}>
+                  {duration} minutes
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-4">
+          <Label htmlFor="model-name" className="text-sm font-semibold text-muted-foreground">
+            Model Name
+          </Label>
+          <Select
+            value={modelName}
+            onValueChange={(value) => setSessionConfig({ modelName: value })}
+          >
+            <SelectTrigger id="model-name" className="w-full max-w-xs">
+              <SelectValue placeholder="Select model" />
+            </SelectTrigger>
+            <SelectContent>
+              {MODEL_NAMES.map((modelName) => (
+                <SelectItem key={modelName} value={modelName}>
+                  {modelName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div className="space-y-4">

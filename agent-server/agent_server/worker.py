@@ -155,9 +155,11 @@ async def entrypoint(ctx: JobContext):
     # def on_metrics_collected(metrics):
     #     logger.info(f"[metrics_collected] {metrics}")
 
+    logger.info(f"Model name: {session.session_metadata.model_name}")
+
     agent_config = AgentConfig(
         # fast_model="deepseek-chat",
-        # smart_model="deepseek-chat",
+        smart_model=session.session_metadata.model_name,
         convex_url=convex_api.convex_url,
         stages=session.session_metadata.interview_flow,  # type: ignore
         transition_confirmation_enabled=True,

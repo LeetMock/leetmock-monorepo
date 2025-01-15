@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **interview_mode** | **str** |  | 
 **interview_type** | **str** |  | 
 **metadata** | **object** |  | 
+**model_name** | **str** |  | 
 **programming_language** | **str** |  | 
 **question_content** | **str** |  | 
 **question_id** | **str** | ID from table \&quot;questions\&quot; | 

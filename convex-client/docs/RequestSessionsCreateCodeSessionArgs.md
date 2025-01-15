@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **interview_flow** | **List[str]** |  | 
 **interview_mode** | [**RequestSessionsCreateCodeSessionArgsInterviewMode**](RequestSessionsCreateCodeSessionArgsInterviewMode.md) |  | 
 **interview_type** | [**RequestSessionsCreateCodeSessionArgsInterviewType**](RequestSessionsCreateCodeSessionArgsInterviewType.md) |  | 
+**model_name** | **str** |  | 
 **programming_language** | **str** |  | 
 **question_id** | **str** | ID from table \&quot;questions\&quot; | 
 **time_limit** | **float** |  | 

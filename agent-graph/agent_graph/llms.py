@@ -14,7 +14,7 @@ def get_model(
     if model_name.startswith("gpt") or model_name.startswith("o1"):
         return ChatOpenAI(model=model_name, temperature=temperature)
     elif model_name.startswith("claude"):
-        return ChatAnthropic(model=model_name, temperature=temperature)  # type: ignore
+        return ChatAnthropic(model="claude-3-5-sonnet-latest", temperature=temperature)  # type: ignore
     elif "fireworks" in model_name:
         return ChatFireworks(
             model=model_name,

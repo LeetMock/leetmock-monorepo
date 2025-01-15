@@ -28,6 +28,7 @@ export interface SessionConfigState {
   voice: string;
   interviewTime: number;
   mode: SessionMode;
+  modelName: string;
 }
 
 interface SessionCreateModalState {
@@ -41,6 +42,7 @@ const INITIAL_SESSION_CONFIG: SessionConfigState = {
   voice: AVAILABLE_VOICES[0].id,
   interviewTime: 30,
   mode: SessionMode.Practice,
+  modelName: "gpt-4o",
   interviewFlow: {
     [InterviewStage.Intro]: true,
     [InterviewStage.Background]: false,

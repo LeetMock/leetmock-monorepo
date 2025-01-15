@@ -32,6 +32,7 @@ class ResponseActionsGetSessionMetadataValue(BaseModel):
     interview_mode: StrictStr = Field(alias="interviewMode")
     interview_type: StrictStr = Field(alias="interviewType")
     metadata: Dict[str, Any]
+    model_name: StrictStr = Field(alias="modelName")
     programming_language: Optional[StrictStr] = Field(alias="programmingLanguage")
     question_content: StrictStr = Field(alias="questionContent")
     question_id: StrictStr = Field(description="ID from table \"questions\"", alias="questionId")
@@ -39,7 +40,7 @@ class ResponseActionsGetSessionMetadataValue(BaseModel):
     session_id: StrictStr = Field(description="ID from table \"sessions\"", alias="sessionId")
     session_status: StrictStr = Field(alias="sessionStatus")
     voice: StrictStr
-    __properties: ClassVar[List[str]] = ["agentThreadId", "assistantId", "interviewFlow", "interviewMode", "interviewType", "metadata", "programmingLanguage", "questionContent", "questionId", "questionTitle", "sessionId", "sessionStatus", "voice"]
+    __properties: ClassVar[List[str]] = ["agentThreadId", "assistantId", "interviewFlow", "interviewMode", "interviewType", "metadata", "modelName", "programmingLanguage", "questionContent", "questionId", "questionTitle", "sessionId", "sessionStatus", "voice"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -103,6 +104,7 @@ class ResponseActionsGetSessionMetadataValue(BaseModel):
             "interviewMode": obj.get("interviewMode"),
             "interviewType": obj.get("interviewType"),
             "metadata": obj.get("metadata"),
+            "modelName": obj.get("modelName"),
             "programmingLanguage": obj.get("programmingLanguage"),
             "questionContent": obj.get("questionContent"),
             "questionId": obj.get("questionId"),

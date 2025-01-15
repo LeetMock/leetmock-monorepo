@@ -5,7 +5,7 @@ import { Id } from "./_generated/dataModel";
 
 import { CODE_TEMPLATES } from "@/lib/constants";
 import { isDefined, minutesToMilliseconds } from "@/lib/utils";
-import { internalMutation, internalQuery, userMutation, userQuery, query } from "./functions";
+import { internalMutation, internalQuery, query, userMutation, userQuery } from "./functions";
 import { MutationCtx } from "./types";
 
 export const exists = userQuery({
@@ -155,6 +155,7 @@ export const createCodeSession = userMutation({
     programmingLanguage: v.string(),
     timeLimit: v.number(),
     voice: v.string(),
+    modelName: v.string(),
   },
   handler: async (
     ctx,
@@ -168,6 +169,7 @@ export const createCodeSession = userMutation({
       programmingLanguage,
       timeLimit,
       voice,
+      modelName,
     }
   ) => {
     const activeSession = await ctx
@@ -198,6 +200,7 @@ export const createCodeSession = userMutation({
       voice,
       interviewFlow,
       programmingLanguage,
+      modelName,
       metadata: {},
     });
 

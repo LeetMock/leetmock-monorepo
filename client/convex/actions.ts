@@ -3,16 +3,11 @@ import axios from "axios";
 import type { VideoGrant } from "livekit-server-sdk";
 
 import { api, internal } from "./_generated/api";
-import { userAction } from "./functions";
 import { action } from "./_generated/server";
+import { userAction } from "./functions";
 
 import { CODE_PREFIX, DATA_STRUCTURES } from "@/lib/constants";
-import {
-  CodeRunResult,
-  RunCodeResult,
-  RunTestResult,
-  TokenResult,
-} from "@/lib/types";
+import { CodeRunResult, RunCodeResult, RunTestResult, TokenResult } from "@/lib/types";
 import {
   createToken,
   generateRandomAlphanumeric,
@@ -24,10 +19,7 @@ import { ConvexError, v } from "convex/values";
 
 import { retry } from "@lifeomic/attempt";
 
-async function executeCode(
-  payload: any,
-  maxRetries = 3
-): Promise<CodeRunResult> {
+async function executeCode(payload: any, maxRetries = 3): Promise<CodeRunResult> {
   const url = "https://onecompiler-apis.p.rapidapi.com/api/v1/run";
   const headers = {
     "Content-Type": "application/json",
@@ -144,12 +136,7 @@ export const getToken = action({
       canSubscribe: true,
     };
 
-    const token = await createToken(
-      apiKey,
-      apiSecret,
-      { identity: userIdentity },
-      grant
-    );
+    const token = await createToken(apiKey, apiSecret, { identity: userIdentity }, grant);
     const result: TokenResult = {
       identity: userIdentity,
       accessToken: token,
@@ -164,10 +151,7 @@ export const runCode = action({
     language: v.string(),
     code: v.string(),
   },
-  handler: async (
-    ctx,
-    { language, code }
-  ): Promise<RunCodeResult | undefined> => {
+  handler: async (ctx, { language, code }): Promise<RunCodeResult | undefined> => {
     const payload = {
       language,
       stdin: "",
@@ -187,11 +171,11 @@ export const runCode = action({
 
     return result
       ? {
-        status: !result.isError, //true if API call was successful
-        executionTime: result.executionTime,
-        isError: !!result.stderr, //true if there's an error in the code
-        output: result.stderr || result.stdout || "",
-      }
+          status: !result.isError, //true if API call was successful
+          executionTime: result.executionTime,
+          isError: !!result.stderr, //true if there's an error in the code
+          output: result.stderr || result.stdout || "",
+        }
       : undefined;
   },
 });
@@ -235,7 +219,7 @@ export const runGroundTruthTest = action({
     let globalCaseNumber = 0; // Track the overall test case number
 
     // Process test cases with dynamic batch size
-    for (let i = 0; i < testCases.length;) {
+    for (let i = 0; i < testCases.length; ) {
       const batchTestCases = testCases.slice(i, i + currentBatchSize);
       const testCode = generateTestCode(question, language, batchTestCases);
       const payload = {
@@ -271,9 +255,9 @@ export const runGroundTruthTest = action({
             if (jsonMatch && jsonMatch[1]) {
               const batchResult: RunTestResult = JSON.parse(jsonMatch[1]);
               // Adjust case numbers to be consecutive
-              const adjustedResults = batchResult.map(result => ({
+              const adjustedResults = batchResult.map((result) => ({
                 ...result,
-                caseNumber: ++globalCaseNumber
+                caseNumber: ++globalCaseNumber,
               }));
               allTestResults.push(...adjustedResults);
               success = true;
@@ -340,12 +324,9 @@ export const runTests = action({
   }),
   handler: async (ctx, { language, sessionId, questionId }) => {
     // Retrieve editor state and test cases state using internal queries
-    const editorState = await ctx.runQuery(
-      internal.codeSessionStates.getEditorStateInternal,
-      {
-        sessionId,
-      }
-    );
+    const editorState = await ctx.runQuery(internal.codeSessionStates.getEditorStateInternal, {
+      sessionId,
+    });
     const testCasesState = await ctx.runQuery(
       internal.codeSessionStates.getTestCasesStateInternal,
       { sessionId }
@@ -419,7 +400,7 @@ export const runTests = action({
     return {
       status: "error",
       isError: true,
-      exception: "Failed to execute tests after all retries"
+      exception: "Failed to execute tests after all retries",
     };
   },
 });
@@ -445,6 +426,7 @@ export const getSessionMetadata = action({
     interviewMode: v.string(),
     interviewFlow: v.array(v.string()),
     programmingLanguage: v.union(v.string(), v.null()),
+    modelName: v.string(),
     metadata: v.record(v.string(), v.any()),
   }),
   handler: async (ctx, { sessionId }) => {
@@ -477,13 +459,10 @@ export const getSessionMetadata = action({
       interviewMode,
       interviewFlow,
       programmingLanguage,
+      modelName,
       metadata,
     } = session;
-    const {
-      _id: questionId,
-      title: questionTitle,
-      question: questionContent,
-    } = question;
+    const { _id: questionId, title: questionTitle, question: questionContent } = question;
 
     return {
       sessionId,
@@ -498,6 +477,7 @@ export const getSessionMetadata = action({
       interviewMode,
       interviewFlow,
       programmingLanguage,
+      modelName,
       metadata,
     };
   },
