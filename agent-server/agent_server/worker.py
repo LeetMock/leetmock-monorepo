@@ -1,6 +1,6 @@
 from dotenv import find_dotenv, load_dotenv
 
-load_dotenv(find_dotenv())
+load_dotenv(find_dotenv(), override=True)
 
 from agent_server.telemetry import init_telemetry
 
@@ -156,8 +156,8 @@ async def entrypoint(ctx: JobContext):
     #     logger.info(f"[metrics_collected] {metrics}")
 
     agent_config = AgentConfig(
-        # fast_model="gpt-4o-mini",
-        # smart_model="gpt-4o-mini",
+        # fast_model="deepseek-chat",
+        # smart_model="deepseek-chat",
         convex_url=convex_api.convex_url,
         stages=session.session_metadata.interview_flow,  # type: ignore
         transition_confirmation_enabled=True,

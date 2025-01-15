@@ -1,7 +1,10 @@
+import os
+
 from langchain_anthropic import ChatAnthropic
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_fireworks import ChatFireworks
 from langchain_openai import ChatOpenAI
+from pydantic import SecretStr
 
 
 def get_model(
@@ -20,5 +23,11 @@ def get_model(
             timeout=None,
             max_retries=2,
         )  # type: ignore
+    elif model_name.startswith("deepseek"):
+        return ChatOpenAI(
+            model="deepseek-chat",
+            api_key=SecretStr(os.getenv("DEEPSEEK_API_KEY", "")),
+            base_url="https://api.deepseek.com",
+        )
 
     raise ValueError(f"Model {model_name} not found")
