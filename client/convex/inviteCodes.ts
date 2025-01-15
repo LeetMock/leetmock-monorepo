@@ -35,17 +35,13 @@ export const applyInviteCode = userMutation({
       await profile.patch({
         role,
         minutesRemaining: ADMIN_EVALUATION_COUNT,
-        meta: {
-          evaluationCount: ADMIN_EVALUATION_COUNT,
-        },
+        evaluationCount: ADMIN_EVALUATION_COUNT,
       });
     } else {
       await profile.patch({
         role,
         minutesRemaining: FREE_PLAN_MINUTES_ONLY_ONCE,
-        meta: {
-          evaluationCount: FREE_PLAN_EVALUATION_ONLY_ONCE,
-        },
+        evaluationCount: FREE_PLAN_EVALUATION_ONLY_ONCE,
       });
     }
   },
@@ -75,9 +71,7 @@ export const createDefaultUserProfile = userMutation({
       email,
       subscription,
       minutesRemaining,
-      meta: {
-        evaluationCount,
-      },
+      evaluationCount,
     });
   },
 });

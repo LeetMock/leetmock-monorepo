@@ -6,9 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { MINUTE_PRICE, MINUTE_PRICE_DISCOUNTED } from "@/lib/constants";
 import { useUser } from "@clerk/clerk-react";
+import { useTheme } from "next-themes";
 import { useEffect } from "react";
 
 const SubscriptionPage: React.FC = () => {
+  const { theme } = useTheme();
+
   useEffect(() => {
     // Load Stripe Pricing Table script
     const script = document.createElement("script");
@@ -24,7 +27,10 @@ const SubscriptionPage: React.FC = () => {
 
   const { user } = useUser();
   const { userProfile } = useUserProfile();
-  console.log(userProfile);
+
+  const pricingTableId = theme === 'dark'
+    ? process.env.NEXT_PUBLIC_PRICING_TABLE_ID_DARK
+    : process.env.NEXT_PUBLIC_PRICING_TABLE_ID_LIGHT;
 
   return (
     <div>
@@ -38,15 +44,14 @@ const SubscriptionPage: React.FC = () => {
               <div>
                 <Badge
                   variant={userProfile!.subscription === "free" ? "outline" : "default"}
-                  className={`text-lg py-1 px-2 font-semibold ${
-                    userProfile!.subscription === "basic"
-                      ? "bg-gradient-to-r from-blue-400 to-cyan-300 text-white"
-                      : userProfile!.subscription === "premium"
-                        ? "bg-gradient-to-r from-purple-400 to-pink-500 text-white"
-                        : userProfile!.subscription === "enterprise"
-                          ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white animate-pulse"
-                          : ""
-                  }`}
+                  className={`text-lg py-1 px-2 font-semibold ${userProfile!.subscription === "basic"
+                    ? "bg-gradient-to-r from-blue-400 to-cyan-300 text-white"
+                    : userProfile!.subscription === "premium"
+                      ? "bg-gradient-to-r from-purple-400 to-pink-500 text-white"
+                      : userProfile!.subscription === "enterprise"
+                        ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white animate-pulse"
+                        : ""
+                    }`}
                 >
                   {userProfile!.subscription.charAt(0).toUpperCase() +
                     userProfile!.subscription.slice(1)}
@@ -125,7 +130,7 @@ const SubscriptionPage: React.FC = () => {
       </div>
       {/* @ts-ignore */}
       <stripe-pricing-table
-        pricing-table-id={process.env.NEXT_PUBLIC_PRICING_TABLE_ID}
+        pricing-table-id={pricingTableId}
         publishable-key={process.env.NEXT_PUBLIC_STRIPE_KEY}
         customer-email={user!.emailAddresses[0].emailAddress}
       >
