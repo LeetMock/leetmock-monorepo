@@ -32,6 +32,7 @@ const schema = defineEntSchema({
     latestSubscriptionId: v.optional(v.string()),
     subscriptionStatus: v.optional(v.string()),
     refreshDate: v.optional(v.number()),
+    meta: v.optional(v.record(v.string(), v.any())),
   })
     .field("email", v.string(), { unique: true })
     .field("userId", v.string(), { unique: true }) // user id should be unique
