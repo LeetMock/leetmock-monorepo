@@ -24,17 +24,20 @@ import { cn, isDefined } from "@/lib/utils";
 import { useConnectionState, useRoomContext } from "@livekit/components-react";
 import { useAction, useMutation } from "convex/react";
 import { ConnectionState } from "livekit-client";
-import { ChevronDown, CircleStop, Loader2, Play } from "lucide-react";
+import { Check, ChevronDown, CircleStop, Loader2, Play } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 interface SessionButtonProps {
   session: Doc<"sessions">;
 }
 
+type SessionOptionType = "start" | "end" | "pause";
+
 interface SessionOption {
+  key: SessionOptionType;
   title: string;
   description: string;
-  onClick: () => Promise<void>;
+  onClick: () => Promise<void> | void;
 }
 
 export const SessionButton = ({ session }: SessionButtonProps) => {
@@ -73,10 +76,12 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
     if (!isDefined(session)) return;
     if (connectionState !== ConnectionState.Disconnected) return;
 
+    const connectPromise = connect().then(() => setSessionOptionIndex(1));
+
     const promise =
       session.sessionStatus === "not_started"
-        ? startSession({ sessionId: session._id }).then(() => connect())
-        : connect();
+        ? startSession({ sessionId: session._id }).then(() => connectPromise)
+        : connectPromise;
 
     toast.promise(promise, {
       loading: "Connecting to interview session...",
@@ -87,9 +92,14 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
 
   const handlePauseSession = useCallback(async () => {
     if (!isDefined(session)) return;
-    if (connectionState !== ConnectionState.Connected) return;
+    if (connectionState !== ConnectionState.Connected) {
+      toast.error("You are not connected to the session");
+      return;
+    }
 
-    await disconnect();
+    disconnect();
+    setSessionOptionIndex(0);
+    toast.success("Session paused successfully! 🎉");
   }, [connectionState, disconnect, session]);
 
   const handleEndSession = useCallback(async () => {
@@ -97,20 +107,25 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
     if (connectionState !== ConnectionState.Connected) return;
 
     await disconnect();
-    const promise = endSession({ sessionId: session._id });
-    const evalPromise = triggerEval({ sessionId: session._id });
+    setSessionOptionIndex(0);
 
-    toast.promise(Promise.all([promise, evalPromise]), {
-      loading: "Ending interview...",
-      success: "Interview ended successfully! 🎉",
-      error: "Failed to end interview",
+    const promise = Promise.all([
+      endSession({ sessionId: session._id }),
+      triggerEval({ sessionId: session._id }),
+    ]);
+
+    toast.promise(promise, {
+      loading: "Ending session...",
+      success: "Session ended successfully! 🎉",
+      error: "Failed to end session",
     });
   }, [connectionState, disconnect, endSession, session, triggerEval]);
 
   const sessionOptions: SessionOption[] = useMemo(() => {
     return [
       {
-        title: session.sessionStatus === "not_started" ? "Start Interview" : "Resume Interview",
+        key: "start",
+        title: session.sessionStatus === "not_started" ? "Start Session" : "Resume Session",
         description:
           session.sessionStatus === "not_started"
             ? "Initialize a new interview session and establish connection with the AI interviewer."
@@ -118,28 +133,26 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
         onClick: handleStartSession,
       },
       {
-        title: "End Interview",
+        key: "end",
+        title: "End Session",
         description: "Conclude the interview session and generate final evaluation.",
-        onClick: handleEndSession,
+        onClick: () => setIsEndInterviewDialogOpen(true),
       },
       {
-        title: "Pause Interview",
+        key: "pause",
+        title: "Pause Session",
         description: "Temporarily suspend the interview session while preserving progress.",
         onClick: handlePauseSession,
       },
     ];
-  }, [session, handleStartSession, handleEndSession, handlePauseSession]);
+  }, [session, handleStartSession, handlePauseSession]);
 
   const ButtonIcon = useMemo(() => {
-    if (connectionState === ConnectionState.Connecting) {
-      return Loader2;
-    }
-
-    if (connectionState === ConnectionState.Connected) {
-      return CircleStop;
-    }
-
-    return Play;
+    return connectionState === ConnectionState.Connecting
+      ? Loader2
+      : connectionState === ConnectionState.Connected
+        ? CircleStop
+        : Play;
   }, [connectionState]);
 
   return (
@@ -150,22 +163,22 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
           className={cn(
             !isDefined(session) && "hidden",
             "rounded-none shadow-none first:rounded-s-lg last:rounded-e-lg focus-visible:z-10"
-            // connectionState === ConnectionState.Connected &&
-            //   "bg-red-500 text-white hover:bg-red-600 hover:ring-red-500"
           )}
           disabled={connectionState === ConnectionState.Connecting}
-          onClick={handleConnectionChange}
+          onClick={sessionOptions[sessionOptionIndex].onClick}
         >
           <ButtonIcon
             className={cn(
-              "me-2 opacity-60",
+              "me-2 opacity-70",
               connectionState === ConnectionState.Connecting && "animate-spin"
             )}
             size={14}
             strokeWidth={2}
             aria-hidden="true"
           />
-          Fork
+          {connectionState !== ConnectionState.Connecting
+            ? sessionOptions[sessionOptionIndex].title
+            : "Connecting..."}
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -181,11 +194,37 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
             {sessionOptions.map((option, index) => (
               <DropdownMenuItem
                 key={option.title}
-                className="flex flex-col items-start gap-1"
-                onClick={() => setSessionOptionIndex(index)}
+                className={cn(
+                  "flex flex-col items-start gap-1 relative cursor-pointer",
+                  index !== sessionOptionIndex
+                )}
+                onSelect={(e) => {
+                  e.preventDefault();
+                  setSessionOptionIndex(index);
+                }}
               >
-                <span className="text-sm font-medium">{option.title}</span>
-                <span className="text-xs text-muted-foreground">{option.description}</span>
+                <div className="flex items-center w-full gap-2">
+                  <div
+                    className={cn(
+                      "flex-1 max-w-60 transition-opacity duration-100",
+                      index === sessionOptionIndex ? "opacity-100" : "opacity-45",
+                      "hover:opacity-100"
+                    )}
+                  >
+                    <span className={cn("text-sm font-medium")}>{option.title}</span>
+                    <span className="text-xs text-muted-foreground block">
+                      {option.description}
+                    </span>
+                  </div>
+                  <span className="text-primary">
+                    <Check
+                      size={16}
+                      strokeWidth={2}
+                      aria-hidden="true"
+                      className={cn(index === sessionOptionIndex ? "opacity-100" : "opacity-0")}
+                    />
+                  </span>
+                </div>
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>

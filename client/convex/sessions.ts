@@ -256,9 +256,12 @@ export const createCodeSession = userMutation({
 async function endSessionAction(ctx: MutationCtx, sessionId: Id<"sessions">) {
   const session = await ctx.table("sessions").getX(sessionId);
 
-  const endTime = session.sessionEndTime ? session.sessionEndTime : Date.now();
+  const startTime = isDefined(session.sessionStartTime) ? session.sessionStartTime : Date.now();
+  const endTime = isDefined(session.sessionEndTime) ? session.sessionEndTime : Date.now();
+
   await session.patch({
     sessionStatus: "completed",
+    sessionStartTime: startTime,
     sessionEndTime: endTime,
   });
 }
