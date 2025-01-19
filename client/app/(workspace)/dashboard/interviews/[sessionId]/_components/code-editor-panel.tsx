@@ -11,13 +11,12 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { CodeSessionEvent } from "@/convex/types";
 import { useNonReactiveQuery } from "@/hooks/use-non-reactive-query";
+import { useResizePanel } from "@/hooks/use-resize-panel";
 import { cn, isDefined } from "@/lib/utils";
 import { useConnectionState, useVoiceAssistant } from "@livekit/components-react";
 import Editor from "@monaco-editor/react";
 import { toast } from "sonner";
-import { useResizePanel } from "@/hooks/use-resize-panel";
 import { CodeTestPanel } from "./code-test-pannel";
-import { motion } from "framer-motion";
 
 const darkEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -101,27 +100,6 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
             <span className="text-sm font-semibold mb-px">
               {language.charAt(0).toUpperCase() + language.slice(1)}
             </span>
-          </div>
-
-          <div className="flex items-center gap-3 bg-card/80 px-3 py-1.5 rounded-full">
-            <motion.div
-              className={cn(
-                "w-2 h-2 rounded-full",
-                state === "listening" && "bg-emerald-500",
-                state === "thinking" && "bg-amber-500",
-                state === "speaking" && "bg-primary",
-                state === "connecting" && "bg-muted",
-                state === "disconnected" && "bg-red-500"
-              )}
-              animate={{
-                scale: state !== "disconnected" ? [1, 1.2, 1] : 1,
-              }}
-              transition={{
-                duration: 1,
-                repeat: Infinity,
-              }}
-            />
-            <span className="text-xs text-muted-foreground font-medium capitalize">{state}</span>
           </div>
         </div>
         <div className="flex-1 relative rounded-md pb-2 min-h-0" ref={editorContainerRef}>
