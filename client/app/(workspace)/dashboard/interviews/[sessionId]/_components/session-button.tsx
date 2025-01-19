@@ -182,7 +182,6 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
                   index !== sessionOptionIndex
                 )}
                 onSelect={(e) => {
-                  e.preventDefault();
                   setSessionOptionIndex(index);
                 }}
                 disabled={option.disabled}
@@ -223,7 +222,7 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {sessionOptionIndex === 1 ? "Pause Session" : "End Session"}
+              {sessionOptionIndex === 1 ? "Pause Interview Session" : "End Interview Session"}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {sessionOptionIndex === 1
