@@ -65,19 +65,21 @@ def create_test_code_with_ground_truth_request(
 def create_get_agent_state_by_session_id_request(
     session_id: str,
 ) -> RequestAgentStatesGetBySessionId:
-    return RequestAgentStatesGetBySessionId.from_dict(
+    req = RequestAgentStatesGetBySessionId.from_dict(
         {
             "args": {
                 "sessionId": session_id,
             }
         }
     )
+    assert req is not None
+    return req
 
 
 def create_set_agent_state_by_session_id_request(
-    session_id: str, state: Dict[str, Any]
+    session_id: str, state: str
 ) -> RequestAgentStatesSetBySessionId:
-    return RequestAgentStatesSetBySessionId.from_dict(
+    req = RequestAgentStatesSetBySessionId.from_dict(
         {
             "args": {
                 "sessionId": session_id,
@@ -85,3 +87,5 @@ def create_set_agent_state_by_session_id_request(
             }
         }
     )
+    assert req is not None
+    return req
