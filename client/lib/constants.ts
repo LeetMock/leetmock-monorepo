@@ -5,7 +5,6 @@ export interface Language {
 
 export enum InterviewStage {
   Intro = "introduction",
-  Background = "background",
   Coding = "coding",
   Evaluation = "evaluation",
   End = "end",
@@ -29,14 +28,12 @@ export type Voice = {
 
 export type InterviewFlow = {
   [InterviewStage.Intro]: boolean;
-  [InterviewStage.Background]: boolean;
   [InterviewStage.Coding]: boolean;
   [InterviewStage.Evaluation]: boolean;
 };
 
 export const STAGE_VIEW_MAPPING: Record<InterviewStage, StageView> = {
   [InterviewStage.Intro]: StageView.Chat,
-  [InterviewStage.Background]: StageView.Chat,
   [InterviewStage.Coding]: StageView.Coding,
   [InterviewStage.Evaluation]: StageView.Chat,
   [InterviewStage.End]: StageView.Chat,
@@ -44,7 +41,6 @@ export const STAGE_VIEW_MAPPING: Record<InterviewStage, StageView> = {
 
 export const STAGE_NAME_MAPPING: Record<InterviewStage, string> = {
   [InterviewStage.Intro]: "Introduction",
-  [InterviewStage.Background]: "Background Check",
   [InterviewStage.Coding]: "Coding Challenge",
   [InterviewStage.Evaluation]: "Evaluation",
   [InterviewStage.End]: "End",
@@ -163,8 +159,8 @@ from typing import List, Any
 
 class Solution:
     def ${functionName}(self, ${Object.entries(params)
-        .map(([param, type]) => `${param}: ${type}`)
-        .join(", ")}):
+      .map(([param, type]) => `${param}: ${type}`)
+      .join(", ")}):
         # TODO: Write your Python code here
         pass
 `.trim(),
@@ -187,8 +183,8 @@ import java.util.List;
 
 class Solution {
     public Object ${functionName}(${Object.entries(params)
-        .map(([param, type]) => `${type} ${param}`)
-        .join(", ")}) {
+      .map(([param, type]) => `${type} ${param}`)
+      .join(", ")}) {
         // TODO: Write your Java code here
         return null;
     }
@@ -203,8 +199,8 @@ class Solution {
 class Solution {
 public:
     int ${functionName}(${Object.entries(params)
-        .map(([param, type]) => `${type} ${param}`)
-        .join(", ")}) {
+      .map(([param, type]) => `${type} ${param}`)
+      .join(", ")}) {
         // TODO: Write your C++ code here
         return 0;
     }

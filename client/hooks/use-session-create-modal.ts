@@ -45,9 +45,8 @@ const INITIAL_SESSION_CONFIG: SessionConfigState = {
   modelName: "gpt-4o",
   interviewFlow: {
     [InterviewStage.Intro]: true,
-    [InterviewStage.Background]: false,
     [InterviewStage.Coding]: true,
-    [InterviewStage.Evaluation]: false,
+    [InterviewStage.Evaluation]: true,
   },
 };
 

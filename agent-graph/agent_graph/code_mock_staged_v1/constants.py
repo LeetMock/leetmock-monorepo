@@ -7,6 +7,7 @@ from agent_graph.types import NamedEntity, Signal, Step
 from agent_graph.utils import wrap_xml
 from langchain_core.messages import AIMessage, AIMessageChunk, AnyMessage, HumanMessage
 from pydantic import BaseModel, Field
+from regex import P
 
 from libs.convex.convex_types import (
     CodeSessionContentChangedEvent,
@@ -433,9 +434,23 @@ def get_step_map(interview_flow: List[str]) -> OrderedDict[StageTypes, List[Step
 def create_transition_confirmation_step(
     curr_stage: StageTypes, next_stage: StageTypes
 ) -> Step:
-    return Step.from_info(
-        name=f"ask_candidate_readiness_for_{next_stage.value}",
-        desc=f"Ask the candidate if they are ready to move on to the {next_stage.value} stage.",
-        done_definition=f"Interviewer has finished asking the candidate if they are ready to move on to the {next_stage.value} stage.",
-        required=True,
-    )
+    return {
+        StageTypes.BACKGROUND: Step.from_info(
+            name=f"ask_candidate_readiness_for_coding_stage",
+            desc=f"Ask the candidate if they are ready to start coding.",
+            done_definition=f"Interviewer has finished asking the candidate if they are ready to start coding.",
+            required=True,
+        ),
+        StageTypes.CODING: Step.from_info(
+            name=f"ask_candidate_readiness_for_evaluation_and_feedback_stage",
+            desc=f"Ask the candidate if they are comfortable with their current code and if they are ready to wrap up the interview.",
+            done_definition=f"Interviewer has finished asking the candidate if they are comfortable with their current code and if they are ready to wrap up the interview.",
+            required=True,
+        ),
+        StageTypes.EVAL: Step.from_info(
+            name=f"ask_candidate_ready_to_end_stage",
+            desc=f"Ask the candidate if they are OK to end the interview, and say closing statements.",
+            done_definition=f"Interviewer has finished asking the candidate if they are OK to end the interview, and say closing statements.",
+            required=True,
+        ),
+    }[curr_stage]
