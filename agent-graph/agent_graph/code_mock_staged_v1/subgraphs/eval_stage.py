@@ -6,7 +6,7 @@ from agent_graph.code_mock_staged_v1.constants import (
     Step,
     get_stage_confirmation_tool_call_state_patch,
 )
-from agent_graph.code_mock_staged_v1.prompts import EVAL_PROMPT
+from agent_graph.code_mock_staged_v1.prompts import EVAL_FEEDBACK_PROMPT
 from agent_graph.code_mock_staged_v1.schemas import ConfirmStageCompletion
 from agent_graph.llms import get_model
 from agent_graph.reducers import merge_unique
@@ -51,7 +51,7 @@ async def assistant(
     prompt = ChatPromptTemplate.from_messages(
         [
             SystemMessagePromptTemplate.from_template(
-                EVAL_PROMPT, template_format="jinja2"
+                EVAL_FEEDBACK_PROMPT, template_format="jinja2"
             ),
             MessagesPlaceholder(variable_name="messages"),
         ]
