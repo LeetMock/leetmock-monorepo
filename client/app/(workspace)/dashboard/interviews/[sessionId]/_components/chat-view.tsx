@@ -3,22 +3,23 @@ import { useAgentData } from "@/hooks/use-agent";
 import { cn, isDefined, secondsToMilliseconds } from "@/lib/utils";
 import {
   TrackReference,
+  useConnectionState,
   useLocalParticipant,
   useMultibandTrackVolume,
   useTrackTranscription,
   useVoiceAssistant,
 } from "@livekit/components-react";
+import { motion } from "framer-motion";
 import {
-  AudioTrack,
+  ConnectionState,
   LocalParticipant,
   Participant,
   Track,
   TranscriptionSegment,
 } from "livekit-client";
+import { MessageSquare } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare } from "lucide-react";
 
 type ChatMessageType = {
   name: string;
@@ -111,7 +112,16 @@ export const SessionTranscripts = ({ sessionId }: { sessionId: Id<"sessions"> })
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-background/50 rounded-lg backdrop-blur-sm">
-      <div className="absolute inset-0 overflow-y-auto px-4 space-y-4">
+      <div
+        className={cn(
+          "absolute inset-0 inset-y-1 overflow-y-auto px-4 space-y-4",
+          `[&::-webkit-scrollbar]:w-2
+           [&::-webkit-scrollbar-track]:rounded-full
+           [&::-webkit-scrollbar-thumb]:rounded-full
+           [&::-webkit-scrollbar-thumb]:bg-gray-300
+           dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500`
+        )}
+      >
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 w-full h-full">
             <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
@@ -262,7 +272,9 @@ const WaveVisualizer = ({ audioTrack }: { audioTrack?: TrackReference }) => {
 
 const AudioRenderer = () => {
   const { state, audioTrack } = useVoiceAssistant();
-  console.log(audioTrack);
+  const connectionState = useConnectionState();
+  const isConnected = connectionState === ConnectionState.Connected;
+
   return (
     <div className="flex flex-col items-center gap-16 p-10 rounded-3xl backdrop-blur-sm">
       <div className="flex items-center gap-3 bg-card/80 px-5 py-2.5 rounded-full">
@@ -276,7 +288,7 @@ const AudioRenderer = () => {
             state === "disconnected" && "bg-red-500"
           )}
           animate={{
-            scale: state !== "disconnected" ? [1, 1.2, 1] : 1,
+            scale: isConnected ? [1, 1.2, 1] : 1,
           }}
           transition={{
             duration: 1,
@@ -287,7 +299,7 @@ const AudioRenderer = () => {
       </div>
 
       <div className="relative w-full aspect-square rounded-3xl p-4">
-        <WaveVisualizer audioTrack={audioTrack} />
+        <WaveVisualizer audioTrack={isConnected ? audioTrack : undefined} />
       </div>
 
       <div className="text-sm text-muted-foreground font-medium">
