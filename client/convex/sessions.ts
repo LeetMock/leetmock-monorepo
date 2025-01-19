@@ -264,4 +264,8 @@ async function endSessionAction(ctx: MutationCtx, sessionId: Id<"sessions">) {
     sessionStartTime: startTime,
     sessionEndTime: endTime,
   });
+
+  ctx.scheduler.runAfter(1000, internal.actions.triggerEval, {
+    sessionId,
+  });
 }
