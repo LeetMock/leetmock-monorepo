@@ -1,13 +1,14 @@
-from typing import Annotated, List, OrderedDict, Set, cast
+from typing import Annotated, List, OrderedDict, cast
 
 from agent_graph.code_mock_staged_v1.constants import (
     AgentConfig,
     StageTypes,
     Step,
+    format_end_of_session_thought_messages,
     get_stage_confirmation_tool_call_state_patch,
 )
 from agent_graph.code_mock_staged_v1.prompts import EVAL_FEEDBACK_PROMPT
-from agent_graph.code_mock_staged_v1.schemas import ConfirmStageCompletion
+from agent_graph.code_mock_staged_v1.schemas import ConfirmEndOfInterview
 from agent_graph.llms import get_model
 from agent_graph.reducers import merge_unique
 from agent_graph.types import EventMessageState
@@ -62,39 +63,57 @@ async def assistant(
         temperature=agent_config.temperature,
     )
 
-    if (
-        agent_config.transition_confirmation_enabled
-        and state.round_until_next_confirmation == 0
-    ):
-        llm = llm.bind_tools([ConfirmStageCompletion])
-
     chain = prompt | llm.bind(stop=["SILENT", "<thinking>"])
 
     content = ""
-    tool_call_detected = False
-    function_name = ""
     async for chunk in chain.astream(
         {
             "messages": state.messages,
             "steps": state.steps[StageTypes.EVAL],
         }
     ):
-        if "tool_calls" in chunk.additional_kwargs:
-            tool_call_detected = True
-            function_name = chunk.additional_kwargs["tool_calls"][0]["function"]["name"]
-            break
-        else:
-            content += cast(str, chunk.content)
-            writer(custom_data("assistant", chunk.content))
-
-    if tool_call_detected:
-        return get_stage_confirmation_tool_call_state_patch(
-            StageTypes.EVAL, function_name, state
-        )
+        content += cast(str, chunk.content)
+        writer(custom_data("assistant", chunk.content))
 
     # If the assistant doesn't say anything, we should return a SILENT message
     if len(content.strip()) == 0:
         return dict(messages=[AIMessage(content="SILENT")])
+
+    return None
+
+
+async def check_end_of_session(state: EvalStageState, config: RunnableConfig):
+    agent_config = get_configurable(AgentConfig, config)
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            SystemMessagePromptTemplate.from_template(
+                EVAL_FEEDBACK_PROMPT, template_format="jinja2"
+            ),
+            MessagesPlaceholder(variable_name="messages"),
+            MessagesPlaceholder(variable_name="thought"),
+        ]
+    )
+
+    llm = get_model(
+        model_name=agent_config.smart_model,
+        temperature=0.1,
+    )
+
+    chain = prompt | llm.with_structured_output(ConfirmEndOfInterview)
+
+    result = await chain.ainvoke(
+        {
+            "messages": state.messages,
+            "steps": state.steps[StageTypes.EVAL],
+            "thought": format_end_of_session_thought_messages(),
+        }
+    )
+    result = cast(ConfirmEndOfInterview, result)
+
+    if result.should_end:
+        return get_stage_confirmation_tool_call_state_patch(
+            StageTypes.EVAL, "confirm_end_of_interview", state
+        )
 
     return None
 
@@ -104,8 +123,11 @@ def create_graph():
         StateGraph(EvalStageState, AgentConfig)
         # nodes
         .add_node("assistant", assistant)  # type: ignore
+        .add_node("check_end_of_session", check_end_of_session)  # type: ignore
         # edges
-        .add_edge(START, "assistant").add_edge("assistant", END)
+        .add_edge(START, "assistant")
+        .add_edge("assistant", "check_end_of_session")
+        .add_edge("check_end_of_session", END)
     )
 
 

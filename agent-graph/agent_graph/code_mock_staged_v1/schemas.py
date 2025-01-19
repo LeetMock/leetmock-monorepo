@@ -65,3 +65,19 @@ class ConfirmStageCompletion(BaseModel):
     """
 
     pass
+
+
+class ConfirmEndOfInterview(BaseModel):
+    """
+    Confirm if the interview session should be safely ended based on the conversation history.
+    """
+
+    thought: str = Field(
+        ...,
+        description="Step-by-step thinking process for deciding if the interview session should be safely ended based on the conversation history",
+    )
+
+    should_end: bool = Field(
+        ...,
+        description="Whether the interview session should be safely ended based on the conversation history",
+    )

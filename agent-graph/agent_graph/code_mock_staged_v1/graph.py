@@ -9,11 +9,9 @@ from agent_graph.code_mock_staged_v1.constants import (
     format_stage_transition_messages,
     format_testcase_changed_notification_messages,
     format_user_testcase_executed_notification_messages,
-    get_next_stage,
     get_step_map,
 )
 from agent_graph.code_mock_staged_v1.subgraphs import (
-    background_stage,
     coding_stage,
     eval_stage,
     intro_stage,
@@ -117,7 +115,7 @@ async def on_event(
 ):
     if state.event == "trigger":
         messages = (
-            [HumanMessage(content=RECONNECT_MESSAGE)] if len(state.messages) > 5 else []
+            [HumanMessage(content=RECONNECT_MESSAGE)] if len(state.messages) > 1 else []
         )
         return with_event_reset(trigger=True, messages=messages)
 
@@ -256,7 +254,6 @@ def create_graph():
         .add_node("on_trigger", on_trigger)
         .add_node("decide_next_stage", decide_next_stage)
         .add_node(StageTypes.INTRO, intro_stage.create_compiled_graph())
-        .add_node(StageTypes.BACKGROUND, background_stage.create_compiled_graph())
         .add_node(StageTypes.CODING, coding_stage.create_compiled_graph())
         .add_node(StageTypes.EVAL, eval_stage.create_compiled_graph())
         # edges
@@ -276,14 +273,12 @@ def create_graph():
             path=select_stage,
             path_map=[
                 StageTypes.INTRO,
-                StageTypes.BACKGROUND,
                 StageTypes.CODING,
                 StageTypes.EVAL,
                 END,
             ],
         )
         .add_edge(StageTypes.INTRO, "decide_next_stage")
-        .add_edge(StageTypes.BACKGROUND, "decide_next_stage")
         .add_edge(StageTypes.CODING, "decide_next_stage")
         .add_edge(StageTypes.EVAL, "decide_next_stage")
         .add_conditional_edges(

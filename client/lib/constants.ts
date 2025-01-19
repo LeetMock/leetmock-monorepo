@@ -13,6 +13,7 @@ export enum InterviewStage {
 export enum StageView {
   Chat = "chat",
   Coding = "coding",
+  End = "end",
 }
 
 export enum VoiceProvider {
@@ -36,7 +37,7 @@ export const STAGE_VIEW_MAPPING: Record<InterviewStage, StageView> = {
   [InterviewStage.Intro]: StageView.Chat,
   [InterviewStage.Coding]: StageView.Coding,
   [InterviewStage.Evaluation]: StageView.Chat,
-  [InterviewStage.End]: StageView.Chat,
+  [InterviewStage.End]: StageView.End,
 };
 
 export const STAGE_NAME_MAPPING: Record<InterviewStage, string> = {

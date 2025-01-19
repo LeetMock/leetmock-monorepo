@@ -5,9 +5,8 @@ from typing import List, OrderedDict, TypeVar
 from agent_graph.event_descriptors import CodingEventType
 from agent_graph.types import NamedEntity, Signal, Step
 from agent_graph.utils import wrap_xml
-from langchain_core.messages import AIMessage, AIMessageChunk, AnyMessage, HumanMessage
+from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
 from pydantic import BaseModel, Field
-from regex import P
 
 from libs.convex.convex_types import (
     CodeSessionContentChangedEvent,
@@ -25,7 +24,6 @@ logger = logging.getLogger(__name__)
 
 class StageTypes(str, Enum):
     INTRO = "introduction"
-    BACKGROUND = "background"
     CODING = "coding"
     EVAL = "evaluation"
     END = "end"
@@ -49,18 +47,6 @@ class AgentConfig(BaseModel):
     stages: List[StageTypes] = Field(default=[])
 
     transition_confirmation_enabled: bool = Field(default=False)
-
-
-def get_next_stage(stage: StageTypes) -> StageTypes:
-    """Get the next stage."""
-
-    return {
-        StageTypes.INTRO: StageTypes.BACKGROUND,
-        StageTypes.BACKGROUND: StageTypes.CODING,
-        StageTypes.CODING: StageTypes.EVAL,
-        StageTypes.EVAL: StageTypes.END,
-        StageTypes.END: StageTypes.END,
-    }[stage]
 
 
 def get_new_entities(
@@ -164,6 +150,14 @@ def format_testcase_changed_notification_messages(
     ]
 
 
+def format_end_of_session_thought_messages() -> List[AIMessage]:
+    content = """\
+I need to decide if I can properly end the interview session. \
+This should only be proceeded after interviewer and candidate say goodbye to each other, or some closing statements like that.
+"""
+    return [AIMessage(content=wrap_xml(tag="thinking", content=content))]
+
+
 def format_user_testcase_executed_notification_messages(
     event_data: CodeSessionUserTestcaseExecutedEvent,
 ) -> List[AnyMessage]:
@@ -243,7 +237,6 @@ Now candidate has finished the interview. Thank them for their time and interact
 """
 
 STAGE_TRANSITION_MESSAGES = {
-    StageTypes.BACKGROUND: START_ASK_BACKGROUND_QUESTION_PROMPT,
     StageTypes.CODING: START_ASK_CODING_QUESTION_PROMPT,
     StageTypes.EVAL: FINISH_EVAL_PROMPT,
     StageTypes.END: FINISH_INTERVIEW_PROMPT,
@@ -406,7 +399,6 @@ def get_step_map(interview_flow: List[str]) -> OrderedDict[StageTypes, List[Step
     # Map string stage names to enum values
     stage_name_to_enum = {
         "introduction": StageTypes.INTRO,
-        "background": StageTypes.BACKGROUND,
         "coding": StageTypes.CODING,
         "evaluation": StageTypes.EVAL,
         "end": StageTypes.END,
@@ -415,7 +407,6 @@ def get_step_map(interview_flow: List[str]) -> OrderedDict[StageTypes, List[Step
     # Map enum values to step lists
     stage_to_steps = {
         StageTypes.INTRO: INTRO_STEPS,
-        StageTypes.BACKGROUND: BACKGROUND_STEPS,
         StageTypes.CODING: CODING_STEPS,
         StageTypes.EVAL: EVAL_STEPS,
     }
@@ -434,8 +425,12 @@ def get_step_map(interview_flow: List[str]) -> OrderedDict[StageTypes, List[Step
 def create_transition_confirmation_step(
     curr_stage: StageTypes, next_stage: StageTypes
 ) -> Step:
-    return {
-        StageTypes.BACKGROUND: Step.from_info(
+    logger.info(
+        f"Creating transition confirmation step for {curr_stage} -> {next_stage}"
+    )
+
+    step_map = {
+        StageTypes.INTRO: Step.from_info(
             name=f"ask_candidate_readiness_for_coding_stage",
             desc=f"Ask the candidate if they are ready to start coding.",
             done_definition=f"Interviewer has finished asking the candidate if they are ready to start coding.",
@@ -453,4 +448,9 @@ def create_transition_confirmation_step(
             done_definition=f"Interviewer has finished asking the candidate if they are OK to end the interview, and say closing statements.",
             required=True,
         ),
-    }[curr_stage]
+    }
+
+    if curr_stage not in step_map:
+        raise ValueError(f"Invalid stage: {curr_stage}")
+
+    return step_map[curr_stage]
