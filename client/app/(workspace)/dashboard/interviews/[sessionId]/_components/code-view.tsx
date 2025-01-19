@@ -1,11 +1,11 @@
 import { Wait } from "@/components/wait";
 import { Doc, Id } from "@/convex/_generated/dataModel";
+import { useResizePanel } from "@/hooks/use-resize-panel";
 import { cn } from "@/lib/utils";
 import { LucideFileText } from "lucide-react";
+import { useWindowSize } from "usehooks-ts";
 import { CodeEditorPanel } from "./code-editor-panel";
 import { CodeQuestionPanel } from "./code-question-panel";
-import { useResizePanel } from "@/hooks/use-resize-panel";
-import { useWindowSize } from "usehooks-ts";
 
 export const CodeView: React.FC<{
   sessionId: Id<"sessions">;
@@ -13,7 +13,7 @@ export const CodeView: React.FC<{
 }> = ({ sessionId, question }) => {
   const { width: windowWidth = 300 } = useWindowSize();
   const { size, isResizing, resizeHandleProps } = useResizePanel({
-    defaultSize: 400,
+    defaultSize: 800,
     minSize: 200,
     maxSize: windowWidth - 300,
     direction: "horizontal",

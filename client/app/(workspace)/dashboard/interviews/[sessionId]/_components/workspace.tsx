@@ -1,4 +1,3 @@
-import { Tooltip } from "@/components/tooltip";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Wait } from "@/components/wait";
@@ -10,21 +9,19 @@ import { useConnection } from "@/hooks/use-connection";
 import { useEditorStore } from "@/hooks/use-editor-store";
 import { useSessionSidebar } from "@/hooks/use-session-sidebar";
 import { useUserProfile } from "@/hooks/use-user-profile";
-import { cn, isDefined } from "@/lib/utils";
+import { InterviewStage, STAGE_VIEW_MAPPING, StageView } from "@/lib/constants";
+import { isDefined } from "@/lib/utils";
 import { useConnectionState, useLocalParticipant } from "@livekit/components-react";
 import { useQuery } from "convex/react";
 import { ConnectionState } from "livekit-client";
-import { MessageCircle, PanelLeftOpen, X } from "lucide-react";
+import { MessageCircle, X } from "lucide-react";
 import { redirect } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { useWindowSize } from "usehooks-ts";
+import { ChatView } from "./chat-view";
+import { CodeView } from "./code-view";
 import { WorkspaceSidebar } from "./workspace-sidebar";
 import { WorkspaceToolbar } from "./workspace-toolbar";
-import { CodeView } from "./code-view";
-import { ChatView } from "./chat-view";
-import { InterviewStage, STAGE_VIEW_MAPPING, StageView } from "@/lib/constants";
-import { AnimatePresence, motion } from "framer-motion";
 
 export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { reset } = useEditorStore();
@@ -78,26 +75,8 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
       {/* Sidebar */}
       <WorkspaceSidebar sessionId={sessionId} />
       <div className="flex flex-col justify-center items-center flex-1 bg-accent">
-        <div className={cn("w-full flex items-center p-2 relative")}>
-          {collapsed && (
-            <Tooltip content="Expand">
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => setCollapsed(false)}
-                className={
-                  "absolute left-2 transition-all duration-200 hover:bg-black/5 dark:hover:bg-white/10"
-                }
-              >
-                <PanelLeftOpen className="w-4 h-4 text-primary" />
-              </Button>
-            </Tooltip>
-          )}
-          <div className="flex-1 flex items-center justify-center">
-            <Wait data={{ session }}>
-              {({ session }) => <WorkspaceToolbar session={session} />}
-            </Wait>
-          </div>
+        <div className="w-full flex p-2 items-center justify-center">
+          <Wait data={{ session }}>{({ session }) => <WorkspaceToolbar session={session} />}</Wait>
         </div>
         <div className="w-full h-full flex justify-center items-center p-2 pt-0 relative">
           {stageView}
