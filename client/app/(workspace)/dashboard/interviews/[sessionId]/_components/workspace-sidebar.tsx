@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useSessionSidebar } from "@/hooks/use-session-sidebar";
+import { InterviewStage, STAGE_NAME_MAPPING } from "@/lib/constants";
 import {
   cn,
   getTimeDurationSeconds,
@@ -15,23 +16,12 @@ import {
 } from "@/lib/utils";
 import { useQuery } from "convex/react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  CheckCircle,
-  Clock,
-  Code,
-  HelpCircle,
-  LucideIcon,
-  MessageSquare,
-  PanelLeft,
-  Smile,
-} from "lucide-react";
+import { CheckCircle, Clock, Code, HelpCircle, LucideIcon, PanelLeft, Smile } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { TimerCountdown } from "./timer-countdown";
-import { InterviewStage, STAGE_NAME_MAPPING } from "@/lib/constants";
 
 const STAGE_TO_ICON_MAP: Record<InterviewStage, LucideIcon> = {
   [InterviewStage.Intro]: Smile,
-  [InterviewStage.Background]: MessageSquare,
   [InterviewStage.Coding]: Code,
   [InterviewStage.Evaluation]: HelpCircle,
   [InterviewStage.End]: CheckCircle,
