@@ -7,7 +7,6 @@ import { useAgent } from "@/hooks/use-agent";
 import { useAgentChat } from "@/hooks/use-agent-chat";
 import { useConnection } from "@/hooks/use-connection";
 import { useEditorStore } from "@/hooks/use-editor-store";
-import { useSessionSidebar } from "@/hooks/use-session-sidebar";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { InterviewStage, STAGE_VIEW_MAPPING, StageView } from "@/lib/constants";
 import { isDefined } from "@/lib/utils";
@@ -20,13 +19,13 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ChatView } from "./chat-view";
 import { CodeView } from "./code-view";
+import { EndView } from "./end-view";
 import { WorkspaceSidebar } from "./workspace-sidebar";
 import { WorkspaceToolbar } from "./workspace-toolbar";
 
 export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }) => {
   const { reset } = useEditorStore();
   const { isAgentConnected } = useAgent(sessionId);
-  const { collapsed, setCollapsed } = useSessionSidebar();
 
   const { disconnect } = useConnection();
   const connectionState = useConnectionState();
@@ -39,6 +38,10 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
   const stageView = useMemo(() => {
     if (!isDefined(session)) return undefined;
     if (!isDefined(sessionState)) return undefined;
+
+    if (sessionState.currentStageIdx >= session.interviewFlow.length) {
+      return <EndView session={session} />;
+    }
 
     const flow = session.interviewFlow as InterviewStage[];
     const stage = flow[sessionState.currentStageIdx];

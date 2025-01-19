@@ -24,7 +24,7 @@ import { QuestionCard } from "./question-card";
 
 const INTERVIEW_DURATIONS = [15, 30, 45, 60, 75, 90];
 
-const REQUIRED_STAGES = [InterviewStage.Intro, InterviewStage.Coding];
+const REQUIRED_STAGES = [InterviewStage.Intro, InterviewStage.Coding, InterviewStage.Evaluation];
 
 const SESSION_MODE_NAME_MAPPING = {
   [SessionMode.Practice]: "Practice Mode",
