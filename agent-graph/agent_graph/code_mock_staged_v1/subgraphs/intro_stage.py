@@ -60,7 +60,7 @@ async def assistant(
     )
 
     llm = get_model(
-        model_name=agent_config.fast_model,
+        model_name=agent_config.smart_model,
         temperature=agent_config.temperature,
     )
 

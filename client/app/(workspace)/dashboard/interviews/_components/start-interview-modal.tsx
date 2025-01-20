@@ -107,7 +107,8 @@ export const InterviewTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & 
   return (
     <Card
       className={cn(
-        "flex flex-col relative overflow-hidden transition-all duration-300 shadow-none select-none",
+        "flex flex-col relative overflow-hidden transition-all duration-300 shadow-none select-none h-full",
+        "min-h-[420px] flex-1 justify-between",
         available && "hover:cursor-pointer hover:scale-[1.03] hover:shadow-lg",
         currentType === type && "shadow-lg ring-2 ring-primary scale-[1.03]",
         className
@@ -148,7 +149,7 @@ export const InterviewTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & 
 
 export const InterviewTypeSelection: React.FC = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full min-h-[400px] pt-4 px-8  mx-auto">
       {interviewTypes.map((interviewType) => (
         <InterviewTypeCard key={interviewType.title} {...interviewType} className="h-full" />
       ))}
@@ -303,7 +304,7 @@ export const StartInterviewModal: React.FC = () => {
           <DialogContent
             className={cn(
               "max-w-[1200px] w-[90vw] min-h-[50rem] max-h-[90vh]",
-              "flex flex-col gap-6 overflow-y-auto"
+              "flex flex-col gap-6"
             )}
           >
             <DialogHeader>
@@ -316,8 +317,11 @@ export const StartInterviewModal: React.FC = () => {
               currentStep={maxStep}
             />
 
-            {content}
-            <div className="flex justify-between">
+            <div className="flex-1 overflow-y-auto min-h-0">
+              {content}
+            </div>
+
+            <div className="flex justify-between mt-auto pt-4 border-t">
               <Button
                 variant="ghost"
                 disabled={currentStep <= 0}
@@ -345,16 +349,18 @@ export const StartInterviewModal: React.FC = () => {
         </Dialog>
       ) : (
         <Drawer open={startDialogOpen} onOpenChange={setStartDialogOpen}>
-          <DrawerContent className="max-h-[90vh]">
-            <div className="flex flex-col gap-3 overflow-y-auto">
+          <DrawerContent className="max-h-[90vh] flex flex-col">
+            <div className="flex flex-col flex-1 min-h-0">
               <DrawerHeader>
                 <DrawerTitle className="text-lg">{title}</DrawerTitle>
                 <DrawerDescription className="text-sm">{description}</DrawerDescription>
               </DrawerHeader>
 
-              <div className="px-4 relative">{content}</div>
+              <div className="px-4 flex-1 overflow-y-auto">
+                {content}
+              </div>
 
-              <DrawerFooter className="flex justify-between">
+              <DrawerFooter className="flex justify-between mt-auto border-t">
                 <Button
                   variant="ghost"
                   disabled={currentStep <= 0}
