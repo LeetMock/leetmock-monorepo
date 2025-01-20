@@ -109,7 +109,11 @@ def format_content_changed_notification_messages(
     event_data: CodeSessionContentChangedEvent,
 ) -> List[AnyMessage]:
     before, after = event_data.event.data.before, event_data.event.data.after
-    diff = get_unified_diff(before, after)
+    diff = get_unified_diff(before, after).strip()
+
+    if len(diff) == 0:
+        return []
+
     return [
         HumanMessage(
             content=wrap_xml(
