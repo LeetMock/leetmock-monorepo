@@ -29,6 +29,7 @@ import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
 import { CodeInterviewConfig } from "./code-interview-config";
 import { CodeQuestionViewer } from "./code-question-viewer";
+import { getUserProfile } from "@/convex/userProfiles";
 
 interface SessionMeta {
   title: string;
@@ -182,6 +183,7 @@ export const StartInterviewModal: React.FC = () => {
   }, [hasSetInterviewType, hasSetProblem, hasConfiguredSession]);
 
   const questions = useQuery(api.questions.getAll);
+  const user_info = useQuery(api.userProfiles.getUserMinutesRemaining);
   const createAgentThread = useAction(api.actions.createAgentThread);
   const createSession = useMutation(api.sessions.createCodeSession);
 
@@ -189,6 +191,18 @@ export const StartInterviewModal: React.FC = () => {
     if (!questions) return;
     const question = questions.find((q) => q._id === questionId);
     if (!question) return;
+
+    // Get user profile information
+    if (!user_info) {
+      toast.error("Unable to fetch user profile");
+      return;
+    }
+
+    // check if user has enough minutes
+    if (user_info.minutesRemaining < interviewTime) {
+      toast.error("You don't have enough interview minutes remaining");
+      return;
+    }
 
     const promise = createAgentThread({ graphId: "code-mock-staged-v1-db" })
       .then(({ threadId, assistantId }) => {

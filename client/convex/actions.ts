@@ -96,6 +96,15 @@ export const triggerEval = userAction({
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
+
+
+    const result = await ctx.runMutation(internal.userProfiles.decrementEvaluationCount);
+
+    if (!result.success) {
+      throw new Error(result.message);
+    }
+    console.log("result", result);
+
     const apiKey = process.env.LANGSMITH_API_KEY;
     if (!apiKey) throw new Error("LANGSMITH_API_KEY not found");
     const apiUrl = process.env.LANGGRAPH_API_URL;
@@ -113,6 +122,11 @@ export const triggerEval = userAction({
         },
       }),
     });
+
+    return {
+      success: true,
+      remainingCredits: result.currentCount
+    };
   },
 });
 
@@ -171,11 +185,11 @@ export const runCode = action({
 
     return result
       ? {
-          status: !result.isError, //true if API call was successful
-          executionTime: result.executionTime,
-          isError: !!result.stderr, //true if there's an error in the code
-          output: result.stderr || result.stdout || "",
-        }
+        status: !result.isError, //true if API call was successful
+        executionTime: result.executionTime,
+        isError: !!result.stderr, //true if there's an error in the code
+        output: result.stderr || result.stdout || "",
+      }
       : undefined;
   },
 });
@@ -219,7 +233,7 @@ export const runGroundTruthTest = action({
     let globalCaseNumber = 0; // Track the overall test case number
 
     // Process test cases with dynamic batch size
-    for (let i = 0; i < testCases.length; ) {
+    for (let i = 0; i < testCases.length;) {
       const batchTestCases = testCases.slice(i, i + currentBatchSize);
       const testCode = generateTestCode(question, language, batchTestCases);
       const payload = {

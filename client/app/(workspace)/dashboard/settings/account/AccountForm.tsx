@@ -2,6 +2,7 @@
 
 import {
   BellIcon,
+  ClipboardIcon,
   FaceIcon,
   LayersIcon,
   PersonIcon,
@@ -76,6 +77,11 @@ export function AccountForm() {
             icon={TimerIcon}
             title={<Badge>{userProfile.minutesRemaining} minutes</Badge>}
             description="Interview Minutes remaining"
+          />
+          <InfoItem
+            icon={ClipboardIcon}
+            title={<Badge>{userProfile.evaluationCount || 0} credits</Badge>}
+            description="Evaluation Credits remaining"
           />
           {userProfile.currentPeriodStart && userProfile.currentPeriodEnd && (
             <InfoItem

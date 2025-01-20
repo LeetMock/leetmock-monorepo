@@ -11,6 +11,42 @@ export const getUserProfileInternal = internalQuery({
   },
 });
 
+export const decrementEvaluationCount = internalMutation({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    // Return early if no authenticated user
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const profile = await ctx.table("userProfiles").get("userId", identity.subject);
+    if (!profile) {
+      throw new Error("Profile not found");
+    }
+
+    const currentCount = profile.evaluationCount ?? 0;
+
+    if (currentCount === 0) {
+      return {
+        success: false,
+        message: "No evaluation credits remaining",
+        currentCount: 0
+      };
+    }
+
+    await profile.patch({
+      evaluationCount: currentCount - 1
+    });
+
+    return {
+      success: true,
+      message: "Evaluation credit used successfully",
+      currentCount: currentCount - 1
+    };
+  },
+});
+
 export const getUserProfile = userQuery({
   handler: async (ctx) => {
     // Check if user is authenticated
@@ -30,6 +66,28 @@ export const getUserProfile = userQuery({
     return { profile: profile };
   },
 });
+
+export const getUserMinutesRemaining = userQuery({
+  handler: async (ctx) => {
+    // Check if user is authenticated
+    const identity = await ctx.auth.getUserIdentity();
+
+    // Return early if no authenticated user
+    if (!identity) {
+      return { minutesRemaining: -1 };
+    }
+
+    const profile = await ctx.table("userProfiles").get("userId", identity.subject);
+
+    if (!isDefined(profile)) {
+      return { minutesRemaining: -1 };
+    }
+
+    return { minutesRemaining: profile.minutesRemaining };
+  },
+});
+
+
 
 export const getByEmailInternal = internalQuery({
   args: { email: v.optional(v.string()) },

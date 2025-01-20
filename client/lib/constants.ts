@@ -160,8 +160,8 @@ from typing import List, Any
 
 class Solution:
     def ${functionName}(self, ${Object.entries(params)
-      .map(([param, type]) => `${param}: ${type}`)
-      .join(", ")}):
+        .map(([param, type]) => `${param}: ${type}`)
+        .join(", ")}):
         # TODO: Write your Python code here
         pass
 `.trim(),
@@ -184,8 +184,8 @@ import java.util.List;
 
 class Solution {
     public Object ${functionName}(${Object.entries(params)
-      .map(([param, type]) => `${type} ${param}`)
-      .join(", ")}) {
+        .map(([param, type]) => `${type} ${param}`)
+        .join(", ")}) {
         // TODO: Write your Java code here
         return null;
     }
@@ -200,8 +200,8 @@ class Solution {
 class Solution {
 public:
     int ${functionName}(${Object.entries(params)
-      .map(([param, type]) => `${type} ${param}`)
-      .join(", ")}) {
+        .map(([param, type]) => `${type} ${param}`)
+        .join(", ")}) {
         // TODO: Write your C++ code here
         return 0;
     }
@@ -209,8 +209,8 @@ public:
 `.trim(),
 };
 
-export const FREE_PLAN_MINUTES_ONLY_ONCE = 30;
-export const FREE_PLAN_EVALUATION_ONLY_ONCE = 3;
+export const FREE_PLAN_MINUTES_ONLY_ONCE = 300;
+export const FREE_PLAN_EVALUATION_ONLY_ONCE = 15;
 
 export const ADMIN_INVITE_CODE_ONLY_ONCE = 999999;
 export const ADMIN_EVALUATION_COUNT = 999999;

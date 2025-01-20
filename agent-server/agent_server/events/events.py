@@ -321,37 +321,21 @@ class GroundTruthTestcaseExecutedEvent(BaseEvent[Any]):
             else:
                 logger.info("No static check error, running tests")
 
-                # Get current testcases
-                request = create_test_code_correctness_request(
-                    language="python",
-                    code=self.session.session_state.editor.content,
-                    question_id=self.session.session_metadata.question_id,
-                    session_id=self.session.session_metadata.session_id,
+                # TODO: fix bug in ground truth test execution and replace above with following
+                response = self.convex_api.action_unsafe(
+                    "actions:runGroundTruthTest",
+                    {
+                        "questionId": self.session.session_metadata.question_id,
+                        "code": self.session.session_state.editor.content,
+                        "language": "python",
+                    },
                 )
-                response = self.convex_api.action.api_run_actions_run_tests_post(
-                    request
-                )
-                assert (
-                    response.value is not None
-                    and response.value.test_results is not None
-                ), "No test results"
-                testcase_results = response.value.test_results
+
+                testcase_results = response.value
 
                 # Emit formatted test results and the graph should pick it up
                 self.emit(format_test_context(testcase_results))
 
-                # TODO: fix bug in ground truth test execution and replace above with following
-                # response = self.convex_api.action_unsafe(
-                #     "actions:runGroundTruthTest",
-                #     {
-                #         "questionId": self.session.session_metadata.question_id,
-                #         "code": self.session.session_state.editor.content,
-                #         "language": "python",
-                #     },
-                # )
-                # run_code_result = [TestcaseResult(**testcase) for testcase in response]
-
-                # self.emit(format_test_context(run_code_result))
         except Exception as e:
             if isinstance(e, AssertionError) and "No test results" in str(e):
                 logger.info("No test results, skipping emit")

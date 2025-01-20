@@ -90,6 +90,23 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     store.incrementTestCounter();
 
     try {
+      // Wait for any pending testcase changes to be saved
+      if (store.hasTestcaseChanges) {
+        await new Promise<void>((resolve) => {
+          onCommitEvent({
+            type: "testcase_changed",
+            data: {
+              before: store.savedTestcases,
+              after: store.draftTestcases,
+            }
+          });
+          resolve();
+        });
+        store.saveDraft();
+        // Small delay to ensure backend state is updated
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
       const result = await runTests({ language, sessionId, questionId });
       if (result.status === "success" && result.testResults) {
         store.setTestResults(result.testResults);
