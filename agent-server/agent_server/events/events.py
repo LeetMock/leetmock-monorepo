@@ -48,10 +48,9 @@ from pydantic import BaseModel, Field, PrivateAttr, StrictStr
 
 from libs.convex.api import ConvexApi
 from libs.convex.convex_requests import create_test_code_correctness_request
-from libs.convex.convex_types import CodeSessionContentChangedEvent
+from libs.convex.convex_types import CodeSessionContentChangedEvent, TestcaseResult
 from libs.helpers import static_check_with_mypy
 from libs.message_wrapper import MessageWrapper
-from libs.convex.convex_types import TestcaseResult
 
 logger = logging.getLogger(__name__)
 
@@ -96,7 +95,7 @@ class ConditionedStateChangeEvent(BaseEvent[AgentState]):
 
     def setup(self):
         self.state_merger.on("state_initialized", self._handle_state_inited)
-        self.state_merger.on("state_changed", self._handle_state_change)
+        self.state_merger.on("state_changed", self._handle_state_changed)
 
 
 class ReminderEvent(BaseEvent[Reminder]):
