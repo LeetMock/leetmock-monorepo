@@ -12,7 +12,7 @@ interface EndViewProps {
 }
 
 export const EndView = ({ session }: EndViewProps) => {
-  const [countdown, setCountdown] = useState(10);
+  const [countdown, setCountdown] = useState(30);
   const endSession = useMutation(api.sessions.endSession);
   const triggerEval = useAction(api.actions.triggerEval);
 

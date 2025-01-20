@@ -1,3 +1,4 @@
+from lib2to3.pytree import HUGE
 from typing import Annotated, List, OrderedDict, cast
 
 from agent_graph.code_mock_staged_v1.constants import (
@@ -13,7 +14,7 @@ from agent_graph.llms import get_model
 from agent_graph.reducers import merge_unique
 from agent_graph.types import EventMessageState
 from agent_graph.utils import custom_data, get_configurable
-from langchain_core.messages import AIMessage
+from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.prompts import (
     ChatPromptTemplate,
     MessagesPlaceholder,
@@ -42,6 +43,19 @@ class EvalStageState(EventMessageState):
     round_until_next_confirmation: int = Field(
         default=0, description="Round until next confirmation"
     )
+
+    num_messages_before_eval: int = Field(
+        default=1000000, description="Number of messages so far"
+    )
+
+
+async def update_num_messages_so_far(state: EvalStageState):
+    num_messages_before_eval = min(
+        state.num_messages_before_eval,
+        len(state.messages),
+    )
+
+    return dict(num_messages_before_eval=num_messages_before_eval)
 
 
 # --------------------- stage subgraph nodes --------------------- #
@@ -101,9 +115,16 @@ async def check_end_of_session(state: EvalStageState, config: RunnableConfig):
 
     chain = prompt | llm.with_structured_output(ConfirmEndOfInterview)
 
+    messages = [
+        HumanMessage(
+            content="(Below are the most recent conversations; earlier conversations are omitted.)"
+        ),
+        *state.messages[state.num_messages_before_eval - 3 :],
+    ]
+
     result = await chain.ainvoke(
         {
-            "messages": state.messages,
+            "messages": messages,
             "steps": state.steps[StageTypes.EVAL],
             "thought": format_end_of_session_thought_messages(),
         }

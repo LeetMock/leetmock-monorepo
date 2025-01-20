@@ -70,6 +70,10 @@ class ConfirmStageCompletion(BaseModel):
 class ConfirmEndOfInterview(BaseModel):
     """
     Confirm if the interview session should be safely ended based on the conversation history.
+
+    This tool should be only called after
+    1. Interviewer has provided feedback to candidate.
+    2. Candidate and interviewer say goodbye to each other, or some closing statements are made.
     """
 
     thought: str = Field(

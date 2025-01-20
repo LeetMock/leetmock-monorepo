@@ -255,6 +255,12 @@ INTRO_STEPS: List[Step] = [
         required=True,
     ),
     Step.from_info(
+        name="ask_candidate_name",
+        desc="Ask the candidate about their name.",
+        done_definition="Interviewer has finished asking about the candidate's name.",
+        required=True,
+    ),
+    Step.from_info(
         name="ask_company_and_role",
         desc="Ask the candidate about their current company and role. DO NOT ask about anything else.",
         done_definition="Interviewer has finished asking about the candidate's current company and role.",
