@@ -143,10 +143,12 @@ def create_graph():
     return (
         StateGraph(EvalStageState, AgentConfig)
         # nodes
+        .add_node("update_num_messages_so_far", update_num_messages_so_far)  # type: ignore
         .add_node("assistant", assistant)  # type: ignore
         .add_node("check_end_of_session", check_end_of_session)  # type: ignore
         # edges
-        .add_edge(START, "assistant")
+        .add_edge(START, "update_num_messages_so_far")
+        .add_edge("update_num_messages_so_far", "assistant")
         .add_edge("assistant", "check_end_of_session")
         .add_edge("check_end_of_session", END)
     )
