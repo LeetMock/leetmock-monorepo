@@ -148,7 +148,7 @@ async def entrypoint(ctx: JobContext):
         llm=no_op_llm,
         tts=get_tts_engine(session.session_metadata.voice),
         before_llm_cb=before_llm_callback,
-        turn_detector=turn_detector.EOUModel(),
+        # turn_detector=turn_detector.EOUModel(),
     )
 
     # @assistant.on("metrics_collected")
