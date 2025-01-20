@@ -3,8 +3,9 @@
   "graphs": {
     "code-mock-staged-v1-db": "./agent-graph/agent_graph/code_mock_staged_v1/db.py:db",
     "code-mock-staged-v1-graph": "./agent-graph/agent_graph/code_mock_staged_v1/graph.py:graph",
+    "code-mock-staged-v1-intro": "./agent-graph/agent_graph/code_mock_staged_v1/subgraphs/intro_stage.py:stage_subgraph",
     "code-mock-staged-v1-coding": "./agent-graph/agent_graph/code_mock_staged_v1/subgraphs/coding_stage.py:stage_subgraph",
-    "template": "./agent-graph/agent_graph/template/graph.py:graph",
+    "code-mock-staged-v1-eval": "./agent-graph/agent_graph/code_mock_staged_v1/subgraphs/eval_stage.py:stage_subgraph",
     "eval-agent": "./agent-graph/agent_graph/eval_agent/graph.py:graph"
   },
   "env": ".env",
