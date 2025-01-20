@@ -51,6 +51,7 @@ from libs.convex.convex_requests import create_test_code_correctness_request
 from libs.convex.convex_types import CodeSessionContentChangedEvent
 from libs.helpers import static_check_with_mypy
 from libs.message_wrapper import MessageWrapper
+from libs.convex.convex_types import TestcaseResult
 
 logger = logging.getLogger(__name__)
 
@@ -331,8 +332,7 @@ class GroundTruthTestcaseExecutedEvent(BaseEvent[Any]):
                     },
                 )
 
-                testcase_results = response.value
-
+                testcase_results = [TestcaseResult(**result) for result in response]
                 # Emit formatted test results and the graph should pick it up
                 self.emit(format_test_context(testcase_results))
 
