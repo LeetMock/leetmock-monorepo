@@ -40,6 +40,7 @@ export const QuestionCard: React.FC<
   const remainingCategories = category.length - 2;
 
   const handleCategoryClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering onQuestionSelected
     setIsExpanded(!isExpanded);
   };
 
@@ -70,7 +71,7 @@ export const QuestionCard: React.FC<
         </Badge>
       </CardHeader>
       <CardContent className="p-2 pt-0">
-        <div className="flex flex-wrap gap-1 cursor-pointer" onClick={handleCategoryClick}>
+        <div className="flex flex-wrap gap-1 cursor-pointer">
           {displayCategories.map((element: string, index: number) => (
             <Badge
               key={index}
@@ -84,6 +85,7 @@ export const QuestionCard: React.FC<
             <Badge
               variant="secondary"
               className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 dark:bg-zinc-800 dark:text-gray-100"
+              onClick={handleCategoryClick}
             >
               +{remainingCategories} more
             </Badge>
