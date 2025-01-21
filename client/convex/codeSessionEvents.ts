@@ -59,20 +59,13 @@ async function handleStageSwitchedEvent(
   e: Extract<CodeSessionEvent, { type: "stage_switched" }>
 ) {
   const { stageIdx } = e.data;
+  const currentTransitionTimestamps = sessionState.transitionTimestamps;
 
-  console.log("stage switched event", stageIdx);
   await sessionState.patch({
     currentStageIdx: stageIdx,
+    transitionTimestamps: [...currentTransitionTimestamps, Date.now()],
   });
 }
-
-// don't need to handle user testcase executed event for now
-// async function handleUserTestcaseExecutedEvent(
-//   sessionState: EntWriter<"codeSessionStates">,
-//   e: Extract<CodeSessionEvent, { type: "user_testcase_executed" }>
-// ) {
-//   const { testResults } = e.data;
-// }
 
 async function handleTestcasesChangeEvent(
   sessionState: EntWriter<"codeSessionStates">,

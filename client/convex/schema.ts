@@ -83,6 +83,7 @@ const schema = defineEntSchema({
       })
     ),
   })
+    .field("transitionTimestamps", v.array(v.number()), { default: [] })
     .deletion("soft")
     .edge("session")
     .edges("codeSessionEvents", { ref: true }),

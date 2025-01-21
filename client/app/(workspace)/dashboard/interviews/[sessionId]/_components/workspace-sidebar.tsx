@@ -38,14 +38,38 @@ export const WorkspaceSidebar: React.FC<{
     sessionId,
   });
 
-  const activeTaskIdx = codeSessionState?.currentStageIdx ?? 0;
-  const timelineSteps: InterviewStage[] | undefined = !isDefined(session)
+  const activeStageIdx = codeSessionState?.currentStageIdx ?? 0;
+  const sessionStages: InterviewStage[] | undefined = !isDefined(session)
     ? undefined
     : (session.interviewFlow as InterviewStage[]);
 
-  const isEndStage = isDefined(timelineSteps) && activeTaskIdx === timelineSteps.length;
-  const totalTasks = timelineSteps?.length ?? 0;
-  const progressPercentage = isDefined(timelineSteps) ? (activeTaskIdx / totalTasks) * 100 : 0;
+  const lastTransitionTimestamp = useMemo(() => {
+    if (!isDefined(session?.sessionStartTime) || !isDefined(codeSessionState)) {
+      return Date.now();
+    }
+
+    if (codeSessionState.transitionTimestamps.length === 0) {
+      return session.sessionStartTime;
+    }
+
+    return codeSessionState.transitionTimestamps[codeSessionState.transitionTimestamps.length - 1];
+  }, [codeSessionState, session]);
+
+  const elapsedTimes = useMemo(() => {
+    const transitionTimestamps = codeSessionState?.transitionTimestamps ?? [];
+
+    return session?.sessionStartTime
+      ? transitionTimestamps.map((timestamp, idx) =>
+          idx === 0
+            ? getTimeDurationSeconds(session.sessionStartTime!, timestamp)
+            : getTimeDurationSeconds(transitionTimestamps[idx - 1]!, timestamp)
+        )
+      : [];
+  }, [codeSessionState?.transitionTimestamps, session]);
+
+  const isEndStage = isDefined(sessionStages) && activeStageIdx === sessionStages.length;
+  const totalTasks = sessionStages?.length ?? 0;
+  const progressPercentage = isDefined(sessionStages) ? (activeStageIdx / totalTasks) * 100 : 0;
   const totalTime = !isDefined(session)
     ? minutesToSeconds(60)
     : minutesToSeconds(session.timeLimit);
@@ -123,11 +147,11 @@ export const WorkspaceSidebar: React.FC<{
                   <div className="relative h-24 w-1.5 bg-muted rounded-full">
                     <div
                       className="absolute bottom-0 w-1.5 bg-primary rounded-full transition-all duration-300"
-                      style={{ height: `${Math.round((activeTaskIdx / totalTasks) * 100)}%` }}
+                      style={{ height: `${Math.round((activeStageIdx / totalTasks) * 100)}%` }}
                     />
                   </div>
                   <span className="text-xs font-medium text-muted-foreground rotate-0">
-                    {`${Math.round((activeTaskIdx / totalTasks) * 100)}%`}
+                    {`${Math.round((activeStageIdx / totalTasks) * 100)}%`}
                   </span>
                 </div>
               </motion.div>
@@ -147,7 +171,7 @@ export const WorkspaceSidebar: React.FC<{
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-xs">
                     <span className="text-muted-foreground font-medium">Progress</span>
-                    <span className="text-foreground font-semibold">{`${Math.round((activeTaskIdx / totalTasks) * 100)}%`}</span>
+                    <span className="text-foreground font-semibold">{`${Math.round((activeStageIdx / totalTasks) * 100)}%`}</span>
                   </div>
                   <div className="space-y-1.5">
                     <Progress
@@ -155,8 +179,8 @@ export const WorkspaceSidebar: React.FC<{
                       className="h-1.5 transition-all duration-300"
                     />
                     <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>{`${activeTaskIdx}/${totalTasks} Complete`}</span>
-                      <span>{`${totalTasks - activeTaskIdx} remaining`}</span>
+                      <span>{`${activeStageIdx}/${totalTasks} Complete`}</span>
+                      <span>{`${totalTasks - activeStageIdx} remaining`}</span>
                     </div>
                   </div>
                 </div>
@@ -164,21 +188,23 @@ export const WorkspaceSidebar: React.FC<{
             )}
           </AnimatePresence>
           {/* Interview timeline */}
-          {timelineSteps && (
+          {sessionStages && (
             <motion.div
               className={cn("mx-4", collapsed && "mx-2")}
               animate={{ marginLeft: collapsed ? "0.5rem" : "1rem" }}
               transition={{ duration: 0.2 }}
             >
               <Timeline.Root>
-                {timelineSteps.map((step, index) => (
+                {sessionStages.map((step, index) => (
                   <TimelineItem
                     key={step}
                     step={step}
-                    completed={index < activeTaskIdx}
-                    isActive={index === activeTaskIdx}
+                    completed={index < activeStageIdx}
+                    isActive={index === activeStageIdx && isDefined(session?.sessionStartTime)}
                     isLastItem={false}
                     collapsed={collapsed}
+                    elapsedTime={elapsedTimes?.[index]}
+                    lastTransitionTimestamp={lastTransitionTimestamp}
                   />
                 ))}
                 <TimelineItem
@@ -188,6 +214,8 @@ export const WorkspaceSidebar: React.FC<{
                   isActive={isEndStage}
                   isLastItem={true}
                   collapsed={collapsed}
+                  elapsedTime={undefined}
+                  lastTransitionTimestamp={lastTransitionTimestamp}
                 />
               </Timeline.Root>
             </motion.div>
@@ -208,40 +236,92 @@ const TimelineItem: React.FC<{
   isActive: boolean;
   isLastItem: boolean;
   collapsed: boolean;
-}> = ({ step, completed, isActive, isLastItem, collapsed }) => {
+  elapsedTime?: number;
+  lastTransitionTimestamp: number;
+}> = ({
+  step,
+  completed,
+  isActive,
+  isLastItem,
+  collapsed,
+  elapsedTime,
+  lastTransitionTimestamp,
+}) => {
+  const [currentTime, setCurrentTime] = useState<number>(Date.now());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
+
+  const timeElapsedText = useMemo(() => {
+    let timeElapsed: number | undefined;
+
+    if (isActive) {
+      timeElapsed = getTimeDurationSeconds(lastTransitionTimestamp, currentTime);
+    } else {
+      timeElapsed = elapsedTime;
+    }
+
+    if (!timeElapsed) return undefined;
+
+    // decide the most appropriate unit of time to display
+    let timeText: string;
+
+    if (timeElapsed < 60) {
+      timeText = `${timeElapsed} seconds`;
+    } else if (timeElapsed < 3600) {
+      timeText = `${Math.floor(timeElapsed / 60)} minutes`;
+    } else {
+      timeText = `${Math.floor(timeElapsed / 3600)} hours`;
+    }
+
+    return (
+      <span className="text-xs text-muted-foreground">
+        {isActive ? `${timeText} has passed` : `Completed in ${timeText}`}
+      </span>
+    );
+  }, [elapsedTime, isActive, lastTransitionTimestamp, currentTime]);
+
+  const shouldRenderTimeElapsed = useMemo(() => {
+    return (completed || isActive) && !isLastItem && isDefined(timeElapsedText);
+  }, [completed, isActive, isLastItem, timeElapsedText]);
+
   const collapsedView = useMemo(() => {
     return (
       <div className="absolute -top-1 left-7 z-10 hidden group-hover:block min-w-60">
         <div className="flex flex-col gap-2 ml-2.5 px-2 py-1.5 bg-background rounded-md border shadow-sm">
           <Timeline.Title>{STAGE_NAME_MAPPING[step]}</Timeline.Title>
-          {completed && (
+          {shouldRenderTimeElapsed && (
             <div className="flex flex-col gap-2 pb-1">
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Clock className="h-3 w-3" />
-                <span>Completed in 22 minutes</span>
+                {timeElapsedText}
               </div>
             </div>
           )}
         </div>
       </div>
     );
-  }, [step, completed]);
+  }, [step, shouldRenderTimeElapsed, timeElapsedText]);
 
   const expandedView = useMemo(() => {
     return (
       <Timeline.Content className="space-y-2 pb-4">
         <Timeline.Title>{STAGE_NAME_MAPPING[step]}</Timeline.Title>
         <div className="flex flex-col gap-2">
-          {completed && (
+          {shouldRenderTimeElapsed && (
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Clock className="h-3 w-3" />
-              <span>Completed in 22 minutes</span>
+              {timeElapsedText}
             </div>
           )}
         </div>
       </Timeline.Content>
     );
-  }, [step, completed]);
+  }, [step, shouldRenderTimeElapsed, timeElapsedText]);
 
   return (
     <Timeline.Item

@@ -211,26 +211,28 @@ class CodeSession(BaseSession[CodeSessionEventTypes, AgentState]):
         """
 
         await self._synced_future
+        await self._reconcile_session_stage_idx(next.current_stage_idx)
 
+    async def _reconcile_session_stage_idx(self, next_stage_idx: int):
         curr_stage_idx = self.session_state.current_stage_idx
-        next_stage_idx = next.current_stage_idx
+        if curr_stage_idx == next_stage_idx:
+            return
 
-        if curr_stage_idx != next_stage_idx:
-            assert (
-                self._session_id is not None
-            ), "Session ID must be set before committing events"
+        assert (
+            self._session_id is not None
+        ), "Session ID must be set before committing events"
 
-            self._api.mutation_unsafe(
-                name="codeSessionEvents:commitCodeSessionEvent",
-                args={
-                    "sessionId": self._session_id,
-                    "event": {
-                        "type": "stage_switched",
-                        "data": {"stageIdx": next_stage_idx},
-                    },
+        self._api.mutation_unsafe(
+            name="codeSessionEvents:commitCodeSessionEvent",
+            args={
+                "sessionId": self._session_id,
+                "event": {
+                    "type": "stage_switched",
+                    "data": {"stageIdx": next_stage_idx},
                 },
-            )
-            logger.info("Committed stage_switched code session event")
+            },
+        )
+        logger.info("Committed stage_switched code session event")
 
     async def setup(
         self,

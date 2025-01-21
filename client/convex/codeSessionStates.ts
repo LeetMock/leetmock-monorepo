@@ -13,6 +13,7 @@ export const get = query({
     _creationTime: v.number(),
     sessionId: v.id("sessions"),
     currentStageIdx: v.number(),
+    transitionTimestamps: v.array(v.number()),
     editor: v.object({
       language: v.string(),
       content: v.string(),
