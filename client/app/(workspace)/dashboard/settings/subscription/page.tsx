@@ -31,7 +31,9 @@ const SubscriptionPage: React.FC = () => {
   const pricingTableId = theme === 'dark'
     ? process.env.NEXT_PUBLIC_PRICING_TABLE_ID_DARK
     : process.env.NEXT_PUBLIC_PRICING_TABLE_ID_LIGHT;
-
+  const pricingTableKey = theme === 'dark'
+    ? process.env.NEXT_PUBLIC_PRICING_TABLE_KEY_DARK
+    : process.env.NEXT_PUBLIC_PRICING_TABLE_KEY_LIGHT;
   return (
     <div>
       <div className="flex justify-center mb-8 gap-4">
@@ -131,7 +133,7 @@ const SubscriptionPage: React.FC = () => {
       {/* @ts-ignore */}
       <stripe-pricing-table
         pricing-table-id={pricingTableId}
-        publishable-key={process.env.NEXT_PUBLIC_STRIPE_KEY}
+        publishable-key={pricingTableKey}
         customer-email={user!.emailAddresses[0].emailAddress}
       >
         {/* @ts-ignore */}
