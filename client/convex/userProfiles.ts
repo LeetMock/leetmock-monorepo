@@ -11,6 +11,25 @@ export const getUserProfileInternal = internalQuery({
   },
 });
 
+// Decrease minutes remaining by given amount
+export const decrementMinutesRemaining = internalMutation({
+  args: { minutes: v.number() },
+  handler: async (ctx, { minutes }) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+    const profile = await ctx.table("userProfiles").get("userId", identity.subject);
+    if (!profile) {
+      throw new Error("Profile not found");
+    }
+    await profile.patch({
+      minutesRemaining: profile.minutesRemaining - minutes,
+    });
+  },
+});
+
+// Decrease evaluation count by 1
 export const decrementEvaluationCount = internalMutation({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
