@@ -40,7 +40,6 @@ export const QuestionCard: React.FC<
   const remainingCategories = category.length - 2;
 
   const handleCategoryClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent triggering onQuestionSelected
     setIsExpanded(!isExpanded);
   };
 
@@ -49,8 +48,8 @@ export const QuestionCard: React.FC<
       key={_id}
       className={cn(
         "flex-1 cursor-pointer shadow-sm rounded-lg dark:bg-zinc-900",
-        "block transition-all duration-200 ease-in-out transform hover:scale-[103%] hover:shadow-lg",
-        isSelected && "ring-2 ring-gray-800 dark:ring-gray-200 shadow-lg scale-[101%]",
+        "block transition-all duration-200 ease-in-out transform hover:scale-[101%] hover:shadow-md",
+        isSelected && "ring-2 ring-gray-800 dark:ring-gray-200 shadow-md scale-[101%]",
         className
       )}
       onClick={() => onQuestionSelected(_id)}

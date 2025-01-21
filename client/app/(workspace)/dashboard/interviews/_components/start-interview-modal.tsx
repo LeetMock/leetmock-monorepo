@@ -29,7 +29,6 @@ import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
 import { CodeInterviewConfig } from "./code-interview-config";
 import { CodeQuestionViewer } from "./code-question-viewer";
-import { getUserProfile } from "@/convex/userProfiles";
 
 interface SessionMeta {
   title: string;
@@ -108,8 +107,7 @@ export const InterviewTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & 
   return (
     <Card
       className={cn(
-        "flex flex-col relative overflow-hidden transition-all duration-300 shadow-none select-none h-full",
-        "min-h-[420px] flex-1 justify-between",
+        "flex flex-col relative overflow-hidden transition-all duration-300 shadow-none select-none h-full justify-center lg:justify-start",
         available && "hover:cursor-pointer hover:scale-[1.03] hover:shadow-lg",
         currentType === type && "shadow-lg ring-2 ring-primary scale-[1.03]",
         className
@@ -124,7 +122,7 @@ export const InterviewTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & 
         </CardTitle>
         <CardDescription className="text-base">{description}</CardDescription>
       </CardHeader>
-      <CardContent className="hidden md:block">
+      <CardContent className="hidden lg:block">
         <ul className="list-disc ml-[1.1rem] [&>li]:mt-2 text-muted-foreground">
           {bullets.map((bullet) => (
             <li key={bullet}>{bullet}</li>
@@ -150,7 +148,7 @@ export const InterviewTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & 
 
 export const InterviewTypeSelection: React.FC = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full min-h-[400px] pt-4 px-8  mx-auto">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full min-h-[400px] px-8 py-3 mx-auto">
       {interviewTypes.map((interviewType) => (
         <InterviewTypeCard key={interviewType.title} {...interviewType} className="h-full" />
       ))}
@@ -243,16 +241,17 @@ export const StartInterviewModal: React.FC = () => {
     });
   }, [
     questions,
+    user_info,
+    interviewTime,
     createAgentThread,
     questionId,
     type,
     mode,
     interviewFlow,
     language,
-    interviewTime,
     voice,
-    modelName,
     createSession,
+    modelName,
     reset,
     router,
   ]);
@@ -309,7 +308,6 @@ export const StartInterviewModal: React.FC = () => {
     );
   }, [currentStep, questions, setSessionConfig, questionId]);
 
-  console.log(isDesktop);
   return (
     <>
       {triggerButton}
@@ -318,7 +316,7 @@ export const StartInterviewModal: React.FC = () => {
           <DialogContent
             className={cn(
               "max-w-[1200px] w-[90vw] min-h-[50rem] max-h-[90vh]",
-              "flex flex-col gap-6"
+              "flex flex-col gap-5"
             )}
           >
             <DialogHeader>
@@ -331,8 +329,8 @@ export const StartInterviewModal: React.FC = () => {
               currentStep={maxStep}
             />
 
-            <div className="flex-1 overflow-y-auto min-h-0">
-              {content}
+            <div className="flex-1 overflow-y-auto min-h-0 relative">
+              <div className="absolute inset-0 inset-x-2">{content}</div>
             </div>
 
             <div className="flex justify-between mt-auto pt-4 border-t">
@@ -370,9 +368,7 @@ export const StartInterviewModal: React.FC = () => {
                 <DrawerDescription className="text-sm">{description}</DrawerDescription>
               </DrawerHeader>
 
-              <div className="px-4 flex-1 overflow-y-auto">
-                {content}
-              </div>
+              <div className="px-4 flex-1 overflow-y-auto h-full">{content}</div>
 
               <DrawerFooter className="flex justify-between mt-auto border-t">
                 <Button

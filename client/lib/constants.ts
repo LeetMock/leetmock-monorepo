@@ -60,6 +60,15 @@ export const AVAILABLE_VOICES: Voice[] = [
   { id: "alloy", name: "Alloy", provider: VoiceProvider.OpenAI },
 ];
 
+export const SCROLLBAR_CSS = `
+[&::-webkit-scrollbar]:w-2
+[&::-webkit-scrollbar-track]:rounded-full
+[&::-webkit-scrollbar-thumb]:rounded-full
+[&::-webkit-scrollbar-thumb]:bg-gray-300
+[&::-webkit-scrollbar-thumb]:opacity-50
+dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
+d`;
+
 export const BG_COLORS = [
   "bg-blue-500",
   "bg-green-500",
@@ -160,8 +169,8 @@ from typing import List, Any
 
 class Solution:
     def ${functionName}(self, ${Object.entries(params)
-        .map(([param, type]) => `${param}: ${type}`)
-        .join(", ")}):
+      .map(([param, type]) => `${param}: ${type}`)
+      .join(", ")}):
         # TODO: Write your Python code here
         pass
 `.trim(),
@@ -184,8 +193,8 @@ import java.util.List;
 
 class Solution {
     public Object ${functionName}(${Object.entries(params)
-        .map(([param, type]) => `${type} ${param}`)
-        .join(", ")}) {
+      .map(([param, type]) => `${type} ${param}`)
+      .join(", ")}) {
         // TODO: Write your Java code here
         return null;
     }
@@ -200,8 +209,8 @@ class Solution {
 class Solution {
 public:
     int ${functionName}(${Object.entries(params)
-        .map(([param, type]) => `${type} ${param}`)
-        .join(", ")}) {
+      .map(([param, type]) => `${type} ${param}`)
+      .join(", ")}) {
         // TODO: Write your C++ code here
         return 0;
     }

@@ -1,5 +1,6 @@
 import { Id } from "@/convex/_generated/dataModel";
 import { useAgentData } from "@/hooks/use-agent";
+import { SCROLLBAR_CSS } from "@/lib/constants";
 import { cn, isDefined, secondsToMilliseconds } from "@/lib/utils";
 import {
   TrackReference,
@@ -113,14 +114,7 @@ export const SessionTranscripts = ({ sessionId }: { sessionId: Id<"sessions"> })
   return (
     <div className="relative h-full w-full overflow-hidden bg-background/50 rounded-lg backdrop-blur-sm">
       <div
-        className={cn(
-          "absolute inset-0 inset-y-1 overflow-y-auto px-4 space-y-4",
-          `[&::-webkit-scrollbar]:w-2
-           [&::-webkit-scrollbar-track]:rounded-full
-           [&::-webkit-scrollbar-thumb]:rounded-full
-           [&::-webkit-scrollbar-thumb]:bg-gray-300
-           dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500`
-        )}
+        className={cn("absolute inset-0 inset-y-1 overflow-y-auto px-4 space-y-4", SCROLLBAR_CSS)}
       >
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 w-full h-full">

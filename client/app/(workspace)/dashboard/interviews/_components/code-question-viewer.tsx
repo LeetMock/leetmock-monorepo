@@ -3,11 +3,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Id } from "@/convex/_generated/dataModel";
+import { SCROLLBAR_CSS } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 import { Dice3 } from "lucide-react";
 import { useState } from "react";
-import { QuestionCard } from "./question-card";
-import { cn } from "@/lib/utils";
 import { useMediaQuery } from "usehooks-ts";
+import { QuestionCard } from "./question-card";
 
 interface Question {
   _id: Id<"questions">;
@@ -81,8 +82,9 @@ export const CodeQuestionViewer: React.FC<{
   };
 
   return (
-    <div className={cn("flex flex-col", isDesktop && "flex-1")}>
-      <div className="flex flex-col gap-4 p-4">
+    <div className={cn("flex flex-col h-full gap-4", isDesktop && "flex-1")}>
+      {/* Search and filter */}
+      <div className="flex flex-col gap-4 p-2">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             type="text"
@@ -144,24 +146,26 @@ export const CodeQuestionViewer: React.FC<{
         </div>
       </div>
 
-      <div className="md:flex-grow overflow-y-auto p-4">
-        {sortedQuestions.length === 0 ? (
-          <p className="text-center">No questions available.</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-            {sortedQuestions.map(({ _id, title, difficulty, category }) => (
-              <QuestionCard
-                key={_id}
-                _id={_id}
-                title={title}
-                difficulty={difficulty}
-                category={category}
-                onQuestionSelected={handleQuestionSelect}
-                isSelected={_id === selectedQuestionId}
-              />
-            ))}
-          </div>
-        )}
+      <div className="relative flex-1 min-h-[20rem]">
+        <div className={cn("absolute inset-0 overflow-y-auto p-2", SCROLLBAR_CSS)}>
+          {sortedQuestions.length === 0 ? (
+            <p className="text-center">No questions available.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+              {sortedQuestions.map(({ _id, title, difficulty, category }) => (
+                <QuestionCard
+                  key={_id}
+                  _id={_id}
+                  title={title}
+                  difficulty={difficulty}
+                  category={category}
+                  onQuestionSelected={handleQuestionSelect}
+                  isSelected={_id === selectedQuestionId}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

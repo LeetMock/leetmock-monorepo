@@ -52,7 +52,9 @@ export const CodeInterviewConfig: React.FC<CodeInterviewConfigProps> = ({ select
   );
 
   return (
-    <ScrollArea className={cn("w-full overflow-y-auto space-y-6 px-0.5", isDesktop && "flex-1")}>
+    <ScrollArea
+      className={cn("w-full overflow-y-auto space-y-6 px-0.5 pb-4", isDesktop && "flex-1")}
+    >
       <div className="space-y-4">
         <h3 className="text-sm font-semibold text-muted-foreground">Interview Flow</h3>
         <div className="flex flex-wrap gap-3">
