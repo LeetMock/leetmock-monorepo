@@ -1,3 +1,4 @@
+import time
 from ast import Dict
 from collections import defaultdict
 from typing import Annotated, List, OrderedDict, Set, cast
@@ -96,7 +97,7 @@ async def assistant(
 
     # If the assistant doesn't say anything, we should return a SILENT message
     if len(content.strip()) == 0:
-        return dict(messages=[AIMessage(content="SILENT")])
+        return dict(messages=[AIMessage(content="SILENT", id=str(time.time()))])
 
     return None
 
