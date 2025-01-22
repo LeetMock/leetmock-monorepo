@@ -123,7 +123,7 @@ export function AccountForm() {
           <CardDescription>Your current settings.</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-1 pb-3">
-          <InfoItem icon={LayersIcon} title="Brian" description="Preferred Voice Model" />
+          <InfoItem icon={LayersIcon} title="Alex" description="Preferred Voice Model" />
           <InfoItem icon={TimerIcon} title="GPT-4o" description="Preferred LLM" />
           <InfoItem icon={RocketIcon} title="30 minutes" description="Interview Length" />
           <InfoItem icon={RocketIcon} title="English" description="Interview Language" />

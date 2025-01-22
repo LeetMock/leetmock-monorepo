@@ -2,7 +2,7 @@
 name = "leetmock"
 version = "0.1.0"
 description = ""
-authors = ["Brian Yin <toubatbrian@gmail.com>"]
+authors = ["LeetMock <leetmock001@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]

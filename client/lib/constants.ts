@@ -56,7 +56,7 @@ export const LANGUAGES: Language[] = [
 
 export const AVAILABLE_LANGUAGES = ["python"];
 export const AVAILABLE_VOICES: Voice[] = [
-  { id: "brian", name: "Brian", provider: VoiceProvider.ElevenLabs },
+  { id: "alex", name: "Alex", provider: VoiceProvider.ElevenLabs },
   { id: "alloy", name: "Alloy", provider: VoiceProvider.OpenAI },
 ];
 

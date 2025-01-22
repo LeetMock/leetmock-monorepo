@@ -3,7 +3,7 @@ from livekit.plugins import elevenlabs, openai
 
 
 def get_tts_engine(voice: str) -> TTS:
-    if voice == "brian":
+    if voice == "alex":
         return create_elevenlabs_tts()
     elif voice == "alloy":
         return create_openai_tts()
