@@ -1,0 +1,38 @@
+[
+    {
+        "tier": "free",
+        "price": 0,
+        "minutes": 300,
+        "evalCount": 15,
+        "isDefault": true,
+        "isPurchasable": false,
+        "discountRate": 0
+    },
+    {
+        "tier": "basic",
+        "price": 24.99,
+        "minutes": 400,
+        "evalCount": 15,
+        "isDefault": false,
+        "isPurchasable": true,
+        "discountRate": 0
+    },
+    {
+        "tier": "premium",
+        "price": 49.99,
+        "minutes": 1000,
+        "evalCount": 15,
+        "isDefault": false,
+        "isPurchasable": true,
+        "discountRate": 0
+    },
+    {
+        "tier": "payAsYouGo",
+        "price": 0.1,
+        "minutes": 1,
+        "evalCount": 0,
+        "isDefault": false,
+        "isPurchasable": true,
+        "discountRate": 0
+    }
+]

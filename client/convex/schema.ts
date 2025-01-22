@@ -145,6 +145,14 @@ const schema = defineEntSchema({
     state: v.optional(v.string()),
     lastUpdated: v.number(),
   }).field("sessionId", v.id("sessions"), { unique: true }),
+  pricings: defineEnt({
+    price: v.number(),
+    evalCount: v.number(),
+    minutes: v.number(),
+    isDefault: v.boolean(),
+    isPurchasable: v.boolean(),
+    discountRate: v.number(),
+  }).field("tier", v.union(v.literal("free"), v.literal("basic"), v.literal("premium"), v.literal("payAsYouGo")), { unique: true }),
 });
 
 export const entDefinitions = getEntDefinitions(schema);

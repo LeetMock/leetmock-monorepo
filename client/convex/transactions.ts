@@ -1,6 +1,5 @@
 import Stripe from "stripe";
 
-import { PLANS } from "@/lib/constants";
 import { get30DaysFromNowInSeconds, isDefined } from "@/lib/utils";
 import { ConvexError } from "convex/values";
 import { internal } from "./_generated/api";
@@ -95,51 +94,62 @@ async function handleSubscriptionUpdate(ctx: ActionCtx, subscription: Stripe.Sub
       message: "User not found",
     });
   }
+  const tier = product.name.toLowerCase() as "basic" | "premium";
+
+  if (!["basic", "premium"].includes(tier)) {
+    throw new ConvexError({
+      code: "InvalidProductName",
+      message: "Invalid product name",
+    });
+  }
+
+  const pricing = await ctx.runQuery(internal.pricings.getPricingsInternal, { tier });
+  if (!isDefined(pricing)) {
+    throw new ConvexError({
+      code: "PricingNotFound",
+      message: "Pricing not found",
+    });
+  }
+  
+  const { price, evalCount, minutes } = pricing;
+  console.log("tier", product.name);
+  console.log("price", price);
+  console.log("evalCount", evalCount);
+  console.log("minutes", minutes);
+  console.log("subscription", subscription);
+
+  const premiumPricing = await ctx.runQuery(internal.pricings.getPricingsInternal, {
+    tier: "premium",
+  });
+  const basicPricing = await ctx.runQuery(internal.pricings.getPricingsInternal, {
+    tier: "basic",
+  });
+  const premiumMinutes = premiumPricing!.minutes;
+  const basicMinutes = basicPricing!.minutes;
+
   // payment successful
   if (status === "active") {
-    const planName =
-      product.name === "Basic Plan"
-        ? PLANS.basic.name
-        : product.name === "Premium Plan"
-          ? PLANS.premium.name
-          : product.name === "Enterprise Plan"
-            ? PLANS.enterprise.name
-            : PLANS.free.name;
     const refreshDate =
       interval === "month" ? current_period_end : get30DaysFromNowInSeconds(current_period_start);
     let minutesRemaining = user.minutesRemaining || 0;
     if (user.subscriptionStatus !== "active") {
       // new subscription or returning from cancelled
-      minutesRemaining +=
-        planName === "basic"
-          ? PLANS.basic.minutes
-          : planName === "premium"
-            ? PLANS.premium.minutes
-            : planName === "enterprise"
-              ? PLANS.enterprise.minutes
-              : PLANS.free.minutes;
+      minutesRemaining += minutes;
     } else if (user.subscriptionStatus === "active") {
-      // user is upgrading
-      if (user.subscription === PLANS.basic.name && planName === PLANS.premium.name) {
-        minutesRemaining += PLANS.premium.minutes - PLANS.basic.minutes;
-      } else if (user.subscription === PLANS.basic.name && planName === PLANS.enterprise.name) {
-        minutesRemaining += PLANS.enterprise.minutes - PLANS.basic.minutes;
-      } else if (user.subscription === PLANS.premium.name && planName === PLANS.enterprise.name) {
-        minutesRemaining += PLANS.enterprise.minutes - PLANS.premium.minutes;
-      } else if (user.subscription === PLANS.premium.name && planName === PLANS.basic.name) {
-        minutesRemaining -= PLANS.premium.minutes - PLANS.basic.minutes;
-      } else if (user.subscription === PLANS.enterprise.name && planName === PLANS.basic.name) {
-        minutesRemaining -= PLANS.enterprise.minutes - PLANS.basic.minutes;
-      } else if (user.subscription === PLANS.enterprise.name && planName === PLANS.premium.name) {
-        minutesRemaining -= PLANS.enterprise.minutes - PLANS.premium.minutes;
-      } else if (user.subscription === planName) {
+      if (user.subscription === "basic" && tier === "premium") {
+        // user is upgrading
+        minutesRemaining += premiumMinutes - basicMinutes;
+      } else if (user.subscription === "premium" && tier === "basic") {
+        // user is downgrading
+        minutesRemaining -= premiumMinutes - basicMinutes;
+      } else if (user.subscription === tier) {
         // no change in plan
-        minutesRemaining = PLANS[user.subscription as keyof typeof PLANS].minutes;
+        minutesRemaining += minutes;
       }
     }
     await ctx.runMutation(internal.userProfiles.updateSubscriptionByEmailInternal, {
       email: customer.email!,
-      planName,
+      planName: tier,
       minutesRemaining,
       interval,
       refreshDate,
@@ -150,18 +160,19 @@ async function handleSubscriptionUpdate(ctx: ActionCtx, subscription: Stripe.Sub
     });
   } else {
     // payment failed or subscription cancelled
-    await ctx.runMutation(internal.userProfiles.updateSubscriptionByEmailInternal, {
-      email: customer.email!,
-      planName: "free",
-      minutesRemaining: 0,
-      interval: undefined,
-      refreshDate: undefined,
-      currentPeriodEnd: undefined,
-      currentPeriodStart: undefined,
-      latestSubscriptionId: subscription.id,
-      subscriptionStatus: status,
-    });
-  }
+    // await ctx.runMutation(internal.userProfiles.updateSubscriptionByEmailInternal, {
+    //   email: customer.email!,
+    //   planName: "free",
+    //   minutesRemaining: 0,
+    //   interval: undefined,
+    //   refreshDate: undefined,
+    //   currentPeriodEnd: undefined,
+    //   currentPeriodStart: undefined,
+    //   latestSubscriptionId: subscription.id,
+    //   subscriptionStatus: status,
+    // });
+    console.log("payment failed or subscription cancelled, do nothing", subscription);
+  } 
 }
 
 async function handleSubscriptionDeleted(ctx: ActionCtx, subscription: Stripe.Subscription) {
