@@ -5,39 +5,47 @@ import { Wait } from "@/components/wait";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { isDefined } from "@/lib/utils";
-import { useQuery } from "convex/react";
-import { useParams, notFound } from "next/navigation";
-import { useState, useEffect, useMemo } from "react";
-import { formatDistanceToNow, differenceInSeconds } from "date-fns";
+import { useConvex, useQuery } from "convex/react";
+import { differenceInSeconds, formatDistanceToNow } from "date-fns";
+import { notFound, useParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export default function Home() {
   const { sessionId } = useParams();
+  const convex = useConvex();
+
   const sessionExists = useQuery(api.sessions.exists, {
-    sessionId: sessionId as string
+    sessionId: sessionId as string,
   });
 
   if (sessionExists === false) {
     notFound();
   }
 
-  const agentStateSnapshot = useQuery(api.agentStates.getBySessionId, {
-    sessionId: sessionId as Id<"sessions">,
-  });
+  const [agentState, setAgentState] = useState<Record<string, any> | undefined>(undefined);
+
+  const fetchAgentState = useCallback(async () => {
+    const agentState = await convex.action(api.actions.getLangGraphAgentState, {
+      sessionId: sessionId as Id<"sessions">,
+    });
+
+    setAgentState(agentState);
+  }, [sessionId, convex]);
 
   const lastUpdated = useMemo(() => {
-    if (!isDefined(agentStateSnapshot)) return undefined;
-    return agentStateSnapshot.lastUpdated;
-  }, [agentStateSnapshot]);
-
-  const agentState = useMemo(() => {
-    if (!isDefined(agentStateSnapshot)) return undefined;
-    if (!isDefined(agentStateSnapshot.state)) return undefined;
-
-    const state = JSON.parse(agentStateSnapshot.state);
-    return state;
-  }, [agentStateSnapshot]);
+    if (!isDefined(agentState)) return undefined;
+    return agentState.lastUpdated;
+  }, [agentState]);
 
   const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchAgentState();
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [fetchAgentState]);
 
   // Update the current time every second
   useEffect(() => {
@@ -59,6 +67,8 @@ export default function Home() {
 
     return formatDistanceToNow(date, { addSuffix: true });
   }, [lastUpdated, now]);
+
+  console.log(agentState);
 
   return (
     <main className="flex min-h-screen flex-col p-8">

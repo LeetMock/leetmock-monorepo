@@ -18,6 +18,7 @@ import {
 import { ConvexError, v } from "convex/values";
 
 import { retry } from "@lifeomic/attempt";
+import { Doc } from "./_generated/dataModel";
 
 async function executeCode(payload: any, maxRetries = 3): Promise<CodeRunResult> {
   const url = "https://onecompiler-apis.p.rapidapi.com/api/v1/run";
@@ -96,8 +97,6 @@ export const triggerEval = userAction({
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-
-
     const result = await ctx.runMutation(internal.userProfiles.decrementEvaluationCount);
 
     if (!result.success) {
@@ -125,7 +124,7 @@ export const triggerEval = userAction({
 
     return {
       success: true,
-      remainingCredits: result.currentCount
+      remainingCredits: result.currentCount,
     };
   },
 });
@@ -160,6 +159,31 @@ export const getToken = action({
   },
 });
 
+export const getLangGraphAgentState = action({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  returns: v.record(v.string(), v.any()),
+  handler: async (ctx, { sessionId }) => {
+    const apiKey = process.env.LANGSMITH_API_KEY;
+    const apiUrl = process.env.LANGGRAPH_API_URL;
+
+    const session: Doc<"sessions"> = await ctx.runQuery(internal.sessions.getByIdInternal, {
+      sessionId,
+    });
+
+    if (!isDefined(session)) {
+      throw new Error("Session not found");
+    }
+
+    const client = new Client({ apiKey, apiUrl });
+    const state = await client.threads.getState(session.agentThreadId);
+
+    console.log("state", state.values);
+    return state.values;
+  },
+});
+
 export const runCode = action({
   args: {
     language: v.string(),
@@ -185,11 +209,11 @@ export const runCode = action({
 
     return result
       ? {
-        status: !result.isError, //true if API call was successful
-        executionTime: result.executionTime,
-        isError: !!result.stderr, //true if there's an error in the code
-        output: result.stderr || result.stdout || "",
-      }
+          status: !result.isError, //true if API call was successful
+          executionTime: result.executionTime,
+          isError: !!result.stderr, //true if there's an error in the code
+          output: result.stderr || result.stdout || "",
+        }
       : undefined;
   },
 });
@@ -233,7 +257,7 @@ export const runGroundTruthTest = action({
     let globalCaseNumber = 0; // Track the overall test case number
 
     // Process test cases with dynamic batch size
-    for (let i = 0; i < testCases.length;) {
+    for (let i = 0; i < testCases.length; ) {
       const batchTestCases = testCases.slice(i, i + currentBatchSize);
       const testCode = generateTestCode(question, language, batchTestCases);
       const payload = {

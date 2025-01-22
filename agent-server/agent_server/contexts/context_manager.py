@@ -3,6 +3,7 @@ from typing import Generic, Type, TypeVar
 
 from agent_graph.state_merger import AgentStateEmitter
 from agent_graph.storages.convex import ConvexStateStorage
+from agent_graph.storages.langgraph_cloud import LangGraphCloudStateStorage
 from agent_graph.types import EventMessageState
 from agent_server.contexts.session import BaseSession
 from agent_server.livekit.channel import ChanConfig, ChanValue
@@ -126,10 +127,9 @@ class AgentContextManager(Generic[TSession, TState]):
         await self._session.start(result, self._agent_state_emitter)
         # Connect the agent state emitter to the state storage
         await self._agent_state_emitter.connect(
-            storage=ConvexStateStorage(
-                session_id=self.session_id,
-                state_type=self.state_type,
-                convex_api=self.api,
+            storage=LangGraphCloudStateStorage(
+                thread_id=self.session.session_metadata.agent_thread_id,
+                assistant_id=self.session.session_metadata.assistant_id,
             )
         )
 

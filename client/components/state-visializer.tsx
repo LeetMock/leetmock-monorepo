@@ -3,19 +3,18 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { cn } from "@/lib/utils";
-import React, { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { ChevronDown, ChevronRight, Bot, User } from "lucide-react";
 import type { JsonValue, StateVisualizerProps } from "@/lib/types";
-import { isSpecialObject } from "@/lib/utils";
+import { cn, isSpecialObject } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { Bot, ChevronDown, ChevronRight, User } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 
 const MessageView: React.FC<{ message: any; isFirst: boolean; isLast: boolean }> = ({
   message,
   isFirst,
   isLast,
 }) => {
-  const isAI = message.kwargs.type === "ai";
+  const isAI = message.type === "ai";
 
   return (
     <div
@@ -46,16 +45,14 @@ const MessageView: React.FC<{ message: any; isFirst: boolean; isLast: boolean }>
               isAI ? "text-blue-600 dark:text-blue-400" : "text-gray-700 dark:text-zinc-300"
             )}
           >
-            {message.kwargs.type}
+            {message.type}
           </span>
-          {message.kwargs.id && (
-            <span className="text-xs text-gray-500 dark:text-zinc-500 font-mono">
-              {message.kwargs.id}
-            </span>
+          {message.id && (
+            <span className="text-xs text-gray-500 dark:text-zinc-500 font-mono">{message.id}</span>
           )}
         </div>
         <div className="text-sm text-gray-600 dark:text-zinc-300 whitespace-pre-wrap">
-          {message.kwargs.content}
+          {message.content}
         </div>
       </div>
     </div>
@@ -88,7 +85,11 @@ const MessageListView: React.FC<{ messages: any[] }> = ({ messages }) => {
   );
 };
 
-const JsonView: React.FC<{ data: JsonValue; level?: number }> = ({ data, level = 0 }) => {
+const JsonView: React.FC<{ data: JsonValue; level?: number; title: string }> = ({
+  data,
+  level = 0,
+  title,
+}) => {
   const [isExpanded, setIsExpanded] = React.useState(level < 2);
 
   const toggleExpand = () => setIsExpanded(!isExpanded);
@@ -105,7 +106,7 @@ const JsonView: React.FC<{ data: JsonValue; level?: number }> = ({ data, level =
   }
 
   if (Array.isArray(data)) {
-    if (data.length > 0 && isSpecialObject(data[0]) && data[0].id[2] === "messages") {
+    if (data.length > 0 && title === "messages") {
       return <MessageListView messages={data} />;
     }
     return (
@@ -118,7 +119,7 @@ const JsonView: React.FC<{ data: JsonValue; level?: number }> = ({ data, level =
           <div className="pl-4 border-l border-gray-300">
             {data.map((item, index) => (
               <div key={index} className="py-1">
-                <JsonView data={item} level={level + 1} />
+                <JsonView data={item} level={level + 1} title={title} />
               </div>
             ))}
           </div>
@@ -144,7 +145,7 @@ const JsonView: React.FC<{ data: JsonValue; level?: number }> = ({ data, level =
             {Object.entries(data.kwargs).map(([key, value]) => (
               <div key={key} className="py-1">
                 <span className="text-gray-500">{key}: </span>
-                <JsonView data={value} level={level + 1} />
+                <JsonView data={value} level={level + 1} title={title} />
               </div>
             ))}
           </div>
@@ -164,7 +165,7 @@ const JsonView: React.FC<{ data: JsonValue; level?: number }> = ({ data, level =
           {Object.entries(data).map(([key, value]) => (
             <div key={key} className="py-1">
               <span className="text-gray-500 dark:text-zinc-400">{key}: </span>
-              <JsonView data={value} level={level + 1} />
+              <JsonView data={value} level={level + 1} title={title} />
             </div>
           ))}
         </div>
@@ -230,7 +231,7 @@ const StateCard: React.FC<{ title: string; data: JsonValue; highlight?: boolean 
               isExpanded ? "max-h-[700px]" : "max-h-[200px]"
             )}
           >
-            <JsonView data={data} />
+            <JsonView data={data} title={title} />
           </div>
         </CardContent>
       </Card>
