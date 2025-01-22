@@ -1,4 +1,4 @@
-import { type ClassValue, clsx } from "clsx";
+import { clsx, type ClassValue } from "clsx";
 import type { AccessTokenOptions, VideoGrant } from "livekit-server-sdk";
 import { AccessToken } from "livekit-server-sdk";
 import { twMerge } from "tailwind-merge";
@@ -135,6 +135,7 @@ function toPythonBoolean(value: any): string {
   if (typeof value === "string") {
     return value.toLowerCase() === "true" ? "True" : "False";
   }
+
   return value ? "True" : "False";
 }
 
