@@ -12,6 +12,7 @@ Name | Type | Description | Notes
 **session_id** | **str** | ID from table \&quot;sessions\&quot; | 
 **terminal** | [**ResponseCodeSessionStatesGetValueTerminal**](ResponseCodeSessionStatesGetValueTerminal.md) |  | 
 **testcases** | [**List[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner]**](RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner.md) |  | 
+**transition_timestamps** | **List[float]** |  | 
 
 ## Example
 

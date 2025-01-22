@@ -51,6 +51,9 @@ class TestResponseCodeSessionStatesGetValue(unittest.TestCase):
                     convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_3_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_3_data_after_inner(
                         expected_output = null, 
                         input = convex_client.models.input.input(), )
+                    ],
+                transition_timestamps = [
+                    1.337
                     ]
             )
         else:
@@ -71,6 +74,9 @@ class TestResponseCodeSessionStatesGetValue(unittest.TestCase):
                     convex_client.models.request_code_session_events_commit_code_session_event_args_event_one_of_3_data_after_inner.Request_codeSessionEvents_commitCodeSessionEvent_args_event_oneOf_3_data_after_inner(
                         expected_output = null, 
                         input = convex_client.models.input.input(), )
+                    ],
+                transition_timestamps = [
+                    1.337
                     ],
         )
         """

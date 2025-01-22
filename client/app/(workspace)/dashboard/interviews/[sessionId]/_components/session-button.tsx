@@ -24,7 +24,7 @@ import { cn, isDefined } from "@/lib/utils";
 import { useConnectionState, useRoomContext } from "@livekit/components-react";
 import { useAction, useMutation } from "convex/react";
 import { ConnectionState } from "livekit-client";
-import { Check, ChevronDown, CircleStop, Loader2, Lock, Pause, Play } from "lucide-react";
+import { Check, ChevronDown, CircleStop, Loader2, Lock, Pause, Play, AlertTriangle, AlertOctagon } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -221,13 +221,25 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
       <AlertDialog open={isSessionDialogOpen} onOpenChange={setIsSessionDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-yellow-500" />
               {sessionOptionIndex === 1 ? "Pause Interview Session" : "End Interview Session"}
             </AlertDialogTitle>
-            <AlertDialogDescription>
-              {sessionOptionIndex === 1
-                ? "Are you sure you want to pause this interview? This will temporarily suspend the current session."
-                : "Are you sure you want to end this interview? This action cannot be undone and will permanently conclude the current session."}
+            <AlertDialogDescription className="space-y-2">
+              {sessionOptionIndex === 1 ? (
+                <>
+                  <p>Are you sure you want to pause this interview?</p>
+                  <p className="flex items-center gap-2 text-yellow-600 dark:text-yellow-500">
+                    <AlertOctagon className="h-4 w-4" />
+                    <span>The timer will continue running even when paused!</span>
+                  </p>
+                  <p className="text-muted-foreground">
+                    This will temporarily suspend the current session.
+                  </p>
+                </>
+              ) : (
+                "Are you sure you want to end this interview? This action cannot be undone and will permanently conclude the current session."
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

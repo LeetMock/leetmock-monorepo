@@ -133,6 +133,7 @@ Class | Method | HTTP request | Description
 *QueryApi* | [**api_run_sessions_get_by_id_post**](docs/QueryApi.md#api_run_sessions_get_by_id_post) | **POST** /api/run/sessions/getById | Calls a query at the path sessions.js:getById
 *QueryApi* | [**api_run_sessions_get_by_id_unauth_post**](docs/QueryApi.md#api_run_sessions_get_by_id_unauth_post) | **POST** /api/run/sessions/getById_unauth | Calls a query at the path sessions.js:getById_unauth
 *QueryApi* | [**api_run_sessions_get_by_user_id_post**](docs/QueryApi.md#api_run_sessions_get_by_user_id_post) | **POST** /api/run/sessions/getByUserId | Calls a query at the path sessions.js:getByUserId
+*QueryApi* | [**api_run_user_profiles_get_user_minutes_remaining_post**](docs/QueryApi.md#api_run_user_profiles_get_user_minutes_remaining_post) | **POST** /api/run/userProfiles/getUserMinutesRemaining | Calls a query at the path userProfiles.js:getUserMinutesRemaining
 *QueryApi* | [**api_run_user_profiles_get_user_profile_post**](docs/QueryApi.md#api_run_user_profiles_get_user_profile_post) | **POST** /api/run/userProfiles/getUserProfile | Calls a query at the path userProfiles.js:getUserProfile
 
 
@@ -229,8 +230,12 @@ Class | Method | HTTP request | Description
  - [RequestSessionsGetByIdUnauth](docs/RequestSessionsGetByIdUnauth.md)
  - [RequestSessionsGetByUserId](docs/RequestSessionsGetByUserId.md)
  - [RequestSessionsStartSession](docs/RequestSessionsStartSession.md)
+ - [RequestUserProfilesDecrementEvaluationCount](docs/RequestUserProfilesDecrementEvaluationCount.md)
+ - [RequestUserProfilesDecrementMinutesRemaining](docs/RequestUserProfilesDecrementMinutesRemaining.md)
+ - [RequestUserProfilesDecrementMinutesRemainingArgs](docs/RequestUserProfilesDecrementMinutesRemainingArgs.md)
  - [RequestUserProfilesGetByEmailInternal](docs/RequestUserProfilesGetByEmailInternal.md)
  - [RequestUserProfilesGetByEmailInternalArgs](docs/RequestUserProfilesGetByEmailInternalArgs.md)
+ - [RequestUserProfilesGetUserMinutesRemaining](docs/RequestUserProfilesGetUserMinutesRemaining.md)
  - [RequestUserProfilesGetUserProfile](docs/RequestUserProfilesGetUserProfile.md)
  - [RequestUserProfilesGetUserProfileInternal](docs/RequestUserProfilesGetUserProfileInternal.md)
  - [RequestUserProfilesRefreshMinutesForYearlyPlansInternal](docs/RequestUserProfilesRefreshMinutesForYearlyPlansInternal.md)
@@ -297,7 +302,10 @@ Class | Method | HTTP request | Description
  - [ResponseSessionsGetByIdUnauth](docs/ResponseSessionsGetByIdUnauth.md)
  - [ResponseSessionsGetByUserId](docs/ResponseSessionsGetByUserId.md)
  - [ResponseSessionsStartSession](docs/ResponseSessionsStartSession.md)
+ - [ResponseUserProfilesDecrementEvaluationCount](docs/ResponseUserProfilesDecrementEvaluationCount.md)
+ - [ResponseUserProfilesDecrementMinutesRemaining](docs/ResponseUserProfilesDecrementMinutesRemaining.md)
  - [ResponseUserProfilesGetByEmailInternal](docs/ResponseUserProfilesGetByEmailInternal.md)
+ - [ResponseUserProfilesGetUserMinutesRemaining](docs/ResponseUserProfilesGetUserMinutesRemaining.md)
  - [ResponseUserProfilesGetUserProfile](docs/ResponseUserProfilesGetUserProfile.md)
  - [ResponseUserProfilesGetUserProfileInternal](docs/ResponseUserProfilesGetUserProfileInternal.md)
  - [ResponseUserProfilesRefreshMinutesForYearlyPlansInternal](docs/ResponseUserProfilesRefreshMinutesForYearlyPlansInternal.md)

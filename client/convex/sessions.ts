@@ -128,6 +128,17 @@ export const endSession = userMutation({
   },
   handler: async (ctx, { sessionId }) => {
     await endSessionAction(ctx, sessionId);
+
+    // compute time taken for session
+    const session = await ctx.table("sessions").getX(sessionId);
+    const startTime = session.sessionStartTime ?? Date.now();
+    const endTime = session.sessionEndTime ?? Date.now();
+    const timeTaken = endTime - startTime;
+    const minutesTaken = Math.floor(timeTaken / 60000); // rounds up to nearest minute
+    // deduct mins from user profile
+    await ctx.runMutation(internal.userProfiles.decrementMinutesRemaining, {
+      minutes: minutesTaken,
+    });
   },
 });
 
@@ -229,6 +240,7 @@ export const createCodeSession = userMutation({
       },
       currentStageIdx: 0,
       testcases: testCases,
+      transitionTimestamps: [],
     });
 
     // Populate initial content changed event

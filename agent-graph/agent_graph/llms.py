@@ -23,11 +23,18 @@ def get_model(
             timeout=None,
             max_retries=2,
         )  # type: ignore
+    elif model_name == "deepseek-reasoner":
+        return ChatOpenAI(
+            model="deepseek-reasoner",
+            api_key=SecretStr(os.getenv("DEEPSEEK_API_KEY", "")),
+            base_url="https://api.deepseek.com",
+        )
     elif model_name.startswith("deepseek"):
         return ChatOpenAI(
             model="deepseek-chat",
             api_key=SecretStr(os.getenv("DEEPSEEK_API_KEY", "")),
             base_url="https://api.deepseek.com",
         )
+    
 
     raise ValueError(f"Model {model_name} not found")

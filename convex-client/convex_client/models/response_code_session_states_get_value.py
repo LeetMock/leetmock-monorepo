@@ -36,7 +36,8 @@ class ResponseCodeSessionStatesGetValue(BaseModel):
     session_id: StrictStr = Field(description="ID from table \"sessions\"", alias="sessionId")
     terminal: ResponseCodeSessionStatesGetValueTerminal
     testcases: List[RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner]
-    __properties: ClassVar[List[str]] = ["_creationTime", "_id", "currentStageIdx", "editor", "sessionId", "terminal", "testcases"]
+    transition_timestamps: List[Union[StrictFloat, StrictInt]] = Field(alias="transitionTimestamps")
+    __properties: ClassVar[List[str]] = ["_creationTime", "_id", "currentStageIdx", "editor", "sessionId", "terminal", "testcases", "transitionTimestamps"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -108,7 +109,8 @@ class ResponseCodeSessionStatesGetValue(BaseModel):
             "editor": ResponseCodeSessionStatesGetValueEditor.from_dict(obj["editor"]) if obj.get("editor") is not None else None,
             "sessionId": obj.get("sessionId"),
             "terminal": ResponseCodeSessionStatesGetValueTerminal.from_dict(obj["terminal"]) if obj.get("terminal") is not None else None,
-            "testcases": [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner.from_dict(_item) for _item in obj["testcases"]] if obj.get("testcases") is not None else None
+            "testcases": [RequestCodeSessionEventsCommitCodeSessionEventArgsEventOneOf3DataAfterInner.from_dict(_item) for _item in obj["testcases"]] if obj.get("testcases") is not None else None,
+            "transitionTimestamps": obj.get("transitionTimestamps")
         })
         return _obj
 
