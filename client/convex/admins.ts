@@ -9,7 +9,7 @@ export const createUserProfile = adminMutation({
       v.literal("free"),
       v.literal("basic"),
       v.literal("premium"),
-      v.literal("enterprise")
+      v.literal("payAsYouGo")
     ),
     email: v.string(),
     minutesRemaining: v.number(),
@@ -32,7 +32,7 @@ export const patchUserSubscription = adminMutation({
   args: {
     userId: v.string(),
     subscription: v.optional(
-      v.union(v.literal("free"), v.literal("basic"), v.literal("premium"), v.literal("enterprise"))
+      v.union(v.literal("free"), v.literal("basic"), v.literal("premium"), v.literal("payAsYouGo"))
     ),
     minutesRemaining: v.optional(v.number()),
   },

@@ -55,8 +55,8 @@ export const UserDropdown: React.FC<{
                 <span className="text-sm font-medium">Current Plan</span>
                 <TierBadge
                   tier={
-                    userProfile.subscription === "enterprise"
-                      ? PriceTier.Enterprise
+                    userProfile.subscription === "payAsYouGo"
+                      ? PriceTier.PayAsYouGo
                       : userProfile.subscription === "premium"
                         ? PriceTier.Premium
                         : userProfile.subscription === "basic"

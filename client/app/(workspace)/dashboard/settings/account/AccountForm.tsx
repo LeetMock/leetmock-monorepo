@@ -3,7 +3,6 @@
 import {
   BellIcon,
   ClipboardIcon,
-  FaceIcon,
   LayersIcon,
   PersonIcon,
   RocketIcon,
@@ -13,7 +12,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUserProfile } from "@/hooks/use-user-profile";
-import { MINUTE_PRICE_DISCOUNTED } from "@/lib/constants";
 import { useUser } from "@clerk/clerk-react";
 
 const InfoItem = ({ icon: Icon, title, description }) => (
@@ -60,7 +58,7 @@ export function AccountForm() {
                     ? "bg-gradient-to-r from-blue-400 to-cyan-300 text-white font-semibold"
                     : userProfile.subscription === "premium"
                       ? "bg-gradient-to-r from-purple-400 to-pink-500 text-white font-semibold"
-                      : userProfile.subscription === "enterprise"
+                      : userProfile.subscription === "payAsYouGo"
                         ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-semibold animate-pulse"
                         : ""
                 }
@@ -106,13 +104,6 @@ export function AccountForm() {
                 </Badge>
               }
               description="Minutes refresh date"
-            />
-          )}
-          {userProfile.subscriptionStatus === "active" && (
-            <InfoItem
-              icon={FaceIcon}
-              title={<Badge>${MINUTE_PRICE_DISCOUNTED} / minute</Badge>}
-              description="Charge beyond the tier minutes"
             />
           )}
         </CardContent>

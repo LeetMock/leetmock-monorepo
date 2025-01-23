@@ -1,0 +1,42 @@
+[
+    {
+        "tier": "free",
+        "price": 0,
+        "minutes": 300,
+        "evalCount": 15,
+        "isDefault": true,
+        "isPurchasable": false
+    },
+    {
+        "tier": "basic",
+        "price": 24.99,
+        "minutes": 400,
+        "evalCount": 15,
+        "isDefault": false,
+        "isPurchasable": true
+    },
+    {
+        "tier": "premium",
+        "price": 49.99,
+        "minutes": 1000,
+        "evalCount": 15,
+        "isDefault": false,
+        "isPurchasable": true
+    },
+    {
+        "tier": "payAsYouGo",
+        "price": 0.1,
+        "minutes": 1,
+        "evalCount": 0,
+        "isDefault": false,
+        "isPurchasable": true
+    },
+    {
+        "tier": "premiumExtraMins",
+        "price": 0.08,
+        "minutes": 1,
+        "evalCount": 0,
+        "isDefault": false,
+        "isPurchasable": true
+    }
+]

@@ -1,4 +1,3 @@
-import { PLANS } from "@/lib/constants";
 import { get30DaysFromNowInSeconds, isDefined } from "@/lib/utils";
 import { v } from "convex/values";
 import { internalMutation, internalQuery, userQuery } from "./functions";
@@ -122,7 +121,7 @@ export async function getOrCreateUserProfile(
   userId: string,
   email: string,
   role: "admin" | "user",
-  subscription: "free" | "basic" | "premium" | "enterprise",
+  subscription: "free" | "basic" | "premium" | "payAsYouGo",
   minutesRemaining: number
 ) {
   // check if profile already exists
@@ -157,6 +156,7 @@ export const voidSubscriptionInternal = internalMutation({
       minutesRemaining: 0,
       interval: undefined,
       refreshDate: undefined,
+      evaluationCount: 0,
       currentPeriodEnd: undefined,
       currentPeriodStart: undefined,
       latestSubscriptionId: undefined,
@@ -169,13 +169,14 @@ export const updateSubscriptionByEmailInternal = internalMutation({
   args: {
     email: v.string(),
     planName: v.optional(
-      v.union(v.literal("free"), v.literal("basic"), v.literal("premium"), v.literal("enterprise"))
+      v.union(v.literal("free"), v.literal("basic"), v.literal("premium"), v.literal("payAsYouGo"))
     ),
     minutesRemaining: v.optional(v.number()),
     interval: v.optional(
       v.union(v.literal("month"), v.literal("year"), v.literal("day"), v.literal("week"))
     ),
     refreshDate: v.optional(v.number()),
+    evaluationCount: v.optional(v.number()),
     currentPeriodEnd: v.optional(v.number()),
     currentPeriodStart: v.optional(v.number()),
     latestSubscriptionId: v.optional(v.string()),
@@ -189,6 +190,7 @@ export const updateSubscriptionByEmailInternal = internalMutation({
       minutesRemaining,
       interval,
       refreshDate,
+      evaluationCount,
       currentPeriodEnd,
       currentPeriodStart,
       latestSubscriptionId,
@@ -202,6 +204,7 @@ export const updateSubscriptionByEmailInternal = internalMutation({
       minutesRemaining: minutesRemaining ?? profile.minutesRemaining,
       interval: interval ?? profile.interval,
       refreshDate: refreshDate ?? profile.refreshDate,
+      evaluationCount: evaluationCount ?? profile.evaluationCount,
       currentPeriodEnd: currentPeriodEnd ?? profile.currentPeriodEnd,
       currentPeriodStart: currentPeriodStart ?? profile.currentPeriodStart,
       latestSubscriptionId: latestSubscriptionId ?? profile.latestSubscriptionId,
@@ -236,8 +239,16 @@ export const refreshMinutesForYearlyPlansInternal = internalMutation({
         continue;
       }
       if (refreshDate < currentTime) {
+
+        const pricing = await ctx.table("pricings").get("tier", profile.subscription);
+        if (!isDefined(pricing)) {
+          console.log("pricing not found for subscription", profile.subscription);
+          continue;
+        }
+        const minutes = pricing.minutes;
+
         await profile.patch({
-          minutesRemaining: PLANS[profile.subscription as keyof typeof PLANS].minutes,
+          minutesRemaining: minutes,
           refreshDate: get30DaysFromNowInSeconds(currentTime),
         });
       }

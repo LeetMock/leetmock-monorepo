@@ -1,4 +1,3 @@
-import { FREE_PLAN_MINUTES_ONLY_ONCE, FREE_PLAN_EVALUATION_ONLY_ONCE, ADMIN_INVITE_CODE_ONLY_ONCE, ADMIN_EVALUATION_COUNT } from "@/lib/constants";
 import { isDefined } from "@/lib/utils";
 import { v } from "convex/values";
 import { internalMutation, userMutation } from "./functions";
@@ -12,6 +11,8 @@ export const createInviteCode = internalMutation({
     await ctx.table("inviteCodes").insert({
       code: inviteCode,
       assignedRole,
+      minutes: 0,
+      evaluationCount: 0,
     });
   },
 });
@@ -34,14 +35,14 @@ export const applyInviteCode = userMutation({
     if (role === "admin") {
       await profile.patch({
         role,
-        minutesRemaining: ADMIN_EVALUATION_COUNT,
-        evaluationCount: ADMIN_EVALUATION_COUNT,
+        minutesRemaining: inviteCode.minutes,
+        evaluationCount: inviteCode.evaluationCount,
       });
     } else {
       await profile.patch({
         role,
-        minutesRemaining: FREE_PLAN_MINUTES_ONLY_ONCE,
-        evaluationCount: FREE_PLAN_EVALUATION_ONLY_ONCE,
+        minutesRemaining: inviteCode.minutes,
+        evaluationCount: inviteCode.evaluationCount,
       });
     }
   },
@@ -62,8 +63,8 @@ export const createDefaultUserProfile = userMutation({
     const userId = ctx.user.subject;
     const role = "waitlist";
     const subscription = "free";
-    const minutesRemaining = FREE_PLAN_MINUTES_ONLY_ONCE;
-    const evaluationCount = FREE_PLAN_EVALUATION_ONLY_ONCE;
+    const minutesRemaining = 0;
+    const evaluationCount = 0;
 
     await ctx.table("userProfiles").insert({
       userId,
