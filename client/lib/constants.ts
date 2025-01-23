@@ -218,32 +218,11 @@ public:
 `.trim(),
 };
 
-export const FREE_PLAN_MINUTES_ONLY_ONCE = 300;
-export const FREE_PLAN_EVALUATION_ONLY_ONCE = 15;
 
-export const ADMIN_INVITE_CODE_ONLY_ONCE = 999999;
-export const ADMIN_EVALUATION_COUNT = 999999;
-
-export const PLANS: {
-  [key: string]: { name: "free" | "basic" | "premium" | "enterprise"; minutes: number };
-} = {
-  free: {
-    name: "free",
-    minutes: 0,
-  },
-  basic: {
-    name: "basic",
-    minutes: 200,
-  },
-  premium: {
-    name: "premium",
-    minutes: 400,
-  },
-  enterprise: {
-    name: "enterprise",
-    minutes: 500,
-  },
-};
-
-export const MINUTE_PRICE = 0.2;
-export const MINUTE_PRICE_DISCOUNTED = 0.16;
+export enum PricingTier {
+  Free = "free",
+  Basic = "basic",
+  Premium = "premium",
+  PayAsYouGo = "payAsYouGo",  
+  PremiumExtraMins = "premiumExtraMins",
+}

@@ -5,7 +5,7 @@ export enum PriceTier {
   Free = 0,
   Basic = 1,
   Premium = 2,
-  Enterprise = 3,
+  PayAsYouGo = 3,
 }
 
 const priceTiers = [
@@ -28,9 +28,9 @@ const priceTiers = [
     className: "bg-blue-100 text-blue-800",
   },
   {
-    name: "Enterprise",
-    description: "Enterprise tier",
-    value: PriceTier.Enterprise,
+    name: "Pay As You Go",
+    description: "Pay As You Go tier",
+    value: PriceTier.PayAsYouGo,
     className: "bg-purple-100 text-purple-800",
   },
 ];

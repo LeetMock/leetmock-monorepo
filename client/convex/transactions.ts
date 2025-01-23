@@ -26,41 +26,56 @@ async function handleCheckoutSessionCompleted(
   }
   const email = checkoutSession.customer_details?.email;
 
-  const profile = await ctx.runQuery(internal.userProfiles.getByEmailInternal, { email });
+  const profile = await ctx.runQuery(internal.userProfiles.getByEmailInternal, {
+    email,
+  });
   if (!isDefined(profile)) {
     throw new ConvexError({
       code: "UserNotFound",
       message: "User not found",
     });
   }
-
-  // only handle if amount_subtotal is 960, i.e. $9.6 for extra 60 minutes
-  if (checkoutSession.amount_subtotal !== 960) {
-    console.log("payment received, but not $9.6, skipping");
+  const lineItems = await stripe.checkout.sessions.listLineItems(
+    checkoutSession.id
+  );
+  if (!lineItems.data.length) {
+    throw new ConvexError({
+      code: "LineItemsNotFound",
+      message: "Line items not found",
+    });
+  }
+  const product = await stripe.products.retrieve(
+    lineItems.data[0].price?.product as string
+  );
+  if (product.name !== "Extra 60 Mins") {
+    console.log(
+      "payment received, but product nameis not Extra 60 Mins, skipping"
+    );
     return;
   }
-  if (profile.subscriptionStatus !== "active") {
+  if (profile.subscription !== "premium") {
     throw new ConvexError({
-      code: "SubscriptionNotActive",
-      message: "Subscription is not active",
+      code: "SubscriptionNotPremium",
+      message: "Subscription is not premium",
     });
   }
-  // only handle if subscription is active
-  if (profile.subscriptionStatus === "active") {
-    await ctx.runMutation(internal.userProfiles.updateSubscriptionByEmailInternal, {
+
+  await ctx.runMutation(
+    internal.userProfiles.updateSubscriptionByEmailInternal,
+    {
       email: profile.email,
       planName: profile.subscription,
-      minutesRemaining: profile.minutesRemaining! + 60,
-    });
-  } else {
-    throw new ConvexError({
-      code: "SubscriptionNotActive",
-      message: "Subscription is not active",
-    });
-  }
+      minutesRemaining:
+        profile.minutesRemaining! +
+        60 * (lineItems.data[0].quantity!),
+    }
+  );
 }
 
-async function handleSubscriptionUpdate(ctx: ActionCtx, subscription: Stripe.Subscription) {
+async function handleSubscriptionUpdate(
+  ctx: ActionCtx,
+  subscription: Stripe.Subscription
+) {
   // check if stripe key is set
   if (!process.env.STRIPE_KEY) {
     throw new ConvexError({
@@ -103,14 +118,16 @@ async function handleSubscriptionUpdate(ctx: ActionCtx, subscription: Stripe.Sub
     });
   }
 
-  const pricing = await ctx.runQuery(internal.pricings.getPricingsInternal, { tier });
+  const pricing = await ctx.runQuery(internal.pricings.getPricingsInternal, {
+    tier,
+  });
   if (!isDefined(pricing)) {
     throw new ConvexError({
       code: "PricingNotFound",
       message: "Pricing not found",
     });
   }
-  
+
   const { price, evalCount, minutes } = pricing;
   console.log("tier", product.name);
   console.log("price", price);
@@ -118,64 +135,79 @@ async function handleSubscriptionUpdate(ctx: ActionCtx, subscription: Stripe.Sub
   console.log("minutes", minutes);
   console.log("subscription", subscription);
 
-  const premiumPricing = await ctx.runQuery(internal.pricings.getPricingsInternal, {
-    tier: "premium",
-  });
-  const basicPricing = await ctx.runQuery(internal.pricings.getPricingsInternal, {
-    tier: "basic",
-  });
+  const premiumPricing = await ctx.runQuery(
+    internal.pricings.getPricingsInternal,
+    {
+      tier: "premium",
+    }
+  );
+  const basicPricing = await ctx.runQuery(
+    internal.pricings.getPricingsInternal,
+    {
+      tier: "basic",
+    }
+  );
   const premiumMinutes = premiumPricing!.minutes;
+  const premiumEvalCount = premiumPricing!.evalCount;
   const basicMinutes = basicPricing!.minutes;
+  const basicEvalCount = basicPricing!.evalCount;
+  if (status !== "active") {
+    console.log("payment status", status, "do nothing", subscription);
+    return;
+  }
 
   // payment successful
-  if (status === "active") {
-    const refreshDate =
-      interval === "month" ? current_period_end : get30DaysFromNowInSeconds(current_period_start);
-    let minutesRemaining = user.minutesRemaining || 0;
-    if (user.subscriptionStatus !== "active") {
-      // new subscription or returning from cancelled
-      minutesRemaining += minutes;
-    } else if (user.subscriptionStatus === "active") {
-      if (user.subscription === "basic" && tier === "premium") {
-        // user is upgrading
-        minutesRemaining += premiumMinutes - basicMinutes;
-      } else if (user.subscription === "premium" && tier === "basic") {
-        // user is downgrading
-        minutesRemaining -= premiumMinutes - basicMinutes;
-      } else if (user.subscription === tier) {
-        // no change in plan
-        minutesRemaining += minutes;
-      }
+  const refreshDate =
+    interval === "month"
+      ? current_period_end
+      : get30DaysFromNowInSeconds(current_period_start);
+  let minutesRemaining = user.minutesRemaining || 0;
+  let evaluationCount = user.evaluationCount || 0;
+  if (user.currentPeriodEnd && user.currentPeriodEnd < Date.now() / 1000) {
+    console.log("subscription is expired, this is a renewal");
+    minutesRemaining = minutes;
+    evaluationCount = evalCount;
+  } else {
+    if (user.subscription === "free") {
+      console.log("new subscription");
+      minutesRemaining = minutes;
+      evaluationCount = evalCount;
+    } else if (user.subscription === "basic" && tier === "premium") {
+      console.log("user is upgrading");
+      minutesRemaining += premiumMinutes - basicMinutes;
+      evaluationCount += premiumEvalCount - basicEvalCount;
+    } else if (user.subscription === "premium" && tier === "basic") {
+      console.log("user is downgrading");
+      minutesRemaining -= premiumMinutes - basicMinutes;
+      evaluationCount -= premiumEvalCount - basicEvalCount;
+    } else if (user.subscription === tier) {
+      console.log("no change in plan, do nothing");
+    } else {
+      console.log("unknown subscription, do nothing", user.subscription, tier);
     }
-    await ctx.runMutation(internal.userProfiles.updateSubscriptionByEmailInternal, {
+  }
+
+  await ctx.runMutation(
+    internal.userProfiles.updateSubscriptionByEmailInternal,
+    {
       email: customer.email!,
       planName: tier,
       minutesRemaining,
+      evaluationCount,
       interval,
       refreshDate,
       currentPeriodEnd: current_period_end,
       currentPeriodStart: current_period_start,
       latestSubscriptionId: subscription.id,
       subscriptionStatus: status,
-    });
-  } else {
-    // payment failed or subscription cancelled
-    // await ctx.runMutation(internal.userProfiles.updateSubscriptionByEmailInternal, {
-    //   email: customer.email!,
-    //   planName: "free",
-    //   minutesRemaining: 0,
-    //   interval: undefined,
-    //   refreshDate: undefined,
-    //   currentPeriodEnd: undefined,
-    //   currentPeriodStart: undefined,
-    //   latestSubscriptionId: subscription.id,
-    //   subscriptionStatus: status,
-    // });
-    console.log("payment failed or subscription cancelled, do nothing", subscription);
-  } 
+    }
+  );
 }
 
-async function handleSubscriptionDeleted(ctx: ActionCtx, subscription: Stripe.Subscription) {
+async function handleSubscriptionDeleted(
+  ctx: ActionCtx,
+  subscription: Stripe.Subscription
+) {
   // check if stripe key is set
   if (!process.env.STRIPE_KEY) {
     throw new ConvexError({

@@ -5,8 +5,7 @@
         "minutes": 300,
         "evalCount": 15,
         "isDefault": true,
-        "isPurchasable": false,
-        "discountRate": 0
+        "isPurchasable": false
     },
     {
         "tier": "basic",
@@ -14,8 +13,7 @@
         "minutes": 400,
         "evalCount": 15,
         "isDefault": false,
-        "isPurchasable": true,
-        "discountRate": 0
+        "isPurchasable": true
     },
     {
         "tier": "premium",
@@ -23,8 +21,7 @@
         "minutes": 1000,
         "evalCount": 15,
         "isDefault": false,
-        "isPurchasable": true,
-        "discountRate": 0
+        "isPurchasable": true
     },
     {
         "tier": "payAsYouGo",
@@ -32,7 +29,14 @@
         "minutes": 1,
         "evalCount": 0,
         "isDefault": false,
-        "isPurchasable": true,
-        "discountRate": 0
+        "isPurchasable": true
+    },
+    {
+        "tier": "premiumExtraMins",
+        "price": 0.08,
+        "minutes": 1,
+        "evalCount": 0,
+        "isDefault": false,
+        "isPurchasable": true
     }
 ]

@@ -1,0 +1,4 @@
+[
+    {"assignedRole": "admin", "code": "leetmock-admin-0719", "minutes": 99999, "evaluationCount": 10000},
+    {"assignedRole": "user", "code": "leetmock-user-0514", "minutes": 300, "evaluationCount": 15}
+]

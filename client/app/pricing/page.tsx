@@ -31,11 +31,13 @@ export interface PricingTier {
   highlighted?: boolean;
   cta: string;
   soldOut?: boolean;
+  showFor: string[];
 }
 
 export const frequencies: PricingTierFrequency[] = [
   { id: "1", value: "1", label: "Monthly", priceSuffix: "/month" },
   { id: "2", value: "2", label: "Annually", priceSuffix: "/year" },
+  { id: "3", value: "3", label: "Pay As You Go", priceSuffix: "/minute" },
 ];
 
 export const tiers: PricingTier[] = [
@@ -43,7 +45,7 @@ export const tiers: PricingTier[] = [
     name: "Basic",
     id: "0",
     href: "/dashboard/settings/subscription",
-    price: { "1": "$29.99", "2": "$305.99" },
+    price: { "1": "$24.99", "2": "$199.99" },
     discountPrice: { "1": "", "2": "" },
     description: `Experience your first well-designed AI interview, on us.`,
     features: [
@@ -56,12 +58,13 @@ export const tiers: PricingTier[] = [
     highlighted: false,
     soldOut: false,
     cta: `Sign up`,
+    showFor: ["1", "2"],
   },
   {
     name: "Premium",
     id: "1",
     href: "/dashboard/settings/subscription",
-    price: { "1": "$49.99", "2": "$509.99" },
+    price: { "1": "$49.99", "2": "$499.99" },
     discountPrice: { "1": "", "2": "" },
     description: `Essential interview practice for steady progress.`,
     features: [
@@ -74,19 +77,26 @@ export const tiers: PricingTier[] = [
     highlighted: true,
     soldOut: false,
     cta: `Get started`,
+    showFor: ["1", "2"],
   },
   {
-    name: "Enterprise",
+    name: "Pay As You Go",
     id: "2",
-    href: "/contact-us",
-    price: { "1": "$ Quote", "2": "$ Quote" },
-    discountPrice: { "1": "", "2": "" },
-    description: `Tailored for enterprises to empower talent. Contact us for pricing.`,
-    features: [`All in the pro plan plus`, `Priority support`, `Enterprise custom solution`],
-    featured: true,
+    href: "/dashboard/settings/subscription",
+    price: { "3": "$0.1" },
+    discountPrice: { "3": "" },
+    description: `Pay only for what you use. Perfect for flexible interview practice.`,
+    features: [
+      `$0.1 per minute`,
+      `All premium features`,
+      `No commitment`,
+      `Pay as you go`,
+    ],
+    featured: false,
     highlighted: false,
     soldOut: false,
-    cta: `Contact Us`,
+    cta: `Get started`,
+    showFor: ["3"],
   },
 ];
 
@@ -180,124 +190,126 @@ export default function PricingPage() {
             <div
               className={cn(
                 "isolate mx-auto mt-4 mb-28 grid max-w-md grid-cols-1 gap-8 lg:mx-0 lg:max-w-none",
-                tiers.length === 2 ? "lg:grid-cols-2" : "",
-                tiers.length === 3 ? "lg:grid-cols-3" : ""
+                "justify-items-center lg:grid-cols-2 container",
+                frequency.value === "3" ? "lg:grid-cols-1" : "lg:grid-cols-2"
               )}
             >
-              {tiers.map((tier) => (
-                <div
-                  key={tier.id}
-                  className={cn(
-                    tier.featured
-                      ? "!bg-gray-900 ring-gray-900 dark:!bg-gray-100 dark:ring-gray-100"
-                      : "bg-white dark:bg-gray-900/80 ring-gray-300/70 dark:ring-gray-700",
-                    "max-w-xs ring-1 rounded-3xl p-8 xl:p-10",
-                    tier.highlighted ? styles.fancyGlassContrast : ""
-                  )}
-                >
-                  <h3
-                    id={tier.id}
-                    className={cn(
-                      tier.featured ? "text-white dark:text-black" : "text-black dark:text-white",
-                      "text-2xl font-bold tracking-tight"
-                    )}
-                  >
-                    {tier.name}
-                  </h3>
-                  <p
+              {tiers
+                .filter((tier) => tier.showFor.includes(frequency.value))
+                .map((tier) => (
+                  <div
+                    key={tier.id}
                     className={cn(
                       tier.featured
-                        ? "text-gray-300 dark:text-gray-500"
-                        : "text-gray-600 dark:text-gray-400",
-                      "mt-4 text-sm leading-6"
+                        ? "!bg-gray-900 ring-gray-900 dark:!bg-gray-100 dark:ring-gray-100"
+                        : "bg-white dark:bg-gray-900/80 ring-gray-300/70 dark:ring-gray-700",
+                      "max-w-xs ring-1 rounded-3xl p-8 xl:p-10",
+                      tier.highlighted ? styles.fancyGlassContrast : ""
                     )}
                   >
-                    {tier.description}
-                  </p>
-                  <p className="mt-6 flex items-baseline gap-x-1">
-                    <span
+                    <h3
+                      id={tier.id}
                       className={cn(
                         tier.featured ? "text-white dark:text-black" : "text-black dark:text-white",
-                        "text-4xl font-bold tracking-tight",
-                        tier.discountPrice && tier.discountPrice[frequency.value]
-                          ? "line-through"
-                          : ""
+                        "text-2xl font-bold tracking-tight"
                       )}
                     >
-                      {typeof tier.price === "string" ? tier.price : tier.price[frequency.value]}
-                    </span>
-
-                    <span
+                      {tier.name}
+                    </h3>
+                    <p
                       className={cn(
-                        tier.featured ? "text-white dark:text-black" : "text-black dark:text-white"
+                        tier.featured
+                          ? "text-gray-300 dark:text-gray-500"
+                          : "text-gray-600 dark:text-gray-400",
+                        "mt-4 text-sm leading-6"
                       )}
                     >
-                      {typeof tier.discountPrice === "string"
-                        ? tier.discountPrice
-                        : tier.discountPrice[frequency.value]}
-                    </span>
-
-                    {typeof tier.price !== "string" ? (
+                      {tier.description}
+                    </p>
+                    <p className="mt-6 flex items-baseline gap-x-1">
                       <span
                         className={cn(
-                          tier.featured
-                            ? "text-gray-300 dark:text-gray-500"
-                            : "dark:text-gray-400 text-gray-600",
-                          "text-sm font-semibold leading-6"
+                          tier.featured ? "text-white dark:text-black" : "text-black dark:text-white",
+                          "text-4xl font-bold tracking-tight",
+                          tier.discountPrice && tier.discountPrice[frequency.value]
+                            ? "line-through"
+                            : ""
                         )}
                       >
-                        {frequency.priceSuffix}
+                        {typeof tier.price === "string" ? tier.price : tier.price[frequency.value]}
                       </span>
-                    ) : null}
-                  </p>
-                  <a
-                    href={tier.href}
-                    aria-describedby={tier.id}
-                    className={cn("flex mt-6 shadow-sm", tier.soldOut ? "pointer-events-none" : "")}
-                  >
-                    <Button
-                      size="lg"
-                      disabled={tier.soldOut}
-                      className={cn(
-                        "w-full text-black dark:text-white",
-                        !tier.highlighted && !tier.featured
-                          ? "bg-gray-100 dark:bg-gray-600"
-                          : "bg-slate-300 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700",
-                        tier.featured || tier.soldOut
-                          ? "bg-white dark:bg-neutral-900 hover:bg-gray-200 dark:hover:bg-black"
-                          : "hover:opacity-80 transition-opacity"
-                      )}
-                      variant={tier.highlighted ? "default" : "outline"}
-                    >
-                      {tier.soldOut ? "Sold out" : tier.cta}
-                    </Button>
-                  </a>
 
-                  <ul
-                    className={cn(
-                      tier.featured
-                        ? "text-gray-300 dark:text-gray-500"
-                        : "text-gray-700 dark:text-gray-400",
-                      "mt-8 space-y-3 text-sm leading-6 xl:mt-10"
-                    )}
-                  >
-                    {tier.features.map((feature) => (
-                      <li key={feature} className="flex gap-x-3">
-                        <CheckIcon
+                      <span
+                        className={cn(
+                          tier.featured ? "text-white dark:text-black" : "text-black dark:text-white"
+                        )}
+                      >
+                        {typeof tier.discountPrice === "string"
+                          ? tier.discountPrice
+                          : tier.discountPrice[frequency.value]}
+                      </span>
+
+                      {typeof tier.price !== "string" ? (
+                        <span
                           className={cn(
-                            tier.featured ? "text-white dark:text-black" : "",
-                            tier.highlighted ? "text-slate-500" : "text-gray-500",
-
-                            "h-6 w-5 flex-none"
+                            tier.featured
+                              ? "text-gray-300 dark:text-gray-500"
+                              : "dark:text-gray-400 text-gray-600",
+                            "text-sm font-semibold leading-6"
                           )}
-                          aria-hidden="true"
-                        />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+                        >
+                          {frequency.priceSuffix}
+                        </span>
+                      ) : null}
+                    </p>
+                    <a
+                      href={tier.href}
+                      aria-describedby={tier.id}
+                      className={cn("flex mt-6 shadow-sm", tier.soldOut ? "pointer-events-none" : "")}
+                    >
+                      <Button
+                        size="lg"
+                        disabled={tier.soldOut}
+                        className={cn(
+                          "w-full text-black dark:text-white",
+                          !tier.highlighted && !tier.featured
+                            ? "bg-gray-100 dark:bg-gray-600"
+                            : "bg-slate-300 hover:bg-slate-400 dark:bg-slate-600 dark:hover:bg-slate-700",
+                          tier.featured || tier.soldOut
+                            ? "bg-white dark:bg-neutral-900 hover:bg-gray-200 dark:hover:bg-black"
+                            : "hover:opacity-80 transition-opacity"
+                        )}
+                        variant={tier.highlighted ? "default" : "outline"}
+                      >
+                        {tier.soldOut ? "Sold out" : tier.cta}
+                      </Button>
+                    </a>
+
+                    <ul
+                      className={cn(
+                        tier.featured
+                          ? "text-gray-300 dark:text-gray-500"
+                          : "text-gray-700 dark:text-gray-400",
+                        "mt-8 space-y-3 text-sm leading-6 xl:mt-10"
+                      )}
+                    >
+                      {tier.features.map((feature) => (
+                        <li key={feature} className="flex gap-x-3">
+                          <CheckIcon
+                            className={cn(
+                              tier.featured ? "text-white dark:text-black" : "",
+                              tier.highlighted ? "text-slate-500" : "text-gray-500",
+
+                              "h-6 w-5 flex-none"
+                            )}
+                            aria-hidden="true"
+                          />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
