@@ -117,12 +117,12 @@ class AgentConfig(BaseModel):
 
     fast_model: str = Field(default="o1-mini")
 
-    smart_model: str = Field(default="o1-mini")
+    smart_model: str = Field(default="o1-preview-2024-09-12")
 
     temperature: float = Field(default=1)
 
 
-DEFAULT_CONFIG = AgentConfig(fast_model="o1-mini", smart_model="o1-mini", temperature=1)
+DEFAULT_CONFIG = AgentConfig(fast_model="o1-mini", smart_model="deepseek-reasoner", temperature=1)
 
 
 class AgentState(BaseModel):
