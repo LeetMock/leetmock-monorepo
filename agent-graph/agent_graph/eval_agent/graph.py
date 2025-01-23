@@ -15,6 +15,7 @@ from agent_graph.eval_agent.prompts import overall_prompt
 from agent_graph.eval_agent.sub_eval import EVALUATION_TESTS
 from agent_graph.llms import get_model
 from agent_graph.storages.convex import ConvexStateStorage
+from agent_graph.storages.langgraph_cloud import LangGraphCloudStateStorage
 from agent_graph.utils import get_configurable
 from convex import ConvexClient
 from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
@@ -56,26 +57,39 @@ async def initialize_agent(state: AgentState):
         "questions:getById", args={"questionId": session_details["questionId"]}
     )
 
-    state_storage = ConvexStateStorage(
-        session_id=session_id,
-        state_type=CodeMockAgentState,
-        convex_api=convex_api,
+    # state_storage = ConvexStateStorage(
+    #     session_id=session_id,
+    #     state_type=CodeMockAgentState,
+    #     convex_api=convex_api,
+    # )
+
+    # Extracting the messages history from the state
+    # messages_history: List[AnyMessage] = values["messages"]
+    # messages = []
+    # for message in messages_history:
+    #     if "<thinking>" in message.content:
+    #         continue
+
+    #     if isinstance(message, AIMessage):
+    #         messages.append(f"AI: {message.content}")
+    #     elif isinstance(message, HumanMessage):
+    #         messages.append(f"Human: {message.content}")
+    # logger.info(f"Messages history: {messages}")
+
+    state_storage = LangGraphCloudStateStorage(
+        thread_id=session_details["agentThreadId"],
+        assistant_id=session_details["assistantId"],
     )
 
     values = await state_storage.get_state()
 
     # Extracting the messages history from the state
-    messages_history: List[AnyMessage] = values["messages"]
+    messages_history = values["messages"]
     messages = []
     for message in messages_history:
-        if "<thinking>" in message.content:
-            continue
+        if "<thinking>" not in message["content"]:
+            messages.append(message["type"] + ": " + message["content"])
 
-        if isinstance(message, AIMessage):
-            messages.append(f"AI: {message.content}")
-        elif isinstance(message, HumanMessage):
-            messages.append(f"Human: {message.content}")
-    # logger.info(f"Messages history: {messages}")
 
     initial_state["SESSION"] = session_details
     initial_state["SESSION_STATE"] = session_state
