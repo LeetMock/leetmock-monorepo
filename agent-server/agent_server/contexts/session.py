@@ -1,6 +1,7 @@
 import asyncio
 import time
 from abc import ABC, abstractmethod
+from operator import call
 from typing import Any, Generic, Literal, TypeVar
 
 from agent_graph.code_mock_staged_v1.graph import AgentState
@@ -319,14 +320,18 @@ class CodeSession(BaseSession[CodeSessionEventTypes, AgentState]):
             "ground_truth_testcase_executed"
         )
 
-        content_changed_watcher.on_update(content_changed_handler)
-        content_changed_watcher.watch(self._api)
+        content_changed_watcher.on_update(
+            callback=content_changed_handler,
+        ).watch(self._api)
 
-        testcase_changed_watcher.on_update(testcase_changed_handler)
-        testcase_changed_watcher.watch(self._api)
+        testcase_changed_watcher.on_update(
+            callback=testcase_changed_handler,
+        ).watch(self._api)
 
-        user_testcase_executed_watcher.on_update(user_testcase_executed_handler)
-        user_testcase_executed_watcher.watch(self._api)
+        user_testcase_executed_watcher.on_update(
+            callback=user_testcase_executed_handler,
+        ).watch(self._api)
 
-        ground_truth_testcase_executed_watcher.on_update(ground_truth_executed_handler)
-        ground_truth_testcase_executed_watcher.watch(self._api)
+        ground_truth_testcase_executed_watcher.on_update(
+            callback=ground_truth_executed_handler
+        ).watch(self._api)
