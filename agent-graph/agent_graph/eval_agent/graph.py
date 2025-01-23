@@ -87,8 +87,7 @@ async def initialize_agent(state: AgentState):
     messages_history = values["messages"]
     messages = []
     for message in messages_history:
-        if "<thinking>" not in message["content"]:
-            messages.append(message["type"] + ": " + message["content"])
+        messages.append(message["type"] + ": " + message["content"])
 
 
     initial_state["SESSION"] = session_details
