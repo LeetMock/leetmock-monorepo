@@ -113,9 +113,9 @@ const schema = defineEntSchema({
   }),
   inviteCodes: defineEnt({
     code: v.string(),
-    minutes: v.number(),
     assignedRole: v.union(v.literal("admin"), v.literal("user")),
   })
+    .field("minutes", v.number(), { default: 10 })
     .field("evaluationCount", v.number(), { default: 3 })
     .index("by_code", ["code"]),
   evaluations: defineEnt({
