@@ -114,9 +114,10 @@ const schema = defineEntSchema({
   inviteCodes: defineEnt({
     code: v.string(),
     minutes: v.number(),
-    evaluationCount: v.number(),
     assignedRole: v.union(v.literal("admin"), v.literal("user")),
-  }).index("by_code", ["code"]),
+  })
+    .field("evaluationCount", v.number(), { default: 3 })
+    .index("by_code", ["code"]),
   evaluations: defineEnt({
     sessionId: v.id("sessions"),
     overallFeedback: v.string(),
@@ -153,7 +154,17 @@ const schema = defineEntSchema({
     minutes: v.number(),
     isDefault: v.boolean(),
     isPurchasable: v.boolean(),
-  }).field("tier", v.union(v.literal("free"), v.literal("basic"), v.literal("premium"), v.literal("payAsYouGo"), v.literal("premiumExtraMins")), { unique: true }),
+  }).field(
+    "tier",
+    v.union(
+      v.literal("free"),
+      v.literal("basic"),
+      v.literal("premium"),
+      v.literal("payAsYouGo"),
+      v.literal("premiumExtraMins")
+    ),
+    { unique: true }
+  ),
 });
 
 export const entDefinitions = getEntDefinitions(schema);
