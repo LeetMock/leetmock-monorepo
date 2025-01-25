@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { DevTool } from "@/components/dev-tool";
+import { CSPostHogProvider } from './providers'
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -30,6 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head />
+      <CSPostHogProvider>
       <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
         <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange>
           <ConvexClientProvider>
@@ -40,7 +42,9 @@ export default function RootLayout({
             <DevTool />
           </ConvexClientProvider>
         </ThemeProvider>
-      </body>
+        </body>
+        </CSPostHogProvider>
+
     </html>
   );
 }
