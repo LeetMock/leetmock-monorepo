@@ -3,11 +3,11 @@ import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 
 import { ConvexClientProvider } from "@/components/convex-client-provider";
+import { DevTool } from "@/components/dev-tool";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
-import { DevTool } from "@/components/dev-tool";
-import { CSPostHogProvider } from './providers'
+import { CSPostHogProvider } from "./providers";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -32,19 +32,18 @@ export default function RootLayout({
     <html lang="en">
       <head />
       <CSPostHogProvider>
-      <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
-        <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange>
-          <ConvexClientProvider>
-            {children}
-            <Toaster
-              duration={1500} // 1.5 seconds
-            />
-            <DevTool />
-          </ConvexClientProvider>
-        </ThemeProvider>
+        <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
+          <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange>
+            <ConvexClientProvider>
+              {children}
+              <Toaster
+                duration={1500} // 1.5 seconds
+              />
+              <DevTool />
+            </ConvexClientProvider>
+          </ThemeProvider>
         </body>
-        </CSPostHogProvider>
-
+      </CSPostHogProvider>
     </html>
   );
 }
