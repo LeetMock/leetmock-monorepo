@@ -14,17 +14,29 @@ export const scoreDetailSchema = {
   score: v.number(),
 };
 
+export const SubscriptionTier = {
+  FREE: "free",
+  BASIC: "basic",
+  PREMIUM: "premium",
+  PAY_AS_YOU_GO: "payAsYouGo",
+} as const;
+
 const schema = defineEntSchema({
   userProfiles: defineEnt({
     role: v.union(v.literal("admin"), v.literal("user"), v.literal("waitlist")),
     subscription: v.union(
-      v.literal("free"),
-      v.literal("basic"),
-      v.literal("premium"),
-      v.literal("payAsYouGo")
+      v.literal(SubscriptionTier.FREE),
+      v.literal(SubscriptionTier.BASIC),
+      v.literal(SubscriptionTier.PREMIUM),
+      v.literal(SubscriptionTier.PAY_AS_YOU_GO)
     ),
     interval: v.optional(
-      v.union(v.literal("month"), v.literal("year"), v.literal("day"), v.literal("week"))
+      v.union(
+        v.literal("month"),
+        v.literal("year"),
+        v.literal("day"),
+        v.literal("week")
+      )
     ),
     minutesRemaining: v.number(),
     currentPeriodStart: v.optional(v.number()),
