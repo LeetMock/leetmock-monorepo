@@ -2,8 +2,8 @@
     {
         "tier": "free",
         "price": 0,
-        "minutes": 300,
-        "evalCount": 15,
+        "minutes": 0,
+        "evalCount": 0,
         "isDefault": true,
         "isPurchasable": false
     },

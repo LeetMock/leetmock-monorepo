@@ -4,11 +4,13 @@ import { cn } from "@/lib/utils";
 import { Terminal, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import { useConfig } from "@/hooks/use-config";
 
 export const UpgradeBanner: React.FC<{ className?: string }> = ({ className }) => {
   const { theme } = useTheme();
-
+  const { showPriceBanner } = useConfig();
   return (
+    showPriceBanner && (
     <div
       className={cn(
         "flex items-center justify-between p-4 border-b h-11 pr-2.5",
@@ -36,8 +38,9 @@ export const UpgradeBanner: React.FC<{ className?: string }> = ({ className }) =
         size="icon"
         variant="ghost"
       >
-        <X className="w-4 h-4" />
-      </Button>
-    </div>
+          <X className="w-4 h-4" />
+        </Button>
+      </div>
+    )
   );
 };

@@ -169,10 +169,10 @@ const schema = defineEntSchema({
   }).field(
     "tier",
     v.union(
-      v.literal("free"),
-      v.literal("basic"),
-      v.literal("premium"),
-      v.literal("payAsYouGo"),
+      v.literal(SubscriptionTier.FREE),
+      v.literal(SubscriptionTier.BASIC),
+      v.literal(SubscriptionTier.PREMIUM),
+      v.literal(SubscriptionTier.PAY_AS_YOU_GO),
       v.literal("premiumExtraMins")
     ),
     { unique: true }

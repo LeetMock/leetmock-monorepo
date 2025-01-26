@@ -18,6 +18,7 @@ import { CreditCard, LaptopIcon, LogOut, MoonIcon, SunIcon, UserIcon } from "luc
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { PriceTier, TierBadge } from "../app/(workspace)/dashboard/_components/tier-badge";
+import { SubscriptionTier } from "@/convex/schema";
 
 export const UserDropdown: React.FC<{
   children: React.ReactNode;
@@ -55,11 +56,11 @@ export const UserDropdown: React.FC<{
                 <span className="text-sm font-medium">Current Plan</span>
                 <TierBadge
                   tier={
-                    userProfile.subscription === "payAsYouGo"
+                    userProfile.subscription === SubscriptionTier.PAY_AS_YOU_GO
                       ? PriceTier.PayAsYouGo
-                      : userProfile.subscription === "premium"
+                      : userProfile.subscription === SubscriptionTier.PREMIUM
                         ? PriceTier.Premium
-                        : userProfile.subscription === "basic"
+                        : userProfile.subscription === SubscriptionTier.BASIC
                           ? PriceTier.Basic
                           : PriceTier.Free
                   }
@@ -104,7 +105,7 @@ export const UserDropdown: React.FC<{
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/dashboard/settings/billing" className="w-full flex items-center">
+            <Link href="/dashboard/settings/subscription" className="w-full flex items-center">
               <CreditCard className="mr-2 h-4 w-4" />
               <span>Billing</span>
             </Link>
