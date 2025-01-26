@@ -66,8 +66,7 @@ async function handleCheckoutSessionCompleted(
       email: profile.email,
       planName: profile.subscription,
       minutesRemaining:
-        profile.minutesRemaining! +
-        60 * (lineItems.data[0].quantity!),
+        profile.minutesRemaining! + 60 * lineItems.data[0].quantity!,
     }
   );
 }
@@ -250,7 +249,8 @@ export const stripeWebhookHandler = httpAction(async (ctx, req) => {
       await handleCheckoutSessionCompleted(ctx, checkoutSession);
       break;
     case "customer.subscription.updated":
-      console.log("received customer.subscription.updated event", body);
+    case "customer.subscription.created":
+      console.log("received customer.subscription.updated/created event", body);
       const subscription = body.data.object;
       await handleSubscriptionUpdate(ctx, subscription);
       break;
