@@ -22,7 +22,7 @@ primary_region = 'sjc'
     timeout = "3s"
     method = "get"
     path = "/"
-  
+
 [[vm]]
-  size = "shared-cpu-4x"
-  memory = "4gb"
+  size = "performance-8x"
+  memory = "16gb"
