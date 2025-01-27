@@ -4,7 +4,6 @@ import type { VideoGrant } from "livekit-server-sdk";
 
 import { api, internal } from "./_generated/api";
 import { action } from "./_generated/server";
-import { userAction } from "./functions";
 
 import { CODE_PREFIX, DATA_STRUCTURES } from "@/lib/constants";
 import { CodeRunResult, RunCodeResult, RunTestResult, TokenResult } from "@/lib/types";
@@ -91,7 +90,7 @@ export const createAgentThread = action({
   },
 });
 
-export const triggerEval = userAction({
+export const triggerEval = action({
   args: {
     sessionId: v.id("sessions"),
   },
