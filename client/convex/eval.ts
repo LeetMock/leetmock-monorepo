@@ -110,7 +110,7 @@ export const triggerEvalAction = internalAction({
 export const checkPendingEvaluationsInternal = internalMutation({
   args: {},
   handler: async (ctx) => {
-    const timeoutThreshold = 180 * 1000; // 180 seconds in milliseconds
+    const timeoutThreshold = 240 * 1000; // 240 seconds in milliseconds
     const currentTime = Date.now();
 
     // Find in-progress jobs that have timed out
