@@ -155,6 +155,13 @@ const schema = defineEntSchema({
     state: v.optional(v.string()),
     lastUpdated: v.number(),
   }).field("sessionId", v.id("sessions"), { unique: true }),
+  evalJobs: defineEnt({
+    sessionId: v.id("sessions"),
+    status: v.union(v.literal("pending"), v.literal("inProgress"), v.literal("success"), v.literal("failed"), v.literal("timeOut")),
+    lastUpdate: v.number(),
+  })
+    .index("status", ["status", "lastUpdate"])
+    .index("by_session_id", ["sessionId"]),
   pricings: defineEnt({
     price: v.number(),
     evalCount: v.number(),

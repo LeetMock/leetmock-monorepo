@@ -91,29 +91,20 @@ export const createAgentThread = userAction({
   },
 });
 
-export const triggerEval = userAction({
+export const scheduleEval = userAction({
   args: {
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-
-    const apiKey = process.env.LANGSMITH_API_KEY;
-    if (!apiKey) throw new Error("LANGSMITH_API_KEY not found");
-    const apiUrl = process.env.LANGGRAPH_API_URL;
-
-    const response = await fetch(apiUrl + "/runs", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Api-Key": apiKey,
-      },
-      body: JSON.stringify({
-        assistant_id: "eval-agent",
-        input: {
-          session_id: sessionId,
-        },
-      }),
+    const result = await ctx.runMutation(internal.jobs.create, {
+      sessionId,
+      status: "pending",
+      lastUpdate: Date.now(),
     });
+
+    if (result.status === "failed") {
+      throw new Error(result.message);
+    }
 
     return {
       success: true,
@@ -176,11 +167,11 @@ export const runCode = action({
 
     return result
       ? {
-          status: !result.isError, //true if API call was successful
-          executionTime: result.executionTime,
-          isError: !!result.stderr, //true if there's an error in the code
-          output: result.stderr || result.stdout || "",
-        }
+        status: !result.isError, //true if API call was successful
+        executionTime: result.executionTime,
+        isError: !!result.stderr, //true if there's an error in the code
+        output: result.stderr || result.stdout || "",
+      }
       : undefined;
   },
 });
@@ -224,7 +215,7 @@ export const runGroundTruthTest = action({
     let globalCaseNumber = 0; // Track the overall test case number
 
     // Process test cases with dynamic batch size
-    for (let i = 0; i < testCases.length; ) {
+    for (let i = 0; i < testCases.length;) {
       const batchTestCases = testCases.slice(i, i + currentBatchSize);
       const testCode = generateTestCode(question, language, batchTestCases);
       const payload = {

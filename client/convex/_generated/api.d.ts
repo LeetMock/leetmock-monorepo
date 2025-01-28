@@ -25,6 +25,7 @@ import type * as eval from "../eval.js";
 import type * as functions from "../functions.js";
 import type * as http from "../http.js";
 import type * as inviteCodes from "../inviteCodes.js";
+import type * as jobs from "../jobs.js";
 import type * as pricings from "../pricings.js";
 import type * as questions from "../questions.js";
 import type * as sessions from "../sessions.js";
@@ -51,6 +52,7 @@ declare const fullApi: ApiFromModules<{
   functions: typeof functions;
   http: typeof http;
   inviteCodes: typeof inviteCodes;
+  jobs: typeof jobs;
   pricings: typeof pricings;
   questions: typeof questions;
   sessions: typeof sessions;
