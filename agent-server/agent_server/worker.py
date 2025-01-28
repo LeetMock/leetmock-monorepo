@@ -9,10 +9,9 @@ init_telemetry()
 import asyncio
 import os
 from datetime import datetime
-from typing import AsyncIterator, Dict, List, cast
+from typing import AsyncIterator, Dict
 
-import psutil
-from agent_graph.code_mock_staged_v1.constants import AgentConfig, StageTypes
+from agent_graph.code_mock_staged_v1.constants import AgentConfig
 from agent_graph.code_mock_staged_v1.graph import AgentState, create_graph
 from agent_graph.state_merger import StateMerger
 from agent_server.agent_streams import AgentStream
@@ -32,10 +31,9 @@ from agent_server.livekit.tts import get_tts_engine
 from agent_server.utils.logger import get_logger
 from agent_server.utils.messages import livekit_to_langchain_message
 from livekit.agents import cli  # type: ignore
-from livekit.agents import JobContext, JobProcess, WorkerOptions, llm, utils
+from livekit.agents import JobContext, JobProcess, WorkerOptions, llm
 from livekit.agents.llm import ChatMessage
 from livekit.agents.pipeline.pipeline_agent import VoicePipelineAgent
-from livekit.agents.worker import Worker, _DefaultLoadCalc
 from livekit.plugins import deepgram, silero, turn_detector
 from livekit.rtc import DataPacket
 
