@@ -128,6 +128,7 @@ export const endSession = userMutation({
   },
   handler: async (ctx, { sessionId }) => {
     await endSessionAction(ctx, sessionId);
+
     // compute time taken for session
     const session = await ctx.table("sessions").getX(sessionId);
     const startTime = session.sessionStartTime ?? Date.now();
