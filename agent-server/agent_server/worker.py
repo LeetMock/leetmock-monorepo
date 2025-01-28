@@ -45,44 +45,6 @@ from libs.message_wrapper import MessageWrapper
 logger = get_logger(__name__)
 
 
-class CustomLoadCalc(_DefaultLoadCalc):
-    """CustomLoadCalc is a custom load calculator that extends the default load calculator.
-
-    It calculates the load based on the CPU and memory usage.
-    """
-
-    def __init__(self) -> None:
-        super().__init__()
-        self._mem_avg = utils.MovingAverage(5)  # avg over 2.5 seconds, like CPU
-
-    def _calc_load(self) -> None:
-        while True:
-            cpu_p = psutil.cpu_percent(0.5) / 100.0  # 2 samples/s
-            mem_p = psutil.virtual_memory().percent / 100.0
-
-            with self._lock:
-                self._m_avg.add_sample(cpu_p)
-                self._mem_avg.add_sample(mem_p)
-
-    def _get_avg(self) -> float:
-        with self._lock:
-            cpu_load = self._m_avg.get_avg()
-            mem_load = self._mem_avg.get_avg()
-            return max(cpu_load, mem_load)
-
-    @classmethod
-    def get_load(cls, worker: Worker) -> float:
-        """The load is the maximum of the CPU and memory usage.
-
-        Returns:
-            float: The load as a percentage.
-        """
-        if cls._instance is None:
-            cls._instance = CustomLoadCalc()
-
-        return cls._instance._get_avg()
-
-
 def prewarm(proc: JobProcess):
     proc.userdata["vad"] = silero.VAD.load(min_speech_duration=0.2)
 
