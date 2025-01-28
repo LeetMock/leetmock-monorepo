@@ -96,11 +96,6 @@ export const triggerEval = userAction({
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-    const result = await ctx.runMutation(internal.userProfiles.decrementEvaluationCount);
-
-    if (!result.success) {
-      throw new Error(result.message);
-    }
 
     const apiKey = process.env.LANGSMITH_API_KEY;
     if (!apiKey) throw new Error("LANGSMITH_API_KEY not found");
@@ -122,7 +117,6 @@ export const triggerEval = userAction({
 
     return {
       success: true,
-      remainingCredits: result.currentCount,
     };
   },
 });
