@@ -159,6 +159,7 @@ const schema = defineEntSchema({
     sessionId: v.id("sessions"),
     status: v.union(v.literal("pending"), v.literal("inProgress"), v.literal("success"), v.literal("failed"), v.literal("timeOut")),
     lastUpdate: v.number(),
+    numRetries: v.number(),
   })
     .index("status", ["status", "lastUpdate"])
     .index("by_session_id", ["sessionId"]),

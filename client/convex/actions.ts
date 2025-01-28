@@ -100,6 +100,7 @@ export const scheduleEval = userAction({
       sessionId,
       status: "pending",
       lastUpdate: Date.now(),
+      numRetries: 0,
     });
 
     if (result.status === "failed") {

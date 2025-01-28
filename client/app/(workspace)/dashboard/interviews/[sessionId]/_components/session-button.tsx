@@ -60,7 +60,7 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
   const { connect, disconnect } = useConnection(room);
   const startSession = useMutation(api.sessions.startSession);
   const endSession = useMutation(api.sessions.endSession);
-  const triggerEval = useAction(api.actions.triggerEval);
+  const triggerEval = useAction(api.actions.scheduleEval);
 
   const [sessionOptionIndex, setSessionOptionIndex] = useState<number>(0);
   const [isSessionDialogOpen, setIsSessionDialogOpen] = useState<boolean>(false);

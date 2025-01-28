@@ -51,6 +51,16 @@ export const insertEvaluation = mutation({
       scoreboards: args.scoreboards,
     });
 
+    // update evalJob status to completed
+    const evalJob = await ctx.table("evalJobs", "by_session_id", (q) => q.eq("sessionId", args.sessionId)).first();
+
+    if (evalJob) {
+      await evalJob.patch({
+        status: "success",
+        lastUpdate: Date.now(),
+      });
+    }
+
     // Update session evalReady flag
     const session = await ctx.table("sessions").getX(args.sessionId);
     await session.patch({
@@ -94,5 +104,31 @@ export const triggerEvalAction = internalAction({
         },
       }),
     });
+  },
+});
+
+export const checkPendingEvaluationsInternal = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const timeoutThreshold = 180 * 1000; // 180 seconds in milliseconds
+    const currentTime = Date.now();
+
+    // Find in-progress jobs that have timed out
+    const timedOutJobs = await ctx.table("evalJobs")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("status"), "inProgress"),
+          q.lt(q.field("lastUpdate"), currentTime - timeoutThreshold)
+        )
+      );
+
+    // Update each timed out job
+    for (const job of timedOutJobs) {
+      await job.patch({
+        status: job.numRetries >= 2 ? "failed" : "pending", // Will be "failed" on 3rd retry
+        lastUpdate: currentTime,
+        numRetries: job.numRetries + 1
+      });
+    }
   },
 });

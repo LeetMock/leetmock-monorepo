@@ -9,6 +9,7 @@ export const create = internalMutation({
             v.literal("success"), v.literal("failed"), v.literal("timeOut")),
         lastUpdate: v.number(),
         sessionId: v.id("sessions"),
+        numRetries: v.number(),
     },
     handler: async (ctx, args) => {
         // Check if job already exists for this session
@@ -26,7 +27,7 @@ export const create = internalMutation({
     },
 });
 
-export const triggerEval = internalMutation({
+export const triggerEvalJobs = internalMutation({
     args: {},
     handler: async (ctx) => {
         // Get all pending jobs

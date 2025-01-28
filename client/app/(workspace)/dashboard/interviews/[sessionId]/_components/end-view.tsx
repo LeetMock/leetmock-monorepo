@@ -14,7 +14,7 @@ interface EndViewProps {
 export const EndView = ({ session }: EndViewProps) => {
   const [countdown, setCountdown] = useState(30);
   const endSession = useMutation(api.sessions.endSession);
-  const triggerEval = useAction(api.actions.triggerEval);
+  const triggerEval = useAction(api.actions.scheduleEval);
 
   const handleEndSession = useCallback(async () => {
     if (!isDefined(session)) return;
