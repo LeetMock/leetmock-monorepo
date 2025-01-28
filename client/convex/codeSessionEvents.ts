@@ -153,7 +153,7 @@ export const getLatestGroundTruthTestcaseExecutedEvent = query({
       codeSessionStateId,
       "groundtruth_testcase_executed"
     );
-    console.log("event", event);
+
     return event;
   },
 });

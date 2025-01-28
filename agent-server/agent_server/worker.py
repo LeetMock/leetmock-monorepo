@@ -84,7 +84,7 @@ class CustomLoadCalc(_DefaultLoadCalc):
 
 
 def prewarm(proc: JobProcess):
-    proc.userdata["vad"] = silero.VAD.load()
+    proc.userdata["vad"] = silero.VAD.load(min_speech_duration=0.2)
 
 
 async def entrypoint(ctx: JobContext):
@@ -148,7 +148,6 @@ async def entrypoint(ctx: JobContext):
         llm=no_op_llm,
         tts=get_tts_engine(session.session_metadata.voice),
         before_llm_cb=before_llm_callback,
-        interrupt_speech_duration=0.7,
         interrupt_min_words=2,
         turn_detector=turn_detector.EOUModel(
             unlikely_threshold=0.05,

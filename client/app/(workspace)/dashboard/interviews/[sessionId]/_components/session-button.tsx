@@ -24,7 +24,17 @@ import { cn, isDefined } from "@/lib/utils";
 import { useConnectionState, useRoomContext } from "@livekit/components-react";
 import { useAction, useMutation } from "convex/react";
 import { ConnectionState } from "livekit-client";
-import { Check, ChevronDown, CircleStop, Loader2, Lock, Pause, Play, AlertTriangle, AlertOctagon } from "lucide-react";
+import {
+  AlertOctagon,
+  AlertTriangle,
+  Check,
+  ChevronDown,
+  CircleStop,
+  Loader2,
+  Lock,
+  Pause,
+  Play,
+} from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -147,6 +157,7 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
             "rounded-none shadow-none first:rounded-s-md last:rounded-e-md focus-visible:z-10",
             "transition-all duration-200 ease-in-out"
           )}
+          variant={sessionOptionIndex === 2 ? "destructive" : "default"}
           disabled={connectionState === ConnectionState.Connecting}
           onClick={sessionOptions[sessionOptionIndex].onClick}
         >
@@ -166,9 +177,12 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
-              className="rounded-none shadow-none first:rounded-s-md last:rounded-e-md focus-visible:z-10 h-9 w-9"
+              className={cn(
+                "rounded-none shadow-none first:rounded-s-md last:rounded-e-md focus-visible:z-10 h-9 w-9"
+              )}
               size="icon"
               aria-label="Options"
+              variant={sessionOptionIndex === 2 ? "destructive" : "default"}
             >
               <ChevronDown size={16} strokeWidth={2} aria-hidden="true" />
             </Button>

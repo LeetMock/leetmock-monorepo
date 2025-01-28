@@ -31,12 +31,7 @@ const schema = defineEntSchema({
       v.literal(SubscriptionTier.PAY_AS_YOU_GO)
     ),
     interval: v.optional(
-      v.union(
-        v.literal("month"),
-        v.literal("year"),
-        v.literal("day"),
-        v.literal("week")
-      )
+      v.union(v.literal("month"), v.literal("year"), v.literal("day"), v.literal("week"))
     ),
     minutesRemaining: v.number(),
     currentPeriodStart: v.optional(v.number()),
