@@ -96,19 +96,3 @@ export const triggerEvalAction = internalAction({
     });
   },
 });
-
-export const checkPendingEvaluationsInternal = internalMutation({
-  args: {},
-  handler: async (ctx) => {
-    const now = Date.now();
-    const sessions = await ctx.table("sessions", "by_eval_ready_and_status", (q) =>
-      q.eq("evalReady", false).eq("sessionStatus", "completed")
-    );
-
-    for (const session of sessions) {
-      await ctx.scheduler.runAfter(0, internal.eval.triggerEvalAction, {
-        sessionId: session._id,
-      });
-    }
-  },
-});
