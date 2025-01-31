@@ -100,7 +100,7 @@ Class | Method | HTTP request | Description
 *ActionApi* | [**api_run_actions_run_code_post**](docs/ActionApi.md#api_run_actions_run_code_post) | **POST** /api/run/actions/runCode | Calls a action at the path actions.js:runCode
 *ActionApi* | [**api_run_actions_run_ground_truth_test_post**](docs/ActionApi.md#api_run_actions_run_ground_truth_test_post) | **POST** /api/run/actions/runGroundTruthTest | Calls a action at the path actions.js:runGroundTruthTest
 *ActionApi* | [**api_run_actions_run_tests_post**](docs/ActionApi.md#api_run_actions_run_tests_post) | **POST** /api/run/actions/runTests | Calls a action at the path actions.js:runTests
-*ActionApi* | [**api_run_actions_trigger_eval_post**](docs/ActionApi.md#api_run_actions_trigger_eval_post) | **POST** /api/run/actions/triggerEval | Calls a action at the path actions.js:triggerEval
+*ActionApi* | [**api_run_actions_schedule_eval_post**](docs/ActionApi.md#api_run_actions_schedule_eval_post) | **POST** /api/run/actions/scheduleEval | Calls a action at the path actions.js:scheduleEval
 *MutationApi* | [**api_run_admins_create_user_profile_post**](docs/MutationApi.md#api_run_admins_create_user_profile_post) | **POST** /api/run/admins/createUserProfile | Calls a mutation at the path admins.js:createUserProfile
 *MutationApi* | [**api_run_admins_patch_user_subscription_post**](docs/MutationApi.md#api_run_admins_patch_user_subscription_post) | **POST** /api/run/admins/patchUserSubscription | Calls a mutation at the path admins.js:patchUserSubscription
 *MutationApi* | [**api_run_agent_states_set_by_session_id_post**](docs/MutationApi.md#api_run_agent_states_set_by_session_id_post) | **POST** /api/run/agentStates/setBySessionId | Calls a mutation at the path agentStates.js:setBySessionId
@@ -126,6 +126,7 @@ Class | Method | HTTP request | Description
 *QueryApi* | [**api_run_code_session_states_get_terminal_state_post**](docs/QueryApi.md#api_run_code_session_states_get_terminal_state_post) | **POST** /api/run/codeSessionStates/getTerminalState | Calls a query at the path codeSessionStates.js:getTerminalState
 *QueryApi* | [**api_run_code_session_states_get_test_cases_state_post**](docs/QueryApi.md#api_run_code_session_states_get_test_cases_state_post) | **POST** /api/run/codeSessionStates/getTestCasesState | Calls a query at the path codeSessionStates.js:getTestCasesState
 *QueryApi* | [**api_run_eval_get_by_session_id_post**](docs/QueryApi.md#api_run_eval_get_by_session_id_post) | **POST** /api/run/eval/getBySessionId | Calls a query at the path eval.js:getBySessionId
+*QueryApi* | [**api_run_pricings_get_pricing_post**](docs/QueryApi.md#api_run_pricings_get_pricing_post) | **POST** /api/run/pricings/getPricing | Calls a query at the path pricings.js:getPricing
 *QueryApi* | [**api_run_questions_get_all_post**](docs/QueryApi.md#api_run_questions_get_all_post) | **POST** /api/run/questions/getAll | Calls a query at the path questions.js:getAll
 *QueryApi* | [**api_run_questions_get_by_id_post**](docs/QueryApi.md#api_run_questions_get_by_id_post) | **POST** /api/run/questions/getById | Calls a query at the path questions.js:getById
 *QueryApi* | [**api_run_sessions_exists_post**](docs/QueryApi.md#api_run_sessions_exists_post) | **POST** /api/run/sessions/exists | Calls a query at the path sessions.js:exists
@@ -149,7 +150,7 @@ Class | Method | HTTP request | Description
  - [RequestActionsRunGroundTruthTestArgs](docs/RequestActionsRunGroundTruthTestArgs.md)
  - [RequestActionsRunTests](docs/RequestActionsRunTests.md)
  - [RequestActionsRunTestsArgs](docs/RequestActionsRunTestsArgs.md)
- - [RequestActionsTriggerEval](docs/RequestActionsTriggerEval.md)
+ - [RequestActionsScheduleEval](docs/RequestActionsScheduleEval.md)
  - [RequestAdminsCreateUserProfile](docs/RequestAdminsCreateUserProfile.md)
  - [RequestAdminsCreateUserProfileArgs](docs/RequestAdminsCreateUserProfileArgs.md)
  - [RequestAdminsPatchUserSubscription](docs/RequestAdminsPatchUserSubscription.md)
@@ -202,6 +203,14 @@ Class | Method | HTTP request | Description
  - [RequestInviteCodesCreateInviteCode](docs/RequestInviteCodesCreateInviteCode.md)
  - [RequestInviteCodesCreateInviteCodeArgs](docs/RequestInviteCodesCreateInviteCodeArgs.md)
  - [RequestInviteCodesCreateInviteCodeArgsAssignedRole](docs/RequestInviteCodesCreateInviteCodeArgsAssignedRole.md)
+ - [RequestJobsCreate](docs/RequestJobsCreate.md)
+ - [RequestJobsCreateArgs](docs/RequestJobsCreateArgs.md)
+ - [RequestJobsCreateArgsStatus](docs/RequestJobsCreateArgsStatus.md)
+ - [RequestJobsTriggerEvalJobs](docs/RequestJobsTriggerEvalJobs.md)
+ - [RequestPricingsGetPricing](docs/RequestPricingsGetPricing.md)
+ - [RequestPricingsGetPricingArgs](docs/RequestPricingsGetPricingArgs.md)
+ - [RequestPricingsGetPricingArgsTier](docs/RequestPricingsGetPricingArgsTier.md)
+ - [RequestPricingsGetPricingsInternal](docs/RequestPricingsGetPricingsInternal.md)
  - [RequestQuestionsCreateQuestion](docs/RequestQuestionsCreateQuestion.md)
  - [RequestQuestionsCreateQuestionArgs](docs/RequestQuestionsCreateQuestionArgs.md)
  - [RequestQuestionsCreateQuestionArgsEvalMode](docs/RequestQuestionsCreateQuestionArgsEvalMode.md)
@@ -253,7 +262,7 @@ Class | Method | HTTP request | Description
  - [ResponseActionsRunGroundTruthTestValueInner](docs/ResponseActionsRunGroundTruthTestValueInner.md)
  - [ResponseActionsRunTests](docs/ResponseActionsRunTests.md)
  - [ResponseActionsRunTestsValue](docs/ResponseActionsRunTestsValue.md)
- - [ResponseActionsTriggerEval](docs/ResponseActionsTriggerEval.md)
+ - [ResponseActionsScheduleEval](docs/ResponseActionsScheduleEval.md)
  - [ResponseAdminsCreateUserProfile](docs/ResponseAdminsCreateUserProfile.md)
  - [ResponseAdminsPatchUserSubscription](docs/ResponseAdminsPatchUserSubscription.md)
  - [ResponseAgentStatesGetBySessionId](docs/ResponseAgentStatesGetBySessionId.md)
@@ -286,6 +295,10 @@ Class | Method | HTTP request | Description
  - [ResponseInviteCodesApplyInviteCode](docs/ResponseInviteCodesApplyInviteCode.md)
  - [ResponseInviteCodesCreateDefaultUserProfile](docs/ResponseInviteCodesCreateDefaultUserProfile.md)
  - [ResponseInviteCodesCreateInviteCode](docs/ResponseInviteCodesCreateInviteCode.md)
+ - [ResponseJobsCreate](docs/ResponseJobsCreate.md)
+ - [ResponseJobsTriggerEvalJobs](docs/ResponseJobsTriggerEvalJobs.md)
+ - [ResponsePricingsGetPricing](docs/ResponsePricingsGetPricing.md)
+ - [ResponsePricingsGetPricingsInternal](docs/ResponsePricingsGetPricingsInternal.md)
  - [ResponseQuestionsCreateQuestion](docs/ResponseQuestionsCreateQuestion.md)
  - [ResponseQuestionsDeleteQuestion](docs/ResponseQuestionsDeleteQuestion.md)
  - [ResponseQuestionsGetAll](docs/ResponseQuestionsGetAll.md)

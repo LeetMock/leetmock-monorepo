@@ -31,13 +31,14 @@ class RequestUserProfilesUpdateSubscriptionByEmailInternalArgs(BaseModel):
     current_period_end: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="currentPeriodEnd")
     current_period_start: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="currentPeriodStart")
     email: StrictStr
+    evaluation_count: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="evaluationCount")
     interval: Optional[RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval] = None
     latest_subscription_id: Optional[StrictStr] = Field(default=None, alias="latestSubscriptionId")
     minutes_remaining: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="minutesRemaining")
     plan_name: Optional[RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName] = Field(default=None, alias="planName")
     refresh_date: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="refreshDate")
     subscription_status: Optional[StrictStr] = Field(default=None, alias="subscriptionStatus")
-    __properties: ClassVar[List[str]] = ["currentPeriodEnd", "currentPeriodStart", "email", "interval", "latestSubscriptionId", "minutesRemaining", "planName", "refreshDate", "subscriptionStatus"]
+    __properties: ClassVar[List[str]] = ["currentPeriodEnd", "currentPeriodStart", "email", "evaluationCount", "interval", "latestSubscriptionId", "minutesRemaining", "planName", "refreshDate", "subscriptionStatus"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -99,6 +100,7 @@ class RequestUserProfilesUpdateSubscriptionByEmailInternalArgs(BaseModel):
             "currentPeriodEnd": obj.get("currentPeriodEnd"),
             "currentPeriodStart": obj.get("currentPeriodStart"),
             "email": obj.get("email"),
+            "evaluationCount": obj.get("evaluationCount"),
             "interval": RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval.from_dict(obj["interval"]) if obj.get("interval") is not None else None,
             "latestSubscriptionId": obj.get("latestSubscriptionId"),
             "minutesRemaining": obj.get("minutesRemaining"),

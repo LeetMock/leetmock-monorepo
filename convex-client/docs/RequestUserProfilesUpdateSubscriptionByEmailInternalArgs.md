@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **current_period_end** | **float** |  | [optional] 
 **current_period_start** | **float** |  | [optional] 
 **email** | **str** |  | 
+**evaluation_count** | **float** |  | [optional] 
 **interval** | [**RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval**](RequestUserProfilesUpdateSubscriptionByEmailInternalArgsInterval.md) |  | [optional] 
 **latest_subscription_id** | **str** |  | [optional] 
 **minutes_remaining** | **float** |  | [optional] 

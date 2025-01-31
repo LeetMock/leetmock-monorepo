@@ -110,6 +110,13 @@ class TestQueryApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_pricings_get_pricing_post(self) -> None:
+        """Test case for api_run_pricings_get_pricing_post
+
+        Calls a query at the path pricings.js:getPricing
+        """
+        pass
+
     def test_api_run_questions_get_all_post(self) -> None:
         """Test case for api_run_questions_get_all_post
 

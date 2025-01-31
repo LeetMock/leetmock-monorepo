@@ -5,7 +5,7 @@ import { Id } from "./_generated/dataModel";
 
 import { CODE_TEMPLATES } from "@/lib/constants";
 import { isDefined, minutesToMilliseconds } from "@/lib/utils";
-import { internalMutation, internalQuery, query, userMutation, userQuery } from "./functions";
+import { internalMutation, internalQuery, query, userAction, userMutation, userQuery } from "./functions";
 import { MutationCtx } from "./types";
 
 export const exists = userQuery({
@@ -139,6 +139,22 @@ export const endSession = userMutation({
     await ctx.runMutation(internal.userProfiles.decrementMinutesRemaining, {
       minutes: minutesTaken,
     });
+
+    // schedule for evaluation
+    const result = await ctx.runMutation(internal.jobs.create, {
+      sessionId,
+      status: "pending",
+      lastUpdate: Date.now(),
+      numRetries: 0,
+    });
+
+    if (result.status === "failed") {
+      throw new Error(result.message);
+    }
+
+    return {
+      success: true,
+    };
   },
 });
 

@@ -113,15 +113,12 @@ export const checkPendingEvaluationsInternal = internalMutation({
     const timeoutThreshold = 240 * 1000; // 240 seconds in milliseconds
     const currentTime = Date.now();
 
-    // Find in-progress jobs that have timed out
-    const timedOutJobs = await ctx
-      .table("evalJobs")
-      .filter((q) =>
-        q.and(
-          q.eq(q.field("status"), "inProgress"),
-          q.lt(q.field("lastUpdate"), currentTime - timeoutThreshold)
-        )
-      );
+    // Use the "status" index instead
+    const timedOutJobs = await ctx.table("evalJobs", "status", (q) =>
+      q
+        .eq("status", "inProgress")
+        .lt("lastUpdate", currentTime - timeoutThreshold)
+    );
 
     // Update each timed out job
     for (const job of timedOutJobs) {

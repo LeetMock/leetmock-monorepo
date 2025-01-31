@@ -22,14 +22,14 @@ from convex_client.models.request_actions_get_token import RequestActionsGetToke
 from convex_client.models.request_actions_run_code import RequestActionsRunCode
 from convex_client.models.request_actions_run_ground_truth_test import RequestActionsRunGroundTruthTest
 from convex_client.models.request_actions_run_tests import RequestActionsRunTests
-from convex_client.models.request_actions_trigger_eval import RequestActionsTriggerEval
+from convex_client.models.request_actions_schedule_eval import RequestActionsScheduleEval
 from convex_client.models.response_actions_create_agent_thread import ResponseActionsCreateAgentThread
 from convex_client.models.response_actions_get_session_metadata import ResponseActionsGetSessionMetadata
 from convex_client.models.response_actions_get_token import ResponseActionsGetToken
 from convex_client.models.response_actions_run_code import ResponseActionsRunCode
 from convex_client.models.response_actions_run_ground_truth_test import ResponseActionsRunGroundTruthTest
 from convex_client.models.response_actions_run_tests import ResponseActionsRunTests
-from convex_client.models.response_actions_trigger_eval import ResponseActionsTriggerEval
+from convex_client.models.response_actions_schedule_eval import ResponseActionsScheduleEval
 
 from convex_client.api_client import ApiClient, RequestSerialized
 from convex_client.api_response import ApiResponse
@@ -1700,9 +1700,9 @@ class ActionApi:
 
 
     @validate_call
-    def api_run_actions_trigger_eval_post(
+    def api_run_actions_schedule_eval_post(
         self,
-        request_actions_trigger_eval: RequestActionsTriggerEval,
+        request_actions_schedule_eval: RequestActionsScheduleEval,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1715,12 +1715,12 @@ class ActionApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ResponseActionsTriggerEval:
-        """Calls a action at the path actions.js:triggerEval
+    ) -> ResponseActionsScheduleEval:
+        """Calls a action at the path actions.js:scheduleEval
 
 
-        :param request_actions_trigger_eval: (required)
-        :type request_actions_trigger_eval: RequestActionsTriggerEval
+        :param request_actions_schedule_eval: (required)
+        :type request_actions_schedule_eval: RequestActionsScheduleEval
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1743,8 +1743,8 @@ class ActionApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_actions_trigger_eval_post_serialize(
-            request_actions_trigger_eval=request_actions_trigger_eval,
+        _param = self._api_run_actions_schedule_eval_post_serialize(
+            request_actions_schedule_eval=request_actions_schedule_eval,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1752,7 +1752,7 @@ class ActionApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseActionsTriggerEval",
+            '200': "ResponseActionsScheduleEval",
             '400': "object",
             '500': "object",
         }
@@ -1768,9 +1768,9 @@ class ActionApi:
 
 
     @validate_call
-    def api_run_actions_trigger_eval_post_with_http_info(
+    def api_run_actions_schedule_eval_post_with_http_info(
         self,
-        request_actions_trigger_eval: RequestActionsTriggerEval,
+        request_actions_schedule_eval: RequestActionsScheduleEval,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1783,12 +1783,12 @@ class ActionApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[ResponseActionsTriggerEval]:
-        """Calls a action at the path actions.js:triggerEval
+    ) -> ApiResponse[ResponseActionsScheduleEval]:
+        """Calls a action at the path actions.js:scheduleEval
 
 
-        :param request_actions_trigger_eval: (required)
-        :type request_actions_trigger_eval: RequestActionsTriggerEval
+        :param request_actions_schedule_eval: (required)
+        :type request_actions_schedule_eval: RequestActionsScheduleEval
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1811,8 +1811,8 @@ class ActionApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_actions_trigger_eval_post_serialize(
-            request_actions_trigger_eval=request_actions_trigger_eval,
+        _param = self._api_run_actions_schedule_eval_post_serialize(
+            request_actions_schedule_eval=request_actions_schedule_eval,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1820,7 +1820,7 @@ class ActionApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseActionsTriggerEval",
+            '200': "ResponseActionsScheduleEval",
             '400': "object",
             '500': "object",
         }
@@ -1836,9 +1836,9 @@ class ActionApi:
 
 
     @validate_call
-    def api_run_actions_trigger_eval_post_without_preload_content(
+    def api_run_actions_schedule_eval_post_without_preload_content(
         self,
-        request_actions_trigger_eval: RequestActionsTriggerEval,
+        request_actions_schedule_eval: RequestActionsScheduleEval,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1852,11 +1852,11 @@ class ActionApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        """Calls a action at the path actions.js:triggerEval
+        """Calls a action at the path actions.js:scheduleEval
 
 
-        :param request_actions_trigger_eval: (required)
-        :type request_actions_trigger_eval: RequestActionsTriggerEval
+        :param request_actions_schedule_eval: (required)
+        :type request_actions_schedule_eval: RequestActionsScheduleEval
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1879,8 +1879,8 @@ class ActionApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._api_run_actions_trigger_eval_post_serialize(
-            request_actions_trigger_eval=request_actions_trigger_eval,
+        _param = self._api_run_actions_schedule_eval_post_serialize(
+            request_actions_schedule_eval=request_actions_schedule_eval,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1888,7 +1888,7 @@ class ActionApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ResponseActionsTriggerEval",
+            '200': "ResponseActionsScheduleEval",
             '400': "object",
             '500': "object",
         }
@@ -1899,9 +1899,9 @@ class ActionApi:
         return response_data.response
 
 
-    def _api_run_actions_trigger_eval_post_serialize(
+    def _api_run_actions_schedule_eval_post_serialize(
         self,
-        request_actions_trigger_eval,
+        request_actions_schedule_eval,
         _request_auth,
         _content_type,
         _headers,
@@ -1925,8 +1925,8 @@ class ActionApi:
         # process the header parameters
         # process the form parameters
         # process the body parameter
-        if request_actions_trigger_eval is not None:
-            _body_params = request_actions_trigger_eval
+        if request_actions_schedule_eval is not None:
+            _body_params = request_actions_schedule_eval
 
 
         # set the HTTP header `Accept`
@@ -1958,7 +1958,7 @@ class ActionApi:
 
         return self.api_client.param_serialize(
             method='POST',
-            resource_path='/api/run/actions/triggerEval',
+            resource_path='/api/run/actions/scheduleEval',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
