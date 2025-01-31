@@ -1,8 +1,6 @@
 import { v } from "convex/values";
-import { mutation, userQuery, internalMutation, internalAction } from "./functions";
+import { internalAction, internalMutation, mutation, userQuery } from "./functions";
 import { scoreDetailSchema } from "./schema";
-import { isDefined } from "@/lib/utils";
-import { internal } from "./_generated/api";
 
 // Category schema type for communication
 const communicationSchema = v.object({
@@ -52,7 +50,9 @@ export const insertEvaluation = mutation({
     });
 
     // update evalJob status to completed
-    const evalJob = await ctx.table("evalJobs", "by_session_id", (q) => q.eq("sessionId", args.sessionId)).first();
+    const evalJob = await ctx
+      .table("evalJobs", "by_session_id", (q) => q.eq("sessionId", args.sessionId))
+      .first();
 
     if (evalJob) {
       await evalJob.patch({
@@ -114,7 +114,8 @@ export const checkPendingEvaluationsInternal = internalMutation({
     const currentTime = Date.now();
 
     // Find in-progress jobs that have timed out
-    const timedOutJobs = await ctx.table("evalJobs")
+    const timedOutJobs = await ctx
+      .table("evalJobs")
       .filter((q) =>
         q.and(
           q.eq(q.field("status"), "inProgress"),
@@ -127,7 +128,7 @@ export const checkPendingEvaluationsInternal = internalMutation({
       await job.patch({
         status: job.numRetries >= 2 ? "failed" : "pending", // Will be "failed" on 3rd retry
         lastUpdate: currentTime,
-        numRetries: job.numRetries + 1
+        numRetries: job.numRetries + 1,
       });
     }
   },
