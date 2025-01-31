@@ -60,7 +60,6 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
   const { connect, disconnect } = useConnection(room);
   const startSession = useMutation(api.sessions.startSession);
   const endSession = useMutation(api.sessions.endSession);
-  const triggerEval = useAction(api.actions.triggerEval);
 
   const [sessionOptionIndex, setSessionOptionIndex] = useState<number>(0);
   const [isSessionDialogOpen, setIsSessionDialogOpen] = useState<boolean>(false);
@@ -99,8 +98,7 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
     if (!isDefined(session)) return;
 
     const promise = Promise.all([
-      endSession({ sessionId: session._id }),
-      triggerEval({ sessionId: session._id }),
+      endSession({ sessionId: session._id })
     ]);
 
     toast.promise(promise, {
@@ -108,7 +106,7 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
       success: "Session ended successfully! 🎉",
       error: "Failed to end session",
     });
-  }, [endSession, session, triggerEval]);
+  }, [endSession, session]);
 
   const sessionOptions: SessionOption[] = useMemo(() => {
     return [

@@ -38,6 +38,7 @@ class TestRequestUserProfilesUpdateSubscriptionByEmailInternalArgs(unittest.Test
                 current_period_end = 1.337,
                 current_period_start = 1.337,
                 email = '',
+                evaluation_count = 1.337,
                 interval = None,
                 latest_subscription_id = '',
                 minutes_remaining = 1.337,

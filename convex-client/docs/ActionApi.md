@@ -10,7 +10,7 @@ Method | HTTP request | Description
 [**api_run_actions_run_code_post**](ActionApi.md#api_run_actions_run_code_post) | **POST** /api/run/actions/runCode | Calls a action at the path actions.js:runCode
 [**api_run_actions_run_ground_truth_test_post**](ActionApi.md#api_run_actions_run_ground_truth_test_post) | **POST** /api/run/actions/runGroundTruthTest | Calls a action at the path actions.js:runGroundTruthTest
 [**api_run_actions_run_tests_post**](ActionApi.md#api_run_actions_run_tests_post) | **POST** /api/run/actions/runTests | Calls a action at the path actions.js:runTests
-[**api_run_actions_trigger_eval_post**](ActionApi.md#api_run_actions_trigger_eval_post) | **POST** /api/run/actions/triggerEval | Calls a action at the path actions.js:triggerEval
+[**api_run_actions_schedule_eval_post**](ActionApi.md#api_run_actions_schedule_eval_post) | **POST** /api/run/actions/scheduleEval | Calls a action at the path actions.js:scheduleEval
 
 
 # **api_run_actions_create_agent_thread_post**
@@ -487,10 +487,10 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **api_run_actions_trigger_eval_post**
-> ResponseActionsTriggerEval api_run_actions_trigger_eval_post(request_actions_trigger_eval)
+# **api_run_actions_schedule_eval_post**
+> ResponseActionsScheduleEval api_run_actions_schedule_eval_post(request_actions_schedule_eval)
 
-Calls a action at the path actions.js:triggerEval
+Calls a action at the path actions.js:scheduleEval
 
 ### Example
 
@@ -498,8 +498,8 @@ Calls a action at the path actions.js:triggerEval
 
 ```python
 import convex_client
-from convex_client.models.request_actions_trigger_eval import RequestActionsTriggerEval
-from convex_client.models.response_actions_trigger_eval import ResponseActionsTriggerEval
+from convex_client.models.request_actions_schedule_eval import RequestActionsScheduleEval
+from convex_client.models.response_actions_schedule_eval import ResponseActionsScheduleEval
 from convex_client.rest import ApiException
 from pprint import pprint
 
@@ -523,15 +523,15 @@ configuration = convex_client.Configuration(
 with convex_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = convex_client.ActionApi(api_client)
-    request_actions_trigger_eval = convex_client.RequestActionsTriggerEval() # RequestActionsTriggerEval | 
+    request_actions_schedule_eval = convex_client.RequestActionsScheduleEval() # RequestActionsScheduleEval | 
 
     try:
-        # Calls a action at the path actions.js:triggerEval
-        api_response = api_instance.api_run_actions_trigger_eval_post(request_actions_trigger_eval)
-        print("The response of ActionApi->api_run_actions_trigger_eval_post:\n")
+        # Calls a action at the path actions.js:scheduleEval
+        api_response = api_instance.api_run_actions_schedule_eval_post(request_actions_schedule_eval)
+        print("The response of ActionApi->api_run_actions_schedule_eval_post:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling ActionApi->api_run_actions_trigger_eval_post: %s\n" % e)
+        print("Exception when calling ActionApi->api_run_actions_schedule_eval_post: %s\n" % e)
 ```
 
 
@@ -541,11 +541,11 @@ with convex_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **request_actions_trigger_eval** | [**RequestActionsTriggerEval**](RequestActionsTriggerEval.md)|  | 
+ **request_actions_schedule_eval** | [**RequestActionsScheduleEval**](RequestActionsScheduleEval.md)|  | 
 
 ### Return type
 
-[**ResponseActionsTriggerEval**](ResponseActionsTriggerEval.md)
+[**ResponseActionsScheduleEval**](ResponseActionsScheduleEval.md)
 
 ### Authorization
 

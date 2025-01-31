@@ -14,14 +14,12 @@ interface EndViewProps {
 export const EndView = ({ session }: EndViewProps) => {
   const [countdown, setCountdown] = useState(30);
   const endSession = useMutation(api.sessions.endSession);
-  const triggerEval = useAction(api.actions.triggerEval);
 
   const handleEndSession = useCallback(async () => {
     if (!isDefined(session)) return;
 
     const promise = Promise.all([
       endSession({ sessionId: session._id }),
-      triggerEval({ sessionId: session._id }),
     ]);
 
     toast.promise(promise, {
@@ -29,7 +27,7 @@ export const EndView = ({ session }: EndViewProps) => {
       success: "Session ended successfully! 🎉",
       error: "Failed to end session",
     });
-  }, [endSession, session, triggerEval]);
+  }, [endSession, session]);
 
   useEffect(() => {
     const timer = setInterval(() => {

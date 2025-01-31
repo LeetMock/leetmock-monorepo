@@ -1,8 +1,6 @@
 import { v } from "convex/values";
-import { mutation, userQuery, internalMutation, internalAction } from "./functions";
+import { internalAction, internalMutation, mutation, userQuery } from "./functions";
 import { scoreDetailSchema } from "./schema";
-import { isDefined } from "@/lib/utils";
-import { internal } from "./_generated/api";
 
 // Category schema type for communication
 const communicationSchema = v.object({
@@ -50,6 +48,18 @@ export const insertEvaluation = mutation({
       totalScore: args.totalScore,
       scoreboards: args.scoreboards,
     });
+
+    // update evalJob status to completed
+    const evalJob = await ctx
+      .table("evalJobs", "by_session_id", (q) => q.eq("sessionId", args.sessionId))
+      .first();
+
+    if (evalJob) {
+      await evalJob.patch({
+        status: "success",
+        lastUpdate: Date.now(),
+      });
+    }
 
     // Update session evalReady flag
     const session = await ctx.table("sessions").getX(args.sessionId);
@@ -100,14 +110,22 @@ export const triggerEvalAction = internalAction({
 export const checkPendingEvaluationsInternal = internalMutation({
   args: {},
   handler: async (ctx) => {
-    const now = Date.now();
-    const sessions = await ctx.table("sessions", "by_eval_ready_and_status", (q) =>
-      q.eq("evalReady", false).eq("sessionStatus", "completed")
+    const timeoutThreshold = 240 * 1000; // 240 seconds in milliseconds
+    const currentTime = Date.now();
+
+    // Use the "status" index instead
+    const timedOutJobs = await ctx.table("evalJobs", "status", (q) =>
+      q
+        .eq("status", "inProgress")
+        .lt("lastUpdate", currentTime - timeoutThreshold)
     );
 
-    for (const session of sessions) {
-      await ctx.scheduler.runAfter(0, internal.eval.triggerEvalAction, {
-        sessionId: session._id,
+    // Update each timed out job
+    for (const job of timedOutJobs) {
+      await job.patch({
+        status: job.numRetries >= 2 ? "failed" : "pending", // Will be "failed" on 3rd retry
+        lastUpdate: currentTime,
+        numRetries: job.numRetries + 1,
       });
     }
   },

@@ -91,29 +91,21 @@ export const createAgentThread = userAction({
   },
 });
 
-export const triggerEval = userAction({
+export const scheduleEval = userAction({
   args: {
     sessionId: v.id("sessions"),
   },
   handler: async (ctx, { sessionId }) => {
-
-    const apiKey = process.env.LANGSMITH_API_KEY;
-    if (!apiKey) throw new Error("LANGSMITH_API_KEY not found");
-    const apiUrl = process.env.LANGGRAPH_API_URL;
-
-    const response = await fetch(apiUrl + "/runs", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Api-Key": apiKey,
-      },
-      body: JSON.stringify({
-        assistant_id: "eval-agent",
-        input: {
-          session_id: sessionId,
-        },
-      }),
+    const result = await ctx.runMutation(internal.jobs.create, {
+      sessionId,
+      status: "pending",
+      lastUpdate: Date.now(),
+      numRetries: 0,
     });
+
+    if (result.status === "failed") {
+      throw new Error(result.message);
+    }
 
     return {
       success: true,
