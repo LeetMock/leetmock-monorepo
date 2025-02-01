@@ -1,6 +1,6 @@
 import { isDefined } from "@/lib/utils";
 import { v } from "convex/values";
-import { internalQuery, query, mutation } from "./functions";
+import { internalQuery, mutation, query } from "./functions";
 
 export const getById = query({
   args: { questionId: v.optional(v.id("questions")) },
@@ -48,7 +48,7 @@ export const createQuestion = mutation({
       ...args,
       metaData: args.metaData ?? {},
     });
-    
+
     return { questionId };
   },
 });
@@ -80,7 +80,7 @@ export const updateQuestion = mutation({
   handler: async (ctx, args) => {
     const { questionId, ...updates } = args;
     const question = await ctx.table("questions").get(questionId);
-    
+
     if (!question) {
       throw new Error("Question not found");
     }
@@ -94,7 +94,7 @@ export const deleteQuestion = mutation({
   args: { questionId: v.id("questions") },
   handler: async (ctx, { questionId }) => {
     const question = await ctx.table("questions").get(questionId);
-    
+
     if (!question) {
       throw new Error("Question not found");
     }

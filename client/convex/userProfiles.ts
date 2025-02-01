@@ -49,18 +49,18 @@ export const decrementEvaluationCount = internalMutation({
       return {
         success: false,
         message: "No evaluation credits remaining",
-        currentCount: 0
+        currentCount: 0,
       };
     }
 
     await profile.patch({
-      evaluationCount: currentCount - 1
+      evaluationCount: currentCount - 1,
     });
 
     return {
       success: true,
       message: "Evaluation credit used successfully",
-      currentCount: currentCount - 1
+      currentCount: currentCount - 1,
     };
   },
 });
@@ -104,8 +104,6 @@ export const getUserMinutesRemaining = userQuery({
     return { minutesRemaining: profile.minutesRemaining };
   },
 });
-
-
 
 export const getByEmailInternal = internalQuery({
   args: { email: v.optional(v.string()) },
@@ -239,7 +237,6 @@ export const refreshMinutesForYearlyPlansInternal = internalMutation({
         continue;
       }
       if (refreshDate < currentTime) {
-
         const pricing = await ctx.table("pricings").get("tier", profile.subscription);
         if (!isDefined(pricing)) {
           console.log("pricing not found for subscription", profile.subscription);

@@ -17,7 +17,6 @@ export const createInviteCode = internalMutation({
   },
 });
 
-
 export const applyInviteCode = userMutation({
   args: {
     code: v.string(),

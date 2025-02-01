@@ -5,7 +5,7 @@ import { Id } from "./_generated/dataModel";
 
 import { CODE_TEMPLATES } from "@/lib/constants";
 import { isDefined, minutesToMilliseconds } from "@/lib/utils";
-import { internalMutation, internalQuery, query, userAction, userMutation, userQuery } from "./functions";
+import { internalMutation, internalQuery, query, userMutation, userQuery } from "./functions";
 import { MutationCtx } from "./types";
 
 export const exists = userQuery({

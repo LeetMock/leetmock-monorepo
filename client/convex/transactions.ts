@@ -39,8 +39,7 @@ const getStripeClient = () => {
 const getPlanTransition = (from: string, to: string) => {
   console.log("from", from, "to", to);
   const transitions = {
-    [`${SubscriptionTier.FREE}-${SubscriptionTier.PREMIUM}`]:
-      "new-subscription",
+    [`${SubscriptionTier.FREE}-${SubscriptionTier.PREMIUM}`]: "new-subscription",
     [`${SubscriptionTier.FREE}-${SubscriptionTier.BASIC}`]: "new-subscription",
     [`${SubscriptionTier.BASIC}-${SubscriptionTier.PREMIUM}`]: "upgrade",
     [`${SubscriptionTier.PREMIUM}-${SubscriptionTier.BASIC}`]: "downgrade",
@@ -82,18 +81,14 @@ async function handleCheckoutSessionCompleted(
       message: "User not found",
     });
   }
-  const lineItems = await stripe.checkout.sessions.listLineItems(
-    checkoutSession.id
-  );
+  const lineItems = await stripe.checkout.sessions.listLineItems(checkoutSession.id);
   if (!lineItems.data.length) {
     throw new ConvexError({
       code: ErrorCodes.LINE_ITEMS_NOT_FOUND,
       message: "Line items not found",
     });
   }
-  const product = await stripe.products.retrieve(
-    lineItems.data[0].price?.product as string
-  );
+  const product = await stripe.products.retrieve(lineItems.data[0].price?.product as string);
   if (product.name !== PRODUCT_NAMES.EXTRA_MINUTES) {
     console.log(
       `Payment received, but product name is not ${PRODUCT_NAMES.EXTRA_MINUTES}, skipping`
@@ -107,21 +102,14 @@ async function handleCheckoutSessionCompleted(
     });
   }
 
-  await ctx.runMutation(
-    internal.userProfiles.updateSubscriptionByEmailInternal,
-    {
-      email: profile.email,
-      planName: profile.subscription,
-      minutesRemaining:
-        profile.minutesRemaining! + 60 * lineItems.data[0].quantity!,
-    }
-  );
+  await ctx.runMutation(internal.userProfiles.updateSubscriptionByEmailInternal, {
+    email: profile.email,
+    planName: profile.subscription,
+    minutesRemaining: profile.minutesRemaining! + 60 * lineItems.data[0].quantity!,
+  });
 }
 
-async function handleSubscriptionUpdate(
-  ctx: ActionCtx,
-  subscription: Stripe.Subscription
-) {
+async function handleSubscriptionUpdate(ctx: ActionCtx, subscription: Stripe.Subscription) {
   const stripe = getStripeClient();
 
   const { status, current_period_end, current_period_start } = subscription;
@@ -174,18 +162,12 @@ async function handleSubscriptionUpdate(
   console.log("minutes", minutes);
   console.log("subscription", subscription);
 
-  const premiumPricing = await ctx.runQuery(
-    internal.pricings.getPricingsInternal,
-    {
-      tier: "premium",
-    }
-  );
-  const basicPricing = await ctx.runQuery(
-    internal.pricings.getPricingsInternal,
-    {
-      tier: "basic",
-    }
-  );
+  const premiumPricing = await ctx.runQuery(internal.pricings.getPricingsInternal, {
+    tier: "premium",
+  });
+  const basicPricing = await ctx.runQuery(internal.pricings.getPricingsInternal, {
+    tier: "basic",
+  });
   const premiumMinutes = premiumPricing!.minutes;
   const premiumEvalCount = premiumPricing!.evalCount;
   const basicMinutes = basicPricing!.minutes;
@@ -201,68 +183,57 @@ async function handleSubscriptionUpdate(
   switch (transitionType) {
     case "new-subscription":
       console.log("user is subscribing from free plan");
-      await ctx.runMutation(
-        internal.userProfiles.updateSubscriptionByEmailInternal,
-        {
-          email: customer.email!,
-          planName: tier,
-          minutesRemaining: minutesRemaining + minutes,
-          evaluationCount: evaluationCount + evalCount,
-          interval,
-          refreshDate:
-            interval === "month"
-              ? current_period_end
-              : get30DaysFromNowInSeconds(current_period_start),
-          currentPeriodEnd: current_period_end,
-          currentPeriodStart: current_period_start,
-          latestSubscriptionId: subscription.id,
-          subscriptionStatus: status,
-        }
-      );
+      await ctx.runMutation(internal.userProfiles.updateSubscriptionByEmailInternal, {
+        email: customer.email!,
+        planName: tier,
+        minutesRemaining: minutesRemaining + minutes,
+        evaluationCount: evaluationCount + evalCount,
+        interval,
+        refreshDate:
+          interval === "month"
+            ? current_period_end
+            : get30DaysFromNowInSeconds(current_period_start),
+        currentPeriodEnd: current_period_end,
+        currentPeriodStart: current_period_start,
+        latestSubscriptionId: subscription.id,
+        subscriptionStatus: status,
+      });
       break;
     case "upgrade":
       console.log("user is upgrading");
-      await ctx.runMutation(
-        internal.userProfiles.updateSubscriptionByEmailInternal,
-        {
-          email: customer.email!,
-          planName: tier,
-          minutesRemaining: minutesRemaining + (premiumMinutes - basicMinutes),
-          evaluationCount:
-            evaluationCount + (premiumEvalCount - basicEvalCount),
-          interval,
-          refreshDate:
-            interval === "month"
-              ? current_period_end
-              : get30DaysFromNowInSeconds(current_period_start),
-          currentPeriodEnd: current_period_end,
-          currentPeriodStart: current_period_start,
-          latestSubscriptionId: subscription.id,
-          subscriptionStatus: status,
-        }
-      );
+      await ctx.runMutation(internal.userProfiles.updateSubscriptionByEmailInternal, {
+        email: customer.email!,
+        planName: tier,
+        minutesRemaining: minutesRemaining + (premiumMinutes - basicMinutes),
+        evaluationCount: evaluationCount + (premiumEvalCount - basicEvalCount),
+        interval,
+        refreshDate:
+          interval === "month"
+            ? current_period_end
+            : get30DaysFromNowInSeconds(current_period_start),
+        currentPeriodEnd: current_period_end,
+        currentPeriodStart: current_period_start,
+        latestSubscriptionId: subscription.id,
+        subscriptionStatus: status,
+      });
       break;
     case "downgrade":
       console.log("user is downgrading");
-      await ctx.runMutation(
-        internal.userProfiles.updateSubscriptionByEmailInternal,
-        {
-          email: customer.email!,
-          planName: tier,
-          minutesRemaining: minutesRemaining - (premiumMinutes - basicMinutes),
-          evaluationCount:
-            evaluationCount - (premiumEvalCount - basicEvalCount),
-          interval,
-          refreshDate:
-            interval === "month"
-              ? current_period_end
-              : get30DaysFromNowInSeconds(current_period_start),
-          currentPeriodEnd: current_period_end,
-          currentPeriodStart: current_period_start,
-          latestSubscriptionId: subscription.id,
-          subscriptionStatus: status,
-        }
-      );
+      await ctx.runMutation(internal.userProfiles.updateSubscriptionByEmailInternal, {
+        email: customer.email!,
+        planName: tier,
+        minutesRemaining: minutesRemaining - (premiumMinutes - basicMinutes),
+        evaluationCount: evaluationCount - (premiumEvalCount - basicEvalCount),
+        interval,
+        refreshDate:
+          interval === "month"
+            ? current_period_end
+            : get30DaysFromNowInSeconds(current_period_start),
+        currentPeriodEnd: current_period_end,
+        currentPeriodStart: current_period_start,
+        latestSubscriptionId: subscription.id,
+        subscriptionStatus: status,
+      });
       break;
     case "no-change":
       console.log("no change in plan, do nothing");
@@ -272,10 +243,7 @@ async function handleSubscriptionUpdate(
   }
 }
 
-async function handleSubscriptionDeleted(
-  ctx: ActionCtx,
-  subscription: Stripe.Subscription
-) {
+async function handleSubscriptionDeleted(ctx: ActionCtx, subscription: Stripe.Subscription) {
   const stripe = getStripeClient();
 
   if (!subscription.customer) {
@@ -330,10 +298,7 @@ export const stripeWebhookHandler = httpAction(async (ctx, req) => {
         break;
       case "customer.subscription.updated":
       case "customer.subscription.created":
-        console.log(
-          "received customer.subscription.updated/created event",
-          event
-        );
+        console.log("received customer.subscription.updated/created event", event);
         const subscription = event.data.object;
         await handleSubscriptionUpdate(ctx, subscription);
         break;

@@ -115,9 +115,7 @@ export const checkPendingEvaluationsInternal = internalMutation({
 
     // Use the "status" index instead
     const timedOutJobs = await ctx.table("evalJobs", "status", (q) =>
-      q
-        .eq("status", "inProgress")
-        .lt("lastUpdate", currentTime - timeoutThreshold)
+      q.eq("status", "inProgress").lt("lastUpdate", currentTime - timeoutThreshold)
     );
 
     // Update each timed out job
