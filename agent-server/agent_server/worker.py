@@ -192,6 +192,6 @@ if __name__ == "__main__":
             port=8081,
             # load_fnc=CustomLoadCalc.get_load,
             # load_threshold=0.80,  # max(cpu_load, mem_load)
-            # shutdown_process_timeout=30,  # seconds
+            shutdown_process_timeout=10,  # seconds
         )
     )
