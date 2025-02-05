@@ -8,7 +8,7 @@ import {
 } from "convex-helpers/server/customFunctions";
 import { Rules } from "convex-helpers/server/rowLevelSecurity";
 import { GenericActionCtx, GenericMutationCtx, GenericQueryCtx, UserIdentity } from "convex/server";
-import { internal } from "./_generated/api";
+import { components, internal } from "./_generated/api";
 import { DataModel } from "./_generated/dataModel";
 import {
   action,
@@ -19,6 +19,35 @@ import {
   query as baseQuery,
 } from "./_generated/server";
 import { entDefinitions } from "./schema";
+import { Triggers } from "convex-helpers/server/triggers";
+import { TableAggregate } from "@convex-dev/aggregate";
+
+// Must be defined in the functions.ts file to ensure that the triggers are registered
+export const triggers = new Triggers<DataModel>();
+
+// All Aggregates: Must be defined in the functions.ts file to ensure that the its trigger is registered
+export const userMetricsAggregate = new TableAggregate<{
+  Namespace: string;
+  DataModel: DataModel;
+  TableName: "userProfiles";
+  Key: number;
+}>(components.userMetricsAggregate, {
+  namespace: (doc) => doc.role,
+  sortKey: (doc) => doc._creationTime,
+});
+
+export const userSubscriptionMetricsAggregate = new TableAggregate<{
+  Namespace: string;
+  DataModel: DataModel;
+  TableName: "userProfiles";
+  Key: number;
+}>(components.userSubscriptionMetricsAggregate, {
+  namespace: (doc) => doc.subscription,
+  sortKey: (doc) => doc._creationTime,
+});
+
+triggers.register("userProfiles", userSubscriptionMetricsAggregate.trigger());
+triggers.register("userProfiles", userMetricsAggregate.trigger());
 
 type Ctx = {
   user: UserIdentity;
@@ -69,8 +98,11 @@ export const internalQuery = customQuery(
   })
 );
 
+const wrappedMutation = customMutation(baseMutation, customCtx(triggers.wrapDB));
+const wrappedInternalMutation = customMutation(baseInternalMutation, customCtx(triggers.wrapDB));
+
 export const mutation = customMutation(
-  baseMutation,
+  wrappedMutation,
   customCtx(async (ctx) => {
     return {
       table: entsTableFactory(ctx, entDefinitions),
@@ -80,7 +112,7 @@ export const mutation = customMutation(
 );
 
 export const internalMutation = customMutation(
-  baseInternalMutation,
+  wrappedInternalMutation,
   customCtx(async (ctx) => {
     return {
       table: entsTableFactory(ctx, entDefinitions),
@@ -105,7 +137,7 @@ export const userQuery = customQuery(
 );
 
 export const userMutation = customMutation(
-  baseMutation,
+  wrappedMutation,
   customCtx(async (ctx) => {
     const user = await ensureIdentity(ctx);
     return { user, table: entsTableFactory(ctx, entDefinitions), db: undefined };
@@ -130,7 +162,7 @@ export const adminQuery = customQuery(
 );
 
 export const adminMutation = customMutation(
-  baseMutation,
+  wrappedMutation,
   customCtx(async (ctx) => {
     const user = await ensureIdentity(ctx);
     await ensureProfileRole(ctx, user.subject, "admin");

@@ -1,89 +1,84 @@
-import { httpAction, query } from "./_generated/server";
-import { SubscriptionTier } from "./schema";
-import * as client from "prom-client";
+import { internal } from "./_generated/api";
+import { httpAction } from "./_generated/server";
+
+// Create a simple Registry class
+class Registry {
+  gauges: Gauge[] = [];
+  contentType = "text/plain; version=0.0.4";
+
+  async metrics(): Promise<string> {
+    return this.gauges
+      .map((gauge) => {
+        const lines = [
+          `# HELP ${gauge.name} ${gauge.help}`,
+          `# TYPE ${gauge.name} gauge`,
+        ];
+
+        if (Object.keys(gauge.labelValues).length === 0) {
+          lines.push(`${gauge.name} ${gauge.value}`);
+        } else {
+          Object.entries(gauge.labelValues).forEach(([labels, value]) => {
+            lines.push(`${gauge.name}{${labels}} ${value}`);
+          });
+        }
+        return lines.join("\n");
+      })
+      .join("\n\n");
+  }
+}
+
+// Create a simple Gauge class
+class Gauge {
+  value: number = 0;
+  labelValues: Record<string, number> = {};
+
+  constructor(
+    public name: string,
+    public help: string
+  ) {}
+
+  set(labels: Record<string, string> | number, value?: number) {
+    if (typeof labels === "number") {
+      this.value = labels;
+    } else {
+      const labelString = Object.entries(labels)
+        .map(([k, v]) => `${k}="${v}"`)
+        .join(",");
+      this.labelValues[labelString] = value!;
+    }
+  }
+}
 
 // Initialize the Registry
-const register = new client.Registry();
+const register = new Registry();
 
 // Create metrics
-const usersTotalGauge = new client.Gauge({
-  name: "users_total",
-  help: "Total number of users",
-  registers: [register],
-});
+const usersTotalGauge = new Gauge("users_total", "Total number of users");
+register.gauges.push(usersTotalGauge);
 
-const usersByRoleGauge = new client.Gauge({
-  name: "users_by_role",
-  help: "Number of users by role",
-  labelNames: ["role"] as const,
-  registers: [register],
-});
+const usersByRoleGauge = new Gauge("users_by_role", "Number of users by role");
+register.gauges.push(usersByRoleGauge);
 
-const usersBySubscriptionGauge = new client.Gauge({
-  name: "users_by_subscription",
-  help: "Number of users by subscription tier",
-  labelNames: ["tier"] as const,
-  registers: [register],
-});
-
-export const getUsersByRole = query({
-  args: {},
-  handler: async (ctx) => {
-    const userProfiles = await ctx.db
-      .query("userProfiles")
-      .withIndex("by_role")
-      .collect();
-
-    const roleCount: Record<string, number> = {
-      admin: 0,
-      user: 0,
-      waitlist: 0,
-    };
-
-    for (const profile of userProfiles) {
-      roleCount[profile.role]++;
-    }
-
-    return roleCount;
-  },
-});
-
-export const getUsersBySubscription = query({
-  args: {},
-  handler: async (ctx) => {
-    const users = await ctx.db.query("userProfiles").collect();
-    const subscriptionCount: Record<string, number> = {
-      [SubscriptionTier.FREE]: 0,
-      [SubscriptionTier.BASIC]: 0,
-      [SubscriptionTier.PREMIUM]: 0,
-      [SubscriptionTier.PAY_AS_YOU_GO]: 0,
-    };
-
-    for (const user of users) {
-      subscriptionCount[user.subscription]++;
-    }
-
-    return subscriptionCount;
-  },
-});
+const usersBySubscriptionGauge = new Gauge(
+  "users_by_subscription",
+  "Number of users by subscription tier"
+);
+register.gauges.push(usersBySubscriptionGauge);
 
 const updateMetrics = async (ctx: any) => {
-  const [usersByRole, usersBySubscription] = await Promise.all([
-    ctx.runQuery(getUsersByRole),
-    ctx.runQuery(getUsersBySubscription),
-  ]);
+  const metrics = await ctx.runQuery(internal.userProfiles.getAllUserMetricsInternal);
 
-  const totalUsers = Object.values(usersByRole).reduce(
+  const totalUsers = Object.values(metrics.usersByRole).reduce(
     (sum: number, count: unknown) => sum + (count as number),
     0
   );
   usersTotalGauge.set(totalUsers);
 
-  Object.entries(usersByRole).forEach(([role, count]) => {
+  Object.entries(metrics.usersByRole).forEach(([role, count]) => {
     usersByRoleGauge.set({ role }, count as number);
   });
 
-  Object.entries(usersBySubscription).forEach(([tier, count]) => {
+  Object.entries(metrics.usersBySubscription).forEach(([tier, count]) => {
     usersBySubscriptionGauge.set({ tier }, count as number);
   });
 

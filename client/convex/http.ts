@@ -11,7 +11,7 @@ http.route({
 });
 
 http.route({
-  path: "/metrics",
+  path: "/prom-metrics",
   method: "GET",
   handler: metricsHandler,
 });
