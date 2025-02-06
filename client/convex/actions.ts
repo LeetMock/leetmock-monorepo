@@ -6,7 +6,12 @@ import { api, internal } from "./_generated/api";
 import { action } from "./_generated/server";
 
 import { CODE_PREFIX, DATA_STRUCTURES } from "@/lib/constants";
-import { CodeRunResult, RunCodeResult, RunTestResult, TokenResult } from "@/lib/types";
+import {
+  CodeRunResult,
+  RunCodeResult,
+  RunTestResult,
+  TokenResult,
+} from "@/lib/types";
 import {
   createToken,
   generateRandomAlphanumeric,
@@ -17,9 +22,13 @@ import {
 import { ConvexError, v } from "convex/values";
 
 import { retry } from "@lifeomic/attempt";
-import { userAction } from "./functions";
+import { internalAction, userAction } from "./functions";
+import { updateMetrics } from "./metrics";
 
-async function executeCode(payload: any, maxRetries = 3): Promise<CodeRunResult> {
+async function executeCode(
+  payload: any,
+  maxRetries = 3
+): Promise<CodeRunResult> {
   const url = "https://onecompiler-apis.p.rapidapi.com/api/v1/run";
   const headers = {
     "Content-Type": "application/json",
@@ -133,7 +142,12 @@ export const getToken = userAction({
       canSubscribe: true,
     };
 
-    const token = await createToken(apiKey, apiSecret, { identity: userIdentity }, grant);
+    const token = await createToken(
+      apiKey,
+      apiSecret,
+      { identity: userIdentity },
+      grant
+    );
     const result: TokenResult = {
       identity: userIdentity,
       accessToken: token,
@@ -148,7 +162,10 @@ export const runCode = action({
     language: v.string(),
     code: v.string(),
   },
-  handler: async (ctx, { language, code }): Promise<RunCodeResult | undefined> => {
+  handler: async (
+    ctx,
+    { language, code }
+  ): Promise<RunCodeResult | undefined> => {
     const payload = {
       language,
       stdin: "",
@@ -267,7 +284,9 @@ export const runGroundTruthTest = action({
 
         retryCount++;
         if (retryCount < maxRetries) {
-          console.log(`Retrying test execution (attempt ${retryCount + 1}/${maxRetries})...`);
+          console.log(
+            `Retrying test execution (attempt ${retryCount + 1}/${maxRetries})...`
+          );
           await new Promise((resolve) => setTimeout(resolve, 2000));
         }
       }
@@ -278,11 +297,15 @@ export const runGroundTruthTest = action({
       } else {
         // Reduce batch size and retry from current position if all retries failed
         currentBatchSize = Math.max(1, Math.floor(currentBatchSize / 2));
-        console.log(`Reducing batch size to ${currentBatchSize} and retrying...`);
+        console.log(
+          `Reducing batch size to ${currentBatchSize} and retrying...`
+        );
 
         if (currentBatchSize === 1 && retryCount === maxRetries) {
           // If we're already at batch size 1 and still failing, move to next test case
-          console.error(`Failed to process test case at index ${i} even with batch size 1`);
+          console.error(
+            `Failed to process test case at index ${i} even with batch size 1`
+          );
           i += 1;
         }
       }
@@ -321,9 +344,12 @@ export const runTests = action({
   }),
   handler: async (ctx, { language, sessionId, questionId }) => {
     // Retrieve editor state and test cases state using internal queries
-    const editorState = await ctx.runQuery(internal.codeSessionStates.getEditorStateInternal, {
-      sessionId,
-    });
+    const editorState = await ctx.runQuery(
+      internal.codeSessionStates.getEditorStateInternal,
+      {
+        sessionId,
+      }
+    );
     const testCasesState = await ctx.runQuery(
       internal.codeSessionStates.getTestCasesStateInternal,
       { sessionId }
@@ -388,7 +414,9 @@ export const runTests = action({
 
       retryCount++;
       if (retryCount < maxRetries) {
-        console.log(`Retrying test execution (attempt ${retryCount + 1}/${maxRetries})...`);
+        console.log(
+          `Retrying test execution (attempt ${retryCount + 1}/${maxRetries})...`
+        );
         await new Promise((resolve) => setTimeout(resolve, 2000));
       }
     }
@@ -459,7 +487,11 @@ export const getSessionMetadata = action({
       modelName,
       metadata,
     } = session;
-    const { _id: questionId, title: questionTitle, question: questionContent } = question;
+    const {
+      _id: questionId,
+      title: questionTitle,
+      question: questionContent,
+    } = question;
 
     return {
       sessionId,
@@ -477,5 +509,58 @@ export const getSessionMetadata = action({
       modelName,
       metadata,
     };
+  },
+});
+
+const GRAFANA_REMOTE_WRITE_URL =
+  "https://prometheus-prod-36-prod-us-west-0.grafana.net/api/prom/push";
+const GRAFANA_USERNAME = "2220041";
+const GRAFANA_PASSWORD =
+  "glc_eyJvIjoiMTMyNzE5MCIsIm4iOiJwZGMtbGVldG1vY2stZGVmYXVsdC1jb252ZXgtcHJvbSIsImsiOiJYUHQyY0xuNTEwMllVZEVkNzZnNTdJMWkiLCJtIjp7InIiOiJwcm9kLXVzLXdlc3QtMCJ9fQ==";
+
+export const sendMetricsToGrafana = internalAction({
+  args: {},
+  handler: async (ctx) => {
+    try {
+      const metrics = await ctx.runQuery(
+        internal.userProfiles.getAllUserMetricsInternal
+      );
+      const totalUsers = Object.values(metrics.usersByRole).reduce(
+        (sum: number, count: unknown) => sum + (count as number),
+        0
+      );
+      console.log("totalUsers", totalUsers);
+      console.log("metrics", metrics);
+
+      const basicAuth = btoa(`${GRAFANA_USERNAME}:${GRAFANA_PASSWORD}`);
+      const response = await fetch(GRAFANA_REMOTE_WRITE_URL, {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${basicAuth}`,
+          "Content-Type": "text/plain; version=0.0.4",
+          "Content-Encoding": "gzip",
+          "User-Agent": "leetmock-metrics/1.0.0",
+        },
+        body: metrics,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(
+          `Failed to send metrics. Status: ${response.status}, Message: ${errorText}`
+        );
+
+        // Additional debug logging
+        console.debug("Request details:", {
+          url: GRAFANA_REMOTE_WRITE_URL,
+          headers: response.headers,
+          metricsLength: metrics.length,
+        });
+      } else {
+        console.log("Metrics successfully sent to Grafana Cloud.");
+      }
+    } catch (error) {
+      console.error("Error while sending metrics:", error);
+    }
   },
 });

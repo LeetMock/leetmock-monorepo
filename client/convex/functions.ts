@@ -7,7 +7,12 @@ import {
   customQuery,
 } from "convex-helpers/server/customFunctions";
 import { Rules } from "convex-helpers/server/rowLevelSecurity";
-import { GenericActionCtx, GenericMutationCtx, GenericQueryCtx, UserIdentity } from "convex/server";
+import {
+  GenericActionCtx,
+  GenericMutationCtx,
+  GenericQueryCtx,
+  UserIdentity,
+} from "convex/server";
 import { components, internal } from "./_generated/api";
 import { DataModel } from "./_generated/dataModel";
 import {
@@ -21,33 +26,13 @@ import {
 import { entDefinitions } from "./schema";
 import { Triggers } from "convex-helpers/server/triggers";
 import { TableAggregate } from "@convex-dev/aggregate";
+import { Migrations } from "@convex-dev/migrations";
+import { SubscriptionTier } from "./schema";
+import { updateMetrics } from "./metrics";
 
 // Must be defined in the functions.ts file to ensure that the triggers are registered
 export const triggers = new Triggers<DataModel>();
-
-// All Aggregates: Must be defined in the functions.ts file to ensure that the its trigger is registered
-export const userMetricsAggregate = new TableAggregate<{
-  Namespace: string;
-  DataModel: DataModel;
-  TableName: "userProfiles";
-  Key: number;
-}>(components.userMetricsAggregate, {
-  namespace: (doc) => doc.role,
-  sortKey: (doc) => doc._creationTime,
-});
-
-export const userSubscriptionMetricsAggregate = new TableAggregate<{
-  Namespace: string;
-  DataModel: DataModel;
-  TableName: "userProfiles";
-  Key: number;
-}>(components.userSubscriptionMetricsAggregate, {
-  namespace: (doc) => doc.subscription,
-  sortKey: (doc) => doc._creationTime,
-});
-
-triggers.register("userProfiles", userSubscriptionMetricsAggregate.trigger());
-triggers.register("userProfiles", userMetricsAggregate.trigger());
+export const migrations = new Migrations<DataModel>(components.migrations);
 
 type Ctx = {
   user: UserIdentity;
@@ -98,8 +83,14 @@ export const internalQuery = customQuery(
   })
 );
 
-const wrappedMutation = customMutation(baseMutation, customCtx(triggers.wrapDB));
-const wrappedInternalMutation = customMutation(baseInternalMutation, customCtx(triggers.wrapDB));
+const wrappedMutation = customMutation(
+  baseMutation,
+  customCtx(triggers.wrapDB)
+);
+const wrappedInternalMutation = customMutation(
+  baseInternalMutation,
+  customCtx(triggers.wrapDB)
+);
 
 export const mutation = customMutation(
   wrappedMutation,
@@ -132,7 +123,11 @@ export const userQuery = customQuery(
   baseQuery,
   customCtx(async (ctx) => {
     const user = await ensureIdentity(ctx);
-    return { user, table: entsTableFactory(ctx, entDefinitions), db: undefined };
+    return {
+      user,
+      table: entsTableFactory(ctx, entDefinitions),
+      db: undefined,
+    };
   })
 );
 
@@ -140,7 +135,11 @@ export const userMutation = customMutation(
   wrappedMutation,
   customCtx(async (ctx) => {
     const user = await ensureIdentity(ctx);
-    return { user, table: entsTableFactory(ctx, entDefinitions), db: undefined };
+    return {
+      user,
+      table: entsTableFactory(ctx, entDefinitions),
+      db: undefined,
+    };
   })
 );
 
@@ -157,7 +156,11 @@ export const adminQuery = customQuery(
   customCtx(async (ctx) => {
     const user = await ensureIdentity(ctx);
     await ensureProfileRole(ctx, user.subject, "admin");
-    return { user, table: entsTableFactory(ctx, entDefinitions), db: undefined };
+    return {
+      user,
+      table: entsTableFactory(ctx, entDefinitions),
+      db: undefined,
+    };
   })
 );
 
@@ -166,7 +169,11 @@ export const adminMutation = customMutation(
   customCtx(async (ctx) => {
     const user = await ensureIdentity(ctx);
     await ensureProfileRole(ctx, user.subject, "admin");
-    return { user, table: entsTableFactory(ctx, entDefinitions), db: undefined };
+    return {
+      user,
+      table: entsTableFactory(ctx, entDefinitions),
+      db: undefined,
+    };
   })
 );
 
@@ -174,9 +181,12 @@ export const adminAction = customAction(
   action,
   customCtx(async (ctx) => {
     const user = await ensureIdentity(ctx);
-    const profile = await ctx.runQuery(internal.userProfiles.getUserProfileInternal, {
-      userId: user.subject,
-    });
+    const profile = await ctx.runQuery(
+      internal.userProfiles.getUserProfileInternal,
+      {
+        userId: user.subject,
+      }
+    );
 
     if (profile.role !== "admin") {
       throw new Error("Sorry, you must be an admin to perform this operation.");
@@ -187,7 +197,10 @@ export const adminAction = customAction(
 );
 
 async function ensureIdentity(
-  ctx: GenericQueryCtx<DataModel> | GenericMutationCtx<DataModel> | GenericActionCtx<DataModel>
+  ctx:
+    | GenericQueryCtx<DataModel>
+    | GenericMutationCtx<DataModel>
+    | GenericActionCtx<DataModel>
 ) {
   const user = await ctx.auth.getUserIdentity();
   if (!user) {
@@ -213,3 +226,65 @@ async function ensureProfileRole(
 
   return profile;
 }
+
+/*
+ * My experience is that Aggregate must be in the same place of triggers being defined
+ * Otherwise the npx convex dev would fail or the aggregate may not work
+ * If the file gets too big, we can move the aggregates to a separate file
+ * make sure testing is still working
+ */
+export const userMetricsAggregate = new TableAggregate<{
+  Namespace: string;
+  DataModel: DataModel;
+  TableName: "userProfiles";
+  Key: number;
+}>(components.userMetricsAggregate, {
+  namespace: (doc) => doc.role,
+  sortKey: (doc) => doc._creationTime,
+});
+
+export const userSubscriptionMetricsAggregate = new TableAggregate<{
+  Namespace: string;
+  DataModel: DataModel;
+  TableName: "userProfiles";
+  Key: number;
+}>(components.userSubscriptionMetricsAggregate, {
+  namespace: (doc) => doc.subscription,
+  sortKey: (doc) => doc._creationTime,
+});
+
+export const clearAggregates = baseInternalMutation({
+  args: {},
+  handler: async (ctx) => {
+    for (const role of ["admin", "user", "waitlist"]) {
+      console.log("clearing role for ", role);
+      await userMetricsAggregate.clear(ctx, { namespace: role });
+    }
+    for (const subscription of Object.values(SubscriptionTier)) {
+      console.log("clearing subscription for ", subscription);
+      await userSubscriptionMetricsAggregate.clear(ctx, {
+        namespace: subscription,
+      });
+    }
+  },
+});
+
+triggers.register("userProfiles", userSubscriptionMetricsAggregate.trigger());
+triggers.register("userProfiles", userMetricsAggregate.trigger());
+
+//you can then run on dashboard will start the migration
+// or
+// npx convex run functions:clearAggregates
+// npx convex run functions:runAggregateBackfill '{"cursor": null}'
+export const runAggregateBackfill = migrations.runner(
+  internal.functions.backfillAggregatesMigration
+);
+
+export const backfillAggregatesMigration = migrations.define({
+  table: "userProfiles",
+  migrateOne: async (ctx, doc) => {
+    await userMetricsAggregate.insertIfDoesNotExist(ctx, doc);
+    await userSubscriptionMetricsAggregate.insertIfDoesNotExist(ctx, doc);
+    console.log("backfilled", doc.email, doc.role, doc.subscription);
+  },
+});

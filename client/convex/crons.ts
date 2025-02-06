@@ -21,4 +21,10 @@ crons.interval(
 //   internal.jobs.triggerEvalJobs
 // );
 
+crons.interval(
+  "Trigger metrics push",
+  { minutes: 5 }, // Run every 5 minutes
+  internal.actions.sendMetricsToGrafana
+);
+
 export default crons;

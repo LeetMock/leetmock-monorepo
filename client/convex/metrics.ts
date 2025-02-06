@@ -53,8 +53,8 @@ class Gauge {
 const register = new Registry();
 
 // Create metrics
-const usersTotalGauge = new Gauge("users_total", "Total number of users");
-register.gauges.push(usersTotalGauge);
+const usersGauge = new Gauge("users", "Current number of users");
+register.gauges.push(usersGauge);
 
 const usersByRoleGauge = new Gauge("users_by_role", "Number of users by role");
 register.gauges.push(usersByRoleGauge);
@@ -65,14 +65,16 @@ const usersBySubscriptionGauge = new Gauge(
 );
 register.gauges.push(usersBySubscriptionGauge);
 
-const updateMetrics = async (ctx: any) => {
-  const metrics = await ctx.runQuery(internal.userProfiles.getAllUserMetricsInternal);
+export const updateMetrics = async (ctx: any) => {
+  const metrics = await ctx.runQuery(
+    internal.userProfiles.getAllUserMetricsInternal
+  );
 
   const totalUsers = Object.values(metrics.usersByRole).reduce(
     (sum: number, count: unknown) => sum + (count as number),
     0
   );
-  usersTotalGauge.set(totalUsers);
+  usersGauge.set(totalUsers);
 
   Object.entries(metrics.usersByRole).forEach(([role, count]) => {
     usersByRoleGauge.set({ role }, count as number);

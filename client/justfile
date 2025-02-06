@@ -42,3 +42,7 @@ reset-local-backend:
 # (*) rush, the monorepo JS tool for deps and building
 rush *ARGS:
   cd {{invocation_directory()}}; "{{justfile_directory()}}/scripts/rush_from_npm-packages.sh" "$@"
+
+reset-aggregates:
+  npx convex run functions:clearAggregates
+  npx convex run functions:runAggregateBackfill '{"cursor": null}'

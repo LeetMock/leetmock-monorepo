@@ -5,7 +5,6 @@ import { query } from "./_generated/server";
 import {
   internalMutation,
   internalQuery,
-  triggers,
   userMetricsAggregate,
   userQuery,
   userSubscriptionMetricsAggregate,
@@ -370,5 +369,4 @@ export const getAllUserMetricsInternal = internalQuery({
     };
   },
 });
-
 
