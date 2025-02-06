@@ -9,16 +9,16 @@ crons.interval(
   internal.userProfiles.refreshMinutesForYearlyPlansInternal
 );
 
-crons.interval(
-  "Check timeout evaluations",
-  { minutes: 1 }, // Run every 5 minutes
-  internal.eval.checkPendingEvaluationsInternal
-);
+// crons.interval(
+//   "Check timeout evaluations",
+//   { minutes: 1 }, // Run every 5 minutes
+//   internal.eval.checkPendingEvaluationsInternal
+// );
 
-crons.interval(
-  "Trigger eval jobs",
-  { minutes: 1 }, // Run every 5 minutes
-  internal.jobs.triggerEvalJobs
-);
+// crons.interval(
+//   "Trigger eval jobs",
+//   { minutes: 1 }, // Run every 5 minutes
+//   internal.jobs.triggerEvalJobs
+// );
 
 export default crons;

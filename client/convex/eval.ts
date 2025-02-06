@@ -1,6 +1,8 @@
 import { v } from "convex/values";
-import { internalAction, internalMutation, mutation, userQuery } from "./functions";
+import { internalAction, mutation, userQuery } from "./functions";
 import { scoreDetailSchema } from "./schema";
+import { internal } from "./_generated/api";
+import { internalMutation } from "./_generated/server";
 
 // Category schema type for communication
 const communicationSchema = v.object({
@@ -107,24 +109,43 @@ export const triggerEvalAction = internalAction({
   },
 });
 
-export const checkPendingEvaluationsInternal = internalMutation({
-  args: {},
-  handler: async (ctx) => {
-    const timeoutThreshold = 240 * 1000; // 240 seconds in milliseconds
+export const checkTimeout = internalMutation({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  handler: async (ctx, args) => {
+    const timeoutThreshold = 15 * 1000; // 15 seconds in milliseconds
     const currentTime = Date.now();
 
-    // Use the "status" index instead
-    const timedOutJobs = await ctx.table("evalJobs", "status", (q) =>
-      q.eq("status", "inProgress").lt("lastUpdate", currentTime - timeoutThreshold)
-    );
+    // Update status to inProgress
+    const evalJob = await ctx.db
+      .query("evalJobs")
+      .filter((q) => q.eq(q.field("sessionId"), args.sessionId))
+      .first();
 
-    // Update each timed out job
-    for (const job of timedOutJobs) {
-      await job.patch({
-        status: job.numRetries >= 2 ? "failed" : "pending", // Will be "failed" on 3rd retry
-        lastUpdate: currentTime,
-        numRetries: job.numRetries + 1,
-      });
+    if (!evalJob || !ctx.db) return;
+
+    if (evalJob.status === "success") {
+      await ctx.db.delete(evalJob._id);
+    } else if (evalJob.status === "inProgress") {
+      if (evalJob.numRetries > 2) {
+        await ctx.db.patch(evalJob._id, {
+          status: "failed",
+          lastUpdate: currentTime,
+        });
+        // TODO: initiate alert for admin
+      } else {
+        await ctx.db.patch(evalJob._id, {
+          status: "pending",
+          lastUpdate: currentTime,
+          numRetries: evalJob.numRetries + 1,
+        });
+        // schedule retry
+        await ctx.scheduler.runAfter(timeoutThreshold, internal.jobs.triggerEvalJob, {
+          sessionId: args.sessionId,
+        });
+      }
     }
+
   },
 });

@@ -149,8 +149,17 @@ export const endSession = userMutation({
     });
 
     if (result.status === "failed") {
-      throw new Error(result.message);
+      throw new Error("Failed to schedule evaluation");
     }
+
+    // schedule evaluation
+    await ctx.scheduler.runAfter(
+      5000, // 5 seconds in milliseconds
+      internal.jobs.triggerEvalJob,
+      {
+        sessionId,
+      }
+    );
 
     return {
       success: true,
