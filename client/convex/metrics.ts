@@ -88,6 +88,10 @@ export const updateMetrics = async (ctx: any) => {
 };
 
 export const metricsHandler = httpAction(async (ctx, req) => {
+  if (req.headers.get("Authorization") !== "Bearer 1234567890") {
+    return new Response("Unauthorized", { status: 401 });
+  }
+  
   const metrics = await updateMetrics(ctx);
   return new Response(metrics, {
     headers: {
