@@ -65,6 +65,19 @@ const usersBySubscriptionGauge = new Gauge(
 );
 register.gauges.push(usersBySubscriptionGauge);
 
+// Add session metrics gauges
+const sessionsByStatusGauge = new Gauge(
+  "sessions_by_status",
+  "Number of sessions by status"
+);
+register.gauges.push(sessionsByStatusGauge);
+
+const sessionsByEvalStatusGauge = new Gauge(
+  "sessions_by_eval_status",
+  "Number of sessions by evaluation status for each session status"
+);
+register.gauges.push(sessionsByEvalStatusGauge);
+
 export const updateMetrics = async (ctx: any) => {
   const metrics = await ctx.runQuery(
     internal.userProfiles.getAllUserMetricsInternal
@@ -84,6 +97,26 @@ export const updateMetrics = async (ctx: any) => {
     usersBySubscriptionGauge.set({ tier }, count as number);
   });
 
+  const sessionMetrics = await ctx.runQuery(
+    internal.sessions.getSessionMetricsInternal
+  );
+
+  // Update session metrics
+  Object.entries(sessionMetrics).forEach(([status, counts]) => {
+    // Set total count for each status
+    sessionsByStatusGauge.set({ status }, counts.total);
+
+    // Set counts by eval status
+    sessionsByEvalStatusGauge.set(
+      { status, eval_status: "ready" },
+      counts.evalReady
+    );
+    sessionsByEvalStatusGauge.set(
+      { status, eval_status: "pending" },
+      counts.evalPending
+    );
+  });
+
   return await register.metrics();
 };
 
@@ -91,7 +124,7 @@ export const metricsHandler = httpAction(async (ctx, req) => {
   if (req.headers.get("Authorization") !== "Bearer 1234567890") {
     return new Response("Unauthorized", { status: 401 });
   }
-  
+
   const metrics = await updateMetrics(ctx);
   return new Response(metrics, {
     headers: {

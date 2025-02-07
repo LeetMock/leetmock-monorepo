@@ -45,4 +45,5 @@ rush *ARGS:
 
 reset-aggregates:
   npx convex run functions:clearAggregates
-  npx convex run functions:runAggregateBackfill '{"cursor": null}'
+  npx convex run functions:runUserAggregationBackfill '{"cursor": null}'
+  npx convex run functions:runSessionAggregationBackfill '{"cursor": null}'

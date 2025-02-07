@@ -14,7 +14,7 @@ import {
   UserIdentity,
 } from "convex/server";
 import { components, internal } from "./_generated/api";
-import { DataModel } from "./_generated/dataModel";
+import { DataModel, Id } from "./_generated/dataModel";
 import {
   action,
   internalAction as baseInternalAction,
@@ -253,6 +253,14 @@ export const userSubscriptionMetricsAggregate = new TableAggregate<{
   sortKey: (doc) => doc._creationTime,
 });
 
+export const sessionMetricsAggregate = new TableAggregate<{
+  DataModel: DataModel;
+  TableName: "sessions";
+  Key: [string, boolean];
+}>(components.sessionMetricsAggregate, {
+  sortKey: (doc) => [doc.sessionStatus, doc.evalReady],
+});
+
 export const clearAggregates = baseInternalMutation({
   args: {},
   handler: async (ctx) => {
@@ -266,19 +274,14 @@ export const clearAggregates = baseInternalMutation({
         namespace: subscription,
       });
     }
+    await sessionMetricsAggregate.clear(ctx);
   },
 });
 
 triggers.register("userProfiles", userSubscriptionMetricsAggregate.trigger());
 triggers.register("userProfiles", userMetricsAggregate.trigger());
+triggers.register("sessions", sessionMetricsAggregate.trigger());
 
-//you can then run on dashboard will start the migration
-// or
-// npx convex run functions:clearAggregates
-// npx convex run functions:runAggregateBackfill '{"cursor": null}'
-export const runAggregateBackfill = migrations.runner(
-  internal.functions.backfillAggregatesMigration
-);
 
 export const backfillAggregatesMigration = migrations.define({
   table: "userProfiles",
@@ -288,3 +291,20 @@ export const backfillAggregatesMigration = migrations.define({
     console.log("backfilled", doc.email, doc.role, doc.subscription);
   },
 });
+
+export const backfillSessionsMigration = migrations.define({
+  table: "sessions",
+  migrateOne: async (ctx, doc) => {
+    await sessionMetricsAggregate.insertIfDoesNotExist(ctx, doc);
+  },
+});
+
+// npx convex run functions:clearAggregates
+// npx convex run functions:runAggregateBackfill '{"cursor": null}'
+export const runUserAggregationBackfill = migrations.runner(
+  internal.functions.backfillAggregatesMigration
+);
+
+export const runSessionAggregationBackfill = migrations.runner(
+  internal.functions.backfillSessionsMigration
+);
