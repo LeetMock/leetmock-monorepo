@@ -1,0 +1,118 @@
+{
+  "$defs": {
+    "ElectricalEngineer": {
+      "properties": {
+        "name": { "default": "Electrical Engineer", "title": "Name", "type": "string" },
+        "title": { "title": "Title", "type": "string" },
+        "description": {
+          "anyOf": [{ "type": "string" }, { "type": "null" }],
+          "default": null,
+          "title": "Description"
+        },
+        "location": { "anyOf": [{ "type": "string" }, { "type": "integer" }], "title": "Location" },
+        "job_type": { "$ref": "#/$defs/JobType" }
+      },
+      "required": ["title", "location", "job_type"],
+      "title": "ElectricalEngineer",
+      "type": "object"
+    },
+    "Job": {
+      "properties": {
+        "name": { "title": "Name" },
+        "title": { "title": "Title", "type": "string" },
+        "description": {
+          "anyOf": [{ "type": "string" }, { "type": "null" }],
+          "default": null,
+          "title": "Description"
+        },
+        "location": { "anyOf": [{ "type": "string" }, { "type": "integer" }], "title": "Location" },
+        "job_type": { "$ref": "#/$defs/JobType" }
+      },
+      "required": ["name", "title", "location", "job_type"],
+      "title": "Job",
+      "type": "object"
+    },
+    "JobList": {
+      "properties": {
+        "jobs": {
+          "items": {
+            "anyOf": [
+              { "$ref": "#/$defs/ElectricalEngineer" },
+              { "$ref": "#/$defs/SoftwareEngineer" }
+            ]
+          },
+          "title": "Jobs",
+          "type": "array"
+        }
+      },
+      "required": ["jobs"],
+      "title": "JobList",
+      "type": "object"
+    },
+    "JobType": {
+      "enum": ["full_time", "part_time", "contract"],
+      "title": "JobType",
+      "type": "string"
+    },
+    "Profile": {
+      "properties": {
+        "name": { "title": "Name", "type": "string" },
+        "age": { "title": "Age", "type": "integer" },
+        "email": { "title": "Email", "type": "string" },
+        "phone": { "title": "Phone", "type": "string" },
+        "address": { "title": "Address", "type": "string" },
+        "job_type": { "$ref": "#/$defs/JobType" }
+      },
+      "required": ["name", "age", "email", "phone", "address", "job_type"],
+      "title": "Profile",
+      "type": "object"
+    },
+    "ProfileList": {
+      "properties": {
+        "profiles": { "items": { "$ref": "#/$defs/Profile" }, "title": "Profiles", "type": "array" }
+      },
+      "required": ["profiles"],
+      "title": "ProfileList",
+      "type": "object"
+    },
+    "SoftwareEngineer": {
+      "properties": {
+        "name": {
+          "const": "Software Engineer",
+          "default": "Software Engineer",
+          "title": "Name",
+          "type": "string"
+        },
+        "title": { "title": "Title", "type": "string" },
+        "description": {
+          "anyOf": [{ "type": "string" }, { "type": "null" }],
+          "default": null,
+          "title": "Description"
+        },
+        "location": { "anyOf": [{ "type": "string" }, { "type": "integer" }], "title": "Location" },
+        "job_type": { "$ref": "#/$defs/JobType" }
+      },
+      "required": ["title", "location", "job_type"],
+      "title": "SoftwareEngineer",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "profile": { "$ref": "#/$defs/Profile" },
+    "profile_list": { "$ref": "#/$defs/ProfileList" },
+    "job": { "$ref": "#/$defs/Job" },
+    "software_engineer": { "$ref": "#/$defs/SoftwareEngineer" },
+    "electrical_engineer": { "$ref": "#/$defs/ElectricalEngineer" },
+    "job_list": { "$ref": "#/$defs/JobList" }
+  },
+  "required": [
+    "profile",
+    "profile_list",
+    "job",
+    "software_engineer",
+    "electrical_engineer",
+    "job_list"
+  ],
+  "title": "AllModels",
+  "type": "object"
+}
