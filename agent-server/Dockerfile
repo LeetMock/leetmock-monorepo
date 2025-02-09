@@ -61,7 +61,7 @@ WORKDIR /home/appuser/agent-server
 RUN poetry install --no-interaction
 
 # Download required files (only needs to be done once)
-RUN poetry run python -m agent_server.worker download-files
+# RUN poetry run python -m agent_server.worker download-files
 
 # Expose port 8081 for TCP
 EXPOSE 8081

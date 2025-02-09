@@ -34,7 +34,7 @@ from livekit.agents import cli  # type: ignore
 from livekit.agents import JobContext, JobProcess, WorkerOptions, llm
 from livekit.agents.llm import ChatMessage
 from livekit.agents.pipeline.pipeline_agent import VoicePipelineAgent
-from livekit.plugins import deepgram, silero, turn_detector
+from livekit.plugins import deepgram, silero
 from livekit.rtc import DataPacket
 
 from libs.convex.api import ConvexApi
