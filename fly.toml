@@ -23,7 +23,6 @@ primary_region = 'sjc'
     method = "get"
     path = "/"
 
-
 [[vm]]
   size = "shared-cpu-4x"
   memory = "4gb"
