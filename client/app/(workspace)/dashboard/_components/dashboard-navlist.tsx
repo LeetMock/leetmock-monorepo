@@ -9,7 +9,7 @@ interface NavItem {
   title: string;
 }
 
-interface NavProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface NavProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 const navItems: NavItem[] = [
   { href: "/dashboard/interviews", icon: LayoutDashboard, title: "Interviews" },
