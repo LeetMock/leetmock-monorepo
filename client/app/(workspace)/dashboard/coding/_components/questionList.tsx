@@ -3,21 +3,31 @@ import { api } from "@/convex/_generated/api";
 import { CheckCircle2, Circle, Clock, AlertCircle, PlayCircle, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
+import { Id } from "@/convex/_generated/dataModel";
+import { useCallback } from "react";
 
-export default function QuestionList() {
-    const questions = useQuery(api.questions.getAll) || [];
-    const updateStatus = useMutation(api.questions.updateStatus);
-    const updateStarred = useMutation(api.questions.updateStarred);
+interface QuestionListProps {
+    questions: any[]; // Replace 'any' with your actual Question type
+    updateStatus: any; // Replace 'any' with the actual mutation type
+    updateStarred: any; // Replace 'any' with the actual mutation type
+    completedQuestions: Set<Id<"questions">>; // Changed to Set
+    starredQuestions: Set<Id<"questions">>;
+}
 
-    const StatusButton = ({ status, questionId }: { status: string | null, questionId: string }) => {
+export default function QuestionList({ questions, updateStatus, updateStarred, completedQuestions, starredQuestions }: QuestionListProps) {
+    const isQuestionCompleted = useCallback((questionId: Id<"questions">) => {
+        return completedQuestions.has(questionId); // O(1) time complexity
+    }, [completedQuestions]);
+
+    const isQuestionStarred = useCallback((questionId: Id<"questions">) => {
+        return starredQuestions.has(questionId); // O(1) time complexity
+    }, [starredQuestions]);
+
+    const StatusButton = ({ questionId }: { questionId: Id<"questions"> }) => {
+        const completed = isQuestionCompleted(questionId);
+
         const handleClick = async () => {
-            // Cycle through states: null -> "todo" -> "attempted" -> "solved" -> null
-            const nextStatus = !status ? "todo"
-                : status === "todo" ? "attempted"
-                    : status === "attempted" ? "solved"
-                        : null;
-
-            await updateStatus({ id: questionId, status: nextStatus });
+            await updateStatus({ questionId, status: completed ? "incomplete" : "complete" });
         };
 
         return (
@@ -29,27 +39,27 @@ export default function QuestionList() {
                         className="h-8 w-8 p-0 hover:bg-gray-100 transition-colors"
                         onClick={handleClick}
                     >
-                        {status === "solved" && <CheckCircle2 className="h-5 w-5 text-green-600" />}
-                        {status === "attempted" && <AlertCircle className="h-5 w-5 text-amber-500" />}
-                        {status === "todo" && <Clock className="h-5 w-5 text-blue-500" />}
-                        {!status && <Circle className="h-5 w-5 text-gray-400" />}
+                        {completed ? (
+                            <CheckCircle2 className="h-5 w-5 text-green-600" />
+                        ) : (
+                            <Circle className="h-5 w-5 text-gray-400" />
+                        )}
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent side="top">
                     <span className="text-xs">
-                        {!status && "Mark status"}
-                        {status === "solved" && "Solved"}
-                        {status === "attempted" && "Attempted"}
-                        {status === "todo" && "Todo"}
+                        {completed ? "Completed" : "Mark as complete"}
                     </span>
                 </TooltipContent>
             </Tooltip>
         );
     };
 
-    const StarButton = ({ isStarred, questionId }: { isStarred: boolean, questionId: string }) => {
+    const StarButton = ({ questionId }: { questionId: Id<"questions"> }) => {
+        const starred = isQuestionStarred(questionId);
+
         const handleClick = async () => {
-            await updateStarred({ id: questionId, starred: !isStarred });
+            await updateStarred({ questionId, starred: !starred });
         };
 
         return (
@@ -62,13 +72,13 @@ export default function QuestionList() {
                         onClick={handleClick}
                     >
                         <Star
-                            className={`h-5 w-5 ${isStarred ? 'text-yellow-400 fill-yellow-400' : 'text-gray-400'}`}
+                            className={`h-5 w-5 ${starred ? 'text-yellow-400 fill-yellow-400' : 'text-gray-400'}`}
                         />
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent side="top">
                     <span className="text-xs">
-                        {isStarred ? 'Unstar question' : 'Star question'}
+                        {starred ? 'Unstar question' : 'Star question'}
                     </span>
                 </TooltipContent>
             </Tooltip>
@@ -109,12 +119,12 @@ export default function QuestionList() {
                         >
                             {/* Status Button */}
                             <div className="flex-shrink-0 w-[80px]">
-                                <StatusButton status={question.status} questionId={question._id} />
+                                <StatusButton questionId={question._id} />
                             </div>
 
                             {/* Star Button */}
                             <div className="flex-shrink-0 w-[80px]">
-                                <StarButton isStarred={question.starred || false} questionId={question._id} />
+                                <StarButton questionId={question._id} />
                             </div>
 
                             {/* Difficulty */}

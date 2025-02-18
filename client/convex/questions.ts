@@ -1,6 +1,6 @@
 import { isDefined } from "@/lib/utils";
 import { v } from "convex/values";
-import { internalQuery, mutation, query } from "./functions";
+import { internalQuery, mutation, query, userMutation } from "./functions";
 
 export const getById = query({
   args: { questionId: v.optional(v.id("questions")) },
@@ -21,6 +21,89 @@ export const getByIdInternal = internalQuery({
 export const getAll = query({
   handler: async (ctx) => {
     return await ctx.table("questions");
+  },
+});
+
+
+
+
+export const updateStarred = userMutation({
+  args: {
+    questionId: v.id("questions"),
+    starred: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    const { questionId, starred } = args;
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthenticated");
+
+    const question = await ctx.table("questions").get(questionId);
+    if (!question) {
+      throw new Error("Question not found");
+    }
+
+    const userProfile = await ctx.table("userProfiles").filter(q => q.eq(q.field("userId"), identity.subject)).first();
+    if (!userProfile) throw new Error("User profile not found");
+
+    const currentStarred = userProfile.starredQuestions ?? [];
+
+
+
+    if (starred) {
+      // Add to starred if not already present
+      if (!currentStarred.includes(questionId)) {
+        await userProfile.patch({
+          starredQuestions: [...currentStarred, questionId]
+        });
+      }
+    } else {
+      // Remove from starred
+      await userProfile.patch({
+        starredQuestions: currentStarred.filter(id => id !== questionId)
+      });
+    }
+
+    return { questionId };
+  },
+});
+
+export const updateStatus = userMutation({
+  args: {
+    questionId: v.id("questions"),
+    status: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const { questionId, status } = args;
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthenticated");
+
+    const question = await ctx.table("questions").get(questionId);
+    if (!question) {
+      throw new Error("Question not found");
+    }
+
+    const userProfile = await ctx.table("userProfiles").filter(q => q.eq(q.field("userId"), identity.subject)).first();
+    if (!userProfile) throw new Error("User profile not found");
+
+    const currentStatus = userProfile.completedQuestions ?? [];
+
+
+
+    if (status === "complete") {
+      // Add to starred if not already present
+      if (!currentStatus.includes(questionId)) {
+        await userProfile.patch({
+          completedQuestions: [...currentStatus, questionId]
+        });
+      }
+    } else {
+      // Remove from starred
+      await userProfile.patch({
+        completedQuestions: currentStatus.filter(id => id !== questionId)
+      });
+    }
+
+    return { questionId };
   },
 });
 

@@ -139,9 +139,51 @@ export async function getOrCreateUserProfile(
       email,
       subscription,
       minutesRemaining,
+      starredQuestions: [],
+      completedQuestions: [],
     })
     .get();
 }
+
+export const getStarredQuestions = userQuery({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    // Return early if no authenticated user
+    if (!identity) {
+      return { completedQuestions: [] };
+    }
+
+    const profile = await ctx.table("userProfiles").get("userId", identity.subject);
+
+    if (!isDefined(profile)) {
+      return { completedQuestions: [] };
+    }
+
+    return { starredQuestions: profile.starredQuestions };
+  },
+});
+
+export const getCompletedQuestions = userQuery({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    // Return early if no authenticated user
+    if (!identity) {
+      return { completedQuestions: [] };
+    }
+
+    const profile = await ctx.table("userProfiles").get("userId", identity.subject);
+
+    if (!isDefined(profile)) {
+      return { completedQuestions: [] };
+    }
+
+    return { completedQuestions: profile.completedQuestions };
+  },
+});
 
 export const voidSubscriptionInternal = internalMutation({
   args: {

@@ -137,23 +137,25 @@ export default function QuestionFilter({
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" size="sm" className="gap-2">
-                            <CheckCircle2 className="h-4 w-4" />
+                            {status === "Complete" ? (
+                                <CheckCheck className="h-4 w-4 text-green-500" />
+                            ) : status === "Incomplete" ? (
+                                <Clock className="h-4 w-4 text-blue-500" />
+                            ) : (
+                                <CheckCircle2 className="h-4 w-4" />
+                            )}
                             {status || "Status"}
                             <ChevronDown className="h-4 w-4 opacity-50" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                        <DropdownMenuItem onClick={() => setStatus("Attempted")}>
-                            <AlertCircle className="h-4 w-4 mr-2 text-yellow-500" />
-                            Attempted
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setStatus("Solved")}>
+                        <DropdownMenuItem onClick={() => setStatus("Complete")}>
                             <CheckCheck className="h-4 w-4 mr-2 text-green-500" />
-                            Solved
+                            Complete
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setStatus("To Do")}>
+                        <DropdownMenuItem onClick={() => setStatus("Incomplete")}>
                             <Clock className="h-4 w-4 mr-2 text-blue-500" />
-                            To Do
+                            Incomplete
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

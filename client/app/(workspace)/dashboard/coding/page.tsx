@@ -15,7 +15,7 @@ const CodingPage = () => {
 
     return (
         <div className="flex flex-col space-y-6 p-6">
-            <DashboardBreadcrumb />
+            <DashboardBreadcrumb className="h-2 bg-background/80 rounded-t-md" />
             <div className="space-y-1">
                 <h1 className="text-2xl font-bold tracking-tight">Study Plan</h1>
                 <p className="text-muted-foreground">

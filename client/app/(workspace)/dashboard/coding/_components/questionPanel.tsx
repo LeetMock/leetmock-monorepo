@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Filter, Search, Building2, GaugeCircle, CheckCircle2, Tags, Dice1, CircleDot, Timer, Crown, Clock, CheckCheck, AlertCircle, ChevronDown } from "lucide-react";
@@ -11,39 +11,74 @@ import {
 } from "@/components/ui/dropdown-menu";
 import QuestionFilter from "./questionFilter";
 import { api } from "@/convex/_generated/api";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import QuestionList from "./questionList";
-
+import { useDebounceCallback } from "usehooks-ts";
+import { Id } from "@/convex/_generated/dataModel";
 // Filter Section Component
 function QuestionPanel() {
     const [difficulty, setDifficulty] = useState<string | null>(null);
     const [status, setStatus] = useState<string | null>(null);
+
     const questions = useQuery(api.questions.getAll) || [];
+    const updateStatusMutation = useMutation(api.questions.updateStatus);
+    const updateStarredMutation = useMutation(api.questions.updateStarred);
 
-    // const categories = useMemo(() => {
-    //     if (!questions) return [];
-    //     const categorySet = new Set<string>();
-    //     questions.forEach(question => {
-    //         question.category?.forEach(cat => categorySet.add(cat));
-    //     });
-    //     return Array.from(categorySet);
-    // }, [questions]);
+    // Debounce the update functions with 300ms delay using usehooks-ts
+    const updateStatus = useDebounceCallback(
+        (args: { questionId: Id<"questions">; status: "complete" | "incomplete" }) => {
+            updateStatusMutation(args);
+        },
+        300 // 300ms delay
+    );
 
-    // const filteredQuestions = useMemo(() => {
-    //     if (!questions) return [];
+    const updateStarred = useDebounceCallback(
+        (args: { questionId: Id<"questions">; starred: boolean }) => {
+            updateStarredMutation(args);
+        },
+        300 // 300ms delay
+    );
 
-    //     return questions.filter(question => {
-    //         const matchesSearch = question.title.toLowerCase().includes(filters.search.toLowerCase());
+    // Get the arrays from queries
+    const { completedQuestions: completedArray = [] } = useQuery(api.userProfiles.getCompletedQuestions) || {};
+    const { starredQuestions: starredArray = [] } = useQuery(api.userProfiles.getStarredQuestions) || {};
 
-    //         const matchesCategory = filters.category === "all" ||
-    //             question.category?.includes(filters.category);
+    // Convert arrays to Sets using useMemo to prevent unnecessary recreations
+    const completedQuestionsSet = useMemo(() => new Set(completedArray), [completedArray]);
+    const starredQuestionsSet = useMemo(() => new Set(starredArray), [starredArray]);
 
-    //         const matchesDifficulty = filters.difficulty === "all" ||
-    //             question.difficulty === Number(filters.difficulty);
+    // Filter questions based on status and difficulty
+    const filteredQuestions = useMemo(() => {
+        return questions.filter(question => {
+            const isCompleted = completedQuestionsSet.has(question._id);
+            const isStarred = starredQuestionsSet.has(question._id);
 
-    //         return matchesSearch && matchesCategory && matchesDifficulty;
-    //     });
-    // }, [questions, filters]);
+            // Add completed and starred status to each question
+            const enrichedQuestion = {
+                ...question,
+                status: isCompleted ? "complete" : "incomplete",
+                starred: isStarred
+            };
+
+            // Filter by difficulty if selected
+            if (difficulty) {
+                const difficultyMap = { "Easy": 1, "Medium": 2, "Hard": 3 };
+                if (enrichedQuestion.difficulty !== difficultyMap[difficulty as keyof typeof difficultyMap]) {
+                    return false;
+                }
+            }
+
+            // Filter by status if selected
+            if (status) {
+                const questionStatus = isCompleted ? "Complete" : "Incomplete";
+                if (status !== questionStatus) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+    }, [questions, completedQuestionsSet, starredQuestionsSet, difficulty, status]);
 
     return (
         <div className="space-y-4">
@@ -64,8 +99,14 @@ function QuestionPanel() {
                 setStatus={setStatus}
             />
 
-            {/* Question List */}
-            <QuestionList />
+            {/* Pass the required props to QuestionList */}
+            <QuestionList
+                questions={filteredQuestions}
+                updateStatus={updateStatus}
+                updateStarred={updateStarred}
+                completedQuestions={completedQuestionsSet}
+                starredQuestions={starredQuestionsSet}
+            />
         </div>
     );
 }
