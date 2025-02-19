@@ -125,6 +125,7 @@ export const createQuestion = mutation({
     ),
     solutions: v.record(v.string(), v.string()),
     metaData: v.optional(v.record(v.string(), v.any())),
+    companies: v.array(v.string()),
   },
   handler: async (ctx, args) => {
     const questionId = await ctx.table("questions").insert({

@@ -311,7 +311,8 @@ export default function QuestionsPage() {
                 },
                 outputParameters: selectedOutputType,
                 evalMode: evalMode,
-                metaData: {}
+                metaData: {},
+                companies: [],
             };
 
             if (editingQuestion) {

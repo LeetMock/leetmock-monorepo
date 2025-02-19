@@ -90,7 +90,7 @@ export default function QuestionList({ questions, updateStatus, updateStarred, c
             <div className="mt-4">
                 <div className="rounded-lg border shadow-sm">
                     {/* Header Row */}
-                    <div className="flex items-center p-4 bg-gray-50 border-b text-gray-500">
+                    <div className="flex items-center p-4 bg-gray-50 dark:bg-black/50 border-b text-gray-500 dark:text-gray-300">
                         <div className="flex-shrink-0 w-[80px]">
                             <span className="text-xs font-medium uppercase tracking-wider">Status</span>
                         </div>
@@ -112,9 +112,9 @@ export default function QuestionList({ questions, updateStatus, updateStarred, c
                     {questions.map((question, index) => (
                         <div
                             key={question._id}
-                            className={`flex items-center p-4 hover:bg-gray-50/30 transition-colors
-                                ${index !== questions.length - 1 ? 'border-b' : ''}
-                                ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}
+                            className={`flex items-center p-4 hover:bg-gray-50/30 dark:hover:bg-gray-950/50 transition-colors
+                                ${index !== questions.length - 1 ? 'border-b dark:border-gray-950' : ''}
+                                ${index % 2 === 0 ? 'bg-white dark:bg-black' : 'bg-gray-50/50 dark:bg-gray-950'}
                             `}
                         >
                             {/* Status Button */}
@@ -144,7 +144,7 @@ export default function QuestionList({ questions, updateStatus, updateStarred, c
 
                             {/* Title */}
                             <div className="flex-1 min-w-[200px]">
-                                <h3 className="text-sm font-medium text-gray-900 hover:text-blue-600 cursor-pointer transition-colors underline-offset-4 hover:underline truncate">
+                                <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-colors underline-offset-4 hover:underline truncate">
                                     {question.title}
                                 </h3>
                             </div>
@@ -156,9 +156,9 @@ export default function QuestionList({ questions, updateStatus, updateStarred, c
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                                            className="h-8 w-8 p-0 hover:bg-blue-50 dark:hover:bg-blue-950/50 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                                         >
-                                            <PlayCircle className="h-5 w-5 text-blue-500 hover:text-blue-600" />
+                                            <PlayCircle className="h-5 w-5 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300" />
                                         </Button>
                                     </TooltipTrigger>
                                     <TooltipContent side="top">
@@ -171,7 +171,7 @@ export default function QuestionList({ questions, updateStatus, updateStarred, c
                 </div>
 
                 {questions.length === 0 && (
-                    <div className="p-8 text-center text-gray-500 text-sm">
+                    <div className="p-8 text-center text-gray-500 dark:text-gray-400 text-sm">
                         No questions available. Add your first question to get started.
                     </div>
                 )}
