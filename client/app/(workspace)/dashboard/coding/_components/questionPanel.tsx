@@ -1,4 +1,6 @@
-import { useState, useMemo } from "react";
+"use client";
+
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BookOpen, Star, History, Building2, GaugeCircle, CheckCircle2, Tags, Dice1, CircleDot, Timer, Crown, Clock, CheckCheck, AlertCircle, ChevronDown } from "lucide-react";
@@ -15,114 +17,79 @@ import { useQuery, useMutation } from "convex/react";
 import QuestionList from "./questionList";
 import { useDebounceCallback } from "usehooks-ts";
 import { Id } from "@/convex/_generated/dataModel";
+import { useQuestionStore } from "@/hooks/use-question-store";
+
 // Filter Section Component
 function QuestionPanel() {
-    const [difficulty, setDifficulty] = useState<string | null>(null);
-    const [status, setStatus] = useState<string | null>(null);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [selectedTab, setSelectedTab] = useState("general");
+    const {
+        difficulty,
+        status,
+        searchQuery,
+        selectedTab,
+        selectedTags,
+        selectedCompanies,
+        filteredQuestions,
+        tags,
+        companies,
+        completedQuestions,
+        starredQuestions,
+        setDifficulty,
+        setStatus,
+        setSearchQuery,
+        setSelectedTab,
+        setSelectedTags,
+        setSelectedCompanies,
+        setQuestions,
+        setCompletedQuestions,
+        setStarredQuestions,
+    } = useQuestionStore();
 
-    const questions = useQuery(api.questions.getAll) || [];
+    const questionsQuery = useQuery(api.questions.getAll);
+    const completedQuery = useQuery(api.userProfiles.getCompletedQuestions);
+    const starredQuery = useQuery(api.userProfiles.getStarredQuestions);
+
+    // Update store when queries change
+    useEffect(() => {
+        if (questionsQuery) {
+            setQuestions(questionsQuery);
+        }
+    }, [questionsQuery, setQuestions]);
+
+    useEffect(() => {
+        if (completedQuery?.completedQuestions) {
+            setCompletedQuestions(completedQuery.completedQuestions);
+        }
+    }, [completedQuery, setCompletedQuestions]);
+
+    useEffect(() => {
+        if (starredQuery?.starredQuestions) {
+            setStarredQuestions(starredQuery.starredQuestions);
+        }
+    }, [starredQuery, setStarredQuestions]);
+
     const updateStatusMutation = useMutation(api.questions.updateStatus);
     const updateStarredMutation = useMutation(api.questions.updateStarred);
 
-    // Debounce the update functions with 300ms delay using usehooks-ts
+    // Debounce the update functions
     const updateStatus = useDebounceCallback(
-        (args: { questionId: Id<"questions">; status: "complete" | "incomplete" }) => {
-            updateStatusMutation(args);
+        async (args: { questionId: Id<"questions">; status: "complete" | "incomplete" }) => {
+            await updateStatusMutation(args);
+            if (completedQuery?.completedQuestions) {
+                setCompletedQuestions(completedQuery.completedQuestions);
+            }
         },
-        300 // 300ms delay
+        300
     );
 
     const updateStarred = useDebounceCallback(
-        (args: { questionId: Id<"questions">; starred: boolean }) => {
-            updateStarredMutation(args);
+        async (args: { questionId: Id<"questions">; starred: boolean }) => {
+            await updateStarredMutation(args);
+            if (starredQuery?.starredQuestions) {
+                setStarredQuestions(starredQuery.starredQuestions);
+            }
         },
-        300 // 300ms delay
+        300
     );
-
-    // Get the arrays from queries
-    const { completedQuestions: completedArray = [] } = useQuery(api.userProfiles.getCompletedQuestions) || {};
-    const { starredQuestions: starredArray = [] } = useQuery(api.userProfiles.getStarredQuestions) || {};
-
-    // Convert arrays to Sets using useMemo to prevent unnecessary recreations
-    const completedQuestionsSet = useMemo(() => new Set(completedArray), [completedArray]);
-    const starredQuestionsSet = useMemo(() => new Set(starredArray), [starredArray]);
-
-    // Filter questions based on status and difficulty
-    const filteredQuestions = useMemo(() => {
-        return questions.filter(question => {
-            const isCompleted = completedQuestionsSet.has(question._id);
-            const isStarred = starredQuestionsSet.has(question._id);
-
-            // Add completed and starred status to each question
-            const enrichedQuestion = {
-                ...question,
-                status: isCompleted ? "complete" : "incomplete",
-                starred: isStarred
-            };
-
-            // Filter by tab selection
-            if (selectedTab === "starred" && !isStarred) {
-                return false;
-            }
-
-            // Filter by search query
-            if (searchQuery) {
-                const searchLower = searchQuery.toLowerCase();
-                if (!question.title.toLowerCase().includes(searchLower)) {
-                    return false;
-                }
-            }
-
-            // Filter by difficulty if selected
-            if (difficulty) {
-                const difficultyMap = { "Easy": 1, "Medium": 2, "Hard": 3 };
-                if (enrichedQuestion.difficulty !== difficultyMap[difficulty as keyof typeof difficultyMap]) {
-                    return false;
-                }
-            }
-
-            // Filter by status if selected
-            if (status) {
-                const questionStatus = isCompleted ? "Complete" : "Incomplete";
-                if (status !== questionStatus) {
-                    return false;
-                }
-            }
-
-            return true;
-        });
-    }, [questions, completedQuestionsSet, starredQuestionsSet, difficulty, status, searchQuery, selectedTab]);
-
-    // Calculate tags and companies from questions
-    const { tags, companies } = useMemo(() => {
-        const tagCount = new Map<string, number>();
-        const companyCount = new Map<string, number>();
-
-        questions.forEach(question => {
-            // Count tags
-            question.category.forEach(tag => {
-                tagCount.set(tag, (tagCount.get(tag) || 0) + 1);
-            });
-
-            // Count companies
-            question.companies.forEach(company => {
-                companyCount.set(company, (companyCount.get(company) || 0) + 1);
-            });
-        });
-
-        // Convert to sorted arrays of objects
-        const tags = Array.from(tagCount.entries())
-            .map(([name, count]) => ({ name, count }))
-            .sort((a, b) => b.count - a.count);
-
-        const companies = Array.from(companyCount.entries())
-            .map(([name, count]) => ({ name, count }))
-            .sort((a, b) => b.count - a.count);
-
-        return { tags, companies };
-    }, [questions]);
 
     return (
         <div className="space-y-4">
@@ -179,6 +146,10 @@ function QuestionPanel() {
                 setStatus={setStatus}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
+                selectedTags={selectedTags}
+                setSelectedTags={setSelectedTags}
+                selectedCompanies={selectedCompanies}
+                setSelectedCompanies={setSelectedCompanies}
                 tags={tags}
                 companies={companies}
             />
@@ -188,8 +159,8 @@ function QuestionPanel() {
                 questions={filteredQuestions}
                 updateStatus={updateStatus}
                 updateStarred={updateStarred}
-                completedQuestions={completedQuestionsSet}
-                starredQuestions={starredQuestionsSet}
+                completedQuestions={completedQuestions}
+                starredQuestions={starredQuestions}
             />
         </div>
     );

@@ -22,6 +22,10 @@ interface QuestionFilterProps {
     setStatus: (value: string | null) => void;
     searchQuery: string;
     setSearchQuery: (value: string) => void;
+    selectedTags: string[];
+    setSelectedTags: (tags: string[]) => void;
+    selectedCompanies: string[];
+    setSelectedCompanies: (companies: string[]) => void;
     tags: { name: string; count: number }[];
     companies: { name: string; count: number }[];
 }
@@ -33,12 +37,14 @@ export default function QuestionFilter({
     setStatus,
     searchQuery,
     setSearchQuery,
+    selectedTags,
+    setSelectedTags,
+    selectedCompanies,
+    setSelectedCompanies,
     tags,
     companies
 }: QuestionFilterProps) {
-    const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [tagSearch, setTagSearch] = useState("");
-    const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
     const [companySearch, setCompanySearch] = useState("");
 
     const filteredTags = tags.filter(tag =>
@@ -78,11 +84,8 @@ export default function QuestionFilter({
                                             <button
                                                 key={company.name}
                                                 onClick={() => {
-                                                    setSelectedCompanies(prev =>
-                                                        prev.includes(company.name)
-                                                            ? prev.filter(c => c !== company.name)
-                                                            : [...prev, company.name]
-                                                    );
+                                                    const newCompanies = selectedCompanies.filter(c => c !== company.name);
+                                                    setSelectedCompanies(newCompanies);
                                                 }}
                                                 className={`px-2 py-1 rounded-full text-sm ${selectedCompanies.includes(company.name)
                                                     ? 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
@@ -167,11 +170,10 @@ export default function QuestionFilter({
                                             <button
                                                 key={tag.name}
                                                 onClick={() => {
-                                                    setSelectedTags(prev =>
-                                                        prev.includes(tag.name)
-                                                            ? prev.filter(t => t !== tag.name)
-                                                            : [...prev, tag.name]
-                                                    );
+                                                    const newTags = selectedTags.includes(tag.name)
+                                                        ? selectedTags.filter(t => t !== tag.name)
+                                                        : [...selectedTags, tag.name];
+                                                    setSelectedTags(newTags);
                                                 }}
                                                 className={`px-2 py-1 rounded-full text-sm ${selectedTags.includes(tag.name)
                                                     ? 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
@@ -212,9 +214,8 @@ export default function QuestionFilter({
                         <button
                             key={company}
                             onClick={() => {
-                                setSelectedCompanies(prev =>
-                                    prev.filter(c => c !== company)
-                                );
+                                const newCompanies = selectedCompanies.filter(c => c !== company);
+                                setSelectedCompanies(newCompanies);
                             }}
                             className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-700 hover:bg-blue-200"
                         >
@@ -227,9 +228,8 @@ export default function QuestionFilter({
                         <button
                             key={tag}
                             onClick={() => {
-                                setSelectedTags(prev =>
-                                    prev.filter(t => t !== tag)
-                                );
+                                const newTags = selectedTags.filter(t => t !== tag);
+                                setSelectedTags(newTags);
                             }}
                             className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-700 hover:bg-blue-200"
                         >

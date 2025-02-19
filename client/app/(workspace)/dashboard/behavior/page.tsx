@@ -15,30 +15,29 @@ import { MoveRight } from "lucide-react";
 import { useMemo } from "react";
 import { DashboardBreadcrumb } from "../_components/breadcrumb";
 
-interface InterviewCardProps {
-    activeSessionId: Id<"sessions"> | undefined;
-    questionTitle: string | undefined;
-}
-
-export function ComingSoon() {
+const ComingSoon = () => {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300 dark:from-indigo-900 dark:via-blue-900 dark:to-purple-900 flex items-center justify-center p-4">
-            <div className="text-center space-y-8">
-                <div className="animate-pulse">
-                    <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-cyan-400 dark:to-blue-500 bg-clip-text text-transparent mb-4">
-                        Coming Soon
-                    </h1>
-                </div>
-
-                <p className="text-xl text-slate-600/90 dark:text-cyan-100/90 font-light">
-                    Something amazing is brewing. Stay tuned!
-                </p>
-            </div>
+        <div className="flex flex-col items-center justify-center h-full">
+            <Card className="w-full max-w-2xl">
+                <CardHeader>
+                    <CardTitle>Coming Soon</CardTitle>
+                    <CardDescription>
+                        We&apos;re working hard to bring you system design interview practice. Stay tuned!
+                    </CardDescription>
+                </CardHeader>
+                <CardFooter>
+                    <Button asChild>
+                        <Link href="/dashboard/coding">
+                            Try coding interviews <MoveRight className="w-4 h-4 ml-2" />
+                        </Link>
+                    </Button>
+                </CardFooter>
+            </Card>
         </div>
     );
-}
+};
 
-const BehaviorPage: React.FC = () => {
+const BehaviorPage = () => {
     return (
         <div className="flex flex-col">
             <DashboardBreadcrumb className="h-12 px-6 bg-background/80 backdrop-blur-sm rounded-t-md" />
