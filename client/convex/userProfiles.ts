@@ -2,6 +2,7 @@ import { get30DaysFromNowInSeconds, isDefined } from "@/lib/utils";
 import { v } from "convex/values";
 import { internalMutation, internalQuery, userQuery } from "./functions";
 import { MutationCtx } from "./types";
+import { query } from "./_generated/server";
 
 export const getUserProfileInternal = internalQuery({
   args: { userId: v.string() },
@@ -18,7 +19,9 @@ export const decrementMinutesRemaining = internalMutation({
     if (!identity) {
       throw new Error("Not authenticated");
     }
-    const profile = await ctx.table("userProfiles").get("userId", identity.subject);
+    const profile = await ctx
+      .table("userProfiles")
+      .get("userId", identity.subject);
     if (!profile) {
       throw new Error("Profile not found");
     }
@@ -38,7 +41,9 @@ export const decrementEvaluationCount = internalMutation({
       throw new Error("Not authenticated");
     }
 
-    const profile = await ctx.table("userProfiles").get("userId", identity.subject);
+    const profile = await ctx
+      .table("userProfiles")
+      .get("userId", identity.subject);
     if (!profile) {
       throw new Error("Profile not found");
     }
@@ -75,7 +80,9 @@ export const getUserProfile = userQuery({
       return { profile: undefined };
     }
 
-    const profile = await ctx.table("userProfiles").get("userId", identity.subject);
+    const profile = await ctx
+      .table("userProfiles")
+      .get("userId", identity.subject);
 
     if (!isDefined(profile)) {
       return { profile: undefined };
@@ -95,7 +102,9 @@ export const getUserMinutesRemaining = userQuery({
       return { minutesRemaining: -1 };
     }
 
-    const profile = await ctx.table("userProfiles").get("userId", identity.subject);
+    const profile = await ctx
+      .table("userProfiles")
+      .get("userId", identity.subject);
 
     if (!isDefined(profile)) {
       return { minutesRemaining: -1 };
@@ -139,6 +148,8 @@ export async function getOrCreateUserProfile(
       email,
       subscription,
       minutesRemaining,
+      starredQuestions: [],
+      completedQuestions: [],
     })
     .get();
 }
@@ -167,11 +178,21 @@ export const updateSubscriptionByEmailInternal = internalMutation({
   args: {
     email: v.string(),
     planName: v.optional(
-      v.union(v.literal("free"), v.literal("basic"), v.literal("premium"), v.literal("payAsYouGo"))
+      v.union(
+        v.literal("free"),
+        v.literal("basic"),
+        v.literal("premium"),
+        v.literal("payAsYouGo")
+      )
     ),
     minutesRemaining: v.optional(v.number()),
     interval: v.optional(
-      v.union(v.literal("month"), v.literal("year"), v.literal("day"), v.literal("week"))
+      v.union(
+        v.literal("month"),
+        v.literal("year"),
+        v.literal("day"),
+        v.literal("week")
+      )
     ),
     refreshDate: v.optional(v.number()),
     evaluationCount: v.optional(v.number()),
@@ -205,7 +226,8 @@ export const updateSubscriptionByEmailInternal = internalMutation({
       evaluationCount: evaluationCount ?? profile.evaluationCount,
       currentPeriodEnd: currentPeriodEnd ?? profile.currentPeriodEnd,
       currentPeriodStart: currentPeriodStart ?? profile.currentPeriodStart,
-      latestSubscriptionId: latestSubscriptionId ?? profile.latestSubscriptionId,
+      latestSubscriptionId:
+        latestSubscriptionId ?? profile.latestSubscriptionId,
       subscriptionStatus: subscriptionStatus ?? profile.subscriptionStatus,
     });
   },
@@ -237,9 +259,14 @@ export const refreshMinutesForYearlyPlansInternal = internalMutation({
         continue;
       }
       if (refreshDate < currentTime) {
-        const pricing = await ctx.table("pricings").get("tier", profile.subscription);
+        const pricing = await ctx
+          .table("pricings")
+          .get("tier", profile.subscription);
         if (!isDefined(pricing)) {
-          console.log("pricing not found for subscription", profile.subscription);
+          console.log(
+            "pricing not found for subscription",
+            profile.subscription
+          );
           continue;
         }
         const minutes = pricing.minutes;
@@ -250,5 +277,23 @@ export const refreshMinutesForYearlyPlansInternal = internalMutation({
         });
       }
     }
+  },
+});
+
+export const getAllUsers = query({
+  args: {},
+  handler: async (ctx) => {
+    const users = await ctx.db.query("userProfiles").collect();
+    return users;
+  },
+});
+
+export const getUserById = query({
+  args: { userId: v.string() },
+  handler: async (ctx, { userId }) => {
+    return await ctx.db
+      .query("userProfiles")
+      .filter((q) => q.eq(q.field("userId"), userId))
+      .unique();
   },
 });

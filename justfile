@@ -46,3 +46,10 @@ run-convex-local:
 #     stripe listen --forward-to https://{{trim_start_match(convex-deployment, "dev:")}}.convex.site/stripe-webhook
 
 
+fly-test:
+    docker build -t test .
+    docker run test
+
+fly-test-podman:
+    podman build -t test .
+    podman run test
