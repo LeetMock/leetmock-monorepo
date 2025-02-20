@@ -13,7 +13,6 @@ import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { Spinner } from "@/components/spinner";
 import { useUser } from "@clerk/clerk-react";
-import { useUserProfile } from "@/hooks/use-user-profile";
 
 const WaitlistPage = () => {
   const [inviteCode, setInviteCode] = useState("");

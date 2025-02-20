@@ -1,8 +1,15 @@
 import { get30DaysFromNowInSeconds, isDefined } from "@/lib/utils";
 import { v } from "convex/values";
-import { internalMutation, internalQuery, userQuery } from "./functions";
 import { MutationCtx } from "./types";
 import { query } from "./_generated/server";
+import {
+  internalMutation,
+  internalQuery,
+  userMetricsAggregate,
+  userQuery,
+  userSubscriptionMetricsAggregate,
+} from "./functions";
+import { SubscriptionTier } from "./schema";
 
 export const getUserProfileInternal = internalQuery({
   args: { userId: v.string() },
@@ -297,3 +304,69 @@ export const getUserById = query({
       .unique();
   },
 });
+
+export const getAllUserMetricsInternal = internalQuery({
+  handler: async (ctx) => {
+    const roleCount = {
+      admin: await userMetricsAggregate.count(
+        ctx,
+        // @ts-ignore
+        {
+          namespace: "admin",
+        }
+      ),
+      user: await userMetricsAggregate.count(
+        ctx,
+        // @ts-ignore
+        {
+          namespace: "user",
+        }
+      ),
+      waitlist: await userMetricsAggregate.count(
+        ctx,
+        // @ts-ignore
+        {
+          namespace: "waitlist",
+        }
+      ),
+    };
+
+    const subscriptionCount = {
+      [SubscriptionTier.FREE]: await userSubscriptionMetricsAggregate.count(
+        ctx,
+        // @ts-ignore
+        {
+          namespace: SubscriptionTier.FREE,
+        }
+      ),
+      [SubscriptionTier.BASIC]: await userSubscriptionMetricsAggregate.count(
+        ctx,
+        // @ts-ignore
+        {
+          namespace: SubscriptionTier.BASIC,
+        }
+      ),
+      [SubscriptionTier.PREMIUM]: await userSubscriptionMetricsAggregate.count(
+        ctx,
+        // @ts-ignore
+        {
+          namespace: SubscriptionTier.PREMIUM,
+        }
+      ),
+      [SubscriptionTier.PAY_AS_YOU_GO]:
+        await userSubscriptionMetricsAggregate.count(
+          ctx,
+          // @ts-ignore
+          {
+            namespace: SubscriptionTier.PAY_AS_YOU_GO,
+          }
+        ),
+    };
+
+    return {
+      usersByRole: roleCount,
+      usersBySubscription: subscriptionCount,
+    };
+  },
+});
+
