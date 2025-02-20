@@ -50,8 +50,8 @@ export const columns: ColumnDef<Doc<"sessions">>[] = [
             status === "completed"
               ? "success"
               : status === "in_progress"
-                ? "warning"
-                : "secondary"
+                ? "secondary"
+                : "outline"
           }
         >
           {status}
