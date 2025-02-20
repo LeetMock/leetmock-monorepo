@@ -3,12 +3,18 @@
 import { DashboardHeader } from "@/app/(workspace)/dashboard/_components/dashboard-header";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { isDefined } from "@/lib/utils";
+import { useUser } from "@clerk/clerk-react";
 import { useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const { isSignedIn } = useUser();
+
+  if (!isSignedIn) {
+    notFound();
+  }
+
   const { userProfile, isLoaded } = useUserProfile();
-  const router = useRouter();
 
   if (!isLoaded) {
     return <div>Loading...</div>;
