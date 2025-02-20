@@ -43,6 +43,8 @@ const schema = defineEntSchema({
   })
     .field("email", v.string(), { unique: true })
     .field("userId", v.string(), { unique: true }) // user id should be unique
+    .field("starredQuestions", v.array(v.id("questions")), { default: [] })
+    .field("completedQuestions", v.array(v.id("questions")), { default: [] })
     .index("by_role", ["role"])
     .index("by_interval", ["interval"]),
   sessions: defineEnt({
@@ -117,7 +119,8 @@ const schema = defineEntSchema({
     ),
     title: v.string(),
     metaData: v.record(v.string(), v.any()),
-  }),
+  })
+    .field("companies", v.array(v.string()), { default: [] }),
   inviteCodes: defineEnt({
     code: v.string(),
     assignedRole: v.union(v.literal("admin"), v.literal("user")),

@@ -3,7 +3,12 @@ import type { AccessTokenOptions, VideoGrant } from "livekit-server-sdk";
 import { AccessToken } from "livekit-server-sdk";
 import { twMerge } from "tailwind-merge";
 import { BG_COLORS } from "./constants";
-import { JsonValue, SpecialObject, type DefinedObject, type Testcase } from "./types";
+import {
+  JsonValue,
+  SpecialObject,
+  type DefinedObject,
+  type Testcase,
+} from "./types";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -19,7 +24,8 @@ export function getFileExtension(language: string): string {
 }
 
 export function generateRandomAlphanumeric(length: number): string {
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
   const charactersLength = characters.length;
 
@@ -38,7 +44,10 @@ export function getCurrentUnixTimestamp(): number {
   return Math.floor(Date.now() / 1000);
 }
 
-export function getTimeDurationSeconds(startTime: number, endTime: number): number {
+export function getTimeDurationSeconds(
+  startTime: number,
+  endTime: number
+): number {
   return Math.floor((endTime - startTime) / 1000);
 }
 
@@ -168,12 +177,19 @@ export const unwrapSpecialObject = (value: any): JsonValue => {
   }
 
   return Object.fromEntries(
-    Object.entries(value).map(([key, value]) => [key, unwrapSpecialObject(value)])
+    Object.entries(value).map(([key, value]) => [
+      key,
+      unwrapSpecialObject(value),
+    ])
   );
 };
 
-function generatePythonTestCode(question: Question, testCasesState: Testcase[]): string {
-  const { functionName, inputParameters, evalMode, outputParameters } = question;
+function generatePythonTestCode(
+  question: Question,
+  testCasesState: Testcase[]
+): string {
+  const { functionName, inputParameters, evalMode, outputParameters } =
+    question;
   const params = inputParameters["python"];
 
   let testCode = `
@@ -485,14 +501,31 @@ console.log("END_RESULTS_JSON");
   return testCode;
 }
 
-export const isDefined = <T>(value: T): value is Exclude<T, undefined | null> => {
+export const isDefined = <T>(
+  value: T
+): value is Exclude<T, undefined | null> => {
   return value !== undefined && value !== null;
 };
 
-export const allDefined = <T extends object>(obj: T): obj is DefinedObject<T> => {
+export const allDefined = <T extends object>(
+  obj: T
+): obj is DefinedObject<T> => {
   return Object.values(obj).every(isDefined);
 };
 
-export const get30DaysFromNowInSeconds = (current_time: number = Date.now()) => {
+export const get30DaysFromNowInSeconds = (
+  current_time: number = Date.now()
+) => {
   return current_time + 30 * 24 * 60 * 60;
 };
+
+export function formatEpochTimeMilliseconds(epochTime: number) {
+  const date = new Date(epochTime);
+  return date.toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
