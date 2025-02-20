@@ -8,19 +8,22 @@ import { useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { isSignedIn } = useUser();
+  const { isSignedIn, isLoaded } = useUser();
 
-  if (!isSignedIn) {
-    notFound();
-  }
-
-  const { userProfile, isLoaded } = useUserProfile();
+  const { userProfile, isLoaded: isUserProfileLoaded } = useUserProfile();
 
   if (!isLoaded) {
     return <div>Loading...</div>;
   }
+  if (isLoaded && !isSignedIn) {
+    notFound();
+  }
 
-  if (!isDefined(userProfile) || userProfile.role !== "admin") {
+  if (
+    isUserProfileLoaded &&
+    isDefined(userProfile) &&
+    userProfile.role !== "admin"
+  ) {
     notFound();
   }
 
