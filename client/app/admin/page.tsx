@@ -31,7 +31,7 @@ const adminPages: AdminPageLink[] = [
     icon: Users
   },
   {
-    href: "https://leetmock.grafana.net/goto/051vbacNg?orgId=1",
+    href: "https://leetmock.grafana.net/public-dashboards/c5ab80da6d8d48398d02cd0c92da4230",
     title: "Grafana",
     description: "Platform statistics and performance metrics",
     icon: BarChart
