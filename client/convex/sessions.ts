@@ -323,6 +323,23 @@ async function endSessionAction(ctx: MutationCtx, sessionId: Id<"sessions">) {
 }
 
 export const getSessionMetricsInternal = internalQuery({
+  returns: v.object({
+    notStarted: v.object({
+      total: v.number(),
+      evalReady: v.number(),
+      evalPending: v.number(),
+    }),
+    inProgress: v.object({
+      total: v.number(),
+      evalReady: v.number(),
+      evalPending: v.number(),
+    }),
+    completed: v.object({
+      total: v.number(),
+      evalReady: v.number(),
+      evalPending: v.number(),
+    }),
+  }),
   handler: async (ctx) => {
     // Get all sessions by status and evaluation readiness
     const sessionMetrics = {

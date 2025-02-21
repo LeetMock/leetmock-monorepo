@@ -102,11 +102,18 @@ export const updateMetrics = async (ctx: any) => {
   );
 
   // Update session metrics
-  Object.entries(sessionMetrics).forEach(([status, counts]) => {
-    // Set total count for each status
+  Object.entries(
+    sessionMetrics as Record<
+      string,
+      {
+        total: number;
+        evalReady: number;
+        evalPending: number;
+      }
+    >
+  ).forEach(([status, counts]) => {
     sessionsByStatusGauge.set({ status }, counts.total);
 
-    // Set counts by eval status
     sessionsByEvalStatusGauge.set(
       { status, eval_status: "ready" },
       counts.evalReady
