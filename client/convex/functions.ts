@@ -300,7 +300,8 @@ export const backfillSessionsMigration = migrations.define({
 });
 
 // npx convex run functions:clearAggregates
-// npx convex run functions:runAggregateBackfill '{"cursor": null}'
+// npx convex run functions:runSessionAggregationBackfill '{"cursor": null}'
+// npx convex run functions:runUserAggregationBackfill '{"cursor": null}'
 export const runUserAggregationBackfill = migrations.runner(
   internal.functions.backfillAggregatesMigration
 );
