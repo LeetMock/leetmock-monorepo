@@ -28,7 +28,6 @@ import { Triggers } from "convex-helpers/server/triggers";
 import { TableAggregate } from "@convex-dev/aggregate";
 import { Migrations } from "@convex-dev/migrations";
 import { SubscriptionTier } from "./schema";
-import { updateMetrics } from "./metrics";
 
 // Must be defined in the functions.ts file to ensure that the triggers are registered
 export const triggers = new Triggers<DataModel>();
