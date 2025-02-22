@@ -5,4 +5,4 @@ test-watch:
     uv run ptw -- --clear
 
 dev:
-    uv run python3 agent_server/worker.py dev
+    uv run python -m agent_server.worker dev
