@@ -44,7 +44,6 @@ RUN pip install uv
 # Configure uv
 RUN uv pip install --system uv
 
-
 USER appuser
 WORKDIR /home/appuser
 
@@ -66,4 +65,4 @@ RUN uv sync
 EXPOSE 8081
 
 # Run the application
-ENTRYPOINT ["uv", "run", "python", "agent_server/worker.py", "start"]
+ENTRYPOINT ["uv", "run", "python", "-m", "agent_server.worker", "start"]
