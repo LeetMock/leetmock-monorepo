@@ -1,5 +1,5 @@
 [project]
-name = "agent-server"
+name = "agent_server"
 version = "0.1.0"
 description = ""
 authors = [{ name = "Lucheng_Hugh", email = "hughqing@qq.com" }]
