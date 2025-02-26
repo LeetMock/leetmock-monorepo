@@ -125,6 +125,7 @@ export const createQuestion = mutation({
     const questionId = await ctx.table("questions").insert({
       ...args,
       metaData: args.metaData ?? {},
+      companies: [],
     });
 
     return { questionId };

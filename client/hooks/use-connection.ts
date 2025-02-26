@@ -1,4 +1,5 @@
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { useAction } from "convex/react";
 import type { Room } from "livekit-client";
 import { create } from "zustand";
@@ -25,8 +26,8 @@ export const useConnection = (room: Room | undefined = undefined) => {
   const { accessToken, serverUrl, shouldConnect, setConnectionState } = useConnectionState();
   const getToken = useAction(api.actions.getToken);
 
-  const connect = async () => {
-    const { accessToken } = await getToken();
+  const connect = async ({ sessionId }: { sessionId: Id<"sessions"> }) => {
+    const { accessToken } = await getToken({ sessionId });
     if (!process.env.NEXT_PUBLIC_LIVEKIT_URL) {
       throw new Error("NEXT_PUBLIC_LIVEKIT_URL is not set");
     }

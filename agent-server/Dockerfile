@@ -38,13 +38,11 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 USER root
 WORKDIR /root
 
-# Install Poetry
-RUN pip install poetry
+# Install uv
+RUN pip install uv
 
-# Configure Poetry
-RUN poetry config virtualenvs.create false
-
-
+# Configure uv
+RUN uv pip install --system uv
 
 USER appuser
 WORKDIR /home/appuser
@@ -58,13 +56,13 @@ COPY --chown=appuser:appuser agent-graph agent-graph
 WORKDIR /home/appuser/agent-server
 
 # Install project dependencies
-RUN poetry install --no-interaction
+RUN uv sync
 
 # Download required files (only needs to be done once)
-# RUN poetry run python -m agent_server.worker download-files
+# RUN uv run python -m agent_server.worker download-files
 
 # Expose port 8081 for TCP
 EXPOSE 8081
 
 # Run the application
-ENTRYPOINT ["poetry", "run", "python", "-m", "agent_server.worker", "start"]
+ENTRYPOINT ["uv", "run", "python", "-m", "agent_server.worker", "start"]

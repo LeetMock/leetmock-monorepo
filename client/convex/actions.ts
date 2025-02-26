@@ -114,7 +114,10 @@ export const scheduleEval = userAction({
 });
 
 export const getToken = userAction({
-  handler: async (ctx) => {
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  handler: async (ctx, { sessionId }) => {
     const apiKey = process.env.LIVEKIT_API_KEY;
     const apiSecret = process.env.LIVEKIT_API_SECRET;
     if (!apiKey || !apiSecret) {
@@ -122,7 +125,7 @@ export const getToken = userAction({
     }
 
     // TODO: May change these
-    const roomName = `room-${generateRandomAlphanumeric(4)}-${generateRandomAlphanumeric(4)}`;
+    const roomName = `room-${sessionId}`;
     const userIdentity = `identity-${generateRandomAlphanumeric(4)}`;
 
     const grant: VideoGrant = {
@@ -132,6 +135,8 @@ export const getToken = userAction({
       canPublishData: true,
       canSubscribe: true,
     };
+
+    console.log(roomName);
 
     const token = await createToken(apiKey, apiSecret, { identity: userIdentity }, grant);
     const result: TokenResult = {

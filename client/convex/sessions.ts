@@ -5,7 +5,14 @@ import { Id } from "./_generated/dataModel";
 
 import { CODE_TEMPLATES } from "@/lib/constants";
 import { isDefined, minutesToMilliseconds } from "@/lib/utils";
-import { internalMutation, internalQuery, query, userMutation, userQuery } from "./functions";
+import {
+  internalMutation,
+  internalQuery,
+  query,
+  sessionMetricsAggregate,
+  userMutation,
+  userQuery,
+} from "./functions";
 import { MutationCtx } from "./types";
 
 export const exists = userQuery({
@@ -54,7 +61,9 @@ export const getByUserId = userQuery({
     userId: v.string(),
   },
   handler: async (ctx, { userId }) => {
-    const sessions = await ctx.table("sessions", "by_user_id", (q) => q.eq("userId", userId));
+    const sessions = await ctx.table("sessions", "by_user_id", (q) =>
+      q.eq("userId", userId)
+    );
 
     return Promise.all(
       sessions.map(async (session) => {
@@ -103,7 +112,9 @@ export const startSession = userMutation({
     }
 
     // update start time if it's not already set
-    const startTime = session.sessionStartTime ? session.sessionStartTime : Date.now();
+    const startTime = session.sessionStartTime
+      ? session.sessionStartTime
+      : Date.now();
 
     if (session.sessionStatus === "not_started") {
       await ctx.scheduler.runAfter(
@@ -293,8 +304,12 @@ export const createCodeSession = userMutation({
 async function endSessionAction(ctx: MutationCtx, sessionId: Id<"sessions">) {
   const session = await ctx.table("sessions").getX(sessionId);
 
-  const startTime = isDefined(session.sessionStartTime) ? session.sessionStartTime : Date.now();
-  const endTime = isDefined(session.sessionEndTime) ? session.sessionEndTime : Date.now();
+  const startTime = isDefined(session.sessionStartTime)
+    ? session.sessionStartTime
+    : Date.now();
+  const endTime = isDefined(session.sessionEndTime)
+    ? session.sessionEndTime
+    : Date.now();
 
   await session.patch({
     sessionStatus: "completed",
@@ -306,3 +321,63 @@ async function endSessionAction(ctx: MutationCtx, sessionId: Id<"sessions">) {
   //   sessionId,
   // });
 }
+
+export const getSessionMetricsInternal = internalQuery({
+  returns: v.object({
+    notStarted: v.object({
+      total: v.number(),
+      evalReady: v.number(),
+      evalPending: v.number(),
+    }),
+    inProgress: v.object({
+      total: v.number(),
+      evalReady: v.number(),
+      evalPending: v.number(),
+    }),
+    completed: v.object({
+      total: v.number(),
+      evalReady: v.number(),
+      evalPending: v.number(),
+    }),
+  }),
+  handler: async (ctx) => {
+    // Get all sessions by status and evaluation readiness
+    const sessionMetrics = {
+      notStarted: {
+        total: await sessionMetricsAggregate.count(ctx, {
+          bounds: { prefix: ["not_started"] },
+        }),
+        evalReady: await sessionMetricsAggregate.count(ctx, {
+          bounds: { prefix: ["not_started", true] },
+        }),
+        evalPending: await sessionMetricsAggregate.count(ctx, {
+          bounds: { prefix: ["not_started", false] },
+        }),
+      },
+      inProgress: {
+        total: await sessionMetricsAggregate.count(ctx, {
+          bounds: { prefix: ["in_progress"] },
+        }),
+        evalReady: await sessionMetricsAggregate.count(ctx, {
+          bounds: { prefix: ["in_progress", true] },
+        }),
+        evalPending: await sessionMetricsAggregate.count(ctx, {
+          bounds: { prefix: ["in_progress", false] },
+        }),
+      },
+      completed: {
+        total: await sessionMetricsAggregate.count(ctx, {
+          bounds: { prefix: ["completed"] },
+        }),
+        evalReady: await sessionMetricsAggregate.count(ctx, {
+          bounds: { prefix: ["completed", true] },
+        }),
+        evalPending: await sessionMetricsAggregate.count(ctx, {
+          bounds: { prefix: ["completed", false] },
+        }),
+      },
+    };
+
+    return sessionMetrics;
+  },
+});

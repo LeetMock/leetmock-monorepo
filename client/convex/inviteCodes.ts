@@ -72,8 +72,8 @@ export const createDefaultUserProfile = userMutation({
       subscription,
       minutesRemaining,
       evaluationCount,
-      completedQuestions: [],
       starredQuestions: [],
+      completedQuestions: [],
     });
   },
 });

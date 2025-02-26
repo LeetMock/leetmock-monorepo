@@ -1,8 +1,8 @@
 test:
-    poetry run pytest
+    uv run pytest
 
 test-watch:
-    poetry run ptw -- --clear
+    uv run ptw -- --clear
 
 dev:
-    poetry run python3 agent_server/worker.py dev
+    uv run python -m agent_server.worker dev

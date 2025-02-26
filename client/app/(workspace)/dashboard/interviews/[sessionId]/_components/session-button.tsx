@@ -22,7 +22,7 @@ import { Doc } from "@/convex/_generated/dataModel";
 import { useConnection } from "@/hooks/use-connection";
 import { cn, isDefined } from "@/lib/utils";
 import { useConnectionState, useRoomContext } from "@livekit/components-react";
-import { useAction, useMutation } from "convex/react";
+import { useMutation } from "convex/react";
 import { ConnectionState } from "livekit-client";
 import {
   AlertOctagon,
@@ -68,7 +68,7 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
     if (!isDefined(session)) return;
     if (connectionState !== ConnectionState.Disconnected) return;
 
-    const connectPromise = connect().then(() => setSessionOptionIndex(1));
+    const connectPromise = connect({ sessionId: session._id }).then(() => setSessionOptionIndex(1));
 
     const promise =
       session.sessionStatus === "not_started"
@@ -97,9 +97,7 @@ export const SessionButton = ({ session }: SessionButtonProps) => {
   const handleEndSession = useCallback(async () => {
     if (!isDefined(session)) return;
 
-    const promise = Promise.all([
-      endSession({ sessionId: session._id })
-    ]);
+    const promise = Promise.all([endSession({ sessionId: session._id })]);
 
     toast.promise(promise, {
       loading: "Ending session...",
