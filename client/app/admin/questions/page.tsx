@@ -110,7 +110,7 @@ export default function QuestionsManagementPage() {
     const categories = useMemo(() => {
         if (!questions) return [];
         const allCategories = questions.flatMap(q => q.category || []);
-        return Array.from(new Set(allCategories)).sort();
+        return Array.from(new Set(allCategories)).sort() as string[];
     }, [questions]);
 
     // Filter questions based on search and filters
