@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Id } from "@/convex/_generated/dataModel";
 import { useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { useAction } from "convex/react";
+import { toast } from "sonner";
 
 interface QuestionListProps {
     questions: any[]; // Replace 'any' with your actual Question type
@@ -15,6 +18,10 @@ interface QuestionListProps {
 }
 
 export default function QuestionList({ questions, updateStatus, updateStarred, completedQuestions, starredQuestions }: QuestionListProps) {
+    const router = useRouter();
+    const createAgentThread = useAction(api.actions.createAgentThread);
+    const createSession = useMutation(api.sessions.createCodeSession);
+
     const isQuestionCompleted = useCallback((questionId: Id<"questions">) => {
         return completedQuestions.has(questionId); // O(1) time complexity
     }, [completedQuestions]);
@@ -83,6 +90,33 @@ export default function QuestionList({ questions, updateStatus, updateStarred, c
                 </TooltipContent>
             </Tooltip>
         );
+    };
+
+    const handleStartInterview = async (questionId: Id<"questions">) => {
+        const promise = createAgentThread({ graphId: "code-mock-staged-v1-db" })
+            .then(({ threadId, assistantId }) => {
+                return createSession({
+                    questionId: questionId,
+                    agentThreadId: threadId,
+                    assistantId: assistantId,
+                    interviewType: "coding",
+                    interviewMode: "practice",
+                    interviewFlow: ["introduction", "coding", "evaluation"],
+                    programmingLanguage: "python",
+                    timeLimit: 30,
+                    voice: "alloy",
+                    modelName: "gpt-4o",
+                });
+            })
+            .then((sessionId) => {
+                router.push(`/dashboard/interviews/${sessionId}`);
+            });
+
+        toast.promise(promise, {
+            loading: "Creating interview",
+            success: "Interview created",
+            error: (error) => error.message,
+        });
     };
 
     return (
@@ -157,6 +191,7 @@ export default function QuestionList({ questions, updateStatus, updateStarred, c
                                             variant="ghost"
                                             size="sm"
                                             className="h-8 w-8 p-0 hover:bg-blue-50 dark:hover:bg-blue-950/50 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                            onClick={() => handleStartInterview(question._id)}
                                         >
                                             <PlayCircle className="h-5 w-5 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300" />
                                         </Button>

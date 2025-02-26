@@ -84,7 +84,9 @@ export default function QuestionFilter({
                                             <button
                                                 key={company.name}
                                                 onClick={() => {
-                                                    const newCompanies = selectedCompanies.filter(c => c !== company.name);
+                                                    const newCompanies = selectedCompanies.includes(company.name)
+                                                        ? selectedCompanies.filter(c => c !== company.name)
+                                                        : [...selectedCompanies, company.name];
                                                     setSelectedCompanies(newCompanies);
                                                 }}
                                                 className={`px-2 py-1 rounded-full text-sm ${selectedCompanies.includes(company.name)
