@@ -24,9 +24,6 @@ export const getAll = query({
   },
 });
 
-
-
-
 export const updateStarred = userMutation({
   args: {
     questionId: v.id("questions"),
@@ -46,8 +43,6 @@ export const updateStarred = userMutation({
     if (!userProfile) throw new Error("User profile not found");
 
     const currentStarred = userProfile.starredQuestions ?? [];
-
-
 
     if (starred) {
       // Add to starred if not already present
@@ -87,8 +82,6 @@ export const updateStatus = userMutation({
 
     const currentStatus = userProfile.completedQuestions ?? [];
 
-
-
     if (status === "complete") {
       // Add to starred if not already present
       if (!currentStatus.includes(questionId)) {
@@ -126,6 +119,7 @@ export const createQuestion = mutation({
     solutions: v.record(v.string(), v.string()),
     metaData: v.optional(v.record(v.string(), v.any())),
     companies: v.array(v.string()),
+    questionSets: v.array(v.string()),
   },
   handler: async (ctx, args) => {
     const questionId = await ctx.table("questions").insert({
@@ -160,6 +154,8 @@ export const updateQuestion = mutation({
     ),
     solutions: v.optional(v.record(v.string(), v.string())),
     metaData: v.optional(v.record(v.string(), v.any())),
+    companies: v.optional(v.array(v.string())),
+    questionSets: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args) => {
     const { questionId, ...updates } = args;
@@ -187,3 +183,6 @@ export const deleteQuestion = mutation({
     return { questionId };
   },
 });
+
+
+

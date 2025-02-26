@@ -30,21 +30,19 @@ def generate_input_parameters(question: Question) -> dict:
     print("\ngenerating input parameters")
     example_params = [
         {
-            "cpp": ["s", "string", "k", "int"],
-            "java": ["s", "String", "k", "int"],
-            "javascript": ["s", "string", "k", "number"],
-            "python": ["s", "str", "k", "int"],
+            "cpp": { "k": "int", "nums": "vector<int>" },
+            "java": { "k": "int", "nums": "int[]" },
+            "javascript": { "k": "number", "nums": "number[]" },
+            "python": { "k": "int", "nums": "List[int]" },
         },
         {
-            "cpp": ["l1", "ListNode*", "l2", "ListNode*"],
-            "java": ["l1", "ListNode", "l2", "ListNode"],
-            "javascript": ["l1", "ListNode", "l2", "ListNode"],
-            "python": [
-                "l1",
-                "Optional[ListNode]",
-                "l2",
-                "Optional[ListNode]",
-            ],
+            "cpp": { "l1": "ListNode*", "l2": "ListNode*" },
+            "java": { "l1": "ListNode", "l2": "ListNode" },
+            "javascript": { "l1": "ListNode", "l2": "ListNode" },
+            "python": {
+                "l1": "Optional[ListNode]", 
+                "l2": "Optional[ListNode]",
+            },
         }
     ]
     prompt = f"""You are a LeetCode expert. Generate input parameters for this question:

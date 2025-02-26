@@ -12,7 +12,7 @@ import {
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useQuery, useMutation, useAction } from "convex/react";
-import { PlusCircle, Pencil, Trash2, Loader2, Eye, Search, Download } from "lucide-react";
+import { PlusCircle, Pencil, Trash2, Loader2, Eye, Search, Download, ImportIcon, Sparkles, Play } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import {
     Dialog,
@@ -45,7 +45,6 @@ import ReactMarkdown from "react-markdown";
 import TurndownService from "turndown";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Editor from "@monaco-editor/react";
-import { PlayIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 
 
@@ -84,13 +83,15 @@ interface TabValidation {
 
 type TabId = keyof TabValidation;
 
-// Add this interface for basic info state
+// Update the BasicInfo interface to reflect these fields as strings (for input)
 interface BasicInfo {
     title: string;
-    category: string;
+    category: string;  // Will be comma-separated in the UI, converted to array on submit
     difficulty: number;
     functionName: string;
     question: string;
+    companies: string;  // Will be comma-separated in the UI, converted to array on submit
+    questionSets: string;  // Will be comma-separated in the UI, converted to array on submit
 }
 
 // Add this near other interfaces
@@ -189,6 +190,8 @@ export default function QuestionsPage() {
         difficulty: editingQuestion?.difficulty || 1,
         functionName: editingQuestion?.functionName || "",
         question: editingQuestion?.question || "",
+        companies: Array.isArray(editingQuestion?.companies) ? editingQuestion.companies.join(", ") : "",
+        questionSets: Array.isArray(editingQuestion?.questionSets) ? editingQuestion.questionSets.join(", ") : "",
     });
 
     // Add this near other state declarations
@@ -256,12 +259,17 @@ export default function QuestionsPage() {
         e.preventDefault();
 
         // Use basicInfo state instead of form data
-        const isBasicValid = Object.values(basicInfo).every(Boolean);
+        // Only check required fields (title, category, difficulty, functionName, question)
+        const isBasicValid = basicInfo.title &&
+            basicInfo.category &&
+            basicInfo.difficulty &&
+            basicInfo.functionName &&
+            basicInfo.question;
         const isParametersValid = validateParameters();
         const isTestcasesValid = validateTestcases();
 
         setTabValidation({
-            basic: isBasicValid,
+            basic: !!isBasicValid,
             parameters: isParametersValid,
             testcases: isTestcasesValid,
             validation: false,
@@ -285,7 +293,9 @@ export default function QuestionsPage() {
                 difficulty: basicInfo.difficulty,
                 question: basicInfo.question,
                 functionName: basicInfo.functionName,
-                category: basicInfo.category.split(",").map(c => c.trim()),
+                category: basicInfo.category.split(",").map(c => c.trim()).filter(Boolean),
+                companies: basicInfo.companies.split(",").map(c => c.trim()).filter(Boolean),
+                questionSets: basicInfo.questionSets.split(",").map(q => q.trim()).filter(Boolean),
                 tests: testcases,
                 solutions: {
                     ...editingQuestion?.solutions,
@@ -312,7 +322,6 @@ export default function QuestionsPage() {
                 outputParameters: selectedOutputType,
                 evalMode: evalMode,
                 metaData: {},
-                companies: [],
             };
 
             if (editingQuestion) {
@@ -351,16 +360,19 @@ export default function QuestionsPage() {
         try {
             // Handle array/list types first
             if (type.includes("List[") || type.includes("[]") || type.includes("vector")) {
-                const parsedArray = JSON.parse(value);
-                // Handle specific array types
-                if (type.includes("float") || type.includes("Float")) {
-                    return parsedArray.map(Number);
-                } else if (type.includes("int") || type.includes("integer")) {
-                    return parsedArray.map((v: any) => parseInt(v, 10));
-                } else if (type.includes("bool") || type.includes("boolean")) {
-                    return parsedArray.map((v: any) => Boolean(v));
+                // If the value is already an array (from direct input), return it
+                if (Array.isArray(value)) return value;
+
+                // If it's an empty array string, return empty array
+                if (value === "[]") return [];
+
+                // Try to parse JSON array
+                try {
+                    return JSON.parse(value);
+                } catch (e) {
+                    // If parsing fails, return empty array
+                    return [];
                 }
-                return parsedArray;
             }
 
             // Handle scalar types
@@ -518,16 +530,18 @@ export default function QuestionsPage() {
         }
     }, [editingQuestion]);
 
-    // Add this useEffect to handle state initialization when editing
+    // When initializing the state from an existing question, handle all three fields
     useEffect(() => {
         if (editingQuestion) {
             // Set basic info
             setBasicInfo({
                 title: editingQuestion.title,
-                category: editingQuestion.category.join(", "),
+                category: editingQuestion.category?.join(", ") || "",
                 difficulty: editingQuestion.difficulty,
                 functionName: editingQuestion.functionName,
                 question: editingQuestion.question,
+                companies: Array.isArray(editingQuestion.companies) ? editingQuestion.companies.join(", ") : "",
+                questionSets: Array.isArray(editingQuestion.questionSets) ? editingQuestion.questionSets.join(", ") : "",
             });
 
             // Set parameters with null check
@@ -573,6 +587,8 @@ export default function QuestionsPage() {
                 difficulty: 1,
                 functionName: "",
                 question: "",
+                companies: "",
+                questionSets: "",
             });
             setParameters([{
                 name: "",
@@ -674,6 +690,182 @@ export default function QuestionsPage() {
         setValidationLanguage("python");
     };
 
+    // Add this state for the import title
+    const [importTitle, setImportTitle] = useState<string>("");
+    const [isImporting, setIsImporting] = useState<boolean>(false);
+
+    // Add this action
+    const scrapeQuestion = useAction(api.actions.scrapeQuestion);
+    const generateQuestion = useAction(api.actions.generateQuestion);
+
+
+    // Add this function to handle importing a question
+    const handleImportQuestion = async () => {
+        if (!importTitle.trim()) {
+            toast.error("Please enter a question title to import");
+            return;
+        }
+
+        setIsImporting(true);
+        try {
+            const questionData = await scrapeQuestion({ titleSlug: importTitle });
+
+            // Parse company tags if available
+            let companies = "";
+            try {
+                if (questionData.companyTagStats) {
+                    // The companyTagStats is a JSON string with a structure like:
+                    // {"1": [{"name": "Google", ...}, {"name": "Amazon", ...}]}
+                    const companyStats = JSON.parse(questionData.companyTagStats);
+
+                    // Extract company names from the first array (key "1")
+                    if (companyStats["1"] && Array.isArray(companyStats["1"])) {
+                        companies = companyStats["1"]
+                            .map((tag: any) => tag.name)
+                            .join(", ");
+                    }
+                }
+            } catch (e) {
+                console.error("Error parsing company tags:", e);
+            }
+
+            // Parse topic tags
+            const categories = questionData.topicTags
+                .map((tag: any) => tag.name)
+                .join(", ");
+
+            // Map difficulty level
+            const difficultyMap: Record<string, number> = {
+                "Easy": 1,
+                "Medium": 2,
+                "Hard": 3
+            };
+
+            // Generate additional question data using AI
+            const generatedData = await generateQuestion({
+                questionTitle: questionData.questionTitle,
+                questionContent: questionData.question
+            });
+
+            // Update basic info state
+            setBasicInfo({
+                title: questionData.questionTitle || importTitle,
+                category: categories || "",
+                difficulty: difficultyMap[questionData.difficulty] || 1,
+                functionName: generatedData.functionName,
+                question: questionData.question || "",
+                companies: companies,
+                questionSets: ""  // No direct mapping for this
+            });
+
+            // Update parameters state
+            if (generatedData.inputParameters) {
+                const params = Object.entries(generatedData.inputParameters.cpp || {}).map(([name, type]) => ({
+                    name,
+                    types: {
+                        cpp: generatedData.inputParameters.cpp[name],
+                        java: generatedData.inputParameters.java[name],
+                        javascript: generatedData.inputParameters.javascript[name],
+                        python: generatedData.inputParameters.python[name],
+                    }
+                }));
+                setParameters(params);
+            }
+
+            // Update test cases state
+            if (generatedData.tests && generatedData.tests.length > 0) {
+                setTestcases(generatedData.tests);
+            }
+
+            // Update eval mode
+            setEvalMode(generatedData.evalMode as EvalMode);
+
+            toast.success("Question imported successfully");
+
+            // Switch to the basic tab to show the imported data
+            setActiveTab("basic");
+
+        } catch (error) {
+            console.error("Error importing question:", error);
+            toast.error("Failed to import question: " + error);
+        } finally {
+            setIsImporting(false);
+        }
+    };
+
+    // Helper function to generate a function name from the title
+    const generateFunctionName = (title: string): string => {
+        if (!title) return "";
+
+        // Convert "Two Sum" to "twoSum"
+        return title
+            .toLowerCase()
+            .replace(/[^\w\s]/g, '')  // Remove special characters
+            .split(/\s+/)  // Split by whitespace
+            .map((word, index) =>
+                index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)
+            )
+            .join('');
+    };
+
+    // Add these state variables
+    const [isSolutionGenerating, setIsSolutionGenerating] = useState<boolean>(false);
+    const [selectedSolutionLanguage, setSelectedSolutionLanguage] = useState<string>("python");
+
+    // Add this action
+    const generateSolution = useAction(api.actions.generateSolution);
+
+    // Add this function to handle solution generation
+    const handleGenerateSolution = async () => {
+        if (!basicInfo.title || !basicInfo.question || !basicInfo.functionName) {
+            toast.error("Please fill in the basic question information first");
+            return;
+        }
+
+        if (parameters.length === 0 || !parameters[0].name) {
+            toast.error("Please define at least one parameter");
+            return;
+        }
+
+        setIsSolutionGenerating(true);
+
+        try {
+            const result = await generateSolution({
+                questionTitle: basicInfo.title,
+                questionContent: basicInfo.question,
+                functionName: basicInfo.functionName,
+                inputParameters: parameters.reduce((acc, param) => {
+                    if (!acc.cpp) acc.cpp = {};
+                    if (!acc.java) acc.java = {};
+                    if (!acc.javascript) acc.javascript = {};
+                    if (!acc.python) acc.python = {};
+
+                    acc.cpp[param.name] = param.types.cpp;
+                    acc.java[param.name] = param.types.java;
+                    acc.javascript[param.name] = param.types.javascript;
+                    acc.python[param.name] = param.types.python;
+
+                    return acc;
+                }, {} as Record<string, Record<string, string>>),
+                outputType: selectedOutputType,
+                language: selectedSolutionLanguage
+            });
+
+            // Set the validation code with the generated solution
+            setValidationCode(result.solution);
+            setValidationLanguage(selectedSolutionLanguage);
+
+            // Switch to validation tab to show the result
+            setActiveTab("validation");
+
+            toast.success("Solution generated successfully");
+        } catch (error) {
+            toast.error("Failed to generate solution: " + error);
+        } finally {
+            setIsSolutionGenerating(false);
+        }
+    };
+
     return (
         <div className="p-6 space-y-6">
             <div className="flex justify-between items-center">
@@ -699,12 +891,44 @@ export default function QuestionsPage() {
                             </DialogTrigger>
                         </div>
                     </div>
-                    <DialogContent className="sm:max-w-[800px]">
+                    <DialogContent className="sm:max-w-[1200px]">
                         <DialogHeader>
                             <DialogTitle>
                                 {editingQuestion ? "Edit Question" : "Create New Question"}
                             </DialogTitle>
                         </DialogHeader>
+
+                        {/* Add import section at the top */}
+                        <div className="flex items-center gap-2 mb-4 p-3 border rounded-md bg-muted/30">
+                            <div className="flex-1">
+                                <Label htmlFor="importTitle">Import from LeetCode</Label>
+                                <div className="flex gap-2 mt-1">
+                                    <Input
+                                        id="importTitle"
+                                        placeholder="Enter question title or slug (e.g., 'two-sum')"
+                                        value={importTitle}
+                                        onChange={(e) => setImportTitle(e.target.value)}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={handleImportQuestion}
+                                        disabled={isImporting}
+                                    >
+                                        {isImporting ? (
+                                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                        ) : (
+                                            <ImportIcon className="h-4 w-4 mr-2" />
+                                        )}
+                                        Import
+                                    </Button>
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    Enter a LeetCode question title to automatically import its details
+                                </p>
+                            </div>
+                        </div>
+
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as TabId)} className="w-full">
                                 <TabsList>
@@ -740,6 +964,24 @@ export default function QuestionsPage() {
                                             value={basicInfo.category}
                                             onChange={(e) => setBasicInfo(prev => ({ ...prev, category: e.target.value }))}
                                             required
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="companies">Companies (comma separated, optional)</Label>
+                                        <Input
+                                            id="companies"
+                                            name="companies"
+                                            value={basicInfo.companies}
+                                            onChange={(e) => setBasicInfo(prev => ({ ...prev, companies: e.target.value }))}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="questionSets">Question Sets (comma separated, optional)</Label>
+                                        <Input
+                                            id="questionSets"
+                                            name="questionSets"
+                                            value={basicInfo.questionSets}
+                                            onChange={(e) => setBasicInfo(prev => ({ ...prev, questionSets: e.target.value }))}
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -975,12 +1217,25 @@ export default function QuestionsPage() {
                                                 {parameters.map((param) => (
                                                     <div key={param.name} className="space-y-2">
                                                         <Label>{param.name}</Label>
-                                                        <Input
-                                                            value={testcase.input[param.name] || ""}
-                                                            onChange={(e) => handleTestcaseChange(index, param.name, e.target.value)}
-                                                            placeholder={`Enter ${getGenericType(param.types)}`}
-                                                            type="text"
-                                                        />
+                                                        {param.types.javascript.includes('[]') ||
+                                                            param.types.python.includes('List') ||
+                                                            param.types.cpp.includes('vector') ? (
+                                                            <Textarea
+                                                                value={Array.isArray(testcase.input[param.name])
+                                                                    ? JSON.stringify(testcase.input[param.name])
+                                                                    : testcase.input[param.name] || "[]"}
+                                                                onChange={(e) => handleTestcaseChange(index, param.name, e.target.value)}
+                                                                placeholder={`Enter array (e.g., [1,2,3])`}
+                                                                rows={3}
+                                                            />
+                                                        ) : (
+                                                            <Input
+                                                                value={testcase.input[param.name] || ""}
+                                                                onChange={(e) => handleTestcaseChange(index, param.name, e.target.value)}
+                                                                placeholder={`Enter ${getGenericType(param.types)}`}
+                                                                type="text"
+                                                            />
+                                                        )}
                                                     </div>
                                                 ))}
 
@@ -1003,6 +1258,20 @@ export default function QuestionsPage() {
                                                                 <SelectItem value="false">false</SelectItem>
                                                             </SelectContent>
                                                         </Select>
+                                                    ) : selectedOutputType.includes('List[') ||
+                                                        selectedOutputType.includes('[]') ? (
+                                                        <Textarea
+                                                            value={Array.isArray(testcase.output)
+                                                                ? JSON.stringify(testcase.output)
+                                                                : testcase.output || "[]"}
+                                                            onChange={(e) => {
+                                                                const updatedTestcases = [...testcases];
+                                                                updatedTestcases[index].output = parseValueByType(e.target.value, selectedOutputType);
+                                                                setTestcases(updatedTestcases);
+                                                            }}
+                                                            placeholder={`Enter array (e.g., [1,2,3])`}
+                                                            rows={3}
+                                                        />
                                                     ) : (
                                                         <Input
                                                             value={testcase.output || ""}
@@ -1021,10 +1290,81 @@ export default function QuestionsPage() {
                                         Add Test Case
                                     </Button>
                                 </TabsContent>
-                                <TabsContent value="validation" className="space-y-4 max-h-[80vh] overflow-y-auto pr-4">
-                                    <div className="grid grid-rows-2 gap-4 h-[800px]">
+                                <TabsContent value="validation" className="space-y-4 max-h-[60vh] overflow-y-auto pr-4">
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex items-center gap-2">
+                                            <Label htmlFor="validationLanguage">Language</Label>
+                                            <Select
+                                                value={validationLanguage}
+                                                onValueChange={setValidationLanguage}
+                                            >
+                                                <SelectTrigger className="w-[150px]">
+                                                    <SelectValue placeholder="Select language" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="python">Python</SelectItem>
+                                                    <SelectItem value="javascript">JavaScript</SelectItem>
+                                                    <SelectItem value="java">Java</SelectItem>
+                                                    <SelectItem value="cpp">C++</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        <div className="flex gap-2">
+                                            {/* Add solution generation UI */}
+                                            <div className="flex items-center gap-2">
+                                                <Select
+                                                    value={selectedSolutionLanguage}
+                                                    onValueChange={setSelectedSolutionLanguage}
+                                                >
+                                                    <SelectTrigger className="w-[150px]">
+                                                        <SelectValue placeholder="Generate in" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="python">Python</SelectItem>
+                                                        <SelectItem value="javascript">JavaScript</SelectItem>
+                                                        <SelectItem value="java">Java</SelectItem>
+                                                        <SelectItem value="cpp">C++</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    onClick={handleGenerateSolution}
+                                                    disabled={isSolutionGenerating}
+                                                >
+                                                    {isSolutionGenerating ? (
+                                                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                                    ) : (
+                                                        <Sparkles className="h-4 w-4 mr-2" />
+                                                    )}
+                                                    Generate Solution
+                                                </Button>
+                                            </div>
+
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                onClick={handleRunValidation}
+                                                disabled={isValidating || !validationCode.trim()}
+                                            >
+                                                {isValidating ? (
+                                                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                                ) : (
+                                                    <>
+                                                        <Play className="h-3.5 w-3.5 mr-1" />
+                                                        <span>Run Tests</span>
+                                                    </>
+                                                )}
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                    {/* Rest of the validation tab content */}
+                                    <div className="grid grid-rows-2 gap-4 h-[800px] max-w-full overflow-x-auto">
                                         {/* Top Section - Code Editor */}
-                                        <Card className="p-4 flex flex-col">
+                                        <Card className="p-4 flex flex-col min-w-[800px]">
                                             <div className="flex justify-between items-center mb-4">
                                                 <h3 className="font-medium">Validation Code</h3>
                                                 <div className="flex items-center gap-2">
@@ -1072,11 +1412,11 @@ export default function QuestionsPage() {
                                         </Card>
 
                                         {/* Bottom Section - Output Panel */}
-                                        <Card className="p-4 flex flex-col">
+                                        <Card className="p-4 flex flex-col min-w-[800px]">
                                             <div className="flex justify-between items-center mb-4">
                                                 <h3 className="font-medium">Test Results</h3>
                                                 <Button
-                                                    variant="outline-blue"
+                                                    variant="outline"
                                                     className="h-8"
                                                     onClick={handleRunValidation}
                                                     disabled={isValidating}
@@ -1085,18 +1425,18 @@ export default function QuestionsPage() {
                                                         <Loader2 className="h-4 w-4 animate-spin" />
                                                     ) : (
                                                         <>
-                                                            <PlayIcon className="h-3.5 w-3.5 mr-1" />
+                                                            <Play className="h-3.5 w-3.5 mr-1" />
                                                             <span>Run Tests</span>
                                                         </>
                                                     )}
                                                 </Button>
                                             </div>
-                                            <div className="flex-1 min-h-0">
-                                                <ScrollArea className="h-full border rounded-md bg-muted/50">
-                                                    <pre className="p-4 text-sm whitespace-pre overflow-x-auto min-w-full">
+                                            <div className="flex-1 min-h-0 max-h-[300px] w-full overflow-hidden">
+                                                <div className="h-full w-full border rounded-md bg-muted/50 overflow-auto">
+                                                    <pre className="p-4 text-sm whitespace-pre">
                                                         {validationOutput}
                                                     </pre>
-                                                </ScrollArea>
+                                                </div>
                                             </div>
                                         </Card>
                                     </div>
