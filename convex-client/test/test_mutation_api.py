@@ -96,6 +96,20 @@ class TestMutationApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_questions_update_starred_post(self) -> None:
+        """Test case for api_run_questions_update_starred_post
+
+        Calls a mutation at the path questions.js:updateStarred
+        """
+        pass
+
+    def test_api_run_questions_update_status_post(self) -> None:
+        """Test case for api_run_questions_update_status_post
+
+        Calls a mutation at the path questions.js:updateStatus
+        """
+        pass
+
     def test_api_run_sessions_create_code_session_post(self) -> None:
         """Test case for api_run_sessions_create_code_session_post
 

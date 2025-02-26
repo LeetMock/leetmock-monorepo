@@ -3,7 +3,7 @@ info:
   title: Convex App - OpenAPI 3.0
   version: 0.0.0
 servers:
-  - url: https://strong-starling-42.convex.cloud
+  - url: https://useful-meadowlark-907.convex.cloud
 security:
   - bearerAuth: []
 tags:
@@ -218,6 +218,68 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Response_questions.updateQuestion"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/questions/updateStarred:
+    post:
+      summary: Calls a mutation at the path questions.js:updateStarred
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_questions.updateStarred"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_questions.updateStarred"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/questions/updateStatus:
+    post:
+      summary: Calls a mutation at the path questions.js:updateStatus
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_questions.updateStatus"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_questions.updateStatus"
         "400":
           description: Failed operation
           content:
@@ -479,6 +541,99 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/userProfiles/getCompletedQuestions:
+    post:
+      summary: Calls a query at the path userProfiles.js:getCompletedQuestions
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_userProfiles.getCompletedQuestions"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_userProfiles.getCompletedQuestions"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/userProfiles/getStarredQuestions:
+    post:
+      summary: Calls a query at the path userProfiles.js:getStarredQuestions
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_userProfiles.getStarredQuestions"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_userProfiles.getStarredQuestions"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/userProfiles/getUserMinutesRemaining:
+    post:
+      summary: Calls a query at the path userProfiles.js:getUserMinutesRemaining
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_userProfiles.getUserMinutesRemaining"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_userProfiles.getUserMinutesRemaining"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
   /api/run/userProfiles/getUserProfile:
     post:
       summary: Calls a query at the path userProfiles.js:getUserProfile
@@ -497,37 +652,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Response_userProfiles.getUserProfile"
-        "400":
-          description: Failed operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-        "500":
-          description: Convex Internal Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FailedResponse"
-
-  /api/run/actions/triggerEval:
-    post:
-      summary: Calls a action at the path actions.js:triggerEval
-      tags:
-        - action
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Request_actions.triggerEval"
-        required: true
-      responses:
-        "200":
-          description: Convex executed your request and returned a result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Response_actions.triggerEval"
         "400":
           description: Failed operation
           content:
@@ -590,6 +714,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Response_actions.getToken"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/actions/scheduleEval:
+    post:
+      summary: Calls a action at the path actions.js:scheduleEval
+      tags:
+        - action
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_actions.scheduleEval"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_actions.scheduleEval"
         "400":
           description: Failed operation
           content:
@@ -714,6 +869,99 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Response_actions.getSessionMetadata"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/actions/scrapeQuestion:
+    post:
+      summary: Calls a action at the path actions.js:scrapeQuestion
+      tags:
+        - action
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_actions.scrapeQuestion"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_actions.scrapeQuestion"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/actions/generateQuestion:
+    post:
+      summary: Calls a action at the path actions.js:generateQuestion
+      tags:
+        - action
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_actions.generateQuestion"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_actions.generateQuestion"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/actions/generateSolution:
+    post:
+      summary: Calls a action at the path actions.js:generateSolution
+      tags:
+        - action
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_actions.generateSolution"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_actions.generateSolution"
         "400":
           description: Failed operation
           content:
@@ -1254,6 +1502,37 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/pricings/getPricing:
+    post:
+      summary: Calls a query at the path pricings.js:getPricing
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_pricings.getPricing"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_pricings.getPricing"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -1363,17 +1642,23 @@ components:
           type: object
           required:
             - category
+            - companies
             - difficulty
             - evalMode
             - functionName
             - inputParameters
             - outputParameters
             - question
+            - questionSets
             - solutions
             - tests
             - title
           properties:
             category:
+              type: array
+              items:
+                type: string
+            companies:
               type: array
               items:
                 type: string
@@ -1400,6 +1685,10 @@ components:
               type: string
             question:
               type: string
+            questionSets:
+              type: array
+              items:
+                type: string
             solutions:
               type: object
             tests:
@@ -1556,6 +1845,10 @@ components:
               type: array
               items:
                 type: string
+            companies:
+              type: array
+              items:
+                type: string
             difficulty:
               type: number
             evalMode:
@@ -1582,6 +1875,10 @@ components:
             questionId:
               type: string
               description: ID from table "questions"
+            questionSets:
+              type: array
+              items:
+                type: string
             solutions:
               type: object
             tests:
@@ -1598,6 +1895,72 @@ components:
               type: string
 
     Response_questions.updateQuestion:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_questions.updateStarred:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - questionId
+            - starred
+          properties:
+            questionId:
+              type: string
+              description: ID from table "questions"
+            starred:
+              type: boolean
+
+    Response_questions.updateStarred:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_questions.updateStatus:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - questionId
+            - status
+          properties:
+            questionId:
+              type: string
+              description: ID from table "questions"
+            status:
+              type: string
+
+    Response_questions.updateStatus:
       type: object
       required:
         - status
@@ -1954,6 +2317,58 @@ components:
           type: object
         value: {}
 
+    Request_userProfiles.decrementEvaluationCount:
+      type: object
+      required:
+        - args
+      properties:
+        args: {}
+
+    Response_userProfiles.decrementEvaluationCount:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.decrementMinutesRemaining:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - minutes
+          properties:
+            minutes:
+              type: number
+
+    Response_userProfiles.decrementMinutesRemaining:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
     Request_userProfiles.getByEmailInternal:
       type: object
       required:
@@ -1966,6 +2381,77 @@ components:
               type: string
 
     Response_userProfiles.getByEmailInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.getCompletedQuestions:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+
+    Response_userProfiles.getCompletedQuestions:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.getStarredQuestions:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+
+    Response_userProfiles.getStarredQuestions:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.getUserMinutesRemaining:
+      type: object
+      required:
+        - args
+      properties:
+        args: {}
+
+    Response_userProfiles.getUserMinutesRemaining:
       type: object
       required:
         - status
@@ -2073,6 +2559,8 @@ components:
               type: number
             email:
               type: string
+            evaluationCount:
+              type: number
             interval:
               oneOf:
                 - type: string
@@ -2104,7 +2592,7 @@ components:
                     - "premium"
                 - type: string
                   enum:
-                    - "enterprise"
+                    - "payAsYouGo"
             refreshDate:
               type: number
             subscriptionStatus:
@@ -2140,36 +2628,6 @@ components:
               type: string
 
     Response_userProfiles.voidSubscriptionInternal:
-      type: object
-      required:
-        - status
-      properties:
-        status:
-          type: string
-          enum:
-            - "success"
-            - "error"
-        errorMessage:
-          type: string
-        errorData:
-          type: object
-        value: {}
-
-    Request_actions.triggerEval:
-      type: object
-      required:
-        - args
-      properties:
-        args:
-          type: object
-          required:
-            - sessionId
-          properties:
-            sessionId:
-              type: string
-              description: ID from table "sessions"
-
-    Response_actions.triggerEval:
       type: object
       required:
         - status
@@ -2222,6 +2680,36 @@ components:
         args: {}
 
     Response_actions.getToken:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_actions.scheduleEval:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_actions.scheduleEval:
       type: object
       required:
         - status
@@ -2492,6 +2980,224 @@ components:
             voice:
               type: string
 
+    Request_actions.scrapeQuestion:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - titleSlug
+          properties:
+            titleSlug:
+              type: string
+
+    Response_actions.scrapeQuestion:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value:
+          type: object
+          required:
+            - companyTagStats
+            - difficulty
+            - dislikes
+            - exampleTestcases
+            - hints
+            - isPaidOnly
+            - likes
+            - link
+            - question
+            - questionFrontendId
+            - questionId
+            - questionTitle
+            - similarQuestions
+            - solution
+            - titleSlug
+            - topicTags
+          properties:
+            companyTagStats:
+              type: string
+            difficulty:
+              type: string
+            dislikes:
+              type: number
+            exampleTestcases:
+              type: string
+            hints:
+              type: array
+              items: {}
+            isPaidOnly:
+              type: boolean
+            likes:
+              type: number
+            link:
+              type: string
+            question:
+              type: string
+            questionFrontendId:
+              type: string
+            questionId:
+              type: string
+            questionTitle:
+              type: string
+            similarQuestions:
+              type: string
+            solution:
+              type: object
+              required:
+                - canSeeDetail
+                - hasVideoSolution
+                - id
+                - paidOnly
+                - paidOnlyVideo
+              properties:
+                canSeeDetail:
+                  type: boolean
+                hasVideoSolution:
+                  type: boolean
+                id:
+                  type: string
+                paidOnly:
+                  type: boolean
+                paidOnlyVideo:
+                  type: boolean
+            titleSlug:
+              type: string
+            topicTags:
+              type: array
+              items:
+                type: object
+                required:
+                  - name
+                  - slug
+                  - translatedName
+                properties:
+                  name:
+                    type: string
+                  slug:
+                    type: string
+                  translatedName:
+                    type: string
+                    nullable: true
+
+    Request_actions.generateQuestion:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - questionContent
+            - questionTitle
+          properties:
+            questionContent:
+              type: string
+            questionTitle:
+              type: string
+
+    Response_actions.generateQuestion:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value:
+          type: object
+          required:
+            - evalMode
+            - functionName
+            - inputParameters
+            - tests
+          properties:
+            evalMode:
+              type: string
+            functionName:
+              type: string
+            inputParameters:
+              type: object
+            tests:
+              type: array
+              items:
+                type: object
+                required:
+                  - input
+                  - output
+                properties:
+                  input:
+                    type: object
+                  output: {}
+
+    Request_actions.generateSolution:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - functionName
+            - inputParameters
+            - language
+            - outputType
+            - questionContent
+            - questionTitle
+          properties:
+            functionName:
+              type: string
+            inputParameters:
+              type: object
+            language:
+              type: string
+            outputType:
+              type: string
+            questionContent:
+              type: string
+            questionTitle:
+              type: string
+
+    Response_actions.generateSolution:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value:
+          type: object
+          required:
+            - solution
+          properties:
+            solution:
+              type: string
+
     Request_admins.createUserProfile:
       type: object
       required:
@@ -2532,7 +3238,7 @@ components:
                     - "premium"
                 - type: string
                   enum:
-                    - "enterprise"
+                    - "payAsYouGo"
 
     Response_admins.createUserProfile:
       type: object
@@ -2575,7 +3281,7 @@ components:
                     - "premium"
                 - type: string
                   enum:
-                    - "enterprise"
+                    - "payAsYouGo"
             userId:
               type: string
 
@@ -3152,6 +3858,7 @@ components:
             - sessionId
             - terminal
             - testcases
+            - transitionTimestamps
           properties:
             _creationTime:
               type: number
@@ -3198,6 +3905,10 @@ components:
                   expectedOutput: {}
                   input:
                     type: object
+            transitionTimestamps:
+              type: array
+              items:
+                type: number
 
     Request_codeSessionStates.getEditorState:
       type: object
@@ -3364,30 +4075,6 @@ components:
               description: ID from table "sessions"
 
     Response_codeSessionStates.getTestCasesStateInternal:
-      type: object
-      required:
-        - status
-      properties:
-        status:
-          type: string
-          enum:
-            - "success"
-            - "error"
-        errorMessage:
-          type: string
-        errorData:
-          type: object
-        value: {}
-
-    Request_eval.checkPendingEvaluationsInternal:
-      type: object
-      required:
-        - args
-      properties:
-        args:
-          type: object
-
-    Response_eval.checkPendingEvaluationsInternal:
       type: object
       required:
         - status
@@ -3799,6 +4486,36 @@ components:
           type: object
         value: {}
 
+    Request_eval.checkTimeout:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_eval.checkTimeout:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
     Request_agentStates.getBySessionId:
       type: object
       required:
@@ -3885,6 +4602,202 @@ components:
               type: string
 
     Response_agentStates.setBySessionId:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_pricings.getPricing:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - tier
+          properties:
+            tier:
+              oneOf:
+                - type: string
+                  enum:
+                    - "free"
+                - type: string
+                  enum:
+                    - "basic"
+                - type: string
+                  enum:
+                    - "premium"
+                - type: string
+                  enum:
+                    - "payAsYouGo"
+                - type: string
+                  enum:
+                    - "premiumExtraMins"
+
+    Response_pricings.getPricing:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_pricings.getPricingsInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - tier
+          properties:
+            tier:
+              oneOf:
+                - type: string
+                  enum:
+                    - "free"
+                - type: string
+                  enum:
+                    - "basic"
+                - type: string
+                  enum:
+                    - "premium"
+                - type: string
+                  enum:
+                    - "payAsYouGo"
+                - type: string
+                  enum:
+                    - "premiumExtraMins"
+
+    Response_pricings.getPricingsInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_jobs.create:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - lastUpdate
+            - numRetries
+            - sessionId
+            - status
+          properties:
+            lastUpdate:
+              type: number
+            numRetries:
+              type: number
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+            status:
+              oneOf:
+                - type: string
+                  enum:
+                    - "pending"
+                - type: string
+                  enum:
+                    - "inProgress"
+                - type: string
+                  enum:
+                    - "success"
+                - type: string
+                  enum:
+                    - "failed"
+                - type: string
+                  enum:
+                    - "timeOut"
+
+    Response_jobs.create:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_jobs.triggerEvalJobs_Deprecated:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+
+    Response_jobs.triggerEvalJobs_Deprecated:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_jobs.triggerEvalJob:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
+
+    Response_jobs.triggerEvalJob:
       type: object
       required:
         - status

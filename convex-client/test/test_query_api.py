@@ -166,6 +166,20 @@ class TestQueryApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_user_profiles_get_completed_questions_post(self) -> None:
+        """Test case for api_run_user_profiles_get_completed_questions_post
+
+        Calls a query at the path userProfiles.js:getCompletedQuestions
+        """
+        pass
+
+    def test_api_run_user_profiles_get_starred_questions_post(self) -> None:
+        """Test case for api_run_user_profiles_get_starred_questions_post
+
+        Calls a query at the path userProfiles.js:getStarredQuestions
+        """
+        pass
+
     def test_api_run_user_profiles_get_user_minutes_remaining_post(self) -> None:
         """Test case for api_run_user_profiles_get_user_minutes_remaining_post
 

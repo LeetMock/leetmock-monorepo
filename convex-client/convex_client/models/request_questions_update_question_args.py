@@ -29,6 +29,7 @@ class RequestQuestionsUpdateQuestionArgs(BaseModel):
     RequestQuestionsUpdateQuestionArgs
     """ # noqa: E501
     category: Optional[List[StrictStr]] = None
+    companies: Optional[List[StrictStr]] = None
     difficulty: Optional[Union[StrictFloat, StrictInt]] = None
     eval_mode: Optional[RequestQuestionsCreateQuestionArgsEvalMode] = Field(default=None, alias="evalMode")
     function_name: Optional[StrictStr] = Field(default=None, alias="functionName")
@@ -37,10 +38,11 @@ class RequestQuestionsUpdateQuestionArgs(BaseModel):
     output_parameters: Optional[StrictStr] = Field(default=None, alias="outputParameters")
     question: Optional[StrictStr] = None
     question_id: StrictStr = Field(description="ID from table \"questions\"", alias="questionId")
+    question_sets: Optional[List[StrictStr]] = Field(default=None, alias="questionSets")
     solutions: Optional[Dict[str, Any]] = None
     tests: Optional[List[RequestQuestionsCreateQuestionArgsTestsInner]] = None
     title: Optional[StrictStr] = None
-    __properties: ClassVar[List[str]] = ["category", "difficulty", "evalMode", "functionName", "inputParameters", "metaData", "outputParameters", "question", "questionId", "solutions", "tests", "title"]
+    __properties: ClassVar[List[str]] = ["category", "companies", "difficulty", "evalMode", "functionName", "inputParameters", "metaData", "outputParameters", "question", "questionId", "questionSets", "solutions", "tests", "title"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -104,6 +106,7 @@ class RequestQuestionsUpdateQuestionArgs(BaseModel):
 
         _obj = cls.model_validate({
             "category": obj.get("category"),
+            "companies": obj.get("companies"),
             "difficulty": obj.get("difficulty"),
             "evalMode": RequestQuestionsCreateQuestionArgsEvalMode.from_dict(obj["evalMode"]) if obj.get("evalMode") is not None else None,
             "functionName": obj.get("functionName"),
@@ -112,6 +115,7 @@ class RequestQuestionsUpdateQuestionArgs(BaseModel):
             "outputParameters": obj.get("outputParameters"),
             "question": obj.get("question"),
             "questionId": obj.get("questionId"),
+            "questionSets": obj.get("questionSets"),
             "solutions": obj.get("solutions"),
             "tests": [RequestQuestionsCreateQuestionArgsTestsInner.from_dict(_item) for _item in obj["tests"]] if obj.get("tests") is not None else None,
             "title": obj.get("title")

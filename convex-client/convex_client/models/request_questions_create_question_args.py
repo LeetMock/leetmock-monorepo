@@ -29,6 +29,7 @@ class RequestQuestionsCreateQuestionArgs(BaseModel):
     RequestQuestionsCreateQuestionArgs
     """ # noqa: E501
     category: List[StrictStr]
+    companies: List[StrictStr]
     difficulty: Union[StrictFloat, StrictInt]
     eval_mode: RequestQuestionsCreateQuestionArgsEvalMode = Field(alias="evalMode")
     function_name: StrictStr = Field(alias="functionName")
@@ -36,10 +37,11 @@ class RequestQuestionsCreateQuestionArgs(BaseModel):
     meta_data: Optional[Dict[str, Any]] = Field(default=None, alias="metaData")
     output_parameters: StrictStr = Field(alias="outputParameters")
     question: StrictStr
+    question_sets: List[StrictStr] = Field(alias="questionSets")
     solutions: Dict[str, Any]
     tests: List[RequestQuestionsCreateQuestionArgsTestsInner]
     title: StrictStr
-    __properties: ClassVar[List[str]] = ["category", "difficulty", "evalMode", "functionName", "inputParameters", "metaData", "outputParameters", "question", "solutions", "tests", "title"]
+    __properties: ClassVar[List[str]] = ["category", "companies", "difficulty", "evalMode", "functionName", "inputParameters", "metaData", "outputParameters", "question", "questionSets", "solutions", "tests", "title"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -103,6 +105,7 @@ class RequestQuestionsCreateQuestionArgs(BaseModel):
 
         _obj = cls.model_validate({
             "category": obj.get("category"),
+            "companies": obj.get("companies"),
             "difficulty": obj.get("difficulty"),
             "evalMode": RequestQuestionsCreateQuestionArgsEvalMode.from_dict(obj["evalMode"]) if obj.get("evalMode") is not None else None,
             "functionName": obj.get("functionName"),
@@ -110,6 +113,7 @@ class RequestQuestionsCreateQuestionArgs(BaseModel):
             "metaData": obj.get("metaData"),
             "outputParameters": obj.get("outputParameters"),
             "question": obj.get("question"),
+            "questionSets": obj.get("questionSets"),
             "solutions": obj.get("solutions"),
             "tests": [RequestQuestionsCreateQuestionArgsTestsInner.from_dict(_item) for _item in obj["tests"]] if obj.get("tests") is not None else None,
             "title": obj.get("title")

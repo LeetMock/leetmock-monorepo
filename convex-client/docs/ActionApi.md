@@ -1,16 +1,19 @@
 # convex_client.ActionApi
 
-All URIs are relative to *https://strong-starling-42.convex.cloud*
+All URIs are relative to *https://useful-meadowlark-907.convex.cloud*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**api_run_actions_create_agent_thread_post**](ActionApi.md#api_run_actions_create_agent_thread_post) | **POST** /api/run/actions/createAgentThread | Calls a action at the path actions.js:createAgentThread
+[**api_run_actions_generate_question_post**](ActionApi.md#api_run_actions_generate_question_post) | **POST** /api/run/actions/generateQuestion | Calls a action at the path actions.js:generateQuestion
+[**api_run_actions_generate_solution_post**](ActionApi.md#api_run_actions_generate_solution_post) | **POST** /api/run/actions/generateSolution | Calls a action at the path actions.js:generateSolution
 [**api_run_actions_get_session_metadata_post**](ActionApi.md#api_run_actions_get_session_metadata_post) | **POST** /api/run/actions/getSessionMetadata | Calls a action at the path actions.js:getSessionMetadata
 [**api_run_actions_get_token_post**](ActionApi.md#api_run_actions_get_token_post) | **POST** /api/run/actions/getToken | Calls a action at the path actions.js:getToken
 [**api_run_actions_run_code_post**](ActionApi.md#api_run_actions_run_code_post) | **POST** /api/run/actions/runCode | Calls a action at the path actions.js:runCode
 [**api_run_actions_run_ground_truth_test_post**](ActionApi.md#api_run_actions_run_ground_truth_test_post) | **POST** /api/run/actions/runGroundTruthTest | Calls a action at the path actions.js:runGroundTruthTest
 [**api_run_actions_run_tests_post**](ActionApi.md#api_run_actions_run_tests_post) | **POST** /api/run/actions/runTests | Calls a action at the path actions.js:runTests
 [**api_run_actions_schedule_eval_post**](ActionApi.md#api_run_actions_schedule_eval_post) | **POST** /api/run/actions/scheduleEval | Calls a action at the path actions.js:scheduleEval
+[**api_run_actions_scrape_question_post**](ActionApi.md#api_run_actions_scrape_question_post) | **POST** /api/run/actions/scrapeQuestion | Calls a action at the path actions.js:scrapeQuestion
 
 
 # **api_run_actions_create_agent_thread_post**
@@ -29,10 +32,10 @@ from convex_client.models.response_actions_create_agent_thread import ResponseAc
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -92,6 +95,164 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **api_run_actions_generate_question_post**
+> ResponseActionsGenerateQuestion api_run_actions_generate_question_post(request_actions_generate_question)
+
+Calls a action at the path actions.js:generateQuestion
+
+### Example
+
+* Bearer Authentication (bearerAuth):
+
+```python
+import convex_client
+from convex_client.models.request_actions_generate_question import RequestActionsGenerateQuestion
+from convex_client.models.response_actions_generate_question import ResponseActionsGenerateQuestion
+from convex_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
+# See configuration.py for a list of all supported configuration parameters.
+configuration = convex_client.Configuration(
+    host = "https://useful-meadowlark-907.convex.cloud"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization: bearerAuth
+configuration = convex_client.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with convex_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = convex_client.ActionApi(api_client)
+    request_actions_generate_question = convex_client.RequestActionsGenerateQuestion() # RequestActionsGenerateQuestion | 
+
+    try:
+        # Calls a action at the path actions.js:generateQuestion
+        api_response = api_instance.api_run_actions_generate_question_post(request_actions_generate_question)
+        print("The response of ActionApi->api_run_actions_generate_question_post:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling ActionApi->api_run_actions_generate_question_post: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_actions_generate_question** | [**RequestActionsGenerateQuestion**](RequestActionsGenerateQuestion.md)|  | 
+
+### Return type
+
+[**ResponseActionsGenerateQuestion**](ResponseActionsGenerateQuestion.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **api_run_actions_generate_solution_post**
+> ResponseActionsGenerateSolution api_run_actions_generate_solution_post(request_actions_generate_solution)
+
+Calls a action at the path actions.js:generateSolution
+
+### Example
+
+* Bearer Authentication (bearerAuth):
+
+```python
+import convex_client
+from convex_client.models.request_actions_generate_solution import RequestActionsGenerateSolution
+from convex_client.models.response_actions_generate_solution import ResponseActionsGenerateSolution
+from convex_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
+# See configuration.py for a list of all supported configuration parameters.
+configuration = convex_client.Configuration(
+    host = "https://useful-meadowlark-907.convex.cloud"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization: bearerAuth
+configuration = convex_client.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with convex_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = convex_client.ActionApi(api_client)
+    request_actions_generate_solution = convex_client.RequestActionsGenerateSolution() # RequestActionsGenerateSolution | 
+
+    try:
+        # Calls a action at the path actions.js:generateSolution
+        api_response = api_instance.api_run_actions_generate_solution_post(request_actions_generate_solution)
+        print("The response of ActionApi->api_run_actions_generate_solution_post:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling ActionApi->api_run_actions_generate_solution_post: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_actions_generate_solution** | [**RequestActionsGenerateSolution**](RequestActionsGenerateSolution.md)|  | 
+
+### Return type
+
+[**ResponseActionsGenerateSolution**](ResponseActionsGenerateSolution.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **api_run_actions_get_session_metadata_post**
 > ResponseActionsGetSessionMetadata api_run_actions_get_session_metadata_post(request_actions_get_session_metadata)
 
@@ -108,10 +269,10 @@ from convex_client.models.response_actions_get_session_metadata import ResponseA
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -187,10 +348,10 @@ from convex_client.models.response_actions_get_token import ResponseActionsGetTo
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -266,10 +427,10 @@ from convex_client.models.response_actions_run_code import ResponseActionsRunCod
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -345,10 +506,10 @@ from convex_client.models.response_actions_run_ground_truth_test import Response
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -424,10 +585,10 @@ from convex_client.models.response_actions_run_tests import ResponseActionsRunTe
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -503,10 +664,10 @@ from convex_client.models.response_actions_schedule_eval import ResponseActionsS
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -546,6 +707,85 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**ResponseActionsScheduleEval**](ResponseActionsScheduleEval.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **api_run_actions_scrape_question_post**
+> ResponseActionsScrapeQuestion api_run_actions_scrape_question_post(request_actions_scrape_question)
+
+Calls a action at the path actions.js:scrapeQuestion
+
+### Example
+
+* Bearer Authentication (bearerAuth):
+
+```python
+import convex_client
+from convex_client.models.request_actions_scrape_question import RequestActionsScrapeQuestion
+from convex_client.models.response_actions_scrape_question import ResponseActionsScrapeQuestion
+from convex_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
+# See configuration.py for a list of all supported configuration parameters.
+configuration = convex_client.Configuration(
+    host = "https://useful-meadowlark-907.convex.cloud"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization: bearerAuth
+configuration = convex_client.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with convex_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = convex_client.ActionApi(api_client)
+    request_actions_scrape_question = convex_client.RequestActionsScrapeQuestion() # RequestActionsScrapeQuestion | 
+
+    try:
+        # Calls a action at the path actions.js:scrapeQuestion
+        api_response = api_instance.api_run_actions_scrape_question_post(request_actions_scrape_question)
+        print("The response of ActionApi->api_run_actions_scrape_question_post:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling ActionApi->api_run_actions_scrape_question_post: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_actions_scrape_question** | [**RequestActionsScrapeQuestion**](RequestActionsScrapeQuestion.md)|  | 
+
+### Return type
+
+[**ResponseActionsScrapeQuestion**](ResponseActionsScrapeQuestion.md)
 
 ### Authorization
 
