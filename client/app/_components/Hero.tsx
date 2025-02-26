@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
-import Logo from './Logo';
-import { useState, useEffect } from 'react';
+import { motion } from "framer-motion";
+import { ArrowRight, ExternalLink } from "lucide-react";
+import { useEffect, useState } from "react";
+import Logo from "./Logo";
 
 const Hero = () => {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -13,18 +13,18 @@ const Hero = () => {
     setIsClient(true);
     setDimensions({
       width: window.innerWidth,
-      height: window.innerHeight
+      height: window.innerHeight,
     });
 
     const handleResize = () => {
       setDimensions({
         width: window.innerWidth,
-        height: window.innerHeight
+        height: window.innerHeight,
       });
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   if (!isClient) {
@@ -77,7 +77,8 @@ const Hero = () => {
             </span>
           </h1>
           <p className="text-xl md:text-2xl text-blue-200 mb-12 max-w-3xl mx-auto">
-            Leverage the latest AI to master your interviews and land your dream job with confidence.
+            Leverage the latest AI to master your interviews and land your dream job with
+            confidence.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
@@ -85,7 +86,7 @@ const Hero = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => {
-                window.location.href = '/dashboard';
+                window.location.href = "/dashboard";
               }}
               className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-cyan-600 transition-all shadow-[0_0_20px_rgba(0,195,255,0.5)] flex items-center"
             >
@@ -94,10 +95,12 @@ const Hero = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-transparent border-2 border-blue-500/50 text-blue-400/50 rounded-lg font-semibold text-lg cursor-not-allowed backdrop-blur-sm"
-              disabled
+              onClick={() => {
+                window.open("https://www.youtube.com/watch?v=0F8RW2bonGg", "_blank");
+              }}
+              className="px-8 py-4 bg-transparent border-2 border-blue-500 text-blue-400 rounded-lg font-semibold text-lg hover:bg-blue-500/10 transition-all backdrop-blur-sm flex items-center"
             >
-              Watch Demo (Coming Soon)
+              Product Tour <ExternalLink className="ml-2" />
             </motion.button>
           </div>
         </motion.div>
