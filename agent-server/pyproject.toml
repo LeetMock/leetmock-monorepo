@@ -28,8 +28,7 @@ dependencies = [
     "convex_client",
     "libs",
     "agent-graph",
-    "logfire[system-metrics, httpx, aiohttp]>=2.8.0,<3",
-    "pydantic-ai[logfire]>=0.0.13,<0.0.14",
+    "logfire[system-metrics, httpx, aiohttp]",
 ]
 
 [dependency-groups]
