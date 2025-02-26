@@ -733,7 +733,6 @@ Return only one of these modes as a string, without any additional text or expla
     if (!validModes.includes(evalMode)) {
       throw new Error(`Invalid eval mode: ${evalMode}`);
     }
-
     return {
       functionName,
       inputParameters,
