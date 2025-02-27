@@ -6,10 +6,17 @@ import { UserDropdown } from "@/components/user-dropdown";
 import { Doc } from "@/convex/_generated/dataModel";
 import { useSessionSidebar } from "@/hooks/use-session-sidebar";
 import { cn } from "@/lib/utils";
-import { useVoiceAssistant } from "@livekit/components-react";
+import { useVoiceAssistant, useMediaDeviceSelect, useRoomContext } from "@livekit/components-react";
 import { motion } from "framer-motion";
-import { PanelLeftOpen, Settings } from "lucide-react";
+import { PanelLeftOpen, Settings, Mic } from "lucide-react";
 import { SessionButton } from "./session-button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface WorkspaceToolbarProps {
   session: Doc<"sessions">;
@@ -58,6 +65,13 @@ const ConnectionStatus = () => {
 
 export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
   const { collapsed, setCollapsed } = useSessionSidebar();
+  const room = useRoomContext();
+
+  const { devices, activeDeviceId, setActiveMediaDevice } = useMediaDeviceSelect({
+    kind: "audioinput",
+    room,
+    requestPermissions: true,
+  });
 
   return (
     <div className="flex items-center w-full justify-between">
@@ -75,6 +89,26 @@ export const WorkspaceToolbar = ({ session }: WorkspaceToolbarProps) => {
           </Tooltip>
         )}
         <ConnectionStatus />
+        {room && (
+          <Select
+            value={activeDeviceId}
+            onValueChange={(value) => {
+              setActiveMediaDevice(value);
+            }}
+          >
+            <SelectTrigger className="w-[180px] h-9">
+              <Mic className="w-4 h-4 mr-2" />
+              <SelectValue placeholder="Select microphone" />
+            </SelectTrigger>
+            <SelectContent>
+              {devices.map((device) => (
+                <SelectItem key={device.deviceId} value={device.deviceId}>
+                  {device.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
       <div className="flex items-center space-x-2 h-full">
         <UserDropdown align="end">

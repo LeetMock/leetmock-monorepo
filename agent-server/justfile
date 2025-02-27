@@ -6,3 +6,6 @@ test-watch:
 
 dev:
     uv run python -m agent_server.worker dev
+
+kill:
+    kill -9 $(lsof -ti:8081)
