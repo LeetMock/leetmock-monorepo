@@ -11,5 +11,5 @@ def init_telemetry():
         service_name="leetmock-agent-worker",
     )
     logfire.instrument_openai()
-    logfire.instrument_system_metrics()
+    # logfire.instrument_system_metrics()
     basicConfig(handlers=[logfire.LogfireLoggingHandler()])
