@@ -33,6 +33,20 @@ class TestActionApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_actions_generate_question_post(self) -> None:
+        """Test case for api_run_actions_generate_question_post
+
+        Calls a action at the path actions.js:generateQuestion
+        """
+        pass
+
+    def test_api_run_actions_generate_solution_post(self) -> None:
+        """Test case for api_run_actions_generate_solution_post
+
+        Calls a action at the path actions.js:generateSolution
+        """
+        pass
+
     def test_api_run_actions_get_session_metadata_post(self) -> None:
         """Test case for api_run_actions_get_session_metadata_post
 
@@ -72,6 +86,13 @@ class TestActionApi(unittest.TestCase):
         """Test case for api_run_actions_schedule_eval_post
 
         Calls a action at the path actions.js:scheduleEval
+        """
+        pass
+
+    def test_api_run_actions_scrape_question_post(self) -> None:
+        """Test case for api_run_actions_scrape_question_post
+
+        Calls a action at the path actions.js:scrapeQuestion
         """
         pass
 

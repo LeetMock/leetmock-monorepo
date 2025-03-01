@@ -10,7 +10,7 @@ import { useMediaQuery } from "usehooks-ts";
 import { DashboardHeader } from "./_components/dashboard-header";
 import { useSidebar } from "@/hooks/use-sidebar";
 
-const dashboardPages = ["/dashboard/interviews", "/dashboard/settings"];
+const dashboardPages = ["/dashboard/interviews", "/dashboard/settings", "/dashboard/coding", "/dashboard/behavior", "/dashboard/system-design"];
 
 const DashboardSkeleton: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { showPriceBanner } = useConfig();

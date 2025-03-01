@@ -120,7 +120,8 @@ const schema = defineEntSchema({
     title: v.string(),
     metaData: v.record(v.string(), v.any()),
   })
-    .field("companies", v.array(v.string()), { default: [] }),
+    .field("companies", v.array(v.string()), { default: [] })
+    .field("questionSets", v.array(v.string()), { default: [] }),
   inviteCodes: defineEnt({
     code: v.string(),
     assignedRole: v.union(v.literal("admin"), v.literal("user")),

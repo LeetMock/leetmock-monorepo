@@ -38,6 +38,9 @@ class TestRequestQuestionsCreateQuestionArgs(unittest.TestCase):
                 category = [
                     ''
                     ],
+                companies = [
+                    ''
+                    ],
                 difficulty = 1.337,
                 eval_mode = None,
                 function_name = '',
@@ -45,6 +48,9 @@ class TestRequestQuestionsCreateQuestionArgs(unittest.TestCase):
                 meta_data = convex_client.models.meta_data.metaData(),
                 output_parameters = '',
                 question = '',
+                question_sets = [
+                    ''
+                    ],
                 solutions = convex_client.models.solutions.solutions(),
                 tests = [
                     convex_client.models.request_questions_create_question_args_tests_inner.Request_questions_createQuestion_args_tests_inner(
@@ -58,12 +64,18 @@ class TestRequestQuestionsCreateQuestionArgs(unittest.TestCase):
                 category = [
                     ''
                     ],
+                companies = [
+                    ''
+                    ],
                 difficulty = 1.337,
                 eval_mode = None,
                 function_name = '',
                 input_parameters = convex_client.models.input_parameters.inputParameters(),
                 output_parameters = '',
                 question = '',
+                question_sets = [
+                    ''
+                    ],
                 solutions = convex_client.models.solutions.solutions(),
                 tests = [
                     convex_client.models.request_questions_create_question_args_tests_inner.Request_questions_createQuestion_args_tests_inner(

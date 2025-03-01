@@ -55,10 +55,10 @@ import convex_client
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -90,17 +90,20 @@ with convex_client.ApiClient(configuration) as api_client:
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://strong-starling-42.convex.cloud*
+All URIs are relative to *https://useful-meadowlark-907.convex.cloud*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *ActionApi* | [**api_run_actions_create_agent_thread_post**](docs/ActionApi.md#api_run_actions_create_agent_thread_post) | **POST** /api/run/actions/createAgentThread | Calls a action at the path actions.js:createAgentThread
+*ActionApi* | [**api_run_actions_generate_question_post**](docs/ActionApi.md#api_run_actions_generate_question_post) | **POST** /api/run/actions/generateQuestion | Calls a action at the path actions.js:generateQuestion
+*ActionApi* | [**api_run_actions_generate_solution_post**](docs/ActionApi.md#api_run_actions_generate_solution_post) | **POST** /api/run/actions/generateSolution | Calls a action at the path actions.js:generateSolution
 *ActionApi* | [**api_run_actions_get_session_metadata_post**](docs/ActionApi.md#api_run_actions_get_session_metadata_post) | **POST** /api/run/actions/getSessionMetadata | Calls a action at the path actions.js:getSessionMetadata
 *ActionApi* | [**api_run_actions_get_token_post**](docs/ActionApi.md#api_run_actions_get_token_post) | **POST** /api/run/actions/getToken | Calls a action at the path actions.js:getToken
 *ActionApi* | [**api_run_actions_run_code_post**](docs/ActionApi.md#api_run_actions_run_code_post) | **POST** /api/run/actions/runCode | Calls a action at the path actions.js:runCode
 *ActionApi* | [**api_run_actions_run_ground_truth_test_post**](docs/ActionApi.md#api_run_actions_run_ground_truth_test_post) | **POST** /api/run/actions/runGroundTruthTest | Calls a action at the path actions.js:runGroundTruthTest
 *ActionApi* | [**api_run_actions_run_tests_post**](docs/ActionApi.md#api_run_actions_run_tests_post) | **POST** /api/run/actions/runTests | Calls a action at the path actions.js:runTests
 *ActionApi* | [**api_run_actions_schedule_eval_post**](docs/ActionApi.md#api_run_actions_schedule_eval_post) | **POST** /api/run/actions/scheduleEval | Calls a action at the path actions.js:scheduleEval
+*ActionApi* | [**api_run_actions_scrape_question_post**](docs/ActionApi.md#api_run_actions_scrape_question_post) | **POST** /api/run/actions/scrapeQuestion | Calls a action at the path actions.js:scrapeQuestion
 *MutationApi* | [**api_run_admins_create_user_profile_post**](docs/MutationApi.md#api_run_admins_create_user_profile_post) | **POST** /api/run/admins/createUserProfile | Calls a mutation at the path admins.js:createUserProfile
 *MutationApi* | [**api_run_admins_patch_user_subscription_post**](docs/MutationApi.md#api_run_admins_patch_user_subscription_post) | **POST** /api/run/admins/patchUserSubscription | Calls a mutation at the path admins.js:patchUserSubscription
 *MutationApi* | [**api_run_agent_states_set_by_session_id_post**](docs/MutationApi.md#api_run_agent_states_set_by_session_id_post) | **POST** /api/run/agentStates/setBySessionId | Calls a mutation at the path agentStates.js:setBySessionId
@@ -111,6 +114,8 @@ Class | Method | HTTP request | Description
 *MutationApi* | [**api_run_questions_create_question_post**](docs/MutationApi.md#api_run_questions_create_question_post) | **POST** /api/run/questions/createQuestion | Calls a mutation at the path questions.js:createQuestion
 *MutationApi* | [**api_run_questions_delete_question_post**](docs/MutationApi.md#api_run_questions_delete_question_post) | **POST** /api/run/questions/deleteQuestion | Calls a mutation at the path questions.js:deleteQuestion
 *MutationApi* | [**api_run_questions_update_question_post**](docs/MutationApi.md#api_run_questions_update_question_post) | **POST** /api/run/questions/updateQuestion | Calls a mutation at the path questions.js:updateQuestion
+*MutationApi* | [**api_run_questions_update_starred_post**](docs/MutationApi.md#api_run_questions_update_starred_post) | **POST** /api/run/questions/updateStarred | Calls a mutation at the path questions.js:updateStarred
+*MutationApi* | [**api_run_questions_update_status_post**](docs/MutationApi.md#api_run_questions_update_status_post) | **POST** /api/run/questions/updateStatus | Calls a mutation at the path questions.js:updateStatus
 *MutationApi* | [**api_run_sessions_create_code_session_post**](docs/MutationApi.md#api_run_sessions_create_code_session_post) | **POST** /api/run/sessions/createCodeSession | Calls a mutation at the path sessions.js:createCodeSession
 *MutationApi* | [**api_run_sessions_end_session_post**](docs/MutationApi.md#api_run_sessions_end_session_post) | **POST** /api/run/sessions/endSession | Calls a mutation at the path sessions.js:endSession
 *MutationApi* | [**api_run_sessions_start_session_post**](docs/MutationApi.md#api_run_sessions_start_session_post) | **POST** /api/run/sessions/startSession | Calls a mutation at the path sessions.js:startSession
@@ -134,6 +139,8 @@ Class | Method | HTTP request | Description
 *QueryApi* | [**api_run_sessions_get_by_id_post**](docs/QueryApi.md#api_run_sessions_get_by_id_post) | **POST** /api/run/sessions/getById | Calls a query at the path sessions.js:getById
 *QueryApi* | [**api_run_sessions_get_by_id_unauth_post**](docs/QueryApi.md#api_run_sessions_get_by_id_unauth_post) | **POST** /api/run/sessions/getById_unauth | Calls a query at the path sessions.js:getById_unauth
 *QueryApi* | [**api_run_sessions_get_by_user_id_post**](docs/QueryApi.md#api_run_sessions_get_by_user_id_post) | **POST** /api/run/sessions/getByUserId | Calls a query at the path sessions.js:getByUserId
+*QueryApi* | [**api_run_user_profiles_get_completed_questions_post**](docs/QueryApi.md#api_run_user_profiles_get_completed_questions_post) | **POST** /api/run/userProfiles/getCompletedQuestions | Calls a query at the path userProfiles.js:getCompletedQuestions
+*QueryApi* | [**api_run_user_profiles_get_starred_questions_post**](docs/QueryApi.md#api_run_user_profiles_get_starred_questions_post) | **POST** /api/run/userProfiles/getStarredQuestions | Calls a query at the path userProfiles.js:getStarredQuestions
 *QueryApi* | [**api_run_user_profiles_get_user_minutes_remaining_post**](docs/QueryApi.md#api_run_user_profiles_get_user_minutes_remaining_post) | **POST** /api/run/userProfiles/getUserMinutesRemaining | Calls a query at the path userProfiles.js:getUserMinutesRemaining
 *QueryApi* | [**api_run_user_profiles_get_user_profile_post**](docs/QueryApi.md#api_run_user_profiles_get_user_profile_post) | **POST** /api/run/userProfiles/getUserProfile | Calls a query at the path userProfiles.js:getUserProfile
 
@@ -142,6 +149,10 @@ Class | Method | HTTP request | Description
 
  - [RequestActionsCreateAgentThread](docs/RequestActionsCreateAgentThread.md)
  - [RequestActionsCreateAgentThreadArgs](docs/RequestActionsCreateAgentThreadArgs.md)
+ - [RequestActionsGenerateQuestion](docs/RequestActionsGenerateQuestion.md)
+ - [RequestActionsGenerateQuestionArgs](docs/RequestActionsGenerateQuestionArgs.md)
+ - [RequestActionsGenerateSolution](docs/RequestActionsGenerateSolution.md)
+ - [RequestActionsGenerateSolutionArgs](docs/RequestActionsGenerateSolutionArgs.md)
  - [RequestActionsGetSessionMetadata](docs/RequestActionsGetSessionMetadata.md)
  - [RequestActionsGetToken](docs/RequestActionsGetToken.md)
  - [RequestActionsRunCode](docs/RequestActionsRunCode.md)
@@ -151,6 +162,8 @@ Class | Method | HTTP request | Description
  - [RequestActionsRunTests](docs/RequestActionsRunTests.md)
  - [RequestActionsRunTestsArgs](docs/RequestActionsRunTestsArgs.md)
  - [RequestActionsScheduleEval](docs/RequestActionsScheduleEval.md)
+ - [RequestActionsScrapeQuestion](docs/RequestActionsScrapeQuestion.md)
+ - [RequestActionsScrapeQuestionArgs](docs/RequestActionsScrapeQuestionArgs.md)
  - [RequestAdminsCreateUserProfile](docs/RequestAdminsCreateUserProfile.md)
  - [RequestAdminsCreateUserProfileArgs](docs/RequestAdminsCreateUserProfileArgs.md)
  - [RequestAdminsPatchUserSubscription](docs/RequestAdminsPatchUserSubscription.md)
@@ -185,7 +198,7 @@ Class | Method | HTTP request | Description
  - [RequestCodeSessionStatesGetTerminalState](docs/RequestCodeSessionStatesGetTerminalState.md)
  - [RequestCodeSessionStatesGetTestCasesState](docs/RequestCodeSessionStatesGetTestCasesState.md)
  - [RequestCodeSessionStatesGetTestCasesStateInternal](docs/RequestCodeSessionStatesGetTestCasesStateInternal.md)
- - [RequestEvalCheckPendingEvaluationsInternal](docs/RequestEvalCheckPendingEvaluationsInternal.md)
+ - [RequestEvalCheckTimeout](docs/RequestEvalCheckTimeout.md)
  - [RequestEvalGetBySessionId](docs/RequestEvalGetBySessionId.md)
  - [RequestEvalInsertEvaluation](docs/RequestEvalInsertEvaluation.md)
  - [RequestEvalInsertEvaluationArgs](docs/RequestEvalInsertEvaluationArgs.md)
@@ -206,7 +219,8 @@ Class | Method | HTTP request | Description
  - [RequestJobsCreate](docs/RequestJobsCreate.md)
  - [RequestJobsCreateArgs](docs/RequestJobsCreateArgs.md)
  - [RequestJobsCreateArgsStatus](docs/RequestJobsCreateArgsStatus.md)
- - [RequestJobsTriggerEvalJobs](docs/RequestJobsTriggerEvalJobs.md)
+ - [RequestJobsTriggerEvalJob](docs/RequestJobsTriggerEvalJob.md)
+ - [RequestJobsTriggerEvalJobsDeprecated](docs/RequestJobsTriggerEvalJobsDeprecated.md)
  - [RequestPricingsGetPricing](docs/RequestPricingsGetPricing.md)
  - [RequestPricingsGetPricingArgs](docs/RequestPricingsGetPricingArgs.md)
  - [RequestPricingsGetPricingArgsTier](docs/RequestPricingsGetPricingArgsTier.md)
@@ -223,6 +237,10 @@ Class | Method | HTTP request | Description
  - [RequestQuestionsGetByIdInternal](docs/RequestQuestionsGetByIdInternal.md)
  - [RequestQuestionsUpdateQuestion](docs/RequestQuestionsUpdateQuestion.md)
  - [RequestQuestionsUpdateQuestionArgs](docs/RequestQuestionsUpdateQuestionArgs.md)
+ - [RequestQuestionsUpdateStarred](docs/RequestQuestionsUpdateStarred.md)
+ - [RequestQuestionsUpdateStarredArgs](docs/RequestQuestionsUpdateStarredArgs.md)
+ - [RequestQuestionsUpdateStatus](docs/RequestQuestionsUpdateStatus.md)
+ - [RequestQuestionsUpdateStatusArgs](docs/RequestQuestionsUpdateStatusArgs.md)
  - [RequestSessionsCreateCodeSession](docs/RequestSessionsCreateCodeSession.md)
  - [RequestSessionsCreateCodeSessionArgs](docs/RequestSessionsCreateCodeSessionArgs.md)
  - [RequestSessionsCreateCodeSessionArgsInterviewMode](docs/RequestSessionsCreateCodeSessionArgsInterviewMode.md)
@@ -244,6 +262,8 @@ Class | Method | HTTP request | Description
  - [RequestUserProfilesDecrementMinutesRemainingArgs](docs/RequestUserProfilesDecrementMinutesRemainingArgs.md)
  - [RequestUserProfilesGetByEmailInternal](docs/RequestUserProfilesGetByEmailInternal.md)
  - [RequestUserProfilesGetByEmailInternalArgs](docs/RequestUserProfilesGetByEmailInternalArgs.md)
+ - [RequestUserProfilesGetCompletedQuestions](docs/RequestUserProfilesGetCompletedQuestions.md)
+ - [RequestUserProfilesGetStarredQuestions](docs/RequestUserProfilesGetStarredQuestions.md)
  - [RequestUserProfilesGetUserMinutesRemaining](docs/RequestUserProfilesGetUserMinutesRemaining.md)
  - [RequestUserProfilesGetUserProfile](docs/RequestUserProfilesGetUserProfile.md)
  - [RequestUserProfilesGetUserProfileInternal](docs/RequestUserProfilesGetUserProfileInternal.md)
@@ -254,6 +274,11 @@ Class | Method | HTTP request | Description
  - [RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName](docs/RequestUserProfilesUpdateSubscriptionByEmailInternalArgsPlanName.md)
  - [RequestUserProfilesVoidSubscriptionInternal](docs/RequestUserProfilesVoidSubscriptionInternal.md)
  - [ResponseActionsCreateAgentThread](docs/ResponseActionsCreateAgentThread.md)
+ - [ResponseActionsGenerateQuestion](docs/ResponseActionsGenerateQuestion.md)
+ - [ResponseActionsGenerateQuestionValue](docs/ResponseActionsGenerateQuestionValue.md)
+ - [ResponseActionsGenerateQuestionValueTestsInner](docs/ResponseActionsGenerateQuestionValueTestsInner.md)
+ - [ResponseActionsGenerateSolution](docs/ResponseActionsGenerateSolution.md)
+ - [ResponseActionsGenerateSolutionValue](docs/ResponseActionsGenerateSolutionValue.md)
  - [ResponseActionsGetSessionMetadata](docs/ResponseActionsGetSessionMetadata.md)
  - [ResponseActionsGetSessionMetadataValue](docs/ResponseActionsGetSessionMetadataValue.md)
  - [ResponseActionsGetToken](docs/ResponseActionsGetToken.md)
@@ -263,6 +288,10 @@ Class | Method | HTTP request | Description
  - [ResponseActionsRunTests](docs/ResponseActionsRunTests.md)
  - [ResponseActionsRunTestsValue](docs/ResponseActionsRunTestsValue.md)
  - [ResponseActionsScheduleEval](docs/ResponseActionsScheduleEval.md)
+ - [ResponseActionsScrapeQuestion](docs/ResponseActionsScrapeQuestion.md)
+ - [ResponseActionsScrapeQuestionValue](docs/ResponseActionsScrapeQuestionValue.md)
+ - [ResponseActionsScrapeQuestionValueSolution](docs/ResponseActionsScrapeQuestionValueSolution.md)
+ - [ResponseActionsScrapeQuestionValueTopicTagsInner](docs/ResponseActionsScrapeQuestionValueTopicTagsInner.md)
  - [ResponseAdminsCreateUserProfile](docs/ResponseAdminsCreateUserProfile.md)
  - [ResponseAdminsPatchUserSubscription](docs/ResponseAdminsPatchUserSubscription.md)
  - [ResponseAgentStatesGetBySessionId](docs/ResponseAgentStatesGetBySessionId.md)
@@ -288,7 +317,7 @@ Class | Method | HTTP request | Description
  - [ResponseCodeSessionStatesGetValue](docs/ResponseCodeSessionStatesGetValue.md)
  - [ResponseCodeSessionStatesGetValueEditor](docs/ResponseCodeSessionStatesGetValueEditor.md)
  - [ResponseCodeSessionStatesGetValueTerminal](docs/ResponseCodeSessionStatesGetValueTerminal.md)
- - [ResponseEvalCheckPendingEvaluationsInternal](docs/ResponseEvalCheckPendingEvaluationsInternal.md)
+ - [ResponseEvalCheckTimeout](docs/ResponseEvalCheckTimeout.md)
  - [ResponseEvalGetBySessionId](docs/ResponseEvalGetBySessionId.md)
  - [ResponseEvalInsertEvaluation](docs/ResponseEvalInsertEvaluation.md)
  - [ResponseEvalTriggerEvalAction](docs/ResponseEvalTriggerEvalAction.md)
@@ -296,7 +325,8 @@ Class | Method | HTTP request | Description
  - [ResponseInviteCodesCreateDefaultUserProfile](docs/ResponseInviteCodesCreateDefaultUserProfile.md)
  - [ResponseInviteCodesCreateInviteCode](docs/ResponseInviteCodesCreateInviteCode.md)
  - [ResponseJobsCreate](docs/ResponseJobsCreate.md)
- - [ResponseJobsTriggerEvalJobs](docs/ResponseJobsTriggerEvalJobs.md)
+ - [ResponseJobsTriggerEvalJob](docs/ResponseJobsTriggerEvalJob.md)
+ - [ResponseJobsTriggerEvalJobsDeprecated](docs/ResponseJobsTriggerEvalJobsDeprecated.md)
  - [ResponsePricingsGetPricing](docs/ResponsePricingsGetPricing.md)
  - [ResponsePricingsGetPricingsInternal](docs/ResponsePricingsGetPricingsInternal.md)
  - [ResponseQuestionsCreateQuestion](docs/ResponseQuestionsCreateQuestion.md)
@@ -305,6 +335,8 @@ Class | Method | HTTP request | Description
  - [ResponseQuestionsGetById](docs/ResponseQuestionsGetById.md)
  - [ResponseQuestionsGetByIdInternal](docs/ResponseQuestionsGetByIdInternal.md)
  - [ResponseQuestionsUpdateQuestion](docs/ResponseQuestionsUpdateQuestion.md)
+ - [ResponseQuestionsUpdateStarred](docs/ResponseQuestionsUpdateStarred.md)
+ - [ResponseQuestionsUpdateStatus](docs/ResponseQuestionsUpdateStatus.md)
  - [ResponseSessionsCreateCodeSession](docs/ResponseSessionsCreateCodeSession.md)
  - [ResponseSessionsEndSession](docs/ResponseSessionsEndSession.md)
  - [ResponseSessionsEndSessionInternal](docs/ResponseSessionsEndSessionInternal.md)
@@ -318,6 +350,8 @@ Class | Method | HTTP request | Description
  - [ResponseUserProfilesDecrementEvaluationCount](docs/ResponseUserProfilesDecrementEvaluationCount.md)
  - [ResponseUserProfilesDecrementMinutesRemaining](docs/ResponseUserProfilesDecrementMinutesRemaining.md)
  - [ResponseUserProfilesGetByEmailInternal](docs/ResponseUserProfilesGetByEmailInternal.md)
+ - [ResponseUserProfilesGetCompletedQuestions](docs/ResponseUserProfilesGetCompletedQuestions.md)
+ - [ResponseUserProfilesGetStarredQuestions](docs/ResponseUserProfilesGetStarredQuestions.md)
  - [ResponseUserProfilesGetUserMinutesRemaining](docs/ResponseUserProfilesGetUserMinutesRemaining.md)
  - [ResponseUserProfilesGetUserProfile](docs/ResponseUserProfilesGetUserProfile.md)
  - [ResponseUserProfilesGetUserProfileInternal](docs/ResponseUserProfilesGetUserProfileInternal.md)

@@ -19,9 +19,9 @@ def create_elevenlabs_tts() -> elevenlabs.TTS:
             name="Mark - Natural Conversations",
             category="professional",
             settings=elevenlabs.VoiceSettings(
-                stability=0.3,
+                stability=0.25,
                 similarity_boost=0.5,
-                style=0.5,
+                style=0.8,
                 use_speaker_boost=True,
             ),
         ),

@@ -104,7 +104,7 @@ export const scheduleEval = userAction({
     });
 
     if (result.status === "failed") {
-      throw new Error(result.message);
+      throw new Error(result.status);
     }
 
     return {
@@ -173,11 +173,11 @@ export const runCode = action({
 
     return result
       ? {
-          status: !result.isError, //true if API call was successful
-          executionTime: result.executionTime,
-          isError: !!result.stderr, //true if there's an error in the code
-          output: result.stderr || result.stdout || "",
-        }
+        status: !result.isError, //true if API call was successful
+        executionTime: result.executionTime,
+        isError: !!result.stderr, //true if there's an error in the code
+        output: result.stderr || result.stdout || "",
+      }
       : undefined;
   },
 });
@@ -221,7 +221,7 @@ export const runGroundTruthTest = action({
     let globalCaseNumber = 0; // Track the overall test case number
 
     // Process test cases with dynamic batch size
-    for (let i = 0; i < testCases.length; ) {
+    for (let i = 0; i < testCases.length;) {
       const batchTestCases = testCases.slice(i, i + currentBatchSize);
       const testCode = generateTestCode(question, language, batchTestCases);
       const payload = {
@@ -482,5 +482,384 @@ export const getSessionMetadata = action({
       modelName,
       metadata,
     };
+  },
+});
+
+export const scrapeQuestion = action({
+  args: {
+    titleSlug: v.string()
+  },
+  returns: v.object({
+    companyTagStats: v.string(),
+    difficulty: v.string(),
+    dislikes: v.number(),
+    exampleTestcases: v.string(),
+    hints: v.array(v.any()),
+    isPaidOnly: v.boolean(),
+    likes: v.number(),
+    link: v.string(),
+    question: v.string(),
+    questionFrontendId: v.string(),
+    questionId: v.string(),
+    questionTitle: v.string(),
+    similarQuestions: v.string(),
+    solution: v.object({
+      canSeeDetail: v.boolean(),
+      hasVideoSolution: v.boolean(),
+      id: v.string(),
+      paidOnly: v.boolean(),
+      paidOnlyVideo: v.boolean()
+    }),
+    titleSlug: v.string(),
+    topicTags: v.array(v.object({
+      name: v.string(),
+      slug: v.string(),
+      translatedName: v.union(v.string(), v.null())
+    }))
+  }),
+  handler: async (ctx, { titleSlug }) => {
+    // Process the title: replace spaces with hyphens, then convert to lowercase
+    const processedTitleSlug = titleSlug
+      .replace(/\s+/g, '-')  // First replace spaces with hyphens
+      .toLowerCase();        // Convert to lowercase
+
+    console.log(`Attempting to fetch question data for: ${processedTitleSlug}`);
+
+    // Implement retry logic
+    const maxRetries = 3;
+    let lastError;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        // Set a timeout for the fetch operation
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+
+        // Call the external API
+        const response = await fetch(
+          `https://leet-code-api-d5hd.vercel.app/select?titleSlug=${processedTitleSlug}`,
+          { signal: controller.signal }
+        );
+
+        // Clear the timeout
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`API responded with status: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log(`Successfully fetched question data on attempt ${attempt}`);
+        return data;
+      } catch (error) {
+        lastError = error;
+        console.error(`Attempt ${attempt}/${maxRetries} failed:`, error);
+
+        if (attempt < maxRetries) {
+          // Wait before retrying (exponential backoff)
+          const delay = Math.min(1000 * Math.pow(2, attempt - 1), 8000);
+          console.log(`Retrying in ${delay}ms...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+    }
+
+    // If we've exhausted all retries, throw a more descriptive error
+    throw new Error(`Failed to fetch question data after ${maxRetries} attempts: ${lastError?.message || 'Unknown error'}`);
+  },
+});
+
+export const generateQuestion = action({
+  args: {
+    questionTitle: v.string(),
+    questionContent: v.string(),
+  },
+  returns: v.object({
+    functionName: v.string(),
+    inputParameters: v.record(v.string(), v.record(v.string(), v.string())),
+    tests: v.array(v.object({
+      input: v.record(v.string(), v.any()),
+      output: v.any()
+    })),
+    evalMode: v.string()
+  }),
+  handler: async (ctx, { questionTitle, questionContent }) => {
+    // Set up Anthropic client
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      throw new Error("ANTHROPIC_API_KEY is not set");
+    }
+
+    // Use axios instead of Anthropic SDK
+    const headers = {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01"
+    };
+
+    // Generate function name
+    const functionNamePrompt = `Generate a concise and informative function name for the following LeetCode question:\n\n${questionTitle}\n\n${questionContent}\n\n return in this schema <functionName>[generated function Name]</functionName>`;
+
+    const functionNameResponse = await axios.post(
+      "https://api.anthropic.com/v1/messages",
+      {
+        model: "claude-3-5-sonnet-20240620",
+        max_tokens: 50,
+        messages: [{ role: "user", content: functionNamePrompt }]
+      },
+      { headers }
+    );
+
+    const functionNameRaw = functionNameResponse.data.content[0].text;
+    const functionNameMatch = functionNameRaw.match(/<functionName>(.*?)<\/functionName>/);
+    const functionName = functionNameMatch ? functionNameMatch[1] : "solution";
+
+    // Generate input parameters
+    const exampleParams = [
+      {
+        "cpp": { "k": "int", "nums": "vector<int>" },
+        "java": { "k": "int", "nums": "int[]" },
+        "javascript": { "k": "number", "nums": "number[]" },
+        "python": { "k": "int", "nums": "List[int]" },
+      },
+      {
+        "cpp": { "l1": "ListNode*", "l2": "ListNode*" },
+        "java": { "l1": "ListNode", "l2": "ListNode" },
+        "javascript": { "l1": "ListNode", "l2": "ListNode" },
+        "python": {
+          "l1": "Optional[ListNode]",
+          "l2": "Optional[ListNode]",
+        },
+      }
+    ];
+
+    const inputParamsPrompt = `You are a LeetCode expert. Generate input parameters for this question:
+
+Title: ${questionTitle}
+
+Question: ${questionContent}
+
+Example outputs:
+${JSON.stringify(exampleParams, null, 2)}
+
+Provide input parameters for each language as shown above. Don't output anything else, just output an json like object contains the inputParamter for those languages`;
+
+    const inputParamsResponse = await axios.post(
+      "https://api.anthropic.com/v1/messages",
+      {
+        model: "claude-3-5-sonnet-20240620",
+        max_tokens: 1024,
+        temperature: 0,
+        messages: [{ role: "user", content: inputParamsPrompt }]
+      },
+      { headers }
+    );
+
+    let inputParameters = JSON.parse(inputParamsResponse.data.content[0].text);
+    if (Array.isArray(inputParameters) && inputParameters.length > 0) {
+      inputParameters = inputParameters[0];
+    }
+
+    // Generate test cases
+    const exampleTests = [
+      { 'input': { 'nums': [3, 1, 5, 8] }, 'output': 167 },
+      { 'input': { 'nums': [1, 5] }, 'output': 10 },
+    ];
+
+    const testsPrompt = `Generate 10 test cases for the following LeetCode question:
+
+Question Title: ${questionTitle}
+
+Question Description: ${questionContent}
+
+Input Parameter: ${JSON.stringify(inputParameters)}
+
+Example Testcases for MaxCoin:
+${JSON.stringify(exampleTests)} 
+
+Instructions:
+1. Strictly follow testcase requirment in question description
+2. use parameter name in Input Parameters
+3. Make sure to generate good quality testcases, try to test different aspect of the code
+4. Most importantly, Provide the test cases in the following format:
+[{"input": {...}, "output": ...}, ...]
+
+Don't output anything else, just output a JSON-like list of test cases.`;
+
+    const testsResponse = await axios.post(
+      "https://api.anthropic.com/v1/messages",
+      {
+        model: "claude-3-5-sonnet-20240620",
+        max_tokens: 2048,
+        temperature: 0.1,
+        messages: [{ role: "user", content: testsPrompt }]
+      },
+      { headers }
+    );
+
+    const tests = JSON.parse(testsResponse.data.content[0].text);
+
+    // Generate eval mode
+    const evalModePrompt = `Determine the appropriate evaluation mode this problen should use when comparing user code output with testcase ground truth output for the code evaluation (code testing):
+
+Title: ${questionTitle}
+
+Question: ${questionContent}
+
+Input Parameters: ${JSON.stringify(inputParameters)}
+
+tests : ${JSON.stringify(tests)}
+
+Possible evaluation modes:
+1. "sortedMatch" - The ground truth output is an array, and could be in any order, we need to sort both actual output and ground output array, then assert them equal to determine if user's code is correct
+2. "exactMatch" - the ground truth output should be exactly the same as the actual output
+3. "listNodeIter" - The output is of type Listnode, which is linkedlist, and we need to compare the iteration of linkedlist value to see if it is user output is equal to groundtruth
+4. "other" - if none of those fit the description
+
+Return only one of these modes as a string, without any additional text or explanation. return in this schema <evalMode>[generated eval Mode]</evalMode>`;
+
+    const evalModeResponse = await axios.post(
+      "https://api.anthropic.com/v1/messages",
+      {
+        model: "claude-3-5-sonnet-20240620",
+        max_tokens: 40,
+        temperature: 0,
+        messages: [{ role: "user", content: evalModePrompt }]
+      },
+      { headers }
+    );
+
+    const evalModeRaw = evalModeResponse.data.content[0].text.trim();
+    const evalModeMatch = evalModeRaw.match(/<evalMode>(.*?)<\/evalMode>/);
+    const evalMode = evalModeMatch ? evalModeMatch[1] : "exactMatch";
+
+    // Validate the eval mode
+    const validModes = ["sortedMatch", "exactMatch", "listNodeIter", "other"];
+    if (!validModes.includes(evalMode)) {
+      throw new Error(`Invalid eval mode: ${evalMode}`);
+    }
+    return {
+      functionName,
+      inputParameters,
+      tests,
+      evalMode
+    };
+  },
+});
+
+export const generateSolution = action({
+  args: {
+    questionTitle: v.string(),
+    questionContent: v.string(),
+    functionName: v.string(),
+    inputParameters: v.record(v.string(), v.record(v.string(), v.string())),
+    outputType: v.string(),
+    language: v.string(),
+  },
+  returns: v.object({
+    solution: v.string()
+  }),
+  handler: async (ctx, { questionTitle, questionContent, functionName, inputParameters, outputType, language }) => {
+    // Set up Anthropic client
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      throw new Error("ANTHROPIC_API_KEY is not set");
+    }
+
+    // Use axios instead of Anthropic SDK
+    const headers = {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01"
+    };
+
+    // Format input parameters for the selected language
+    const langParams = inputParameters[language] || {};
+    const paramString = Object.entries(langParams)
+      .map(([name, type]) => `${name}: ${type}`)
+      .join(", ");
+
+    // Customize prompt based on language
+    let prompt;
+    if (language === "python") {
+      prompt = `You are an expert Python programmer. Write a solution for the following coding problem:
+
+Question Title: ${questionTitle}
+
+Problem Description:
+${questionContent}
+
+Write your solution inside a class named 'Solution' with a method named '${functionName}' that takes the following parameters:
+self, ${paramString}
+
+The method should return: ${outputType}
+
+IMPORTANT: 
+1. Always include 'self' as the first parameter in the method definition
+2. Format your solution exactly like this:
+\`\`\`python
+class Solution:
+    def ${functionName}(self, ${paramString}):
+        # Your solution code here
+\`\`\`
+
+Please provide only the solution code without explanations. Make sure your solution is:
+1. Correct and handles all edge cases
+2. Efficient in terms of time and space complexity
+3. Well-commented to explain the approach`;
+    } else {
+      // For other languages
+      prompt = `You are an expert programmer. Write a solution for the following coding problem in ${language}:
+
+Question Title: ${questionTitle}
+
+Problem Description:
+${questionContent}
+
+Write a function named '${functionName}' that takes the following parameters:
+${paramString}
+
+The function should return: ${outputType}
+
+Please provide only the solution code without explanations. Make sure your solution is:
+1. Correct and handles all edge cases
+2. Efficient in terms of time and space complexity
+3. Well-commented to explain the approach
+4. Following best practices for ${language}`;
+    }
+
+    try {
+      const response = await axios.post(
+        "https://api.anthropic.com/v1/messages",
+        {
+          model: "claude-3-5-sonnet-20240620",
+          max_tokens: 4000,
+          temperature: 0.2,
+          messages: [{ role: "user", content: prompt }]
+        },
+        { headers }
+      );
+
+      // Extract code from response
+      const content = response.data.content[0].text;
+
+      // Clean up the response to extract just the code
+      // This handles cases where Claude might add markdown code blocks
+      let solution = content;
+      const codeBlockMatch = content.match(/```[\w]*\n([\s\S]*?)```/);
+      if (codeBlockMatch && codeBlockMatch[1]) {
+        solution = codeBlockMatch[1];
+      }
+
+      // For Python, ensure the solution has a class structure if not already present
+      if (language === "python" && !solution.includes("class Solution:")) {
+        solution = `class Solution:\n    def ${functionName}(self, ${paramString}):\n${solution.split('\n').map(line => '        ' + line).join('\n')}`;
+      }
+
+      return { solution };
+    } catch (error) {
+      console.error("Error generating solution:", error);
+      throw new Error(`Failed to generate solution: ${error}`);
+    }
   },
 });

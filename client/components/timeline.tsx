@@ -1,84 +1,132 @@
+import React from "react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
-export const Root = ({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
-  return (
-    <div className={cn("flex flex-col justify-center ", className)} {...props}>
-      {children}
-    </div>
-  );
-};
+interface TimelineRootProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+}
 
-export const Item = ({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
-  return (
-    <div className={cn("flex gap-2", "data-[collapsed=true]:gap-0", className)} {...props}>
-      {children}
-    </div>
-  );
-};
-
-export const Connector = ({
+export const TimelineRoot: React.FC<TimelineRootProps> = ({
+  children,
   className,
-  icon: Icon,
-  isLastItem,
-  completed,
   ...props
-}: React.HTMLAttributes<HTMLDivElement> & {
-  icon: React.ComponentType<{ className?: string }>;
-  isLastItem?: boolean;
-  completed?: boolean;
 }) => {
   return (
-    <div className={cn("flex flex-col items-center min-h-16", className)} {...props}>
+    <div className={cn("relative space-y-4", className)} {...props}>
+      {children}
+    </div>
+  );
+};
+
+interface TimelineItemProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+}
+
+export const TimelineItem: React.FC<TimelineItemProps> = ({
+  children,
+  className,
+  ...props
+}) => {
+  return (
+    <div className={cn("relative flex gap-4", className)} {...props}>
+      {children}
+    </div>
+  );
+};
+
+interface TimelineConnectorProps extends React.HTMLAttributes<HTMLDivElement> {
+  icon?: React.ElementType;
+  isLastItem?: boolean;
+  completed?: boolean;
+}
+
+export const TimelineConnector: React.FC<TimelineConnectorProps> = ({
+  className,
+  icon: Icon,
+  isLastItem = false,
+  completed = false,
+  ...props
+}) => {
+  return (
+    <div className="relative flex items-center justify-center z-10" {...props}>
+      {Icon && (
+        <div className={cn(
+          "h-7 w-7 rounded-full flex items-center justify-center",
+          completed ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
+          className
+        )}>
+          {Icon && <Icon className="h-4 w-4" />}
+        </div>
+      )}
+      {!isLastItem && (
+        <div className="absolute left-3.5 top-7 h-full w-px bg-border" />
+      )}
+    </div>
+  );
+};
+
+interface TimelineDotProps extends React.HTMLAttributes<HTMLDivElement> {
+  active?: boolean;
+}
+
+export const TimelineDot: React.FC<TimelineDotProps> = ({
+  active = false,
+  className,
+  ...props
+}) => {
+  return (
+    <div className="relative z-10 flex h-7 w-7 items-center justify-center">
       <div
         className={cn(
-          "flex h-7 w-7 items-center justify-center rounded-[4px] transition-all duration-200",
-          completed ? "bg-primary text-primary-foreground" : "bg-accent"
+          "h-3 w-3 rounded-full",
+          active ? "bg-primary" : "bg-muted-foreground/30",
+          className
         )}
-      >
-        <Icon className="h-3.5 w-3.5" />
-      </div>
-      {!isLastItem && (
-        <div
-          className={cn(
-            "flex-1 w-[1px] transition-colors duration-200",
-            completed ? "bg-primary/30" : "bg-border/60"
-          )}
-        />
-      )}
+        {...props}
+      />
     </div>
   );
 };
 
-export const Content = ({
-  className,
+interface TimelineContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+}
+
+export const TimelineContent: React.FC<TimelineContentProps> = ({
   children,
+  className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => {
+}) => {
   return (
-    <div className={cn("flex flex-col", className)} {...props}>
+    <div className={cn("flex-1 pt-0.5", className)} {...props}>
       {children}
     </div>
   );
 };
 
-export const Title = ({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
+interface TimelineTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
+  children: React.ReactNode;
+}
+
+export const TimelineTitle: React.FC<TimelineTitleProps> = ({
+  children,
+  className,
+  ...props
+}) => {
   return (
-    <div
-      className={cn(
-        "h-7 flex items-center text-sm font-semibold tracking-tight text-foreground",
-        className
-      )}
-      {...props}
-    >
+    <h3 className={cn("text-sm font-medium", className)} {...props}>
       {children}
-    </div>
+    </h3>
   );
 };
 
 export const Timeline = {
-  Root: Root,
-  Item: Item,
-  Connector: Connector,
-  Content: Content,
-  Title: Title,
+  Root: TimelineRoot,
+  Item: TimelineItem,
+  Connector: TimelineConnector,
+  Dot: TimelineDot,
+  Content: TimelineContent,
+  Title: TimelineTitle,
 };
+
+export default Timeline;

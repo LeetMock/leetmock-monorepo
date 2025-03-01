@@ -1,6 +1,6 @@
 # convex_client.MutationApi
 
-All URIs are relative to *https://strong-starling-42.convex.cloud*
+All URIs are relative to *https://useful-meadowlark-907.convex.cloud*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -14,6 +14,8 @@ Method | HTTP request | Description
 [**api_run_questions_create_question_post**](MutationApi.md#api_run_questions_create_question_post) | **POST** /api/run/questions/createQuestion | Calls a mutation at the path questions.js:createQuestion
 [**api_run_questions_delete_question_post**](MutationApi.md#api_run_questions_delete_question_post) | **POST** /api/run/questions/deleteQuestion | Calls a mutation at the path questions.js:deleteQuestion
 [**api_run_questions_update_question_post**](MutationApi.md#api_run_questions_update_question_post) | **POST** /api/run/questions/updateQuestion | Calls a mutation at the path questions.js:updateQuestion
+[**api_run_questions_update_starred_post**](MutationApi.md#api_run_questions_update_starred_post) | **POST** /api/run/questions/updateStarred | Calls a mutation at the path questions.js:updateStarred
+[**api_run_questions_update_status_post**](MutationApi.md#api_run_questions_update_status_post) | **POST** /api/run/questions/updateStatus | Calls a mutation at the path questions.js:updateStatus
 [**api_run_sessions_create_code_session_post**](MutationApi.md#api_run_sessions_create_code_session_post) | **POST** /api/run/sessions/createCodeSession | Calls a mutation at the path sessions.js:createCodeSession
 [**api_run_sessions_end_session_post**](MutationApi.md#api_run_sessions_end_session_post) | **POST** /api/run/sessions/endSession | Calls a mutation at the path sessions.js:endSession
 [**api_run_sessions_start_session_post**](MutationApi.md#api_run_sessions_start_session_post) | **POST** /api/run/sessions/startSession | Calls a mutation at the path sessions.js:startSession
@@ -35,10 +37,10 @@ from convex_client.models.response_admins_create_user_profile import ResponseAdm
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -114,10 +116,10 @@ from convex_client.models.response_admins_patch_user_subscription import Respons
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -193,10 +195,10 @@ from convex_client.models.response_agent_states_set_by_session_id import Respons
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -272,10 +274,10 @@ from convex_client.models.response_code_session_events_commit_code_session_event
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -351,10 +353,10 @@ from convex_client.models.response_eval_insert_evaluation import ResponseEvalIns
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -430,10 +432,10 @@ from convex_client.models.response_invite_codes_apply_invite_code import Respons
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -509,10 +511,10 @@ from convex_client.models.response_invite_codes_create_default_user_profile impo
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -588,10 +590,10 @@ from convex_client.models.response_questions_create_question import ResponseQues
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -667,10 +669,10 @@ from convex_client.models.response_questions_delete_question import ResponseQues
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -746,10 +748,10 @@ from convex_client.models.response_questions_update_question import ResponseQues
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -809,6 +811,164 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **api_run_questions_update_starred_post**
+> ResponseQuestionsUpdateStarred api_run_questions_update_starred_post(request_questions_update_starred)
+
+Calls a mutation at the path questions.js:updateStarred
+
+### Example
+
+* Bearer Authentication (bearerAuth):
+
+```python
+import convex_client
+from convex_client.models.request_questions_update_starred import RequestQuestionsUpdateStarred
+from convex_client.models.response_questions_update_starred import ResponseQuestionsUpdateStarred
+from convex_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
+# See configuration.py for a list of all supported configuration parameters.
+configuration = convex_client.Configuration(
+    host = "https://useful-meadowlark-907.convex.cloud"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization: bearerAuth
+configuration = convex_client.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with convex_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = convex_client.MutationApi(api_client)
+    request_questions_update_starred = convex_client.RequestQuestionsUpdateStarred() # RequestQuestionsUpdateStarred | 
+
+    try:
+        # Calls a mutation at the path questions.js:updateStarred
+        api_response = api_instance.api_run_questions_update_starred_post(request_questions_update_starred)
+        print("The response of MutationApi->api_run_questions_update_starred_post:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling MutationApi->api_run_questions_update_starred_post: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_questions_update_starred** | [**RequestQuestionsUpdateStarred**](RequestQuestionsUpdateStarred.md)|  | 
+
+### Return type
+
+[**ResponseQuestionsUpdateStarred**](ResponseQuestionsUpdateStarred.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **api_run_questions_update_status_post**
+> ResponseQuestionsUpdateStatus api_run_questions_update_status_post(request_questions_update_status)
+
+Calls a mutation at the path questions.js:updateStatus
+
+### Example
+
+* Bearer Authentication (bearerAuth):
+
+```python
+import convex_client
+from convex_client.models.request_questions_update_status import RequestQuestionsUpdateStatus
+from convex_client.models.response_questions_update_status import ResponseQuestionsUpdateStatus
+from convex_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
+# See configuration.py for a list of all supported configuration parameters.
+configuration = convex_client.Configuration(
+    host = "https://useful-meadowlark-907.convex.cloud"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization: bearerAuth
+configuration = convex_client.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with convex_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = convex_client.MutationApi(api_client)
+    request_questions_update_status = convex_client.RequestQuestionsUpdateStatus() # RequestQuestionsUpdateStatus | 
+
+    try:
+        # Calls a mutation at the path questions.js:updateStatus
+        api_response = api_instance.api_run_questions_update_status_post(request_questions_update_status)
+        print("The response of MutationApi->api_run_questions_update_status_post:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling MutationApi->api_run_questions_update_status_post: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_questions_update_status** | [**RequestQuestionsUpdateStatus**](RequestQuestionsUpdateStatus.md)|  | 
+
+### Return type
+
+[**ResponseQuestionsUpdateStatus**](ResponseQuestionsUpdateStatus.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **api_run_sessions_create_code_session_post**
 > ResponseSessionsCreateCodeSession api_run_sessions_create_code_session_post(request_sessions_create_code_session)
 
@@ -825,10 +985,10 @@ from convex_client.models.response_sessions_create_code_session import ResponseS
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -904,10 +1064,10 @@ from convex_client.models.response_sessions_end_session import ResponseSessionsE
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -983,10 +1143,10 @@ from convex_client.models.response_sessions_start_session import ResponseSession
 from convex_client.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://strong-starling-42.convex.cloud
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
 # See configuration.py for a list of all supported configuration parameters.
 configuration = convex_client.Configuration(
-    host = "https://strong-starling-42.convex.cloud"
+    host = "https://useful-meadowlark-907.convex.cloud"
 )
 
 # The client must configure the authentication and authorization parameters

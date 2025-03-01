@@ -6,6 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **category** | **List[str]** |  | [optional] 
+**companies** | **List[str]** |  | [optional] 
 **difficulty** | **float** |  | [optional] 
 **eval_mode** | [**RequestQuestionsCreateQuestionArgsEvalMode**](RequestQuestionsCreateQuestionArgsEvalMode.md) |  | [optional] 
 **function_name** | **str** |  | [optional] 
@@ -14,6 +15,7 @@ Name | Type | Description | Notes
 **output_parameters** | **str** |  | [optional] 
 **question** | **str** |  | [optional] 
 **question_id** | **str** | ID from table \&quot;questions\&quot; | 
+**question_sets** | **List[str]** |  | [optional] 
 **solutions** | **object** |  | [optional] 
 **tests** | [**List[RequestQuestionsCreateQuestionArgsTestsInner]**](RequestQuestionsCreateQuestionArgsTestsInner.md) |  | [optional] 
 **title** | **str** |  | [optional] 

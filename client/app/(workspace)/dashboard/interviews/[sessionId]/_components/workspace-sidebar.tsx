@@ -60,10 +60,10 @@ export const WorkspaceSidebar: React.FC<{
 
     return session?.sessionStartTime
       ? transitionTimestamps.map((timestamp, idx) =>
-          idx === 0
-            ? getTimeDurationSeconds(session.sessionStartTime!, timestamp)
-            : getTimeDurationSeconds(transitionTimestamps[idx - 1]!, timestamp)
-        )
+        idx === 0
+          ? getTimeDurationSeconds(session.sessionStartTime!, timestamp)
+          : getTimeDurationSeconds(transitionTimestamps[idx - 1]!, timestamp)
+      )
       : [];
   }, [codeSessionState?.transitionTimestamps, session]);
 
@@ -247,97 +247,97 @@ const TimelineItem: React.FC<{
   elapsedTime,
   lastTransitionTimestamp,
 }) => {
-  const [currentTime, setCurrentTime] = useState<number>(Date.now());
+    const [currentTime, setCurrentTime] = useState<number>(Date.now());
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(Date.now());
-    }, 500);
-    return () => clearInterval(interval);
-  }, []);
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setCurrentTime(Date.now());
+      }, 500);
+      return () => clearInterval(interval);
+    }, []);
 
-  const timeElapsedText = useMemo(() => {
-    let timeElapsed: number | undefined;
+    const timeElapsedText = useMemo(() => {
+      let timeElapsed: number | undefined;
 
-    if (isActive) {
-      timeElapsed = getTimeDurationSeconds(lastTransitionTimestamp, currentTime);
-    } else {
-      timeElapsed = elapsedTime;
-    }
+      if (isActive) {
+        timeElapsed = getTimeDurationSeconds(lastTransitionTimestamp, currentTime);
+      } else {
+        timeElapsed = elapsedTime;
+      }
 
-    if (!timeElapsed) return undefined;
+      if (!timeElapsed) return undefined;
 
-    // decide the most appropriate unit of time to display
-    let timeText: string;
+      // decide the most appropriate unit of time to display
+      let timeText: string;
 
-    if (timeElapsed < 60) {
-      timeText = `${timeElapsed} seconds`;
-    } else if (timeElapsed < 3600) {
-      timeText = `${Math.floor(timeElapsed / 60)} minutes`;
-    } else {
-      timeText = `${Math.floor(timeElapsed / 3600)} hours`;
-    }
+      if (timeElapsed < 60) {
+        timeText = `${timeElapsed} seconds`;
+      } else if (timeElapsed < 3600) {
+        timeText = `${Math.floor(timeElapsed / 60)} minutes`;
+      } else {
+        timeText = `${Math.floor(timeElapsed / 3600)} hours`;
+      }
 
-    return (
-      <span className="text-xs text-muted-foreground">
-        {isActive ? `${timeText} has passed` : `Completed in ${timeText}`}
-      </span>
-    );
-  }, [elapsedTime, isActive, lastTransitionTimestamp, currentTime]);
+      return (
+        <span className="text-xs text-muted-foreground">
+          {isActive ? `${timeText} has passed` : `Completed in ${timeText}`}
+        </span>
+      );
+    }, [elapsedTime, isActive, lastTransitionTimestamp, currentTime]);
 
-  const shouldRenderTimeElapsed = useMemo(() => {
-    return (completed || isActive) && !isLastItem && isDefined(timeElapsedText);
-  }, [completed, isActive, isLastItem, timeElapsedText]);
+    const shouldRenderTimeElapsed = useMemo(() => {
+      return (completed || isActive) && !isLastItem && isDefined(timeElapsedText);
+    }, [completed, isActive, isLastItem, timeElapsedText]);
 
-  const collapsedView = useMemo(() => {
-    return (
-      <div className="absolute -top-1 left-7 z-10 hidden group-hover:block min-w-60">
-        <div className="flex flex-col gap-2 ml-2.5 px-2 py-1.5 bg-background rounded-md border shadow-sm">
+    const collapsedView = useMemo(() => {
+      return (
+        <div className="absolute -top-1 left-7 z-10 hidden group-hover:block min-w-60">
+          <div className="flex flex-col gap-2 ml-2.5 px-2 py-1.5 bg-background rounded-md border shadow-sm">
+            <Timeline.Title>{STAGE_NAME_MAPPING[step]}</Timeline.Title>
+            {shouldRenderTimeElapsed && (
+              <div className="flex flex-col gap-2 pb-1">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Clock className="h-3 w-3" />
+                  {timeElapsedText}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }, [step, shouldRenderTimeElapsed, timeElapsedText]);
+
+    const expandedView = useMemo(() => {
+      return (
+        <Timeline.Content className="space-y-2 pb-4">
           <Timeline.Title>{STAGE_NAME_MAPPING[step]}</Timeline.Title>
-          {shouldRenderTimeElapsed && (
-            <div className="flex flex-col gap-2 pb-1">
+          <div className="flex flex-col gap-2">
+            {shouldRenderTimeElapsed && (
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Clock className="h-3 w-3" />
                 {timeElapsedText}
               </div>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }, [step, shouldRenderTimeElapsed, timeElapsedText]);
+            )}
+          </div>
+        </Timeline.Content>
+      );
+    }, [step, shouldRenderTimeElapsed, timeElapsedText]);
 
-  const expandedView = useMemo(() => {
     return (
-      <Timeline.Content className="space-y-2 pb-4">
-        <Timeline.Title>{STAGE_NAME_MAPPING[step]}</Timeline.Title>
-        <div className="flex flex-col gap-2">
-          {shouldRenderTimeElapsed && (
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Clock className="h-3 w-3" />
-              {timeElapsedText}
-            </div>
-          )}
-        </div>
-      </Timeline.Content>
+      <Timeline.Item
+        className={cn(
+          "transition-all duration-200",
+          collapsed && "self-center relative group",
+          !isActive && !completed && "opacity-50"
+        )}
+      >
+        <Timeline.Connector
+          icon={STAGE_TO_ICON_MAP[step]}
+          isLastItem={isLastItem}
+          completed={completed}
+          className="cursor-pointer"
+        />
+        {collapsed ? collapsedView : expandedView}
+      </Timeline.Item>
     );
-  }, [step, shouldRenderTimeElapsed, timeElapsedText]);
-
-  return (
-    <Timeline.Item
-      className={cn(
-        "transition-all duration-200",
-        collapsed && "self-center relative group",
-        !isActive && !completed && "opacity-50"
-      )}
-    >
-      <Timeline.Connector
-        icon={STAGE_TO_ICON_MAP[step]}
-        isLastItem={isLastItem}
-        completed={completed}
-        className="cursor-pointer"
-      />
-      {collapsed ? collapsedView : expandedView}
-    </Timeline.Item>
-  );
-};
+  };

@@ -78,7 +78,7 @@ class Configuration:
                  ) -> None:
         """Constructor
         """
-        self._base_path = "https://strong-starling-42.convex.cloud" if host is None else host
+        self._base_path = "https://useful-meadowlark-907.convex.cloud" if host is None else host
         """Default Base url
         """
         self.server_index = 0 if server_index is None and host is None else server_index
@@ -402,7 +402,7 @@ class Configuration:
         """
         return [
             {
-                'url': "https://strong-starling-42.convex.cloud",
+                'url': "https://useful-meadowlark-907.convex.cloud",
                 'description': "No description provided",
             }
         ]
