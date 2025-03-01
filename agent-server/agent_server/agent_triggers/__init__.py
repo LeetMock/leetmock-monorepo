@@ -26,7 +26,6 @@ Example:
 """
 
 import asyncio
-import logging
 from typing import Any, Dict, List, Tuple
 
 from agent_server.agent_streams import AgentStream
@@ -37,8 +36,7 @@ from pydantic import BaseModel, Field, PrivateAttr
 
 from libs.timestamp import Timestamp
 
-logger = logging.getLogger(__name__)
-
+from loguru import logger
 
 class AgentTrigger(BaseModel):
     """Manages event-driven triggers for agent interactions.
@@ -93,12 +91,15 @@ class AgentTrigger(BaseModel):
 
     async def trigger(self):
         """Triggers the agent manually by adding a trigger event to the queue."""
+        logger.info("putting trigger event into the queue")
         await self._event_q.put(("trigger", None))
 
     def add_user_message(self, messages: List[AnyMessage]):
+        logger.info("putting add_user_message event into the queue")
         self._event_q.put_nowait(("add_user_message", messages))
 
     def add_ai_message(self, messages: List[AnyMessage]):
+        logger.info("putting add_ai_message event into the queue")
         self._event_q.put_nowait(("add_ai_message", messages))
 
     def _create_event_handler(self, event: BaseEvent):
@@ -114,6 +115,7 @@ class AgentTrigger(BaseModel):
         """
 
         async def handler(data: Any):
+            logger.info(f"putting event: {event.event_name} with data: {data} into the queue")
             await self._event_q.put((event.event_name, data))
 
         return handler
@@ -150,6 +152,7 @@ class AgentTrigger(BaseModel):
 
         while True:
             event, data = await self._event_q.get()
+            logger.info(f"len of event queue: {self._event_q.qsize()}")
 
             logger.info(f"Receiving event: {event} with data: {data}")
             should_trigger = await self.stream.notify_agent(event, data)
@@ -158,10 +161,11 @@ class AgentTrigger(BaseModel):
                 assert False
 
             if should_trigger:
+                logger.info(f"Triggering agent for response for event: {event}")
                 is_user_message = event == "user_message"
                 asyncio.create_task(self._trigger_task(is_user_message))
             else:
-                logger.info(f"Failed to trigger agent for event: {event}")
+                logger.info(f"Not triggering agent for response for event: {event}")
 
     async def _process_state_snapshot(self):
         while True:

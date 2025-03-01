@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import json
-import logging
 import time
 from contextlib import contextmanager
 from pathlib import Path
@@ -10,8 +9,7 @@ from typing import List, Literal
 
 from pydantic import BaseModel, Field
 
-logger = logging.getLogger(__name__)
-
+from loguru import logger
 
 def create_profiler_file_path(profiler_id: str) -> Path:
     return Path("./logs") / f"profiler_{profiler_id}.jsonl"

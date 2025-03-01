@@ -5,9 +5,8 @@ import random
 from enum import Enum
 from typing import Any, Callable, Coroutine, NoReturn
 
-from agent_server.utils.logger import get_logger
+from loguru import logger
 
-logger = get_logger(__name__)
 
 
 class SignalType(Enum):

@@ -8,7 +8,6 @@ from agent_graph.code_mock_staged_v1.graph import AgentState
 from agent_graph.state_merger import AgentStateEmitter
 from agent_graph.types import EventMessageState
 from agent_server.convex.query_watcher import query_watcher
-from agent_server.utils.logger import get_logger
 from livekit.agents.utils import EventEmitter
 from pydantic import BaseModel
 
@@ -26,7 +25,7 @@ from libs.convex.convex_types import (
     SessionMetadata,
 )
 
-logger = get_logger(__name__)
+from loguru import logger
 
 
 TEventTypes = TypeVar("TEventTypes", bound=str)

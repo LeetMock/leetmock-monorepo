@@ -3,12 +3,11 @@ import json
 from inspect import iscoroutinefunction
 from typing import Any, Callable, Coroutine, Dict, Generic, List, Self, TypeVar
 
-from agent_server.utils.logger import get_logger
 from livekit.agents import JobContext
 from livekit.rtc import DataPacket
 from pydantic import BaseModel, Field
 
-logger = get_logger(__name__)
+from loguru import logger
 
 T = TypeVar("T")
 

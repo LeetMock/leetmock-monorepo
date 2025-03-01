@@ -1,4 +1,3 @@
-import logging
 from enum import Enum
 from typing import List, OrderedDict, TypeVar
 
@@ -19,8 +18,7 @@ from libs.diffs import get_unified_diff
 
 TEntity = TypeVar("TEntity", bound=NamedEntity)
 
-logger = logging.getLogger(__name__)
-
+from loguru import logger
 
 class StageTypes(str, Enum):
     INTRO = "introduction"

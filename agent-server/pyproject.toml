@@ -29,6 +29,7 @@ dependencies = [
     "libs",
     "agent-graph",
     "logfire[system-metrics, httpx, aiohttp]",
+    "loguru>=0.7.3",
 ]
 
 [dependency-groups]

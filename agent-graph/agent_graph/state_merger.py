@@ -4,14 +4,13 @@ from typing import Any, Dict, Generic, Literal, Type, TypeVar
 
 from agent_graph.storages import StateStorage
 from agent_graph.utils import DEFAULT_CONFIG, with_noop_node
-from agent_server.utils.logger import get_logger
+from loguru import logger
 from debouncer import debounce
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph.state import CompiledStateGraph, StateGraph
 from livekit.agents.utils import EventEmitter
 from pydantic import BaseModel
 
-logger = get_logger(__name__)
 
 TState = TypeVar("TState", bound=BaseModel)
 EventTypes = Literal["state_changed", "state_initialized"]
@@ -96,9 +95,9 @@ class StateMerger(AgentStateEmitter[TState]):
         state: TState | Dict[str, Any],
         is_initial_state: bool = False,
     ):
-        logger.info(f"Acquiring state lock...")
+        # logger.info(f"Acquiring state lock...")
         async with self._state_lock:
-            logger.info(f"State lock acquired")
+            # logger.info(f"State lock acquired")
             if is_initial_state:
                 return await self._merge_initial_state(state)
             else:

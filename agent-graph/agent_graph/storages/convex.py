@@ -1,4 +1,3 @@
-import logging
 from typing import Any, Dict, Type, cast
 
 from agent_graph.storages import StateStorage
@@ -12,8 +11,7 @@ from libs.convex.convex_requests import (
     create_set_agent_state_by_session_id_request,
 )
 
-logger = logging.getLogger(__name__)
-
+from loguru import logger
 
 class ConvexStateStorage(StateStorage):
     """A state storage that fetches and updates the state from Convex."""
