@@ -2,6 +2,7 @@ import os
 from logging import basicConfig
 
 import logfire
+from loguru import logger
 
 
 def init_telemetry():
@@ -13,3 +14,4 @@ def init_telemetry():
     logfire.instrument_openai()
     # logfire.instrument_system_metrics()
     basicConfig(handlers=[logfire.LogfireLoggingHandler()])
+    logger.configure(handlers=[{"sink": logfire.LogfireLoggingHandler()}])

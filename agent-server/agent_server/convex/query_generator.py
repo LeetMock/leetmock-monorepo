@@ -1,10 +1,8 @@
-import logging
 
 from convex import ConvexError, QuerySetSubscription, QuerySubscription
 from pydantic import BaseModel
 
-logger = logging.getLogger("convex")
-
+from loguru import logger
 
 class AsyncQueryGenerator(BaseModel):
     sub: QuerySubscription

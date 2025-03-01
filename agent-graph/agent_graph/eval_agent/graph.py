@@ -1,4 +1,3 @@
-import logging
 import os
 from collections import defaultdict
 from typing import List, cast
@@ -25,9 +24,7 @@ from langgraph.graph import END, START, StateGraph
 
 from libs.convex.api import ConvexApi
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
+from loguru import logger
 
 configuration = convex_client.Configuration(host=os.getenv("CONVEX_URL") or "")
 CONVEX_URL = cast(str, os.getenv("CONVEX_URL"))

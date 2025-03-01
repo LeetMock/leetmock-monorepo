@@ -28,7 +28,8 @@ from agent_server.events.events import (
 )
 from agent_server.livekit.streams import EchoStream, NoopLLM, NoopStream
 from agent_server.livekit.tts import get_tts_engine
-from agent_server.utils.logger import get_logger
+from loguru import logger
+
 from agent_server.utils.messages import livekit_to_langchain_message
 from livekit.agents import cli  # type: ignore
 from livekit.agents import JobContext, JobProcess, WorkerOptions, llm
@@ -39,8 +40,6 @@ from livekit.rtc import DataPacket
 
 from libs.convex.api import ConvexApi
 from libs.message_wrapper import MessageWrapper
-
-logger = get_logger(__name__)
 
 
 def prewarm(proc: JobProcess):
@@ -90,16 +89,37 @@ async def entrypoint(ctx: JobContext):
         Returns:
             EchoStream: The stream to be used for the LLM response
         """
+        logger.info(
+            f"[before_llm_callback] one new round of conversation started, requiring LLM to synthesize a response"
+        )
         lc_messages = livekit_to_langchain_message(chat_ctx, unix_timestamp)
-
+        logger.info(
+            f"[before_llm_callback] A list of {len(lc_messages)} messages are added to the chat context"
+        )
+        logger.info(
+            f"[before_llm_callback] last message: {lc_messages[-1].content}"
+        )
         # Put the messages into the message event queue so that UserMessageEvent can pick it up
         user_message_event_q.put_nowait(MessageWrapper.from_messages(lc_messages))
+        logger.info(
+            f"[before_llm_callback] Putting lc_messages into the message event queue"
+        )
         # Get the text stream from the message response queue so that we can return it to the voice assistant
         text_stream = await user_message_response_q.get()
-
+        logger.info(
+            f"[before_llm_callback] Getting the text stream from the message response queue"
+        )
         if text_stream is not None:
+            logger.info(
+                f"[before_llm_callback] Returning the text stream to the voice assistant"
+            )
+            print("returning text stream")
             return EchoStream.from_chat_ctx(text_stream=text_stream, chat_ctx=chat_ctx)
         else:
+            logger.info(
+                f"[before_llm_callback] Returning the noop stream to the voice assistant"
+            )
+            print("returning noop stream")
             return NoopStream.from_chat_ctx(chat_ctx=chat_ctx)
 
     assistant = VoicePipelineAgent(

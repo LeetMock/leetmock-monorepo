@@ -29,7 +29,6 @@ Example:
 """
 
 import asyncio
-import logging
 from typing import Any, Callable, Dict, List, Set
 
 from agent_graph.chains.emitters import emit_interval_fixed, emit_stop_after
@@ -52,7 +51,7 @@ from libs.convex.convex_types import CodeSessionContentChangedEvent, TestcaseRes
 from libs.helpers import static_check_with_mypy
 from libs.message_wrapper import MessageWrapper
 
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 class Reminder(BaseModel):

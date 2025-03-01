@@ -30,7 +30,6 @@ Example:
 """
 
 import asyncio
-import logging
 from abc import ABC, abstractmethod
 from inspect import iscoroutinefunction
 from typing import Any, Callable, Coroutine, Generic, List, TypeVar
@@ -38,8 +37,7 @@ from typing import Any, Callable, Coroutine, Generic, List, TypeVar
 from agent_server.contexts.session import BaseSession
 from pydantic import BaseModel, PrivateAttr
 
-logger = logging.getLogger(__name__)
-
+from loguru import logger
 TModel = TypeVar("TModel")
 TSession = TypeVar("TSession", bound=BaseSession)
 

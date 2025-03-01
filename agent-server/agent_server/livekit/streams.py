@@ -3,12 +3,11 @@ from __future__ import annotations
 import uuid
 from typing import AsyncIterator, Literal, Self, Union
 
-from agent_server.utils.logger import get_logger
 from livekit.agents import llm
 from livekit.agents.llm import ToolChoice, function_context
 from livekit.agents.types import DEFAULT_API_CONNECT_OPTIONS, APIConnectOptions
 
-logger = get_logger(__name__)
+from loguru import logger
 
 
 class NoopLLM(llm.LLM):

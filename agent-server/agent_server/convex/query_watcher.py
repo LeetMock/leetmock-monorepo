@@ -49,7 +49,6 @@ Note:
 
 import asyncio
 import json
-import logging
 from inspect import iscoroutinefunction
 from typing import Any, Callable, Coroutine, Dict, Generic, List, Type, TypeVar
 
@@ -59,7 +58,8 @@ from pydantic import BaseModel, Field, PrivateAttr
 from libs.convex.api import ConvexApi
 
 TModel = TypeVar("TModel", bound=BaseModel)
-logger = logging.getLogger("convex")
+
+from loguru import logger
 
 
 class QueryWatcher(BaseModel, Generic[TModel]):

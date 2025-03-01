@@ -7,12 +7,11 @@ from agent_graph.types import EventMessageState
 from agent_server.contexts.session import BaseSession
 from agent_server.livekit.channel import ChanConfig, ChanValue
 from agent_server.livekit.validators import string_validator
-from agent_server.utils.logger import get_logger
 from livekit.agents import JobContext
 
 from libs.convex.api import ConvexApi
 
-logger = get_logger(__name__)
+from loguru import logger
 
 
 SESSION_ID_TOPIC = "session-id"

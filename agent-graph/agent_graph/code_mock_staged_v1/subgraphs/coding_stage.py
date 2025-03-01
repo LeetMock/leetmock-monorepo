@@ -1,4 +1,4 @@
-import logging
+
 import time
 from typing import List, Literal, OrderedDict, Set, cast
 
@@ -32,8 +32,7 @@ from pydantic import Field
 
 from libs.convex.convex_types import CodeSessionState, SessionMetadata
 
-logger = logging.getLogger(__name__)
-
+from loguru import logger
 from typing import Annotated
 
 from agent_graph.reducers import merge_unique

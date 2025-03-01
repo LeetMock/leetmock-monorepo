@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import os
 from typing import (
     Any,
@@ -27,7 +26,7 @@ from pydantic import BaseModel, Field, PrivateAttr
 
 from libs.timestamp import Timestamp
 
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 TState = TypeVar("TState", bound=EventMessageState)
 TConfig = TypeVar("TConfig", bound=BaseModel)

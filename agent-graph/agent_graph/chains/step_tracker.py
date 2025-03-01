@@ -12,7 +12,6 @@ from agent_graph.code_mock_staged_v1.schemas import TrackStep
 from agent_graph.state_merger import StateMerger
 from agent_graph.types import Step
 from agent_graph.utils import wrap_xml
-from agent_server.utils.logger import get_logger
 from agent_server.utils.messages import get_text_hash
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, AnyMessage
@@ -20,7 +19,7 @@ from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTempla
 from langchain_core.runnables import Runnable, RunnableLambda
 from pydantic import BaseModel, Field, PrivateAttr
 
-logger = get_logger(__name__)
+from loguru import logger
 
 
 class StepTrackerConfig(BaseModel):
