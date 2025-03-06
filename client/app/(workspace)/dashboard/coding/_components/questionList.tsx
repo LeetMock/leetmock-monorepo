@@ -104,7 +104,7 @@ export default function QuestionList({ questions, updateStatus, updateStarred, c
                     interviewFlow: ["introduction", "coding", "evaluation"],
                     programmingLanguage: "python",
                     timeLimit: 30,
-                    voice: "alloy",
+                    voice: "male",
                     modelName: "gpt-4o",
                 });
             })

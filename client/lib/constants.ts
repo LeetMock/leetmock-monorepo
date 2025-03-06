@@ -24,7 +24,6 @@ export enum VoiceProvider {
 export type Voice = {
   id: string;
   name: string;
-  provider: VoiceProvider;
 };
 
 export type InterviewFlow = {
@@ -56,8 +55,8 @@ export const LANGUAGES: Language[] = [
 
 export const AVAILABLE_LANGUAGES = ["python"];
 export const AVAILABLE_VOICES: Voice[] = [
-  { id: "alex", name: "Alex", provider: VoiceProvider.ElevenLabs },
-  { id: "alloy", name: "Alloy", provider: VoiceProvider.OpenAI },
+  { id: "male", name: "Male" },
+  { id: "female", name: "Female" },
 ];
 
 export const SCROLLBAR_CSS = `
@@ -169,8 +168,8 @@ from typing import List, Any
 
 class Solution:
     def ${functionName}(self, ${Object.entries(params)
-      .map(([param, type]) => `${param}: ${type}`)
-      .join(", ")}):
+        .map(([param, type]) => `${param}: ${type}`)
+        .join(", ")}):
         # TODO: Write your Python code here
         pass
 `.trim(),
@@ -193,8 +192,8 @@ import java.util.List;
 
 class Solution {
     public Object ${functionName}(${Object.entries(params)
-      .map(([param, type]) => `${type} ${param}`)
-      .join(", ")}) {
+        .map(([param, type]) => `${type} ${param}`)
+        .join(", ")}) {
         // TODO: Write your Java code here
         return null;
     }
@@ -209,8 +208,8 @@ class Solution {
 class Solution {
 public:
     int ${functionName}(${Object.entries(params)
-      .map(([param, type]) => `${type} ${param}`)
-      .join(", ")}) {
+        .map(([param, type]) => `${type} ${param}`)
+        .join(", ")}) {
         // TODO: Write your C++ code here
         return 0;
     }
@@ -223,6 +222,6 @@ export enum PricingTier {
   Free = "free",
   Basic = "basic",
   Premium = "premium",
-  PayAsYouGo = "payAsYouGo",  
+  PayAsYouGo = "payAsYouGo",
   PremiumExtraMins = "premiumExtraMins",
 }

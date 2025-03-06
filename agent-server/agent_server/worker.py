@@ -40,6 +40,7 @@ from livekit.rtc import DataPacket
 
 from libs.convex.api import ConvexApi
 from libs.message_wrapper import MessageWrapper
+from agent_server.livekit import tts
 
 
 def prewarm(proc: JobProcess):
@@ -122,11 +123,12 @@ async def entrypoint(ctx: JobContext):
             print("returning noop stream")
             return NoopStream.from_chat_ctx(chat_ctx=chat_ctx)
 
+    
     assistant = VoicePipelineAgent(
         vad=ctx.proc.userdata["vad"],
         stt=deepgram.STT(),
         llm=no_op_llm,
-        tts=get_tts_engine(session.session_metadata.voice),
+        tts=get_tts_engine(voice=session.session_metadata.voice),
         before_llm_cb=before_llm_callback,
         # turn_detector=turn_detector.EOUModel(unlikely_threshold=0.05),
     )
