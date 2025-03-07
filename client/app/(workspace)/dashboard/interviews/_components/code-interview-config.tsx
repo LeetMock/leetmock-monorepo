@@ -84,7 +84,7 @@ export const CodeInterviewConfig: React.FC<CodeInterviewConfigProps> = ({ select
             title={selectedQuestion.title}
             difficulty={selectedQuestion.difficulty}
             category={selectedQuestion.category}
-            onQuestionSelected={() => {}}
+            onQuestionSelected={() => { }}
             isSelected={false}
             className="hover:scale-100"
           />
@@ -122,11 +122,10 @@ export const CodeInterviewConfig: React.FC<CodeInterviewConfigProps> = ({ select
               <SelectValue placeholder="Select a voice" />
             </SelectTrigger>
             <SelectContent>
-              {AVAILABLE_VOICES.map(({ id, name, provider }) => (
+              {AVAILABLE_VOICES.map(({ id, name }) => (
                 <SelectItem key={id} value={id}>
                   <span className="flex items-center gap-2">
                     {name}
-                    <span className="text-xs text-muted-foreground">({provider})</span>
                   </span>
                 </SelectItem>
               ))}

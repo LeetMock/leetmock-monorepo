@@ -31,8 +31,8 @@ const Workspace = ({
     const email = user.emailAddresses[0].emailAddress;
     createDefaultUserProfile({ email });
 
-    toast.info("Please wait for an invite code to join this workspace");
-    return redirect("/waitlist");
+    toast.info("Signed up successfully! Redirecting to dashboard...");
+    return redirect("/dashboard/interviews");
   }
 
   return isDefined(userProfile) ? children : <Spinner />;

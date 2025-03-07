@@ -60,10 +60,10 @@ export const createDefaultUserProfile = userMutation({
     }
 
     const userId = ctx.user.subject;
-    const role = "waitlist";
+    const role = "user";
     const subscription = "free";
-    const minutesRemaining = 0;
-    const evaluationCount = 0;
+    const minutesRemaining = 30;
+    const evaluationCount = 10;
 
     await ctx.table("userProfiles").insert({
       userId,
