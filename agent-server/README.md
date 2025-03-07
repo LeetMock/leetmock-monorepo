@@ -4,6 +4,10 @@
 2. python3 agent_server/worker.py dev
 3. https://agents-playground.livekit.io/ 
 
+to run the agent server locally, you need to run the following commands:
+
+uv install
+just run
 
 ```bash
 # Build locally for pre-production testing
