@@ -31,10 +31,12 @@ dependencies = [
     "agent-graph",
     "logfire[system-metrics, httpx, aiohttp]",
     "loguru>=0.7.3",
+    "livechain>=0.1.0",
 ]
 
 [dependency-groups]
 dev = [
+    "ipykernel>=6.29.5",
     "pytest>=8.3.2,<9",
     "pytest-watch>=4.2.0,<5",
 ]
