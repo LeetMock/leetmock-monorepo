@@ -541,6 +541,37 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/userProfiles/getAllUsers:
+    post:
+      summary: Calls a query at the path userProfiles.js:getAllUsers
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_userProfiles.getAllUsers"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_userProfiles.getAllUsers"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
   /api/run/userProfiles/getCompletedQuestions:
     post:
       summary: Calls a query at the path userProfiles.js:getCompletedQuestions
@@ -590,6 +621,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Response_userProfiles.getStarredQuestions"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/userProfiles/getUserById:
+    post:
+      summary: Calls a query at the path userProfiles.js:getUserById
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_userProfiles.getUserById"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_userProfiles.getUserById"
         "400":
           description: Failed operation
           content:
@@ -2287,6 +2349,74 @@ components:
           type: object
         value: {}
 
+    Request_sessions.getSessionMetricsInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args: {}
+
+    Response_sessions.getSessionMetricsInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value:
+          type: object
+          required:
+            - completed
+            - inProgress
+            - notStarted
+          properties:
+            completed:
+              type: object
+              required:
+                - evalPending
+                - evalReady
+                - total
+              properties:
+                evalPending:
+                  type: number
+                evalReady:
+                  type: number
+                total:
+                  type: number
+            inProgress:
+              type: object
+              required:
+                - evalPending
+                - evalReady
+                - total
+              properties:
+                evalPending:
+                  type: number
+                evalReady:
+                  type: number
+                total:
+                  type: number
+            notStarted:
+              type: object
+              required:
+                - evalPending
+                - evalReady
+                - total
+              properties:
+                evalPending:
+                  type: number
+                evalReady:
+                  type: number
+                total:
+                  type: number
+
     Request_sessions.startSession:
       type: object
       required:
@@ -2369,6 +2499,53 @@ components:
           type: object
         value: {}
 
+    Request_userProfiles.getAllUserMetricsInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args: {}
+
+    Response_userProfiles.getAllUserMetricsInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.getAllUsers:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+
+    Response_userProfiles.getAllUsers:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
     Request_userProfiles.getByEmailInternal:
       type: object
       required:
@@ -2429,6 +2606,35 @@ components:
           type: object
 
     Response_userProfiles.getStarredQuestions:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.getUserById:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - userId
+          properties:
+            userId:
+              type: string
+
+    Response_userProfiles.getUserById:
       type: object
       required:
         - status
@@ -2677,7 +2883,14 @@ components:
       required:
         - args
       properties:
-        args: {}
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
 
     Response_actions.getToken:
       type: object
@@ -4501,6 +4714,182 @@ components:
               description: ID from table "sessions"
 
     Response_eval.checkTimeout:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_functions.backfillAggregatesMigration:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          properties:
+            batchSize:
+              type: number
+            cursor:
+              type: string
+              nullable: true
+            dryRun:
+              type: boolean
+            fn:
+              type: string
+            next:
+              type: array
+              items:
+                type: string
+
+    Response_functions.backfillAggregatesMigration:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_functions.backfillSessionsMigration:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          properties:
+            batchSize:
+              type: number
+            cursor:
+              type: string
+              nullable: true
+            dryRun:
+              type: boolean
+            fn:
+              type: string
+            next:
+              type: array
+              items:
+                type: string
+
+    Response_functions.backfillSessionsMigration:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_functions.clearAggregates:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+
+    Response_functions.clearAggregates:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_functions.runSessionAggregationBackfill:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          properties:
+            batchSize:
+              type: number
+            cursor:
+              type: string
+              nullable: true
+            dryRun:
+              type: boolean
+            fn:
+              type: string
+            next:
+              type: array
+              items:
+                type: string
+
+    Response_functions.runSessionAggregationBackfill:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_functions.runUserAggregationBackfill:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          properties:
+            batchSize:
+              type: number
+            cursor:
+              type: string
+              nullable: true
+            dryRun:
+              type: boolean
+            fn:
+              type: string
+            next:
+              type: array
+              items:
+                type: string
+
+    Response_functions.runUserAggregationBackfill:
       type: object
       required:
         - status

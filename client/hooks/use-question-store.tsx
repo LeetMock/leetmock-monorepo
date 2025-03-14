@@ -66,6 +66,10 @@ interface QuestionState {
     setStarredQuestions: (questionIds: Id<"questions">[]) => void;
     updateFilteredQuestions: () => void;
     reset: () => void;
+
+    // Add these functions
+    updateStatus: (questionId: Id<"questions">, completed: boolean) => void;
+    updateStarred: (questionId: Id<"questions">, starred: boolean) => void;
 }
 
 export const useQuestionStore = create<QuestionState>()(
@@ -229,6 +233,33 @@ export const useQuestionStore = create<QuestionState>()(
                 companies: [],
                 filteredQuestions: [],
             }),
+
+            // Add these implementations
+            updateStatus: (questionId, completed) => {
+                const newCompletedQuestions = new Set(get().completedQuestions);
+
+                if (completed) {
+                    newCompletedQuestions.add(questionId);
+                } else {
+                    newCompletedQuestions.delete(questionId);
+                }
+
+                set({ completedQuestions: newCompletedQuestions });
+                get().updateFilteredQuestions();
+            },
+
+            updateStarred: (questionId, starred) => {
+                const newStarredQuestions = new Set(get().starredQuestions);
+
+                if (starred) {
+                    newStarredQuestions.add(questionId);
+                } else {
+                    newStarredQuestions.delete(questionId);
+                }
+
+                set({ starredQuestions: newStarredQuestions });
+                get().updateFilteredQuestions();
+            },
         }),
         {
             name: "question-store",

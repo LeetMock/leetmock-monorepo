@@ -6,13 +6,10 @@ function StudyListGrid() {
     const studyLists = [
         {
             icon: CodeImg,
-            title: "Top Interview 150",
-            description: "Must-do List for Interview Prep"
-        },
-        {
-            icon: CodeImg,
-            title: "LeetCode 75",
-            description: "Ace Coding Interview with 75 Questions"
+            title: "Most Asked Questions",
+            description: "Must-do List for Interview Prep",
+            name: "Most Popular Questions",
+            id: "kx7fctxng4969ys1xtwsm7ty3s7c003k"
         },
     ];
 

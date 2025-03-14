@@ -125,7 +125,6 @@ export const createQuestion = mutation({
     const questionId = await ctx.table("questions").insert({
       ...args,
       metaData: args.metaData ?? {},
-      companies: [],
     });
 
     return { questionId };
@@ -182,6 +181,33 @@ export const deleteQuestion = mutation({
 
     await (await ctx.table("questions").get(questionId))?.delete();
     return { questionId };
+  },
+});
+
+export const listBySetId = query({
+  args: { setId: v.string() },
+  handler: async (ctx, args) => {
+    console.log(args.setId);
+    const studySet = await ctx.table("codingQuestionSets")
+      .filter((q) => q.eq(q.field("_id"), args.setId) || q.eq(q.field("name"), args.setId))
+      .first();
+
+    if (!studySet) {
+      return [];
+    }
+
+    // Assuming your study set has a questionIds field containing an array of question IDs
+    if (studySet.questions && studySet.questions.length > 0) {
+      const questions = await Promise.all(
+        studySet.questions.map(async (id) => {
+          return await ctx.table("questions").get(id);
+        })
+      );
+
+      return questions.filter(q => q !== null);
+    }
+
+    return [];
   },
 });
 

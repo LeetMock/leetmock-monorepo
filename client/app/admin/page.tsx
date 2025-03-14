@@ -6,13 +6,14 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
-import { 
-  Users, 
-  BarChart, 
-  Settings, 
-  MessageSquare, 
+import {
+  Users,
+  BarChart,
+  Settings,
+  MessageSquare,
   Code,
-  Loader2 
+  Loader2,
+  List
 } from "lucide-react";
 import Link from "next/link";
 
@@ -53,6 +54,12 @@ const adminPages: AdminPageLink[] = [
     title: "System Settings",
     description: "Configure platform settings and parameters",
     icon: Settings
+  },
+  {
+    href: "/admin/questionsets",
+    title: "Question Sets",
+    description: "Manage question sets",
+    icon: List
   }
 ];
 

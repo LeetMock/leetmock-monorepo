@@ -53,6 +53,14 @@ const DevToolInner: React.FC<{}> = ({ }) => {
     router.push('/admin/questions');
   };
 
+  const handleMainAdminClick = () => {
+    if (!isSignedIn) {
+      router.push("/auth?action=signin");
+      return;
+    }
+    router.push('/admin');
+  };
+
   const handleViewSession = () => {
     if (!isSignedIn) {
       router.push("/auth?action=signin");
@@ -150,6 +158,14 @@ const DevToolInner: React.FC<{}> = ({ }) => {
                   className="w-full hover:bg-accent/50"
                 >
                   View Session
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleMainAdminClick}
+                  className="w-full hover:bg-accent/50"
+                >
+                  Main Admin
                 </Button>
               </div>
             </div>

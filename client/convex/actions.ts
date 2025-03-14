@@ -490,7 +490,7 @@ export const scrapeQuestion = action({
     titleSlug: v.string()
   },
   returns: v.object({
-    companyTagStats: v.string(),
+    companyTagStats: v.union(v.string(), v.null()),
     difficulty: v.string(),
     dislikes: v.number(),
     exampleTestcases: v.string(),
@@ -549,6 +549,7 @@ export const scrapeQuestion = action({
         }
 
         const data = await response.json();
+        console.log(data);
         console.log(`Successfully fetched question data on attempt ${attempt}`);
         return data;
       } catch (error) {
@@ -668,6 +669,8 @@ Provide input parameters for each language as shown above. Don't output anything
 
     const testsPrompt = `Generate 10 test cases for the following LeetCode question:
 
+You are an expert LeetCode problem solver, and you will generate 20 testcases for the following question setting that covers all edge cases to test the correctness of the code.
+
 Question Title: ${questionTitle}
 
 Question Description: ${questionContent}
@@ -680,7 +683,7 @@ ${JSON.stringify(exampleTests)}
 Instructions:
 1. Strictly follow testcase requirment in question description
 2. use parameter name in Input Parameters
-3. Make sure to generate good quality testcases, try to test different aspect of the code
+3. Make sure to generate good quality testcases, the testcase must cover all edge cases
 4. Most importantly, Provide the test cases in the following format:
 [{"input": {...}, "output": ...}, ...]
 
@@ -690,7 +693,7 @@ Don't output anything else, just output a JSON-like list of test cases.`;
       "https://api.anthropic.com/v1/messages",
       {
         model: "claude-3-5-sonnet-20240620",
-        max_tokens: 2048,
+        max_tokens: 4096,
         temperature: 0.1,
         messages: [{ role: "user", content: testsPrompt }]
       },
