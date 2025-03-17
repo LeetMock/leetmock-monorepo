@@ -1,20 +1,9 @@
+import { StudyListItem, StudyPlan } from '../types';
 import StudyCard from "./studycard";
-import CodeImg from '../../../../../public/code.png';
 
-function StudyListGrid() {
+function StudyListGrid({ studyLists }: { studyLists: StudyPlan }) {
 
-    const studyLists = [
-        {
-            icon: CodeImg,
-            title: "Top Interview 150",
-            description: "Must-do List for Interview Prep"
-        },
-        {
-            icon: CodeImg,
-            title: "LeetCode 75",
-            description: "Ace Coding Interview with 75 Questions"
-        },
-    ];
+
 
     return (
         <div>

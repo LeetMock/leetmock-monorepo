@@ -1,4 +1,5 @@
 export const parseValueByType = (value: string, type: string) => {
+    console.log(value, type);
     try {
         // Handle array/list types first
         if (type.includes("List[") || type.includes("[]") || type.includes("vector")) {

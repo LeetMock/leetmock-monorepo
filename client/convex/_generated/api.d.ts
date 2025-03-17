@@ -13,6 +13,7 @@ import type * as admins from "../admins.js";
 import type * as agentStates from "../agentStates.js";
 import type * as codeSessionEvents from "../codeSessionEvents.js";
 import type * as codeSessionStates from "../codeSessionStates.js";
+import type * as codingQuestionSet from "../codingQuestionSet.js";
 import type * as crons from "../crons.js";
 import type * as eval from "../eval.js";
 import type * as functions from "../functions.js";
@@ -46,6 +47,7 @@ declare const fullApi: ApiFromModules<{
   agentStates: typeof agentStates;
   codeSessionEvents: typeof codeSessionEvents;
   codeSessionStates: typeof codeSessionStates;
+  codingQuestionSet: typeof codingQuestionSet;
   crons: typeof crons;
   eval: typeof eval;
   functions: typeof functions;

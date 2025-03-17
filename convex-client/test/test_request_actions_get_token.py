@@ -35,11 +35,13 @@ class TestRequestActionsGetToken(unittest.TestCase):
         model = RequestActionsGetToken()
         if include_optional:
             return RequestActionsGetToken(
-                args = None
+                args = convex_client.models.request_sessions_end_session_args.Request_sessions_endSession_args(
+                    session_id = '', )
             )
         else:
             return RequestActionsGetToken(
-                args = None,
+                args = convex_client.models.request_sessions_end_session_args.Request_sessions_endSession_args(
+                    session_id = '', ),
         )
         """
 

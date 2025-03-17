@@ -139,8 +139,10 @@ Class | Method | HTTP request | Description
 *QueryApi* | [**api_run_sessions_get_by_id_post**](docs/QueryApi.md#api_run_sessions_get_by_id_post) | **POST** /api/run/sessions/getById | Calls a query at the path sessions.js:getById
 *QueryApi* | [**api_run_sessions_get_by_id_unauth_post**](docs/QueryApi.md#api_run_sessions_get_by_id_unauth_post) | **POST** /api/run/sessions/getById_unauth | Calls a query at the path sessions.js:getById_unauth
 *QueryApi* | [**api_run_sessions_get_by_user_id_post**](docs/QueryApi.md#api_run_sessions_get_by_user_id_post) | **POST** /api/run/sessions/getByUserId | Calls a query at the path sessions.js:getByUserId
+*QueryApi* | [**api_run_user_profiles_get_all_users_post**](docs/QueryApi.md#api_run_user_profiles_get_all_users_post) | **POST** /api/run/userProfiles/getAllUsers | Calls a query at the path userProfiles.js:getAllUsers
 *QueryApi* | [**api_run_user_profiles_get_completed_questions_post**](docs/QueryApi.md#api_run_user_profiles_get_completed_questions_post) | **POST** /api/run/userProfiles/getCompletedQuestions | Calls a query at the path userProfiles.js:getCompletedQuestions
 *QueryApi* | [**api_run_user_profiles_get_starred_questions_post**](docs/QueryApi.md#api_run_user_profiles_get_starred_questions_post) | **POST** /api/run/userProfiles/getStarredQuestions | Calls a query at the path userProfiles.js:getStarredQuestions
+*QueryApi* | [**api_run_user_profiles_get_user_by_id_post**](docs/QueryApi.md#api_run_user_profiles_get_user_by_id_post) | **POST** /api/run/userProfiles/getUserById | Calls a query at the path userProfiles.js:getUserById
 *QueryApi* | [**api_run_user_profiles_get_user_minutes_remaining_post**](docs/QueryApi.md#api_run_user_profiles_get_user_minutes_remaining_post) | **POST** /api/run/userProfiles/getUserMinutesRemaining | Calls a query at the path userProfiles.js:getUserMinutesRemaining
 *QueryApi* | [**api_run_user_profiles_get_user_profile_post**](docs/QueryApi.md#api_run_user_profiles_get_user_profile_post) | **POST** /api/run/userProfiles/getUserProfile | Calls a query at the path userProfiles.js:getUserProfile
 
@@ -209,6 +211,12 @@ Class | Method | HTTP request | Description
  - [RequestEvalInsertEvaluationArgsScoreboardsTechnicalCompetency](docs/RequestEvalInsertEvaluationArgsScoreboardsTechnicalCompetency.md)
  - [RequestEvalInsertEvaluationArgsScoreboardsTesting](docs/RequestEvalInsertEvaluationArgsScoreboardsTesting.md)
  - [RequestEvalTriggerEvalAction](docs/RequestEvalTriggerEvalAction.md)
+ - [RequestFunctionsBackfillAggregatesMigration](docs/RequestFunctionsBackfillAggregatesMigration.md)
+ - [RequestFunctionsBackfillAggregatesMigrationArgs](docs/RequestFunctionsBackfillAggregatesMigrationArgs.md)
+ - [RequestFunctionsBackfillSessionsMigration](docs/RequestFunctionsBackfillSessionsMigration.md)
+ - [RequestFunctionsClearAggregates](docs/RequestFunctionsClearAggregates.md)
+ - [RequestFunctionsRunSessionAggregationBackfill](docs/RequestFunctionsRunSessionAggregationBackfill.md)
+ - [RequestFunctionsRunUserAggregationBackfill](docs/RequestFunctionsRunUserAggregationBackfill.md)
  - [RequestInviteCodesApplyInviteCode](docs/RequestInviteCodesApplyInviteCode.md)
  - [RequestInviteCodesApplyInviteCodeArgs](docs/RequestInviteCodesApplyInviteCodeArgs.md)
  - [RequestInviteCodesCreateDefaultUserProfile](docs/RequestInviteCodesCreateDefaultUserProfile.md)
@@ -256,14 +264,18 @@ Class | Method | HTTP request | Description
  - [RequestSessionsGetByIdInternal](docs/RequestSessionsGetByIdInternal.md)
  - [RequestSessionsGetByIdUnauth](docs/RequestSessionsGetByIdUnauth.md)
  - [RequestSessionsGetByUserId](docs/RequestSessionsGetByUserId.md)
+ - [RequestSessionsGetSessionMetricsInternal](docs/RequestSessionsGetSessionMetricsInternal.md)
  - [RequestSessionsStartSession](docs/RequestSessionsStartSession.md)
  - [RequestUserProfilesDecrementEvaluationCount](docs/RequestUserProfilesDecrementEvaluationCount.md)
  - [RequestUserProfilesDecrementMinutesRemaining](docs/RequestUserProfilesDecrementMinutesRemaining.md)
  - [RequestUserProfilesDecrementMinutesRemainingArgs](docs/RequestUserProfilesDecrementMinutesRemainingArgs.md)
+ - [RequestUserProfilesGetAllUserMetricsInternal](docs/RequestUserProfilesGetAllUserMetricsInternal.md)
+ - [RequestUserProfilesGetAllUsers](docs/RequestUserProfilesGetAllUsers.md)
  - [RequestUserProfilesGetByEmailInternal](docs/RequestUserProfilesGetByEmailInternal.md)
  - [RequestUserProfilesGetByEmailInternalArgs](docs/RequestUserProfilesGetByEmailInternalArgs.md)
  - [RequestUserProfilesGetCompletedQuestions](docs/RequestUserProfilesGetCompletedQuestions.md)
  - [RequestUserProfilesGetStarredQuestions](docs/RequestUserProfilesGetStarredQuestions.md)
+ - [RequestUserProfilesGetUserById](docs/RequestUserProfilesGetUserById.md)
  - [RequestUserProfilesGetUserMinutesRemaining](docs/RequestUserProfilesGetUserMinutesRemaining.md)
  - [RequestUserProfilesGetUserProfile](docs/RequestUserProfilesGetUserProfile.md)
  - [RequestUserProfilesGetUserProfileInternal](docs/RequestUserProfilesGetUserProfileInternal.md)
@@ -321,6 +333,11 @@ Class | Method | HTTP request | Description
  - [ResponseEvalGetBySessionId](docs/ResponseEvalGetBySessionId.md)
  - [ResponseEvalInsertEvaluation](docs/ResponseEvalInsertEvaluation.md)
  - [ResponseEvalTriggerEvalAction](docs/ResponseEvalTriggerEvalAction.md)
+ - [ResponseFunctionsBackfillAggregatesMigration](docs/ResponseFunctionsBackfillAggregatesMigration.md)
+ - [ResponseFunctionsBackfillSessionsMigration](docs/ResponseFunctionsBackfillSessionsMigration.md)
+ - [ResponseFunctionsClearAggregates](docs/ResponseFunctionsClearAggregates.md)
+ - [ResponseFunctionsRunSessionAggregationBackfill](docs/ResponseFunctionsRunSessionAggregationBackfill.md)
+ - [ResponseFunctionsRunUserAggregationBackfill](docs/ResponseFunctionsRunUserAggregationBackfill.md)
  - [ResponseInviteCodesApplyInviteCode](docs/ResponseInviteCodesApplyInviteCode.md)
  - [ResponseInviteCodesCreateDefaultUserProfile](docs/ResponseInviteCodesCreateDefaultUserProfile.md)
  - [ResponseInviteCodesCreateInviteCode](docs/ResponseInviteCodesCreateInviteCode.md)
@@ -346,12 +363,18 @@ Class | Method | HTTP request | Description
  - [ResponseSessionsGetByIdInternal](docs/ResponseSessionsGetByIdInternal.md)
  - [ResponseSessionsGetByIdUnauth](docs/ResponseSessionsGetByIdUnauth.md)
  - [ResponseSessionsGetByUserId](docs/ResponseSessionsGetByUserId.md)
+ - [ResponseSessionsGetSessionMetricsInternal](docs/ResponseSessionsGetSessionMetricsInternal.md)
+ - [ResponseSessionsGetSessionMetricsInternalValue](docs/ResponseSessionsGetSessionMetricsInternalValue.md)
+ - [ResponseSessionsGetSessionMetricsInternalValueCompleted](docs/ResponseSessionsGetSessionMetricsInternalValueCompleted.md)
  - [ResponseSessionsStartSession](docs/ResponseSessionsStartSession.md)
  - [ResponseUserProfilesDecrementEvaluationCount](docs/ResponseUserProfilesDecrementEvaluationCount.md)
  - [ResponseUserProfilesDecrementMinutesRemaining](docs/ResponseUserProfilesDecrementMinutesRemaining.md)
+ - [ResponseUserProfilesGetAllUserMetricsInternal](docs/ResponseUserProfilesGetAllUserMetricsInternal.md)
+ - [ResponseUserProfilesGetAllUsers](docs/ResponseUserProfilesGetAllUsers.md)
  - [ResponseUserProfilesGetByEmailInternal](docs/ResponseUserProfilesGetByEmailInternal.md)
  - [ResponseUserProfilesGetCompletedQuestions](docs/ResponseUserProfilesGetCompletedQuestions.md)
  - [ResponseUserProfilesGetStarredQuestions](docs/ResponseUserProfilesGetStarredQuestions.md)
+ - [ResponseUserProfilesGetUserById](docs/ResponseUserProfilesGetUserById.md)
  - [ResponseUserProfilesGetUserMinutesRemaining](docs/ResponseUserProfilesGetUserMinutesRemaining.md)
  - [ResponseUserProfilesGetUserProfile](docs/ResponseUserProfilesGetUserProfile.md)
  - [ResponseUserProfilesGetUserProfileInternal](docs/ResponseUserProfilesGetUserProfileInternal.md)
