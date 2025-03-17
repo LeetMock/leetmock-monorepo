@@ -835,7 +835,7 @@ Please provide only the solution code without explanations. Make sure your solut
       const response = await axios.post(
         "https://api.anthropic.com/v1/messages",
         {
-          model: "claude-3-5-sonnet-20240620",
+          model: "claude-3-7-sonnet-20250219",
           max_tokens: 4000,
           temperature: 0.2,
           messages: [{ role: "user", content: prompt }]
