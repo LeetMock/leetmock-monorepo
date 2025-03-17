@@ -600,11 +600,11 @@ export const generateQuestion = action({
 
     // Generate function name
     const functionNamePrompt = `Generate a concise and informative function name for the following LeetCode question:\n\n${questionTitle}\n\n${questionContent}\n\n return in this schema <functionName>[generated function Name]</functionName>`;
-
+    const MODEL = "claude-3-7-sonnet-20250219";
     const functionNameResponse = await axios.post(
       "https://api.anthropic.com/v1/messages",
       {
-        model: "claude-3-5-sonnet-20240620",
+        model: MODEL,
         max_tokens: 50,
         messages: [{ role: "user", content: functionNamePrompt }]
       },
@@ -648,7 +648,7 @@ Provide input parameters for each language as shown above. Don't output anything
     const inputParamsResponse = await axios.post(
       "https://api.anthropic.com/v1/messages",
       {
-        model: "claude-3-5-sonnet-20240620",
+        model: MODEL,
         max_tokens: 1024,
         temperature: 0,
         messages: [{ role: "user", content: inputParamsPrompt }]
@@ -692,8 +692,8 @@ Don't output anything else, just output a JSON-like list of test cases.`;
     const testsResponse = await axios.post(
       "https://api.anthropic.com/v1/messages",
       {
-        model: "claude-3-5-sonnet-20240620",
-        max_tokens: 4096,
+        model: MODEL,
+        max_tokens: 2048,
         temperature: 0.1,
         messages: [{ role: "user", content: testsPrompt }]
       },
@@ -724,7 +724,7 @@ Return only one of these modes as a string, without any additional text or expla
     const evalModeResponse = await axios.post(
       "https://api.anthropic.com/v1/messages",
       {
-        model: "claude-3-5-sonnet-20240620",
+        model: MODEL,
         max_tokens: 40,
         temperature: 0,
         messages: [{ role: "user", content: evalModePrompt }]
@@ -835,7 +835,7 @@ Please provide only the solution code without explanations. Make sure your solut
       const response = await axios.post(
         "https://api.anthropic.com/v1/messages",
         {
-          model: "claude-3-5-sonnet-20240620",
+          model: "claude-3-7-sonnet-20250219",
           max_tokens: 4000,
           temperature: 0.2,
           messages: [{ role: "user", content: prompt }]
