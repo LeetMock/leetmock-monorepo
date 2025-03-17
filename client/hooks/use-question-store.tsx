@@ -236,7 +236,8 @@ export const useQuestionStore = create<QuestionState>()(
 
             // Add these implementations
             updateStatus: (questionId, completed) => {
-                const newCompletedQuestions = new Set(get().completedQuestions);
+                const state = get();
+                const newCompletedQuestions = new Set(state.completedQuestions);
 
                 if (completed) {
                     newCompletedQuestions.add(questionId);
@@ -244,12 +245,20 @@ export const useQuestionStore = create<QuestionState>()(
                     newCompletedQuestions.delete(questionId);
                 }
 
-                set({ completedQuestions: newCompletedQuestions });
-                get().updateFilteredQuestions();
+                // Update the state in a single operation
+                set({
+                    completedQuestions: newCompletedQuestions
+                });
+
+                // Only update filtered questions if they might be affected
+                if (state.status || state.selectedTab === "starred") {
+                    state.updateFilteredQuestions();
+                }
             },
 
             updateStarred: (questionId, starred) => {
-                const newStarredQuestions = new Set(get().starredQuestions);
+                const state = get();
+                const newStarredQuestions = new Set(state.starredQuestions);
 
                 if (starred) {
                     newStarredQuestions.add(questionId);
@@ -257,8 +266,15 @@ export const useQuestionStore = create<QuestionState>()(
                     newStarredQuestions.delete(questionId);
                 }
 
-                set({ starredQuestions: newStarredQuestions });
-                get().updateFilteredQuestions();
+                // Update the state in a single operation
+                set({
+                    starredQuestions: newStarredQuestions
+                });
+
+                // Only update filtered questions if they might be affected
+                if (state.selectedTab === "starred") {
+                    state.updateFilteredQuestions();
+                }
             },
         }),
         {

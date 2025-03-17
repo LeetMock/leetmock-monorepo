@@ -10,18 +10,23 @@ import { CheckCircle, Clock, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { useQuestionStore } from "@/hooks/use-question-store";
 import QuestionList from "@/app/(workspace)/dashboard/coding/_components/questionList";
+import { useDebounceCallback } from "usehooks-ts";
+import { Id } from "@/convex/_generated/dataModel";
 
 const StudyPlanPage = () => {
     const params = useParams();
     const id = params.id as string;
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const [completedSetQuestions, setcompletedSetQuestions] = useState<Set<string>>(new Set());
 
     const {
         completedQuestions,
         starredQuestions,
-        updateStatus,
-        updateStarred,
+        setCompletedQuestions,
+        setStarredQuestions,
+        updateStatus: updateLocalStatus,
+        updateStarred: updateLocalStarred
     } = useQuestionStore();
 
     // Get study set data based on ID
@@ -30,12 +35,73 @@ const StudyPlanPage = () => {
     // Get questions for the study set
     const questions = useQuery(api.questions.listBySetId, { setId: id });
 
+    const updateStatusMutation = useMutation(api.questions.updateStatus);
+    const updateStarredMutation = useMutation(api.questions.updateStarred);
+
+    // Only fetch these once on initial load, not on every update
+    const completedQuery = useQuery(api.userProfiles.getCompletedQuestions);
+    const starredQuery = useQuery(api.userProfiles.getStarredQuestions);
+
+    useEffect(() => {
+        // Initialize the store with data from the server only once
+        if (completedQuery?.completedQuestions) {
+            setCompletedQuestions(completedQuery.completedQuestions);
+        }
+
+        if (starredQuery?.starredQuestions) {
+            setStarredQuestions(starredQuery.starredQuestions);
+        }
+    }, [completedQuery?.completedQuestions, starredQuery?.starredQuestions, setCompletedQuestions, setStarredQuestions]);
+
     useEffect(() => {
         if (studySet) {
             setTitle(studySet.name || "Study Plan");
             setDescription(studySet.name || "");
         }
-    }, [studySet]);
+
+        // Create a set of completed questions that are in this study set
+        if (questions && questions.length > 0) {
+            const completedQuestionsInSet = questions
+                .filter(question => completedQuestions.has(question._id))
+                .map(question => question._id);
+
+            setcompletedSetQuestions(new Set(completedQuestionsInSet));
+        }
+    }, [studySet, questions, completedQuestions]);
+
+    const updateStatus = useDebounceCallback(
+        async (args: { questionId: Id<"questions">; status: "complete" | "incomplete" }) => {
+            // Optimistic update - update local state immediately
+            updateLocalStatus(args.questionId, args.status === "complete");
+
+            try {
+                // Then update the server
+                await updateStatusMutation(args);
+            } catch (error) {
+                // If server update fails, revert the optimistic update
+                updateLocalStatus(args.questionId, args.status !== "complete");
+                console.error("Failed to update question status:", error);
+            }
+        },
+        300
+    );
+
+    const updateStarred = useDebounceCallback(
+        async (args: { questionId: Id<"questions">; starred: boolean }) => {
+            // Optimistic update - update local state immediately
+            updateLocalStarred(args.questionId, args.starred);
+
+            try {
+                // Then update the server
+                await updateStarredMutation(args);
+            } catch (error) {
+                // If server update fails, revert the optimistic update
+                updateLocalStarred(args.questionId, !args.starred);
+                console.error("Failed to update starred status:", error);
+            }
+        },
+        300
+    );
 
     return (
         <div className="flex flex-col">
@@ -79,20 +145,20 @@ const StudyPlanPage = () => {
                                     <div
                                         className="h-full bg-gradient-to-r from-teal-400 to-blue-500 rounded-full transition-all duration-1000 ease-out-expo"
                                         style={{
-                                            width: `${Math.round((completedQuestions.size / questions.length) * 100)}%`,
+                                            width: `${Math.round((completedSetQuestions.size / questions.length) * 100)}%`,
                                         }}
                                     ></div>
                                 </div>
                                 <div className="flex items-center justify-between mt-2">
                                     <div className="text-base font-semibold text-blue-600 dark:text-blue-400">
-                                        {completedQuestions.size} <span className="text-gray-500 dark:text-gray-400 font-normal">/ {questions.length}</span>
+                                        {completedSetQuestions.size} <span className="text-gray-500 dark:text-gray-400 font-normal">/ {questions.length}</span>
                                     </div>
 
                                     <div className="flex items-center">
                                         <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-teal-300 to-blue-500 p-0.5">
                                             <div className="w-full h-full bg-white dark:bg-gray-800 rounded flex items-center justify-center">
                                                 <span className="text-blue-600 dark:text-blue-400 text-sm font-bold">
-                                                    {Math.round((completedQuestions.size / questions.length) * 100)}%
+                                                    {Math.round((completedSetQuestions.size / questions.length) * 100)}%
                                                 </span>
                                             </div>
                                         </div>

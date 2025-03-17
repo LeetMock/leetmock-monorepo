@@ -130,3 +130,10 @@ export const getSetById = userQuery({
             .first();
     },
 });
+
+export const getStudyPlanByName = userQuery({
+    args: { name: v.string() },
+    handler: async (ctx, args) => {
+        return await ctx.table("codingQuestionSets").filter((q) => q.eq(q.field("name"), args.name)).first();
+    },
+});

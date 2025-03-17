@@ -34,31 +34,30 @@ export const updateStarred = userMutation({
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Unauthenticated");
 
-    const question = await ctx.table("questions").get(questionId);
-    if (!question) {
-      throw new Error("Question not found");
-    }
+    // Skip question validation to reduce database operations
+    // We only need to check if the profile exists and update it
 
-    const userProfile = await ctx.table("userProfiles").filter(q => q.eq(q.field("userId"), identity.subject)).first();
-    if (!userProfile) throw new Error("User profile not found");
+    const profile = await ctx.table("userProfiles").get("userId", identity.subject);
+    if (!profile) throw new Error("User profile not found");
 
-    const currentStarred = userProfile.starredQuestions ?? [];
+    const currentStarred = profile.starredQuestions ?? [];
+    const isAlreadyStarred = currentStarred.includes(questionId);
 
-    if (starred) {
-      // Add to starred if not already present
-      if (!currentStarred.includes(questionId)) {
-        await userProfile.patch({
-          starredQuestions: [...currentStarred, questionId]
-        });
-      }
-    } else {
+    // Only update if there's an actual change to make
+    if (starred && !isAlreadyStarred) {
+      // Add to starred
+      await profile.patch({
+        starredQuestions: [...currentStarred, questionId]
+      });
+    } else if (!starred && isAlreadyStarred) {
       // Remove from starred
-      await userProfile.patch({
+      await profile.patch({
         starredQuestions: currentStarred.filter(id => id !== questionId)
       });
     }
+    // If no change needed (already in desired state), do nothing
 
-    return { questionId };
+    return { questionId, success: true };
   },
 });
 
@@ -72,31 +71,30 @@ export const updateStatus = userMutation({
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Unauthenticated");
 
-    const question = await ctx.table("questions").get(questionId);
-    if (!question) {
-      throw new Error("Question not found");
-    }
+    // Skip question validation to reduce database operations
+    // We only need to check if the profile exists and update it
 
-    const userProfile = await ctx.table("userProfiles").filter(q => q.eq(q.field("userId"), identity.subject)).first();
-    if (!userProfile) throw new Error("User profile not found");
+    const profile = await ctx.table("userProfiles").get("userId", identity.subject);
+    if (!profile) throw new Error("User profile not found");
 
-    const currentStatus = userProfile.completedQuestions ?? [];
+    const currentCompleted = profile.completedQuestions ?? [];
+    const isAlreadyCompleted = currentCompleted.includes(questionId);
 
-    if (status === "complete") {
-      // Add to starred if not already present
-      if (!currentStatus.includes(questionId)) {
-        await userProfile.patch({
-          completedQuestions: [...currentStatus, questionId]
-        });
-      }
-    } else {
-      // Remove from starred
-      await userProfile.patch({
-        completedQuestions: currentStatus.filter(id => id !== questionId)
+    // Only update if there's an actual change to make
+    if (status === "complete" && !isAlreadyCompleted) {
+      // Add to completed
+      await profile.patch({
+        completedQuestions: [...currentCompleted, questionId]
+      });
+    } else if (status !== "complete" && isAlreadyCompleted) {
+      // Remove from completed
+      await profile.patch({
+        completedQuestions: currentCompleted.filter(id => id !== questionId)
       });
     }
+    // If no change needed (already in desired state), do nothing
 
-    return { questionId };
+    return { questionId, success: true };
   },
 });
 
@@ -187,27 +185,19 @@ export const deleteQuestion = mutation({
 export const listBySetId = query({
   args: { setId: v.string() },
   handler: async (ctx, args) => {
-    console.log(args.setId);
     const studySet = await ctx.table("codingQuestionSets")
       .filter((q) => q.eq(q.field("_id"), args.setId) || q.eq(q.field("name"), args.setId))
       .first();
 
-    if (!studySet) {
+    if (!studySet || !studySet.questions || studySet.questions.length === 0) {
       return [];
     }
 
-    // Assuming your study set has a questionIds field containing an array of question IDs
-    if (studySet.questions && studySet.questions.length > 0) {
-      const questions = await Promise.all(
-        studySet.questions.map(async (id) => {
-          return await ctx.table("questions").get(id);
-        })
-      );
+    // Use a more efficient batch get operation instead of Promise.all with individual gets
+    const questions = await ctx.table("questions").getMany(studySet.questions);
 
-      return questions.filter(q => q !== null);
-    }
-
-    return [];
+    // Filter out any null values (in case some questions were deleted)
+    return questions.filter(q => q !== null);
   },
 });
 
