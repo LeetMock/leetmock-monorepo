@@ -18,7 +18,7 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Union
+from typing import Any, ClassVar, Dict, List, Optional, Union
 from convex_client.models.response_actions_scrape_question_value_solution import ResponseActionsScrapeQuestionValueSolution
 from convex_client.models.response_actions_scrape_question_value_topic_tags_inner import ResponseActionsScrapeQuestionValueTopicTagsInner
 from typing import Optional, Set
@@ -28,7 +28,7 @@ class ResponseActionsScrapeQuestionValue(BaseModel):
     """
     ResponseActionsScrapeQuestionValue
     """ # noqa: E501
-    company_tag_stats: StrictStr = Field(alias="companyTagStats")
+    company_tag_stats: Optional[StrictStr] = Field(alias="companyTagStats")
     difficulty: StrictStr
     dislikes: Union[StrictFloat, StrictInt]
     example_testcases: StrictStr = Field(alias="exampleTestcases")
@@ -95,6 +95,11 @@ class ResponseActionsScrapeQuestionValue(BaseModel):
                 if _item_topic_tags:
                     _items.append(_item_topic_tags.to_dict())
             _dict['topicTags'] = _items
+        # set to None if company_tag_stats (nullable) is None
+        # and model_fields_set contains the field
+        if self.company_tag_stats is None and "company_tag_stats" in self.model_fields_set:
+            _dict['companyTagStats'] = None
+
         return _dict
 
     @classmethod

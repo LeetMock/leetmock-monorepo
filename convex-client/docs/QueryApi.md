@@ -15,10 +15,15 @@ Method | HTTP request | Description
 [**api_run_code_session_states_get_session_state_by_session_id_post**](QueryApi.md#api_run_code_session_states_get_session_state_by_session_id_post) | **POST** /api/run/codeSessionStates/getSessionStateBySessionId | Calls a query at the path codeSessionStates.js:getSessionStateBySessionId
 [**api_run_code_session_states_get_terminal_state_post**](QueryApi.md#api_run_code_session_states_get_terminal_state_post) | **POST** /api/run/codeSessionStates/getTerminalState | Calls a query at the path codeSessionStates.js:getTerminalState
 [**api_run_code_session_states_get_test_cases_state_post**](QueryApi.md#api_run_code_session_states_get_test_cases_state_post) | **POST** /api/run/codeSessionStates/getTestCasesState | Calls a query at the path codeSessionStates.js:getTestCasesState
+[**api_run_coding_question_set_get_all_coding_question_sets_post**](QueryApi.md#api_run_coding_question_set_get_all_coding_question_sets_post) | **POST** /api/run/codingQuestionSet/getAllCodingQuestionSets | Calls a query at the path codingQuestionSet.js:getAllCodingQuestionSets
+[**api_run_coding_question_set_get_coding_question_sets_post**](QueryApi.md#api_run_coding_question_set_get_coding_question_sets_post) | **POST** /api/run/codingQuestionSet/getCodingQuestionSets | Calls a query at the path codingQuestionSet.js:getCodingQuestionSets
+[**api_run_coding_question_set_get_set_by_id_post**](QueryApi.md#api_run_coding_question_set_get_set_by_id_post) | **POST** /api/run/codingQuestionSet/getSetById | Calls a query at the path codingQuestionSet.js:getSetById
+[**api_run_coding_question_set_get_study_plan_by_name_post**](QueryApi.md#api_run_coding_question_set_get_study_plan_by_name_post) | **POST** /api/run/codingQuestionSet/getStudyPlanByName | Calls a query at the path codingQuestionSet.js:getStudyPlanByName
 [**api_run_eval_get_by_session_id_post**](QueryApi.md#api_run_eval_get_by_session_id_post) | **POST** /api/run/eval/getBySessionId | Calls a query at the path eval.js:getBySessionId
 [**api_run_pricings_get_pricing_post**](QueryApi.md#api_run_pricings_get_pricing_post) | **POST** /api/run/pricings/getPricing | Calls a query at the path pricings.js:getPricing
 [**api_run_questions_get_all_post**](QueryApi.md#api_run_questions_get_all_post) | **POST** /api/run/questions/getAll | Calls a query at the path questions.js:getAll
 [**api_run_questions_get_by_id_post**](QueryApi.md#api_run_questions_get_by_id_post) | **POST** /api/run/questions/getById | Calls a query at the path questions.js:getById
+[**api_run_questions_list_by_set_id_post**](QueryApi.md#api_run_questions_list_by_set_id_post) | **POST** /api/run/questions/listBySetId | Calls a query at the path questions.js:listBySetId
 [**api_run_sessions_exists_post**](QueryApi.md#api_run_sessions_exists_post) | **POST** /api/run/sessions/exists | Calls a query at the path sessions.js:exists
 [**api_run_sessions_get_active_session_post**](QueryApi.md#api_run_sessions_get_active_session_post) | **POST** /api/run/sessions/getActiveSession | Calls a query at the path sessions.js:getActiveSession
 [**api_run_sessions_get_by_id_post**](QueryApi.md#api_run_sessions_get_by_id_post) | **POST** /api/run/sessions/getById | Calls a query at the path sessions.js:getById
@@ -901,6 +906,322 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **api_run_coding_question_set_get_all_coding_question_sets_post**
+> ResponseCodingQuestionSetGetAllCodingQuestionSets api_run_coding_question_set_get_all_coding_question_sets_post(request_coding_question_set_get_all_coding_question_sets)
+
+Calls a query at the path codingQuestionSet.js:getAllCodingQuestionSets
+
+### Example
+
+* Bearer Authentication (bearerAuth):
+
+```python
+import convex_client
+from convex_client.models.request_coding_question_set_get_all_coding_question_sets import RequestCodingQuestionSetGetAllCodingQuestionSets
+from convex_client.models.response_coding_question_set_get_all_coding_question_sets import ResponseCodingQuestionSetGetAllCodingQuestionSets
+from convex_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
+# See configuration.py for a list of all supported configuration parameters.
+configuration = convex_client.Configuration(
+    host = "https://useful-meadowlark-907.convex.cloud"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization: bearerAuth
+configuration = convex_client.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with convex_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = convex_client.QueryApi(api_client)
+    request_coding_question_set_get_all_coding_question_sets = convex_client.RequestCodingQuestionSetGetAllCodingQuestionSets() # RequestCodingQuestionSetGetAllCodingQuestionSets | 
+
+    try:
+        # Calls a query at the path codingQuestionSet.js:getAllCodingQuestionSets
+        api_response = api_instance.api_run_coding_question_set_get_all_coding_question_sets_post(request_coding_question_set_get_all_coding_question_sets)
+        print("The response of QueryApi->api_run_coding_question_set_get_all_coding_question_sets_post:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling QueryApi->api_run_coding_question_set_get_all_coding_question_sets_post: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_coding_question_set_get_all_coding_question_sets** | [**RequestCodingQuestionSetGetAllCodingQuestionSets**](RequestCodingQuestionSetGetAllCodingQuestionSets.md)|  | 
+
+### Return type
+
+[**ResponseCodingQuestionSetGetAllCodingQuestionSets**](ResponseCodingQuestionSetGetAllCodingQuestionSets.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **api_run_coding_question_set_get_coding_question_sets_post**
+> ResponseCodingQuestionSetGetCodingQuestionSets api_run_coding_question_set_get_coding_question_sets_post(request_coding_question_set_get_coding_question_sets)
+
+Calls a query at the path codingQuestionSet.js:getCodingQuestionSets
+
+### Example
+
+* Bearer Authentication (bearerAuth):
+
+```python
+import convex_client
+from convex_client.models.request_coding_question_set_get_coding_question_sets import RequestCodingQuestionSetGetCodingQuestionSets
+from convex_client.models.response_coding_question_set_get_coding_question_sets import ResponseCodingQuestionSetGetCodingQuestionSets
+from convex_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
+# See configuration.py for a list of all supported configuration parameters.
+configuration = convex_client.Configuration(
+    host = "https://useful-meadowlark-907.convex.cloud"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization: bearerAuth
+configuration = convex_client.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with convex_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = convex_client.QueryApi(api_client)
+    request_coding_question_set_get_coding_question_sets = convex_client.RequestCodingQuestionSetGetCodingQuestionSets() # RequestCodingQuestionSetGetCodingQuestionSets | 
+
+    try:
+        # Calls a query at the path codingQuestionSet.js:getCodingQuestionSets
+        api_response = api_instance.api_run_coding_question_set_get_coding_question_sets_post(request_coding_question_set_get_coding_question_sets)
+        print("The response of QueryApi->api_run_coding_question_set_get_coding_question_sets_post:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling QueryApi->api_run_coding_question_set_get_coding_question_sets_post: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_coding_question_set_get_coding_question_sets** | [**RequestCodingQuestionSetGetCodingQuestionSets**](RequestCodingQuestionSetGetCodingQuestionSets.md)|  | 
+
+### Return type
+
+[**ResponseCodingQuestionSetGetCodingQuestionSets**](ResponseCodingQuestionSetGetCodingQuestionSets.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **api_run_coding_question_set_get_set_by_id_post**
+> ResponseCodingQuestionSetGetSetById api_run_coding_question_set_get_set_by_id_post(request_coding_question_set_get_set_by_id)
+
+Calls a query at the path codingQuestionSet.js:getSetById
+
+### Example
+
+* Bearer Authentication (bearerAuth):
+
+```python
+import convex_client
+from convex_client.models.request_coding_question_set_get_set_by_id import RequestCodingQuestionSetGetSetById
+from convex_client.models.response_coding_question_set_get_set_by_id import ResponseCodingQuestionSetGetSetById
+from convex_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
+# See configuration.py for a list of all supported configuration parameters.
+configuration = convex_client.Configuration(
+    host = "https://useful-meadowlark-907.convex.cloud"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization: bearerAuth
+configuration = convex_client.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with convex_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = convex_client.QueryApi(api_client)
+    request_coding_question_set_get_set_by_id = convex_client.RequestCodingQuestionSetGetSetById() # RequestCodingQuestionSetGetSetById | 
+
+    try:
+        # Calls a query at the path codingQuestionSet.js:getSetById
+        api_response = api_instance.api_run_coding_question_set_get_set_by_id_post(request_coding_question_set_get_set_by_id)
+        print("The response of QueryApi->api_run_coding_question_set_get_set_by_id_post:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling QueryApi->api_run_coding_question_set_get_set_by_id_post: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_coding_question_set_get_set_by_id** | [**RequestCodingQuestionSetGetSetById**](RequestCodingQuestionSetGetSetById.md)|  | 
+
+### Return type
+
+[**ResponseCodingQuestionSetGetSetById**](ResponseCodingQuestionSetGetSetById.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **api_run_coding_question_set_get_study_plan_by_name_post**
+> ResponseCodingQuestionSetGetStudyPlanByName api_run_coding_question_set_get_study_plan_by_name_post(request_coding_question_set_get_study_plan_by_name)
+
+Calls a query at the path codingQuestionSet.js:getStudyPlanByName
+
+### Example
+
+* Bearer Authentication (bearerAuth):
+
+```python
+import convex_client
+from convex_client.models.request_coding_question_set_get_study_plan_by_name import RequestCodingQuestionSetGetStudyPlanByName
+from convex_client.models.response_coding_question_set_get_study_plan_by_name import ResponseCodingQuestionSetGetStudyPlanByName
+from convex_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
+# See configuration.py for a list of all supported configuration parameters.
+configuration = convex_client.Configuration(
+    host = "https://useful-meadowlark-907.convex.cloud"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization: bearerAuth
+configuration = convex_client.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with convex_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = convex_client.QueryApi(api_client)
+    request_coding_question_set_get_study_plan_by_name = convex_client.RequestCodingQuestionSetGetStudyPlanByName() # RequestCodingQuestionSetGetStudyPlanByName | 
+
+    try:
+        # Calls a query at the path codingQuestionSet.js:getStudyPlanByName
+        api_response = api_instance.api_run_coding_question_set_get_study_plan_by_name_post(request_coding_question_set_get_study_plan_by_name)
+        print("The response of QueryApi->api_run_coding_question_set_get_study_plan_by_name_post:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling QueryApi->api_run_coding_question_set_get_study_plan_by_name_post: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_coding_question_set_get_study_plan_by_name** | [**RequestCodingQuestionSetGetStudyPlanByName**](RequestCodingQuestionSetGetStudyPlanByName.md)|  | 
+
+### Return type
+
+[**ResponseCodingQuestionSetGetStudyPlanByName**](ResponseCodingQuestionSetGetStudyPlanByName.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **api_run_eval_get_by_session_id_post**
 > ResponseEvalGetBySessionId api_run_eval_get_by_session_id_post(request_eval_get_by_session_id)
 
@@ -1197,6 +1518,85 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**ResponseQuestionsGetById**](ResponseQuestionsGetById.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Convex executed your request and returned a result |  -  |
+**400** | Failed operation |  -  |
+**500** | Convex Internal Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **api_run_questions_list_by_set_id_post**
+> ResponseQuestionsListBySetId api_run_questions_list_by_set_id_post(request_questions_list_by_set_id)
+
+Calls a query at the path questions.js:listBySetId
+
+### Example
+
+* Bearer Authentication (bearerAuth):
+
+```python
+import convex_client
+from convex_client.models.request_questions_list_by_set_id import RequestQuestionsListBySetId
+from convex_client.models.response_questions_list_by_set_id import ResponseQuestionsListBySetId
+from convex_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://useful-meadowlark-907.convex.cloud
+# See configuration.py for a list of all supported configuration parameters.
+configuration = convex_client.Configuration(
+    host = "https://useful-meadowlark-907.convex.cloud"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization: bearerAuth
+configuration = convex_client.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with convex_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = convex_client.QueryApi(api_client)
+    request_questions_list_by_set_id = convex_client.RequestQuestionsListBySetId() # RequestQuestionsListBySetId | 
+
+    try:
+        # Calls a query at the path questions.js:listBySetId
+        api_response = api_instance.api_run_questions_list_by_set_id_post(request_questions_list_by_set_id)
+        print("The response of QueryApi->api_run_questions_list_by_set_id_post:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling QueryApi->api_run_questions_list_by_set_id_post: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **request_questions_list_by_set_id** | [**RequestQuestionsListBySetId**](RequestQuestionsListBySetId.md)|  | 
+
+### Return type
+
+[**ResponseQuestionsListBySetId**](ResponseQuestionsListBySetId.md)
 
 ### Authorization
 

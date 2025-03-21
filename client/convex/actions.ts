@@ -656,9 +656,28 @@ Provide input parameters for each language as shown above. Don't output anything
       { headers }
     );
 
-    let inputParameters = JSON.parse(inputParamsResponse.data.content[0].text);
-    if (Array.isArray(inputParameters) && inputParameters.length > 0) {
-      inputParameters = inputParameters[0];
+    // Extract the response text
+    const responseText = inputParamsResponse.data.content[0].text;
+
+    // Clean the response text to handle markdown code blocks
+    let cleanedText = responseText;
+    const codeBlockMatch = responseText.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (codeBlockMatch && codeBlockMatch[1]) {
+      cleanedText = codeBlockMatch[1];
+    }
+
+    // Parse the cleaned JSON
+    let inputParameters;
+    try {
+      inputParameters = JSON.parse(cleanedText);
+      if (Array.isArray(inputParameters) && inputParameters.length > 0) {
+        inputParameters = inputParameters[0];
+      }
+    } catch (error) {
+      console.error("Failed to parse input parameters:", error);
+      console.error("Raw response:", responseText);
+      console.error("Cleaned text:", cleanedText);
+      throw new Error("Failed to parse input parameters from Claude's response");
     }
 
     // Generate test cases
@@ -700,7 +719,26 @@ Don't output anything else, just output a JSON-like list of test cases.`;
       { headers }
     );
 
-    const tests = JSON.parse(testsResponse.data.content[0].text);
+    // Extract the response text
+    const testsResponseText = testsResponse.data.content[0].text;
+
+    // Clean the response text to handle markdown code blocks
+    let cleanedTestsText = testsResponseText;
+    const testsCodeBlockMatch = testsResponseText.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (testsCodeBlockMatch && testsCodeBlockMatch[1]) {
+      cleanedTestsText = testsCodeBlockMatch[1];
+    }
+
+    // Parse the cleaned JSON
+    let tests;
+    try {
+      tests = JSON.parse(cleanedTestsText);
+    } catch (error) {
+      console.error("Failed to parse test cases:", error);
+      console.error("Raw response:", testsResponseText);
+      console.error("Cleaned text:", cleanedTestsText);
+      throw new Error("Failed to parse test cases from Claude's response");
+    }
 
     // Generate eval mode
     const evalModePrompt = `Determine the appropriate evaluation mode this problen should use when comparing user code output with testcase ground truth output for the code evaluation (code testing):
