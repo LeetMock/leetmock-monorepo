@@ -368,6 +368,10 @@ export default function QuestionsManagementPage() {
                                 const paramType = parameterTypes?.javascript?.[paramName] || "";
                                 parsedTestcase.input[paramName] = parseValueByType(testcase.input[paramName], paramType);
                             }
+
+                            if (typeof testcase.output === 'string') {
+                                parsedTestcase.output = parseValueByType(testcase.output, selectedOutputType);
+                            }
                         } catch (e) {
                             hasParsingError = true;
                             errorMessage = `Error parsing input parameter "${paramName}" in test case ${index + 1}`;
