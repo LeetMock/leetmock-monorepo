@@ -1,5 +1,5 @@
 export const parseValueByType = (value: string, type: string) => {
-    console.log(value, type);
+
     try {
         // Handle array/list types first
         if (type.includes("List[") || type.includes("[]") || type.includes("vector")) {
@@ -61,12 +61,12 @@ export const getGenericType = (types: { cpp?: string; java?: string; javascript?
 };
 
 export const commonOutputTypes = [
-    { value: "number", label: "integer" },
-    { value: "List[float]", label: "List[float]" },
-    { value: "List[integer]", label: "List[integer]" },
-    { value: "string", label: "string" },
+    { value: "integer", label: "integer" },
     { value: "float", label: "float" },
+    { value: "string", label: "string" },
     { value: "boolean", label: "boolean" },
+    { value: "List[integer]", label: "List[integer]" },
+    { value: "List[float]", label: "List[float]" },
     { value: "List[string]", label: "List[string]" },
     { value: "List[boolean]", label: "List[boolean]" },
     { value: "custom", label: "Custom Type" },
