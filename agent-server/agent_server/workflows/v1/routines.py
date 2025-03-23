@@ -49,10 +49,7 @@ async def on_ground_truth_testcase_executed(event: GroundTruthTestCaseExecutedEv
 
 @root()
 async def entrypoint():
-    state = get_state(AgentState)
-
-    if not state.initialized:
-        await init_state()
+    await init_state()
 
     await before_workflow_stage()
     stage = await select_stage()

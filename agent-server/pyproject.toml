@@ -31,7 +31,7 @@ dependencies = [
     "agent-graph",
     "logfire[system-metrics, httpx, aiohttp]",
     "loguru>=0.7.3",
-    "livechain",
+    "livechain==0.0.10",
 ]
 
 [dependency-groups]

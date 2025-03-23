@@ -101,6 +101,9 @@ FINISH_INTERVIEW_PROMPT = """\
 Now candidate has finished the interview. Thank them for their time and interact for any questions they might have.
 """
 
+TYPING_AWARE_INTERRUPTER_MESSAGE = """\
+(User just spoke, but user is still typing on coding editor. You only need to response if user is asking you a question or to do something explicitly.)"""
+
 STAGE_TRANSITION_MESSAGES = {
     StageType.CODING: START_ASK_CODING_QUESTION_PROMPT,
     StageType.EVAL: FINISH_EVAL_PROMPT,

@@ -29,6 +29,11 @@ class AgentState(SessionState):
         default_factory=lambda: OrderedDict()
     )
 
+    events: List[EventDescriptor] = Field(
+        default_factory=list,
+        description="Event descriptors for the agent",
+    )
+
     completed_steps: Annotated[List[str], merge_unique] = Field(default_factory=list)
 
     test_context: str | None = Field(default=None)
@@ -36,6 +41,10 @@ class AgentState(SessionState):
     tool_call_detected: bool = Field(default=False)
 
     round_until_next_confirmation: int = Field(default=0)
+
+    num_messages_before_eval: int = Field(
+        default=1000000, description="Number of messages so far"
+    )
 
 
 class AgentConfig(BaseModel):
@@ -56,6 +65,54 @@ class AgentConfig(BaseModel):
     stages: List[StageType] = Field(default=[])
 
     transition_confirmation_enabled: bool = Field(default=False)
+
+
+class TrackSignals(BaseModel):
+    """Track which signal(s) are observed based on the conversation history"""
+
+    rationale: str = Field(
+        ...,
+        description="Rationale for which signal(s) are observed based on the conversation context",
+    )
+
+    signals: List[str] = Field(
+        ...,
+        description="List of signal names that are observed, name should correspond to the signal names",
+    )
+
+    # TODO: conversation suggestion
+
+
+class ConfirmStageCompletion(BaseModel):
+    """
+    Confirm if the stage is completed based on the conversation history.
+
+    Call this tool whenever the following three conditions are met:
+    1. Interviewer prompted/asked candidate if he/she wants to move forward to the next stage.
+    2. Candidate confirmed that he/she would like to move forward to the next stage.
+    """
+
+    pass
+
+
+class ConfirmEndOfInterview(BaseModel):
+    """
+    Confirm if the interview session should be safely ended based on the conversation history.
+
+    This tool should be only called after
+    1. Interviewer has provided feedback to candidate.
+    2. Candidate and interviewer say goodbye to each other, or some closing statements are made.
+    """
+
+    thought: str = Field(
+        ...,
+        description="Step-by-step thinking process for deciding if the interview session should be safely ended based on the conversation history",
+    )
+
+    should_end: bool = Field(
+        ...,
+        description="Whether the interview session should be safely ended based on the conversation history",
+    )
 
 
 ## Event Signal Definitions ##
