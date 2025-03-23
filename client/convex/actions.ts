@@ -490,7 +490,7 @@ export const scrapeQuestion = action({
     titleSlug: v.string()
   },
   returns: v.object({
-    companyTagStats: v.string(),
+    companyTagStats: v.union(v.string(), v.null()),
     difficulty: v.string(),
     dislikes: v.number(),
     exampleTestcases: v.string(),
@@ -549,6 +549,7 @@ export const scrapeQuestion = action({
         }
 
         const data = await response.json();
+        console.log(data);
         console.log(`Successfully fetched question data on attempt ${attempt}`);
         return data;
       } catch (error) {
@@ -599,11 +600,11 @@ export const generateQuestion = action({
 
     // Generate function name
     const functionNamePrompt = `Generate a concise and informative function name for the following LeetCode question:\n\n${questionTitle}\n\n${questionContent}\n\n return in this schema <functionName>[generated function Name]</functionName>`;
-
+    const MODEL = "claude-3-7-sonnet-20250219";
     const functionNameResponse = await axios.post(
       "https://api.anthropic.com/v1/messages",
       {
-        model: "claude-3-5-sonnet-20240620",
+        model: MODEL,
         max_tokens: 50,
         messages: [{ role: "user", content: functionNamePrompt }]
       },
@@ -647,7 +648,7 @@ Provide input parameters for each language as shown above. Don't output anything
     const inputParamsResponse = await axios.post(
       "https://api.anthropic.com/v1/messages",
       {
-        model: "claude-3-5-sonnet-20240620",
+        model: MODEL,
         max_tokens: 1024,
         temperature: 0,
         messages: [{ role: "user", content: inputParamsPrompt }]
@@ -655,9 +656,28 @@ Provide input parameters for each language as shown above. Don't output anything
       { headers }
     );
 
-    let inputParameters = JSON.parse(inputParamsResponse.data.content[0].text);
-    if (Array.isArray(inputParameters) && inputParameters.length > 0) {
-      inputParameters = inputParameters[0];
+    // Extract the response text
+    const responseText = inputParamsResponse.data.content[0].text;
+
+    // Clean the response text to handle markdown code blocks
+    let cleanedText = responseText;
+    const codeBlockMatch = responseText.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (codeBlockMatch && codeBlockMatch[1]) {
+      cleanedText = codeBlockMatch[1];
+    }
+
+    // Parse the cleaned JSON
+    let inputParameters;
+    try {
+      inputParameters = JSON.parse(cleanedText);
+      if (Array.isArray(inputParameters) && inputParameters.length > 0) {
+        inputParameters = inputParameters[0];
+      }
+    } catch (error) {
+      console.error("Failed to parse input parameters:", error);
+      console.error("Raw response:", responseText);
+      console.error("Cleaned text:", cleanedText);
+      throw new Error("Failed to parse input parameters from Claude's response");
     }
 
     // Generate test cases
@@ -667,6 +687,8 @@ Provide input parameters for each language as shown above. Don't output anything
     ];
 
     const testsPrompt = `Generate 10 test cases for the following LeetCode question:
+
+You are an expert LeetCode problem solver, and you will generate 20 testcases for the following question setting that covers all edge cases to test the correctness of the code.
 
 Question Title: ${questionTitle}
 
@@ -680,7 +702,7 @@ ${JSON.stringify(exampleTests)}
 Instructions:
 1. Strictly follow testcase requirment in question description
 2. use parameter name in Input Parameters
-3. Make sure to generate good quality testcases, try to test different aspect of the code
+3. Make sure to generate good quality testcases, the testcase must cover all edge cases
 4. Most importantly, Provide the test cases in the following format:
 [{"input": {...}, "output": ...}, ...]
 
@@ -689,7 +711,7 @@ Don't output anything else, just output a JSON-like list of test cases.`;
     const testsResponse = await axios.post(
       "https://api.anthropic.com/v1/messages",
       {
-        model: "claude-3-5-sonnet-20240620",
+        model: MODEL,
         max_tokens: 2048,
         temperature: 0.1,
         messages: [{ role: "user", content: testsPrompt }]
@@ -697,7 +719,26 @@ Don't output anything else, just output a JSON-like list of test cases.`;
       { headers }
     );
 
-    const tests = JSON.parse(testsResponse.data.content[0].text);
+    // Extract the response text
+    const testsResponseText = testsResponse.data.content[0].text;
+
+    // Clean the response text to handle markdown code blocks
+    let cleanedTestsText = testsResponseText;
+    const testsCodeBlockMatch = testsResponseText.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (testsCodeBlockMatch && testsCodeBlockMatch[1]) {
+      cleanedTestsText = testsCodeBlockMatch[1];
+    }
+
+    // Parse the cleaned JSON
+    let tests;
+    try {
+      tests = JSON.parse(cleanedTestsText);
+    } catch (error) {
+      console.error("Failed to parse test cases:", error);
+      console.error("Raw response:", testsResponseText);
+      console.error("Cleaned text:", cleanedTestsText);
+      throw new Error("Failed to parse test cases from Claude's response");
+    }
 
     // Generate eval mode
     const evalModePrompt = `Determine the appropriate evaluation mode this problen should use when comparing user code output with testcase ground truth output for the code evaluation (code testing):
@@ -721,7 +762,7 @@ Return only one of these modes as a string, without any additional text or expla
     const evalModeResponse = await axios.post(
       "https://api.anthropic.com/v1/messages",
       {
-        model: "claude-3-5-sonnet-20240620",
+        model: MODEL,
         max_tokens: 40,
         temperature: 0,
         messages: [{ role: "user", content: evalModePrompt }]
@@ -832,7 +873,7 @@ Please provide only the solution code without explanations. Make sure your solut
       const response = await axios.post(
         "https://api.anthropic.com/v1/messages",
         {
-          model: "claude-3-5-sonnet-20240620",
+          model: "claude-3-7-sonnet-20250219",
           max_tokens: 4000,
           temperature: 0.2,
           messages: [{ role: "user", content: prompt }]

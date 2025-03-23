@@ -200,6 +200,37 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/questions/listBySetId:
+    post:
+      summary: Calls a query at the path questions.js:listBySetId
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_questions.listBySetId"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_questions.listBySetId"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
   /api/run/questions/updateQuestion:
     post:
       summary: Calls a mutation at the path questions.js:updateQuestion
@@ -541,6 +572,37 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/userProfiles/getAllUsers:
+    post:
+      summary: Calls a query at the path userProfiles.js:getAllUsers
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_userProfiles.getAllUsers"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_userProfiles.getAllUsers"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
   /api/run/userProfiles/getCompletedQuestions:
     post:
       summary: Calls a query at the path userProfiles.js:getCompletedQuestions
@@ -590,6 +652,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Response_userProfiles.getStarredQuestions"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/userProfiles/getUserById:
+    post:
+      summary: Calls a query at the path userProfiles.js:getUserById
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_userProfiles.getUserById"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_userProfiles.getUserById"
         "400":
           description: Failed operation
           content:
@@ -1533,6 +1626,223 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailedResponse"
 
+  /api/run/codingQuestionSet/addQuestionToCodingQuestionSet:
+    post:
+      summary: Calls a mutation at the path codingQuestionSet.js:addQuestionToCodingQuestionSet
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codingQuestionSet.addQuestionToCodingQuestionSet"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codingQuestionSet.addQuestionToCodingQuestionSet"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/codingQuestionSet/createCodingQuestionSet:
+    post:
+      summary: Calls a mutation at the path codingQuestionSet.js:createCodingQuestionSet
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codingQuestionSet.createCodingQuestionSet"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codingQuestionSet.createCodingQuestionSet"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/codingQuestionSet/getAllCodingQuestionSets:
+    post:
+      summary: Calls a query at the path codingQuestionSet.js:getAllCodingQuestionSets
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codingQuestionSet.getAllCodingQuestionSets"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codingQuestionSet.getAllCodingQuestionSets"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/codingQuestionSet/getCodingQuestionSets:
+    post:
+      summary: Calls a query at the path codingQuestionSet.js:getCodingQuestionSets
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codingQuestionSet.getCodingQuestionSets"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codingQuestionSet.getCodingQuestionSets"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/codingQuestionSet/getSetById:
+    post:
+      summary: Calls a query at the path codingQuestionSet.js:getSetById
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codingQuestionSet.getSetById"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codingQuestionSet.getSetById"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/codingQuestionSet/getStudyPlanByName:
+    post:
+      summary: Calls a query at the path codingQuestionSet.js:getStudyPlanByName
+      tags:
+        - query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codingQuestionSet.getStudyPlanByName"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codingQuestionSet.getStudyPlanByName"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
+  /api/run/codingQuestionSet/removeQuestionFromCodingQuestionSet:
+    post:
+      summary: Calls a mutation at the path codingQuestionSet.js:removeQuestionFromCodingQuestionSet
+      tags:
+        - mutation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request_codingQuestionSet.removeQuestionFromCodingQuestionSet"
+        required: true
+      responses:
+        "200":
+          description: Convex executed your request and returned a result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_codingQuestionSet.removeQuestionFromCodingQuestionSet"
+        "400":
+          description: Failed operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+        "500":
+          description: Convex Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailedResponse"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -1816,6 +2126,35 @@ components:
               description: ID from table "questions"
 
     Response_questions.getByIdInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_questions.listBySetId:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - setId
+          properties:
+            setId:
+              type: string
+
+    Response_questions.listBySetId:
       type: object
       required:
         - status
@@ -2287,6 +2626,74 @@ components:
           type: object
         value: {}
 
+    Request_sessions.getSessionMetricsInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args: {}
+
+    Response_sessions.getSessionMetricsInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value:
+          type: object
+          required:
+            - completed
+            - inProgress
+            - notStarted
+          properties:
+            completed:
+              type: object
+              required:
+                - evalPending
+                - evalReady
+                - total
+              properties:
+                evalPending:
+                  type: number
+                evalReady:
+                  type: number
+                total:
+                  type: number
+            inProgress:
+              type: object
+              required:
+                - evalPending
+                - evalReady
+                - total
+              properties:
+                evalPending:
+                  type: number
+                evalReady:
+                  type: number
+                total:
+                  type: number
+            notStarted:
+              type: object
+              required:
+                - evalPending
+                - evalReady
+                - total
+              properties:
+                evalPending:
+                  type: number
+                evalReady:
+                  type: number
+                total:
+                  type: number
+
     Request_sessions.startSession:
       type: object
       required:
@@ -2369,6 +2776,53 @@ components:
           type: object
         value: {}
 
+    Request_userProfiles.getAllUserMetricsInternal:
+      type: object
+      required:
+        - args
+      properties:
+        args: {}
+
+    Response_userProfiles.getAllUserMetricsInternal:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.getAllUsers:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+
+    Response_userProfiles.getAllUsers:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
     Request_userProfiles.getByEmailInternal:
       type: object
       required:
@@ -2429,6 +2883,35 @@ components:
           type: object
 
     Response_userProfiles.getStarredQuestions:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_userProfiles.getUserById:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - userId
+          properties:
+            userId:
+              type: string
+
+    Response_userProfiles.getUserById:
       type: object
       required:
         - status
@@ -2677,7 +3160,14 @@ components:
       required:
         - args
       properties:
-        args: {}
+        args:
+          type: object
+          required:
+            - sessionId
+          properties:
+            sessionId:
+              type: string
+              description: ID from table "sessions"
 
     Response_actions.getToken:
       type: object
@@ -3029,6 +3519,7 @@ components:
           properties:
             companyTagStats:
               type: string
+              nullable: true
             difficulty:
               type: string
             dislikes:
@@ -4516,6 +5007,182 @@ components:
           type: object
         value: {}
 
+    Request_functions.backfillAggregatesMigration:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          properties:
+            batchSize:
+              type: number
+            cursor:
+              type: string
+              nullable: true
+            dryRun:
+              type: boolean
+            fn:
+              type: string
+            next:
+              type: array
+              items:
+                type: string
+
+    Response_functions.backfillAggregatesMigration:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_functions.backfillSessionsMigration:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          properties:
+            batchSize:
+              type: number
+            cursor:
+              type: string
+              nullable: true
+            dryRun:
+              type: boolean
+            fn:
+              type: string
+            next:
+              type: array
+              items:
+                type: string
+
+    Response_functions.backfillSessionsMigration:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_functions.clearAggregates:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+
+    Response_functions.clearAggregates:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_functions.runSessionAggregationBackfill:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          properties:
+            batchSize:
+              type: number
+            cursor:
+              type: string
+              nullable: true
+            dryRun:
+              type: boolean
+            fn:
+              type: string
+            next:
+              type: array
+              items:
+                type: string
+
+    Response_functions.runSessionAggregationBackfill:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_functions.runUserAggregationBackfill:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          properties:
+            batchSize:
+              type: number
+            cursor:
+              type: string
+              nullable: true
+            dryRun:
+              type: boolean
+            fn:
+              type: string
+            next:
+              type: array
+              items:
+                type: string
+
+    Response_functions.runUserAggregationBackfill:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
     Request_agentStates.getBySessionId:
       type: object
       required:
@@ -4798,6 +5465,218 @@ components:
               description: ID from table "sessions"
 
     Response_jobs.triggerEvalJob:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_codingQuestionSet.addQuestionToCodingQuestionSet:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - codingQuestionSetName
+            - questionId
+          properties:
+            codingQuestionSetName:
+              type: string
+            questionId:
+              type: string
+              description: ID from table "questions"
+
+    Response_codingQuestionSet.addQuestionToCodingQuestionSet:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_codingQuestionSet.createCodingQuestionSet:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - name
+            - questions
+          properties:
+            name:
+              type: string
+            questions:
+              type: array
+              items:
+                type: string
+                description: ID from table "questions"
+
+    Response_codingQuestionSet.createCodingQuestionSet:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_codingQuestionSet.getAllCodingQuestionSets:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+
+    Response_codingQuestionSet.getAllCodingQuestionSets:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_codingQuestionSet.getCodingQuestionSets:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - name
+          properties:
+            name:
+              type: string
+
+    Response_codingQuestionSet.getCodingQuestionSets:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_codingQuestionSet.getSetById:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - id
+          properties:
+            id:
+              type: string
+
+    Response_codingQuestionSet.getSetById:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_codingQuestionSet.getStudyPlanByName:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - name
+          properties:
+            name:
+              type: string
+
+    Response_codingQuestionSet.getStudyPlanByName:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - "success"
+            - "error"
+        errorMessage:
+          type: string
+        errorData:
+          type: object
+        value: {}
+
+    Request_codingQuestionSet.removeQuestionFromCodingQuestionSet:
+      type: object
+      required:
+        - args
+      properties:
+        args:
+          type: object
+          required:
+            - codingQuestionSetName
+            - questionId
+          properties:
+            codingQuestionSetName:
+              type: string
+            questionId:
+              type: string
+              description: ID from table "questions"
+
+    Response_codingQuestionSet.removeQuestionFromCodingQuestionSet:
       type: object
       required:
         - status

@@ -314,21 +314,32 @@ export default function QuestionsManagementPage() {
     const handleTestcaseChange = (index: number, paramName: string, value: string) => {
         const updatedTestcases = [...testcases];
 
-        if (paramName === "output") {
-            updatedTestcases[index].output = parseValueByType(value, selectedOutputType);
-        } else {
-            // Find the parameter to get its type, using optional chaining
-            const param = parameterTypes?.[validationLanguage as keyof typeof parameterTypes];
-            if (param) {
-                const paramType = param[paramName] || "string";
+        try {
+            if (paramName === "output") {
+                // Store the raw string value for now - it will be parsed during form submission
+                updatedTestcases[index].output = value;
+            } else {
+                // Store the raw string value for input parameters
                 updatedTestcases[index].input = {
                     ...updatedTestcases[index].input,
-                    [paramName]: parseValueByType(value, paramType),
+                    [paramName]: value,
                 };
             }
-        }
 
-        setTestcases(updatedTestcases);
+            setTestcases(updatedTestcases);
+        } catch (error) {
+            console.error("Error updating testcase:", error);
+            // Continue with the raw string if parsing fails
+            if (paramName === "output") {
+                updatedTestcases[index].output = value;
+            } else {
+                updatedTestcases[index].input = {
+                    ...updatedTestcases[index].input,
+                    [paramName]: value,
+                };
+            }
+            setTestcases(updatedTestcases);
+        }
     };
 
     // Handle form submission
@@ -337,6 +348,58 @@ export default function QuestionsManagementPage() {
         setIsSubmitting(true);
 
         try {
+            // Validate testcase values first
+            let hasParsingError = false;
+            let errorMessage = "";
+
+            // Create a copy of testcases with properly parsed values
+            const parsedTestcases = testcases.map((testcase, index) => {
+                const parsedTestcase = {
+                    input: { ...testcase.input },
+                    output: testcase.output
+                };
+
+                // Ensure input values are properly parsed for each parameter
+                for (const paramName of parameters) {
+                    if (testcase.input?.[paramName] !== undefined) {
+                        try {
+                            // Check if the value is a string that needs parsing
+                            if (typeof testcase.input[paramName] === 'string') {
+                                const paramType = parameterTypes?.javascript?.[paramName] || "";
+                                parsedTestcase.input[paramName] = parseValueByType(testcase.input[paramName], paramType);
+                            }
+
+                            if (typeof testcase.output === 'string') {
+                                parsedTestcase.output = parseValueByType(testcase.output, selectedOutputType);
+                            }
+                        } catch (e) {
+                            hasParsingError = true;
+                            errorMessage = `Error parsing input parameter "${paramName}" in test case ${index + 1}`;
+                            console.error(errorMessage, e);
+                        }
+                    }
+                }
+
+                // Parse output if it's a string
+                if (testcase.output !== undefined && typeof testcase.output === 'string') {
+                    try {
+                        parsedTestcase.output = parseValueByType(testcase.output, selectedOutputType);
+                    } catch (e) {
+                        hasParsingError = true;
+                        errorMessage = `Error parsing output in test case ${index + 1}`;
+                        console.error(errorMessage, e);
+                    }
+                }
+
+                return parsedTestcase;
+            });
+
+            if (hasParsingError) {
+                toast.error(errorMessage);
+                setIsSubmitting(false);
+                return;
+            }
+
             // Prepare data, ensuring parameterTypes is defined
             const questionData = {
                 title: basicInfo.title,
@@ -354,7 +417,7 @@ export default function QuestionsManagementPage() {
                 },
                 outputParameters: selectedOutputType,
                 evalMode,
-                tests: testcases,
+                tests: parsedTestcases,
                 solutions: {
                     [validationLanguage]: validationCode,
                 },

@@ -108,6 +108,9 @@ Class | Method | HTTP request | Description
 *MutationApi* | [**api_run_admins_patch_user_subscription_post**](docs/MutationApi.md#api_run_admins_patch_user_subscription_post) | **POST** /api/run/admins/patchUserSubscription | Calls a mutation at the path admins.js:patchUserSubscription
 *MutationApi* | [**api_run_agent_states_set_by_session_id_post**](docs/MutationApi.md#api_run_agent_states_set_by_session_id_post) | **POST** /api/run/agentStates/setBySessionId | Calls a mutation at the path agentStates.js:setBySessionId
 *MutationApi* | [**api_run_code_session_events_commit_code_session_event_post**](docs/MutationApi.md#api_run_code_session_events_commit_code_session_event_post) | **POST** /api/run/codeSessionEvents/commitCodeSessionEvent | Calls a mutation at the path codeSessionEvents.js:commitCodeSessionEvent
+*MutationApi* | [**api_run_coding_question_set_add_question_to_coding_question_set_post**](docs/MutationApi.md#api_run_coding_question_set_add_question_to_coding_question_set_post) | **POST** /api/run/codingQuestionSet/addQuestionToCodingQuestionSet | Calls a mutation at the path codingQuestionSet.js:addQuestionToCodingQuestionSet
+*MutationApi* | [**api_run_coding_question_set_create_coding_question_set_post**](docs/MutationApi.md#api_run_coding_question_set_create_coding_question_set_post) | **POST** /api/run/codingQuestionSet/createCodingQuestionSet | Calls a mutation at the path codingQuestionSet.js:createCodingQuestionSet
+*MutationApi* | [**api_run_coding_question_set_remove_question_from_coding_question_set_post**](docs/MutationApi.md#api_run_coding_question_set_remove_question_from_coding_question_set_post) | **POST** /api/run/codingQuestionSet/removeQuestionFromCodingQuestionSet | Calls a mutation at the path codingQuestionSet.js:removeQuestionFromCodingQuestionSet
 *MutationApi* | [**api_run_eval_insert_evaluation_post**](docs/MutationApi.md#api_run_eval_insert_evaluation_post) | **POST** /api/run/eval/insertEvaluation | Calls a mutation at the path eval.js:insertEvaluation
 *MutationApi* | [**api_run_invite_codes_apply_invite_code_post**](docs/MutationApi.md#api_run_invite_codes_apply_invite_code_post) | **POST** /api/run/inviteCodes/applyInviteCode | Calls a mutation at the path inviteCodes.js:applyInviteCode
 *MutationApi* | [**api_run_invite_codes_create_default_user_profile_post**](docs/MutationApi.md#api_run_invite_codes_create_default_user_profile_post) | **POST** /api/run/inviteCodes/createDefaultUserProfile | Calls a mutation at the path inviteCodes.js:createDefaultUserProfile
@@ -130,17 +133,24 @@ Class | Method | HTTP request | Description
 *QueryApi* | [**api_run_code_session_states_get_session_state_by_session_id_post**](docs/QueryApi.md#api_run_code_session_states_get_session_state_by_session_id_post) | **POST** /api/run/codeSessionStates/getSessionStateBySessionId | Calls a query at the path codeSessionStates.js:getSessionStateBySessionId
 *QueryApi* | [**api_run_code_session_states_get_terminal_state_post**](docs/QueryApi.md#api_run_code_session_states_get_terminal_state_post) | **POST** /api/run/codeSessionStates/getTerminalState | Calls a query at the path codeSessionStates.js:getTerminalState
 *QueryApi* | [**api_run_code_session_states_get_test_cases_state_post**](docs/QueryApi.md#api_run_code_session_states_get_test_cases_state_post) | **POST** /api/run/codeSessionStates/getTestCasesState | Calls a query at the path codeSessionStates.js:getTestCasesState
+*QueryApi* | [**api_run_coding_question_set_get_all_coding_question_sets_post**](docs/QueryApi.md#api_run_coding_question_set_get_all_coding_question_sets_post) | **POST** /api/run/codingQuestionSet/getAllCodingQuestionSets | Calls a query at the path codingQuestionSet.js:getAllCodingQuestionSets
+*QueryApi* | [**api_run_coding_question_set_get_coding_question_sets_post**](docs/QueryApi.md#api_run_coding_question_set_get_coding_question_sets_post) | **POST** /api/run/codingQuestionSet/getCodingQuestionSets | Calls a query at the path codingQuestionSet.js:getCodingQuestionSets
+*QueryApi* | [**api_run_coding_question_set_get_set_by_id_post**](docs/QueryApi.md#api_run_coding_question_set_get_set_by_id_post) | **POST** /api/run/codingQuestionSet/getSetById | Calls a query at the path codingQuestionSet.js:getSetById
+*QueryApi* | [**api_run_coding_question_set_get_study_plan_by_name_post**](docs/QueryApi.md#api_run_coding_question_set_get_study_plan_by_name_post) | **POST** /api/run/codingQuestionSet/getStudyPlanByName | Calls a query at the path codingQuestionSet.js:getStudyPlanByName
 *QueryApi* | [**api_run_eval_get_by_session_id_post**](docs/QueryApi.md#api_run_eval_get_by_session_id_post) | **POST** /api/run/eval/getBySessionId | Calls a query at the path eval.js:getBySessionId
 *QueryApi* | [**api_run_pricings_get_pricing_post**](docs/QueryApi.md#api_run_pricings_get_pricing_post) | **POST** /api/run/pricings/getPricing | Calls a query at the path pricings.js:getPricing
 *QueryApi* | [**api_run_questions_get_all_post**](docs/QueryApi.md#api_run_questions_get_all_post) | **POST** /api/run/questions/getAll | Calls a query at the path questions.js:getAll
 *QueryApi* | [**api_run_questions_get_by_id_post**](docs/QueryApi.md#api_run_questions_get_by_id_post) | **POST** /api/run/questions/getById | Calls a query at the path questions.js:getById
+*QueryApi* | [**api_run_questions_list_by_set_id_post**](docs/QueryApi.md#api_run_questions_list_by_set_id_post) | **POST** /api/run/questions/listBySetId | Calls a query at the path questions.js:listBySetId
 *QueryApi* | [**api_run_sessions_exists_post**](docs/QueryApi.md#api_run_sessions_exists_post) | **POST** /api/run/sessions/exists | Calls a query at the path sessions.js:exists
 *QueryApi* | [**api_run_sessions_get_active_session_post**](docs/QueryApi.md#api_run_sessions_get_active_session_post) | **POST** /api/run/sessions/getActiveSession | Calls a query at the path sessions.js:getActiveSession
 *QueryApi* | [**api_run_sessions_get_by_id_post**](docs/QueryApi.md#api_run_sessions_get_by_id_post) | **POST** /api/run/sessions/getById | Calls a query at the path sessions.js:getById
 *QueryApi* | [**api_run_sessions_get_by_id_unauth_post**](docs/QueryApi.md#api_run_sessions_get_by_id_unauth_post) | **POST** /api/run/sessions/getById_unauth | Calls a query at the path sessions.js:getById_unauth
 *QueryApi* | [**api_run_sessions_get_by_user_id_post**](docs/QueryApi.md#api_run_sessions_get_by_user_id_post) | **POST** /api/run/sessions/getByUserId | Calls a query at the path sessions.js:getByUserId
+*QueryApi* | [**api_run_user_profiles_get_all_users_post**](docs/QueryApi.md#api_run_user_profiles_get_all_users_post) | **POST** /api/run/userProfiles/getAllUsers | Calls a query at the path userProfiles.js:getAllUsers
 *QueryApi* | [**api_run_user_profiles_get_completed_questions_post**](docs/QueryApi.md#api_run_user_profiles_get_completed_questions_post) | **POST** /api/run/userProfiles/getCompletedQuestions | Calls a query at the path userProfiles.js:getCompletedQuestions
 *QueryApi* | [**api_run_user_profiles_get_starred_questions_post**](docs/QueryApi.md#api_run_user_profiles_get_starred_questions_post) | **POST** /api/run/userProfiles/getStarredQuestions | Calls a query at the path userProfiles.js:getStarredQuestions
+*QueryApi* | [**api_run_user_profiles_get_user_by_id_post**](docs/QueryApi.md#api_run_user_profiles_get_user_by_id_post) | **POST** /api/run/userProfiles/getUserById | Calls a query at the path userProfiles.js:getUserById
 *QueryApi* | [**api_run_user_profiles_get_user_minutes_remaining_post**](docs/QueryApi.md#api_run_user_profiles_get_user_minutes_remaining_post) | **POST** /api/run/userProfiles/getUserMinutesRemaining | Calls a query at the path userProfiles.js:getUserMinutesRemaining
 *QueryApi* | [**api_run_user_profiles_get_user_profile_post**](docs/QueryApi.md#api_run_user_profiles_get_user_profile_post) | **POST** /api/run/userProfiles/getUserProfile | Calls a query at the path userProfiles.js:getUserProfile
 
@@ -198,6 +208,17 @@ Class | Method | HTTP request | Description
  - [RequestCodeSessionStatesGetTerminalState](docs/RequestCodeSessionStatesGetTerminalState.md)
  - [RequestCodeSessionStatesGetTestCasesState](docs/RequestCodeSessionStatesGetTestCasesState.md)
  - [RequestCodeSessionStatesGetTestCasesStateInternal](docs/RequestCodeSessionStatesGetTestCasesStateInternal.md)
+ - [RequestCodingQuestionSetAddQuestionToCodingQuestionSet](docs/RequestCodingQuestionSetAddQuestionToCodingQuestionSet.md)
+ - [RequestCodingQuestionSetAddQuestionToCodingQuestionSetArgs](docs/RequestCodingQuestionSetAddQuestionToCodingQuestionSetArgs.md)
+ - [RequestCodingQuestionSetCreateCodingQuestionSet](docs/RequestCodingQuestionSetCreateCodingQuestionSet.md)
+ - [RequestCodingQuestionSetCreateCodingQuestionSetArgs](docs/RequestCodingQuestionSetCreateCodingQuestionSetArgs.md)
+ - [RequestCodingQuestionSetGetAllCodingQuestionSets](docs/RequestCodingQuestionSetGetAllCodingQuestionSets.md)
+ - [RequestCodingQuestionSetGetCodingQuestionSets](docs/RequestCodingQuestionSetGetCodingQuestionSets.md)
+ - [RequestCodingQuestionSetGetCodingQuestionSetsArgs](docs/RequestCodingQuestionSetGetCodingQuestionSetsArgs.md)
+ - [RequestCodingQuestionSetGetSetById](docs/RequestCodingQuestionSetGetSetById.md)
+ - [RequestCodingQuestionSetGetSetByIdArgs](docs/RequestCodingQuestionSetGetSetByIdArgs.md)
+ - [RequestCodingQuestionSetGetStudyPlanByName](docs/RequestCodingQuestionSetGetStudyPlanByName.md)
+ - [RequestCodingQuestionSetRemoveQuestionFromCodingQuestionSet](docs/RequestCodingQuestionSetRemoveQuestionFromCodingQuestionSet.md)
  - [RequestEvalCheckTimeout](docs/RequestEvalCheckTimeout.md)
  - [RequestEvalGetBySessionId](docs/RequestEvalGetBySessionId.md)
  - [RequestEvalInsertEvaluation](docs/RequestEvalInsertEvaluation.md)
@@ -209,6 +230,12 @@ Class | Method | HTTP request | Description
  - [RequestEvalInsertEvaluationArgsScoreboardsTechnicalCompetency](docs/RequestEvalInsertEvaluationArgsScoreboardsTechnicalCompetency.md)
  - [RequestEvalInsertEvaluationArgsScoreboardsTesting](docs/RequestEvalInsertEvaluationArgsScoreboardsTesting.md)
  - [RequestEvalTriggerEvalAction](docs/RequestEvalTriggerEvalAction.md)
+ - [RequestFunctionsBackfillAggregatesMigration](docs/RequestFunctionsBackfillAggregatesMigration.md)
+ - [RequestFunctionsBackfillAggregatesMigrationArgs](docs/RequestFunctionsBackfillAggregatesMigrationArgs.md)
+ - [RequestFunctionsBackfillSessionsMigration](docs/RequestFunctionsBackfillSessionsMigration.md)
+ - [RequestFunctionsClearAggregates](docs/RequestFunctionsClearAggregates.md)
+ - [RequestFunctionsRunSessionAggregationBackfill](docs/RequestFunctionsRunSessionAggregationBackfill.md)
+ - [RequestFunctionsRunUserAggregationBackfill](docs/RequestFunctionsRunUserAggregationBackfill.md)
  - [RequestInviteCodesApplyInviteCode](docs/RequestInviteCodesApplyInviteCode.md)
  - [RequestInviteCodesApplyInviteCodeArgs](docs/RequestInviteCodesApplyInviteCodeArgs.md)
  - [RequestInviteCodesCreateDefaultUserProfile](docs/RequestInviteCodesCreateDefaultUserProfile.md)
@@ -235,6 +262,8 @@ Class | Method | HTTP request | Description
  - [RequestQuestionsGetById](docs/RequestQuestionsGetById.md)
  - [RequestQuestionsGetByIdArgs](docs/RequestQuestionsGetByIdArgs.md)
  - [RequestQuestionsGetByIdInternal](docs/RequestQuestionsGetByIdInternal.md)
+ - [RequestQuestionsListBySetId](docs/RequestQuestionsListBySetId.md)
+ - [RequestQuestionsListBySetIdArgs](docs/RequestQuestionsListBySetIdArgs.md)
  - [RequestQuestionsUpdateQuestion](docs/RequestQuestionsUpdateQuestion.md)
  - [RequestQuestionsUpdateQuestionArgs](docs/RequestQuestionsUpdateQuestionArgs.md)
  - [RequestQuestionsUpdateStarred](docs/RequestQuestionsUpdateStarred.md)
@@ -256,14 +285,18 @@ Class | Method | HTTP request | Description
  - [RequestSessionsGetByIdInternal](docs/RequestSessionsGetByIdInternal.md)
  - [RequestSessionsGetByIdUnauth](docs/RequestSessionsGetByIdUnauth.md)
  - [RequestSessionsGetByUserId](docs/RequestSessionsGetByUserId.md)
+ - [RequestSessionsGetSessionMetricsInternal](docs/RequestSessionsGetSessionMetricsInternal.md)
  - [RequestSessionsStartSession](docs/RequestSessionsStartSession.md)
  - [RequestUserProfilesDecrementEvaluationCount](docs/RequestUserProfilesDecrementEvaluationCount.md)
  - [RequestUserProfilesDecrementMinutesRemaining](docs/RequestUserProfilesDecrementMinutesRemaining.md)
  - [RequestUserProfilesDecrementMinutesRemainingArgs](docs/RequestUserProfilesDecrementMinutesRemainingArgs.md)
+ - [RequestUserProfilesGetAllUserMetricsInternal](docs/RequestUserProfilesGetAllUserMetricsInternal.md)
+ - [RequestUserProfilesGetAllUsers](docs/RequestUserProfilesGetAllUsers.md)
  - [RequestUserProfilesGetByEmailInternal](docs/RequestUserProfilesGetByEmailInternal.md)
  - [RequestUserProfilesGetByEmailInternalArgs](docs/RequestUserProfilesGetByEmailInternalArgs.md)
  - [RequestUserProfilesGetCompletedQuestions](docs/RequestUserProfilesGetCompletedQuestions.md)
  - [RequestUserProfilesGetStarredQuestions](docs/RequestUserProfilesGetStarredQuestions.md)
+ - [RequestUserProfilesGetUserById](docs/RequestUserProfilesGetUserById.md)
  - [RequestUserProfilesGetUserMinutesRemaining](docs/RequestUserProfilesGetUserMinutesRemaining.md)
  - [RequestUserProfilesGetUserProfile](docs/RequestUserProfilesGetUserProfile.md)
  - [RequestUserProfilesGetUserProfileInternal](docs/RequestUserProfilesGetUserProfileInternal.md)
@@ -317,10 +350,22 @@ Class | Method | HTTP request | Description
  - [ResponseCodeSessionStatesGetValue](docs/ResponseCodeSessionStatesGetValue.md)
  - [ResponseCodeSessionStatesGetValueEditor](docs/ResponseCodeSessionStatesGetValueEditor.md)
  - [ResponseCodeSessionStatesGetValueTerminal](docs/ResponseCodeSessionStatesGetValueTerminal.md)
+ - [ResponseCodingQuestionSetAddQuestionToCodingQuestionSet](docs/ResponseCodingQuestionSetAddQuestionToCodingQuestionSet.md)
+ - [ResponseCodingQuestionSetCreateCodingQuestionSet](docs/ResponseCodingQuestionSetCreateCodingQuestionSet.md)
+ - [ResponseCodingQuestionSetGetAllCodingQuestionSets](docs/ResponseCodingQuestionSetGetAllCodingQuestionSets.md)
+ - [ResponseCodingQuestionSetGetCodingQuestionSets](docs/ResponseCodingQuestionSetGetCodingQuestionSets.md)
+ - [ResponseCodingQuestionSetGetSetById](docs/ResponseCodingQuestionSetGetSetById.md)
+ - [ResponseCodingQuestionSetGetStudyPlanByName](docs/ResponseCodingQuestionSetGetStudyPlanByName.md)
+ - [ResponseCodingQuestionSetRemoveQuestionFromCodingQuestionSet](docs/ResponseCodingQuestionSetRemoveQuestionFromCodingQuestionSet.md)
  - [ResponseEvalCheckTimeout](docs/ResponseEvalCheckTimeout.md)
  - [ResponseEvalGetBySessionId](docs/ResponseEvalGetBySessionId.md)
  - [ResponseEvalInsertEvaluation](docs/ResponseEvalInsertEvaluation.md)
  - [ResponseEvalTriggerEvalAction](docs/ResponseEvalTriggerEvalAction.md)
+ - [ResponseFunctionsBackfillAggregatesMigration](docs/ResponseFunctionsBackfillAggregatesMigration.md)
+ - [ResponseFunctionsBackfillSessionsMigration](docs/ResponseFunctionsBackfillSessionsMigration.md)
+ - [ResponseFunctionsClearAggregates](docs/ResponseFunctionsClearAggregates.md)
+ - [ResponseFunctionsRunSessionAggregationBackfill](docs/ResponseFunctionsRunSessionAggregationBackfill.md)
+ - [ResponseFunctionsRunUserAggregationBackfill](docs/ResponseFunctionsRunUserAggregationBackfill.md)
  - [ResponseInviteCodesApplyInviteCode](docs/ResponseInviteCodesApplyInviteCode.md)
  - [ResponseInviteCodesCreateDefaultUserProfile](docs/ResponseInviteCodesCreateDefaultUserProfile.md)
  - [ResponseInviteCodesCreateInviteCode](docs/ResponseInviteCodesCreateInviteCode.md)
@@ -334,6 +379,7 @@ Class | Method | HTTP request | Description
  - [ResponseQuestionsGetAll](docs/ResponseQuestionsGetAll.md)
  - [ResponseQuestionsGetById](docs/ResponseQuestionsGetById.md)
  - [ResponseQuestionsGetByIdInternal](docs/ResponseQuestionsGetByIdInternal.md)
+ - [ResponseQuestionsListBySetId](docs/ResponseQuestionsListBySetId.md)
  - [ResponseQuestionsUpdateQuestion](docs/ResponseQuestionsUpdateQuestion.md)
  - [ResponseQuestionsUpdateStarred](docs/ResponseQuestionsUpdateStarred.md)
  - [ResponseQuestionsUpdateStatus](docs/ResponseQuestionsUpdateStatus.md)
@@ -346,12 +392,18 @@ Class | Method | HTTP request | Description
  - [ResponseSessionsGetByIdInternal](docs/ResponseSessionsGetByIdInternal.md)
  - [ResponseSessionsGetByIdUnauth](docs/ResponseSessionsGetByIdUnauth.md)
  - [ResponseSessionsGetByUserId](docs/ResponseSessionsGetByUserId.md)
+ - [ResponseSessionsGetSessionMetricsInternal](docs/ResponseSessionsGetSessionMetricsInternal.md)
+ - [ResponseSessionsGetSessionMetricsInternalValue](docs/ResponseSessionsGetSessionMetricsInternalValue.md)
+ - [ResponseSessionsGetSessionMetricsInternalValueCompleted](docs/ResponseSessionsGetSessionMetricsInternalValueCompleted.md)
  - [ResponseSessionsStartSession](docs/ResponseSessionsStartSession.md)
  - [ResponseUserProfilesDecrementEvaluationCount](docs/ResponseUserProfilesDecrementEvaluationCount.md)
  - [ResponseUserProfilesDecrementMinutesRemaining](docs/ResponseUserProfilesDecrementMinutesRemaining.md)
+ - [ResponseUserProfilesGetAllUserMetricsInternal](docs/ResponseUserProfilesGetAllUserMetricsInternal.md)
+ - [ResponseUserProfilesGetAllUsers](docs/ResponseUserProfilesGetAllUsers.md)
  - [ResponseUserProfilesGetByEmailInternal](docs/ResponseUserProfilesGetByEmailInternal.md)
  - [ResponseUserProfilesGetCompletedQuestions](docs/ResponseUserProfilesGetCompletedQuestions.md)
  - [ResponseUserProfilesGetStarredQuestions](docs/ResponseUserProfilesGetStarredQuestions.md)
+ - [ResponseUserProfilesGetUserById](docs/ResponseUserProfilesGetUserById.md)
  - [ResponseUserProfilesGetUserMinutesRemaining](docs/ResponseUserProfilesGetUserMinutesRemaining.md)
  - [ResponseUserProfilesGetUserProfile](docs/ResponseUserProfilesGetUserProfile.md)
  - [ResponseUserProfilesGetUserProfileInternal](docs/ResponseUserProfilesGetUserProfileInternal.md)

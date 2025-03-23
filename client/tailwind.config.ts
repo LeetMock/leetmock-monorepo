@@ -33,6 +33,7 @@ const config = {
       },
       transitionTimingFunction: {
         "minor-spring": "cubic-bezier(0.18,0.89,0.82,1.04)",
+        "out-expo": "cubic-bezier(0.19, 1, 0.22, 1)",
       },
       colors: {
         border: "hsl(var(--border))",

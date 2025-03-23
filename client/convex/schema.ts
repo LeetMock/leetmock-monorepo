@@ -22,6 +22,10 @@ export const SubscriptionTier = {
 } as const;
 
 const schema = defineEntSchema({
+  codingQuestionSets: defineEnt({
+    name: v.string(),
+    questions: v.array(v.id("questions")),
+  }),
   userProfiles: defineEnt({
     role: v.union(v.literal("admin"), v.literal("user"), v.literal("waitlist")),
     subscription: v.union(

@@ -12,7 +12,7 @@ export const TimelineRoot: React.FC<TimelineRootProps> = ({
   ...props
 }) => {
   return (
-    <div className={cn("relative space-y-4", className)} {...props}>
+    <div className={cn("relative", className)} {...props}>
       {children}
     </div>
   );
@@ -28,7 +28,7 @@ export const TimelineItem: React.FC<TimelineItemProps> = ({
   ...props
 }) => {
   return (
-    <div className={cn("relative flex gap-4", className)} {...props}>
+    <div className={cn("relative flex gap-4 py-2", className)} {...props}>
       {children}
     </div>
   );
@@ -48,18 +48,18 @@ export const TimelineConnector: React.FC<TimelineConnectorProps> = ({
   ...props
 }) => {
   return (
-    <div className="relative flex items-center justify-center z-10" {...props}>
+    <div className="relative flex items-center justify-center" {...props}>
+      {!isLastItem && (
+        <div className="absolute left-3.5 top-7 w-0.5 bg-border" style={{ height: 'calc(100% + 16px)' }} />
+      )}
       {Icon && (
         <div className={cn(
-          "h-7 w-7 rounded-full flex items-center justify-center",
+          "h-7 w-7 rounded-full flex items-center justify-center z-20 bg-background",
           completed ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
           className
         )}>
           {Icon && <Icon className="h-4 w-4" />}
         </div>
-      )}
-      {!isLastItem && (
-        <div className="absolute left-3.5 top-7 h-full w-px bg-border" />
       )}
     </div>
   );

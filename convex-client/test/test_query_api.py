@@ -103,6 +103,34 @@ class TestQueryApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_coding_question_set_get_all_coding_question_sets_post(self) -> None:
+        """Test case for api_run_coding_question_set_get_all_coding_question_sets_post
+
+        Calls a query at the path codingQuestionSet.js:getAllCodingQuestionSets
+        """
+        pass
+
+    def test_api_run_coding_question_set_get_coding_question_sets_post(self) -> None:
+        """Test case for api_run_coding_question_set_get_coding_question_sets_post
+
+        Calls a query at the path codingQuestionSet.js:getCodingQuestionSets
+        """
+        pass
+
+    def test_api_run_coding_question_set_get_set_by_id_post(self) -> None:
+        """Test case for api_run_coding_question_set_get_set_by_id_post
+
+        Calls a query at the path codingQuestionSet.js:getSetById
+        """
+        pass
+
+    def test_api_run_coding_question_set_get_study_plan_by_name_post(self) -> None:
+        """Test case for api_run_coding_question_set_get_study_plan_by_name_post
+
+        Calls a query at the path codingQuestionSet.js:getStudyPlanByName
+        """
+        pass
+
     def test_api_run_eval_get_by_session_id_post(self) -> None:
         """Test case for api_run_eval_get_by_session_id_post
 
@@ -128,6 +156,13 @@ class TestQueryApi(unittest.TestCase):
         """Test case for api_run_questions_get_by_id_post
 
         Calls a query at the path questions.js:getById
+        """
+        pass
+
+    def test_api_run_questions_list_by_set_id_post(self) -> None:
+        """Test case for api_run_questions_list_by_set_id_post
+
+        Calls a query at the path questions.js:listBySetId
         """
         pass
 
@@ -166,6 +201,13 @@ class TestQueryApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_user_profiles_get_all_users_post(self) -> None:
+        """Test case for api_run_user_profiles_get_all_users_post
+
+        Calls a query at the path userProfiles.js:getAllUsers
+        """
+        pass
+
     def test_api_run_user_profiles_get_completed_questions_post(self) -> None:
         """Test case for api_run_user_profiles_get_completed_questions_post
 
@@ -177,6 +219,13 @@ class TestQueryApi(unittest.TestCase):
         """Test case for api_run_user_profiles_get_starred_questions_post
 
         Calls a query at the path userProfiles.js:getStarredQuestions
+        """
+        pass
+
+    def test_api_run_user_profiles_get_user_by_id_post(self) -> None:
+        """Test case for api_run_user_profiles_get_user_by_id_post
+
+        Calls a query at the path userProfiles.js:getUserById
         """
         pass
 

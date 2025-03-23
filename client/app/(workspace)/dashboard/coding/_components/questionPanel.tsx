@@ -42,6 +42,8 @@ function QuestionPanel() {
         setQuestions,
         setCompletedQuestions,
         setStarredQuestions,
+        updateStatus: updateLocalStatus,
+        updateStarred: updateLocalStarred
     } = useQuestionStore();
 
     const questionsQuery = useQuery(api.questions.getAll);
@@ -70,12 +72,18 @@ function QuestionPanel() {
     const updateStatusMutation = useMutation(api.questions.updateStatus);
     const updateStarredMutation = useMutation(api.questions.updateStarred);
 
-    // Debounce the update functions
     const updateStatus = useDebounceCallback(
         async (args: { questionId: Id<"questions">; status: "complete" | "incomplete" }) => {
-            await updateStatusMutation(args);
-            if (completedQuery?.completedQuestions) {
-                setCompletedQuestions(completedQuery.completedQuestions);
+            // Optimistic update - update local state immediately
+            updateLocalStatus(args.questionId, args.status === "complete");
+
+            try {
+                // Then update the server
+                await updateStatusMutation(args);
+            } catch (error) {
+                // If server update fails, revert the optimistic update
+                updateLocalStatus(args.questionId, args.status !== "complete");
+                console.error("Failed to update question status:", error);
             }
         },
         300
@@ -83,9 +91,16 @@ function QuestionPanel() {
 
     const updateStarred = useDebounceCallback(
         async (args: { questionId: Id<"questions">; starred: boolean }) => {
-            await updateStarredMutation(args);
-            if (starredQuery?.starredQuestions) {
-                setStarredQuestions(starredQuery.starredQuestions);
+            // Optimistic update - update local state immediately
+            updateLocalStarred(args.questionId, args.starred);
+
+            try {
+                // Then update the server
+                await updateStarredMutation(args);
+            } catch (error) {
+                // If server update fails, revert the optimistic update
+                updateLocalStarred(args.questionId, !args.starred);
+                console.error("Failed to update starred status:", error);
             }
         },
         300

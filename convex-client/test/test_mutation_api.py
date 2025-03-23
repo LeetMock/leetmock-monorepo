@@ -54,6 +54,27 @@ class TestMutationApi(unittest.TestCase):
         """
         pass
 
+    def test_api_run_coding_question_set_add_question_to_coding_question_set_post(self) -> None:
+        """Test case for api_run_coding_question_set_add_question_to_coding_question_set_post
+
+        Calls a mutation at the path codingQuestionSet.js:addQuestionToCodingQuestionSet
+        """
+        pass
+
+    def test_api_run_coding_question_set_create_coding_question_set_post(self) -> None:
+        """Test case for api_run_coding_question_set_create_coding_question_set_post
+
+        Calls a mutation at the path codingQuestionSet.js:createCodingQuestionSet
+        """
+        pass
+
+    def test_api_run_coding_question_set_remove_question_from_coding_question_set_post(self) -> None:
+        """Test case for api_run_coding_question_set_remove_question_from_coding_question_set_post
+
+        Calls a mutation at the path codingQuestionSet.js:removeQuestionFromCodingQuestionSet
+        """
+        pass
+
     def test_api_run_eval_insert_evaluation_post(self) -> None:
         """Test case for api_run_eval_insert_evaluation_post
 
