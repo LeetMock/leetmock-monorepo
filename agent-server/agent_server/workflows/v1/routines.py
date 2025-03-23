@@ -57,8 +57,12 @@ async def entrypoint():
     if stage is None:
         return
 
-    # TODO: Implement the stage logic
-    # ...
+    run_stage_workflow = {
+        StageType.INTRO: run_intro_workflow,
+        StageType.CODING: run_coding_workflow,
+        StageType.EVAL: run_eval_workflow,
+    }[stage]
 
+    await run_stage_workflow()
     await decide_next_stage()
     await trigger_on_tool_call()
