@@ -712,7 +712,7 @@ Don't output anything else, just output a JSON-like list of test cases.`;
       "https://api.anthropic.com/v1/messages",
       {
         model: MODEL,
-        max_tokens: 2048,
+        max_tokens: 9012,
         temperature: 0.1,
         messages: [{ role: "user", content: testsPrompt }]
       },

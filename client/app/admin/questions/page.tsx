@@ -376,6 +376,9 @@ export default function QuestionsManagementPage() {
         setIsSubmitting(true);
 
         try {
+            // Validate testcase values first
+            let hasParsingError = false;
+            let errorMessage = "";
             // Prepare the solutions object
             const solutions: Record<string, string> = {};
             if (validationCode) {
@@ -412,7 +415,55 @@ export default function QuestionsManagementPage() {
                 .map(s => s.trim())
                 .filter(s => s);
 
-            // Common properties for create and update
+            // Create a copy of testcases with properly parsed values
+            const parsedTestcases = testcases.map((testcase, index) => {
+                const parsedTestcase = {
+                    input: { ...testcase.input },
+                    output: testcase.output
+                };
+
+                // Ensure input values are properly parsed for each parameter
+                for (const paramName of parameters) {
+                    if (testcase.input?.[paramName] !== undefined) {
+                        try {
+                            // Check if the value is a string that needs parsing
+                            if (typeof testcase.input[paramName] === 'string') {
+                                const paramType = parameterTypes?.javascript?.[paramName] || "";
+                                parsedTestcase.input[paramName] = parseValueByType(testcase.input[paramName], paramType);
+                            }
+
+                            if (typeof testcase.output === 'string') {
+                                parsedTestcase.output = parseValueByType(testcase.output, selectedOutputType);
+                            }
+                        } catch (e) {
+                            hasParsingError = true;
+                            errorMessage = `Error parsing input parameter "${paramName}" in test case ${index + 1}`;
+                            console.error(errorMessage, e);
+                        }
+                    }
+                }
+
+                // Parse output if it's a string
+                if (testcase.output !== undefined && typeof testcase.output === 'string') {
+                    try {
+                        parsedTestcase.output = parseValueByType(testcase.output, selectedOutputType);
+                    } catch (e) {
+                        hasParsingError = true;
+                        errorMessage = `Error parsing output in test case ${index + 1}`;
+                        console.error(errorMessage, e);
+                    }
+                }
+
+                return parsedTestcase;
+            });
+
+            if (hasParsingError) {
+                toast.error(errorMessage);
+                setIsSubmitting(false);
+                return;
+            }
+
+            // Prepare data, ensuring parameterTypes is defined
             const questionData = {
                 title: basicInfo.title,
                 category: categoryArray,
@@ -421,9 +472,11 @@ export default function QuestionsManagementPage() {
                 question: basicInfo.question,
                 inputParameters: inputParams,
                 outputParameters: selectedOutputType,
-                evalMode: evalMode,
-                tests: testcases,
-                solutions: solutions,
+                evalMode,
+                tests: parsedTestcases,
+                solutions: {
+                    [validationLanguage]: validationCode,
+                },
                 metaData: metaData,
                 companies: companiesArray,
                 questionSets: questionSetsArray,
@@ -520,7 +573,7 @@ export default function QuestionsManagementPage() {
     };
 
     // Handle import from LeetCode
-    const handleImportFromLeetCode = async () => {
+    const handleImportQuestion = async () => {
         if (!importTitle.trim()) {
             toast.error("Please enter a question title or slug");
             return;
@@ -682,9 +735,9 @@ export default function QuestionsManagementPage() {
                 isSubmitting={isSubmitting}
                 importTitle={importTitle}
                 setImportTitle={setImportTitle}
-                onImport={handleImportFromLeetCode}
+                onImport={handleImportQuestion}
                 isImporting={isImporting}
-                // Pass states
+                // State
                 basicInfo={basicInfo}
                 setBasicInfo={setBasicInfo}
                 parameters={parameters}
@@ -708,7 +761,7 @@ export default function QuestionsManagementPage() {
                 parameterTypes={parameterTypes}
                 setParameterTypes={setParameterTypes}
                 questionMetadata={questionMetadata}
-                // Pass handlers
+                // Handlers
                 handleAddParameter={handleAddParameter}
                 handleRemoveParameter={handleRemoveParameter}
                 handleParameterChange={handleParameterChange}
