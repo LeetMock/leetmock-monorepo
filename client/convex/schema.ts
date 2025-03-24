@@ -114,7 +114,7 @@ const schema = defineEntSchema({
     functionName: v.string(),
     inputParameters: v.record(v.string(), v.record(v.string(), v.string())),
     outputParameters: v.string(),
-    evalMode: v.union(v.literal("exactMatch"), v.literal("listNodeIter"), v.literal("sortedMatch")),
+    evalMode: v.union(v.literal("exactMatch"), v.literal("listNodeIter"), v.literal("sortedMatch"), v.literal("compareInPlace")),
     tests: v.array(
       v.object({
         input: v.any(),

@@ -51,6 +51,8 @@ interface QuestionDialogProps {
     tabValidation: TabValidation;
     parameterTypes: InputParameters;
     setParameterTypes: React.Dispatch<React.SetStateAction<InputParameters>>;
+    // Metadata for special eval modes
+    questionMetadata: Record<string, any>;
     // Handlers
     handleAddParameter: () => void;
     handleRemoveParameter: (index: number) => void;
@@ -99,6 +101,8 @@ export default function QuestionDialog({
     tabValidation,
     parameterTypes,
     setParameterTypes,
+    // Metadata
+    questionMetadata,
     // Handlers
     handleAddParameter,
     handleRemoveParameter,
@@ -176,6 +180,7 @@ export default function QuestionDialog({
                                 handleRemoveParameter={handleRemoveParameter}
                                 handleParameterChange={handleParameterChange}
                                 handleParameterTypeChange={handleParameterTypeChange}
+                                questionMetadata={questionMetadata}
                             />
                         </TabsContent>
 

@@ -138,7 +138,7 @@ function QuestionPanel() {
                     My Starred
                 </Button>
 
-                <div className="h-6 w-[1px] bg-gray-200 mx-3" />
+                {/* <div className="h-6 w-[1px] bg-gray-200 mx-3" />
 
                 <Button
                     variant="ghost"
@@ -151,7 +151,7 @@ function QuestionPanel() {
                 >
                     <History className="h-4 w-4 mr-2" />
                     Past Practice
-                </Button>
+                </Button> */}
             </div>
 
             <QuestionFilter

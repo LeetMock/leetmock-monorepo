@@ -48,6 +48,6 @@ export interface BasicInfo {
     questionSets: string;  // Will be comma-separated in the UI, converted to array on submit
 }
 
-export type EvalMode = "exactMatch" | "listNodeIter" | "sortedMatch";
+export type EvalMode = "exactMatch" | "listNodeIter" | "sortedMatch" | "compareInPlace";
 
 export type QuestionDoc = Doc<"questions">; 
