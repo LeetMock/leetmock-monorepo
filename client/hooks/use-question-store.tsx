@@ -25,7 +25,7 @@ interface Question {
     solutions: Record<string, string>;
     inputParameters: Record<string, Record<string, string>>;
     outputParameters: string;
-    evalMode: "exactMatch" | "listNodeIter" | "sortedMatch";
+    evalMode: "exactMatch" | "listNodeIter" | "sortedMatch" | "compareInPlace";
     tests: Array<{
         input: any;
         output: any;

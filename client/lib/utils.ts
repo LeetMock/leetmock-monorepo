@@ -119,6 +119,7 @@ interface Question {
   tests: TestCase[];
   evalMode: string;
   outputParameters: string;
+  metaData: Record<string, any>;
 }
 
 export function generateTestCode(
@@ -188,7 +189,7 @@ function generatePythonTestCode(
   question: Question,
   testCasesState: Testcase[]
 ): string {
-  const { functionName, inputParameters, evalMode, outputParameters } =
+  const { functionName, inputParameters, evalMode, outputParameters, metaData } =
     question;
   const params = inputParameters["python"];
 
@@ -198,6 +199,7 @@ import json
 import traceback
 import sys
 from io import StringIO
+from typing import List, Dict, Any
 
 class ListNode:
     def __init__(self, val=0, next=None):
@@ -256,50 +258,99 @@ class TestSolution(unittest.TestCase):
 `;
 
   testCasesState.forEach((test, index) => {
-    const inputArgs = Object.entries(params)
-      .map(([param, paramType]) => {
-        const inputValue = test.input[param];
-        if (inputValue === "") return '""';
-        if (paramType === "Optional[ListNode]" || paramType === "ListNode") {
-          return `arrayToListNode(${JSON.stringify(inputValue)})`;
-        }
-        return JSON.stringify(inputValue);
-      })
-      .join(", ");
+    // Determine if we're using compareInPlace mode
+    const isCompareInPlace = evalMode === "compareInPlace";
+    // Get the parameter to compare for in-place changes
+    const compareParameter = isCompareInPlace ? (metaData?.compareParameter || Object.keys(params)[0]) : "";
 
-    const expectedOutput =
-      outputParameters === "boolean"
-        ? toPythonBoolean(test.expectedOutput)
-        : JSON.stringify(test.expectedOutput);
+    // Define expected output for all cases
+    const expectedOutput = outputParameters === "boolean"
+      ? toPythonBoolean(test.expectedOutput)
+      : JSON.stringify(test.expectedOutput);
 
-    let comparisonCode;
-    if (outputParameters === "boolean") {
-      comparisonCode = `passed = (bool(result) == expected)`;
-    } else {
-      switch (evalMode) {
-        case "exactMatch":
-          comparisonCode = `passed = (result == expected)`;
-          break;
-        case "listNodeIter":
-          comparisonCode = `passed = listToArray(result) == expected`;
-          break;
-        case "sortedMatch":
-          comparisonCode = `passed = compare_lists(sorted(result), sorted(expected))`;
-          break;
-        default:
-          comparisonCode = `passed = compare_lists(result, expected)`;
-      }
-    }
-
+    // Generate test case
     testCode += `
     def test_case_${index + 1}(self):
         with CaptureOutput() as output:
             try:
                 from solution import Solution
                 sol = Solution()
+`;
+
+    if (isCompareInPlace) {
+      // For compareInPlace, we need to define variables first
+      const paramVariables = Object.entries(params).map(([paramName, paramType]) => {
+        const inputValue = test.input[paramName];
+        let valueExpr = inputValue === "" ? '""' : JSON.stringify(inputValue);
+
+        // Handle special case for list nodes
+        if (paramType === "Optional[ListNode]" || paramType === "ListNode") {
+          valueExpr = `arrayToListNode(${JSON.stringify(inputValue)})`;
+        }
+
+        return `                ${paramName} = ${valueExpr}`;
+      }).join("\n");
+
+      // Generate function call using variable names directly
+      const functionCallArgs = Object.keys(params).join(", ");
+
+      testCode += `
+${paramVariables}
+
+                # Call the function with the variables
+                result = sol.${functionName}(${functionCallArgs})
+                expected = ${expectedOutput}
+                
+                # For compare in-place, check if the parameter was modified correctly
+                passed = compare_lists(${compareParameter}, expected)
+                
+                self.__class__.results.append({
+                    "caseNumber": ${index + 1},
+                    "passed": passed,
+                    "input": ${JSON.stringify(test.input)},
+                    "expected": expected,
+                    "actual": ${compareParameter},
+                    "error": None,
+                    "stdout": output.getvalue()
+                })
+`;
+    } else {
+      // Original approach for other evaluation modes
+      const inputArgs = Object.entries(params)
+        .map(([param, paramType]) => {
+          const inputValue = test.input[param];
+          if (inputValue === "") return '""';
+          if (paramType === "Optional[ListNode]" || paramType === "ListNode") {
+            return `arrayToListNode(${JSON.stringify(inputValue)})`;
+          }
+          return JSON.stringify(inputValue);
+        })
+        .join(", ");
+
+      let comparisonCode;
+      if (outputParameters === "boolean") {
+        comparisonCode = `passed = (bool(result) == expected)`;
+      } else {
+        switch (evalMode) {
+          case "exactMatch":
+            comparisonCode = `passed = (result == expected)`;
+            break;
+          case "listNodeIter":
+            comparisonCode = `passed = listToArray(result) == expected`;
+            break;
+          case "sortedMatch":
+            comparisonCode = `passed = compare_lists(sorted(result), sorted(expected))`;
+            break;
+          default:
+            comparisonCode = `passed = compare_lists(result, expected)`;
+        }
+      }
+
+      testCode += `
                 result = sol.${functionName}(${inputArgs})
                 expected = ${expectedOutput}
                 ${comparisonCode}
+                
                 self.__class__.results.append({
                     "caseNumber": ${index + 1},
                     "passed": passed,
@@ -309,7 +360,10 @@ class TestSolution(unittest.TestCase):
                     "error": None,
                     "stdout": output.getvalue()
                 })
-            except Exception as e:
+`;
+    }
+
+    testCode += `            except Exception as e:
                 self.__class__.results.append({
                     "caseNumber": ${index + 1},
                     "passed": False,

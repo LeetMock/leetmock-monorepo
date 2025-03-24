@@ -95,6 +95,9 @@ export default function QuestionsManagementPage() {
         difficulty: "all",
     });
 
+    // Metadata for special eval modes
+    const [questionMetadata, setQuestionMetadata] = useState<Record<string, any>>({});
+
     // Tab validation
     const [tabValidation, setTabValidation] = useState<TabValidation>({
         basic: false,
@@ -169,12 +172,20 @@ export default function QuestionsManagementPage() {
             // Set eval mode
             setEvalMode(editingQuestion.evalMode || "exactMatch");
 
+            // Set metadata
+            if (editingQuestion.metaData) {
+                setQuestionMetadata(editingQuestion.metaData);
+            } else {
+                setQuestionMetadata({});
+            }
+
             // Set validation code
             if (editingQuestion.solutions) {
                 setValidationCode(editingQuestion.solutions[validationLanguage] || "");
             }
         } else {
             resetForm();
+            setQuestionMetadata({});
         }
     }, [editingQuestion, validationLanguage]);
 
@@ -211,6 +222,7 @@ export default function QuestionsManagementPage() {
         setEvalMode("exactMatch");
         setValidationCode("");
         setValidationOutput("");
+        setQuestionMetadata({});
     };
 
     // Reset validation states
@@ -342,106 +354,100 @@ export default function QuestionsManagementPage() {
         }
     };
 
+    // Add event listener for updateMetadata event
+    useEffect(() => {
+        const handleMetadataUpdate = (event: CustomEvent<{ metadata: Record<string, any> }>) => {
+            setQuestionMetadata(prev => ({
+                ...prev,
+                ...event.detail.metadata
+            }));
+        };
+
+        window.addEventListener('updateMetadata', handleMetadataUpdate as EventListener);
+
+        return () => {
+            window.removeEventListener('updateMetadata', handleMetadataUpdate as EventListener);
+        };
+    }, []);
+
     // Handle form submission
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsSubmitting(true);
 
         try {
-            // Validate testcase values first
-            let hasParsingError = false;
-            let errorMessage = "";
-
-            // Create a copy of testcases with properly parsed values
-            const parsedTestcases = testcases.map((testcase, index) => {
-                const parsedTestcase = {
-                    input: { ...testcase.input },
-                    output: testcase.output
-                };
-
-                // Ensure input values are properly parsed for each parameter
-                for (const paramName of parameters) {
-                    if (testcase.input?.[paramName] !== undefined) {
-                        try {
-                            // Check if the value is a string that needs parsing
-                            if (typeof testcase.input[paramName] === 'string') {
-                                const paramType = parameterTypes?.javascript?.[paramName] || "";
-                                parsedTestcase.input[paramName] = parseValueByType(testcase.input[paramName], paramType);
-                            }
-
-                            if (typeof testcase.output === 'string') {
-                                parsedTestcase.output = parseValueByType(testcase.output, selectedOutputType);
-                            }
-                        } catch (e) {
-                            hasParsingError = true;
-                            errorMessage = `Error parsing input parameter "${paramName}" in test case ${index + 1}`;
-                            console.error(errorMessage, e);
-                        }
-                    }
-                }
-
-                // Parse output if it's a string
-                if (testcase.output !== undefined && typeof testcase.output === 'string') {
-                    try {
-                        parsedTestcase.output = parseValueByType(testcase.output, selectedOutputType);
-                    } catch (e) {
-                        hasParsingError = true;
-                        errorMessage = `Error parsing output in test case ${index + 1}`;
-                        console.error(errorMessage, e);
-                    }
-                }
-
-                return parsedTestcase;
-            });
-
-            if (hasParsingError) {
-                toast.error(errorMessage);
-                setIsSubmitting(false);
-                return;
+            // Prepare the solutions object
+            const solutions: Record<string, string> = {};
+            if (validationCode) {
+                solutions[validationLanguage] = validationCode;
             }
 
-            // Prepare data, ensuring parameterTypes is defined
+            // Prepare the input parameters
+            const inputParams = parameterTypes;
+
+            // Prepare metadata with any special evaluation info
+            const metaData: Record<string, any> = {
+                ...questionMetadata
+            };
+
+            // If evalMode is compareInPlace, ensure we have a compareParameter
+            if (evalMode === "compareInPlace" && !metaData.compareParameter && parameters.length > 0) {
+                // Default to the first parameter if none was selected
+                metaData.compareParameter = parameters[0];
+            }
+
+            // Convert comma-separated values to arrays
+            const categoryArray = basicInfo.category
+                .split(",")
+                .map(c => c.trim())
+                .filter(c => c);
+
+            const companiesArray = basicInfo.companies
+                .split(",")
+                .map(c => c.trim())
+                .filter(c => c);
+
+            const questionSetsArray = basicInfo.questionSets
+                .split(",")
+                .map(s => s.trim())
+                .filter(s => s);
+
+            // Common properties for create and update
             const questionData = {
                 title: basicInfo.title,
-                category: basicInfo.category.split(",").map(c => c.trim()).filter(Boolean),
+                category: categoryArray,
                 difficulty: basicInfo.difficulty,
                 functionName: basicInfo.functionName,
                 question: basicInfo.question,
-                companies: basicInfo.companies.split(",").map(c => c.trim()).filter(Boolean),
-                questionSets: basicInfo.questionSets.split(",").map(c => c.trim()).filter(Boolean),
-                inputParameters: parameterTypes || {
-                    cpp: {},
-                    java: {},
-                    javascript: {},
-                    python: {}
-                },
+                inputParameters: inputParams,
                 outputParameters: selectedOutputType,
-                evalMode,
-                tests: parsedTestcases,
-                solutions: {
-                    [validationLanguage]: validationCode,
-                },
+                evalMode: evalMode,
+                tests: testcases,
+                solutions: solutions,
+                metaData: metaData,
+                companies: companiesArray,
+                questionSets: questionSetsArray,
             };
 
+            // Create or update the question
             if (editingQuestion) {
-                // Update existing question
                 await updateQuestion({
                     questionId: editingQuestion._id,
                     ...questionData,
                 });
                 toast.success("Question updated successfully");
             } else {
-                // Create new question
                 await createQuestion(questionData);
                 toast.success("Question created successfully");
             }
 
-            // Close dialog and reset form
+            // Close the dialog and reset the form
             setIsCreateDialogOpen(false);
             setEditingQuestion(null);
             resetForm();
         } catch (error) {
-            toast.error("Failed to save question: " + error);
+            console.error("Error submitting question:", error);
+            toast.error("Error submitting question");
         } finally {
             setIsSubmitting(false);
         }
@@ -514,7 +520,7 @@ export default function QuestionsManagementPage() {
     };
 
     // Handle import from LeetCode
-    const handleImportQuestion = async () => {
+    const handleImportFromLeetCode = async () => {
         if (!importTitle.trim()) {
             toast.error("Please enter a question title or slug");
             return;
@@ -676,15 +682,13 @@ export default function QuestionsManagementPage() {
                 isSubmitting={isSubmitting}
                 importTitle={importTitle}
                 setImportTitle={setImportTitle}
-                onImport={handleImportQuestion}
+                onImport={handleImportFromLeetCode}
                 isImporting={isImporting}
-                // State
+                // Pass states
                 basicInfo={basicInfo}
                 setBasicInfo={setBasicInfo}
                 parameters={parameters}
                 setParameters={setParameters}
-                parameterTypes={parameterTypes}
-                setParameterTypes={setParameterTypes}
                 testcases={testcases}
                 setTestcases={setTestcases}
                 selectedOutputType={selectedOutputType}
@@ -701,7 +705,10 @@ export default function QuestionsManagementPage() {
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
                 tabValidation={tabValidation}
-                // Handlers
+                parameterTypes={parameterTypes}
+                setParameterTypes={setParameterTypes}
+                questionMetadata={questionMetadata}
+                // Pass handlers
                 handleAddParameter={handleAddParameter}
                 handleRemoveParameter={handleRemoveParameter}
                 handleParameterChange={handleParameterChange}
