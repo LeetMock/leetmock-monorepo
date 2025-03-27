@@ -13,7 +13,11 @@ import { CodeSessionEvent } from "@/convex/types";
 import { useNonReactiveQuery } from "@/hooks/use-non-reactive-query";
 import { useResizePanel } from "@/hooks/use-resize-panel";
 import { cn, isDefined } from "@/lib/utils";
-import { useConnectionState, useVoiceAssistant } from "@livekit/components-react";
+import {
+  useConnectionState,
+  useLocalParticipant,
+  useVoiceAssistant,
+} from "@livekit/components-react";
 import Editor from "@monaco-editor/react";
 import { toast } from "sonner";
 import { CodeTestPanel } from "./code-test-pannel";
@@ -54,7 +58,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
   const terminalState = useQuery(api.codeSessionStates.getTerminalState, { sessionId });
 
   const commitCodeSessionEvent = useMutation(api.codeSessionEvents.commitCodeSessionEvent);
-
+  const localParticipant = useLocalParticipant();
   const [localEditorContent, setLocalEditorContent] = useState<string | undefined>(undefined);
 
   const { size, isResizing, resizeHandleProps } = useResizePanel({
