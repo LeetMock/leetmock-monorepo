@@ -1,9 +1,9 @@
 import { Logo } from "@/components/logo";
+import { ThemeToggleButton } from "@/components/ThemeToggleButton";
 import { Button } from "@/components/ui/button";
+import { useSidebar } from "@/hooks/use-sidebar";
 import { cn } from "@/lib/utils";
 import { Menu } from "lucide-react";
-import { useSidebar } from "@/hooks/use-sidebar";
-import { ThemeToggleButton } from "@/components/ThemeToggleButton";
 
 export const DashboardHeader: React.FC<{ className?: string }> = ({ className }) => {
   const { setOpen } = useSidebar();

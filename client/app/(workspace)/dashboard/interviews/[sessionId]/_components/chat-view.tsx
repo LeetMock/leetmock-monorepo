@@ -1,5 +1,6 @@
 import { Id } from "@/convex/_generated/dataModel";
 import { useAgentData } from "@/hooks/use-agent";
+import { useCodeSessionState } from "@/hooks/use-session-state";
 import { SCROLLBAR_CSS } from "@/lib/constants";
 import { cn, isDefined, secondsToMilliseconds } from "@/lib/utils";
 import {
@@ -44,6 +45,8 @@ const segmentToChatMessage = (
 };
 
 export const ChatView = ({ sessionId }: { sessionId: Id<"sessions"> }) => {
+  const [codeSessionState, setCodeSessionState] = useCodeSessionState();
+
   return (
     <div className="flex h-full w-full">
       <div className="flex-1 flex items-center justify-center">

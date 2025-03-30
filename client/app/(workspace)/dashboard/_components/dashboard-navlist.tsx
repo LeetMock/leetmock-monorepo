@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, Settings, Code2, Network, Users } from "lucide-react";
+import { Code2, LayoutDashboard, Network, Settings, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -7,10 +7,10 @@ interface NavItem {
   href: string;
   icon: React.ElementType;
   title: string;
-  children?: { href: string; title: string; icon?: React.ElementType; }[];
+  children?: { href: string; title: string; icon?: React.ElementType }[];
 }
 
-interface NavProps extends React.HTMLAttributes<HTMLDivElement> { }
+interface NavProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const navItems: NavItem[] = [
   {
@@ -21,7 +21,7 @@ const navItems: NavItem[] = [
       { href: "/dashboard/coding", title: "Coding", icon: Code2 },
       { href: "/dashboard/behavior", title: "Behavior", icon: Users },
       { href: "/dashboard/system-design", title: "System Design", icon: Network },
-    ]
+    ],
   },
   { href: "/dashboard/settings/account", icon: Settings, title: "Account" },
 ];
