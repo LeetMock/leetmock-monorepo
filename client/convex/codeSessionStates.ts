@@ -1,7 +1,7 @@
 import { v } from "convex/values";
-import { Id } from "./_generated/dataModel";
 
-import { internalQuery, query, userQuery } from "./functions";
+import { Id } from "./_generated/dataModel";
+import { internalQuery, query, userMutation, userQuery } from "./functions";
 import { QueryCtx } from "./types";
 
 export const get = query({
@@ -33,6 +33,44 @@ export const get = query({
   }),
   handler: async (ctx, { sessionId }) => {
     return await querySessionStateBySessionId(ctx, sessionId);
+  },
+});
+
+export const set = userMutation({
+  args: {
+    sessionId: v.id("sessions"),
+    currentStageIdx: v.optional(v.number()),
+    editor: v.optional(
+      v.object({
+        language: v.string(),
+        content: v.string(),
+        lastUpdated: v.number(),
+      })
+    ),
+    terminal: v.optional(
+      v.object({
+        output: v.string(),
+        isError: v.boolean(),
+        executionTime: v.optional(v.number()),
+      })
+    ),
+    testcases: v.optional(
+      v.array(
+        v.object({
+          input: v.record(v.string(), v.any()),
+          expectedOutput: v.optional(v.any()),
+        })
+      )
+    ),
+  },
+  handler: async (ctx, { sessionId, ...rest }) => {
+    const sessionState = await ctx.table("sessions").getX(sessionId).edgeX("codeSessionState");
+
+    const patch = Object.fromEntries(
+      Object.entries(rest).filter(([_, value]) => value !== undefined)
+    );
+
+    await sessionState.patch(patch);
   },
 });
 

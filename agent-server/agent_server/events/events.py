@@ -43,6 +43,7 @@ from agent_server.contexts.session import CodeSession, CodeSessionEventTypes
 from agent_server.events import BaseEvent
 from debouncer import debounce
 from livekit.agents.voice_assistant import VoiceAssistant
+from loguru import logger
 from pydantic import BaseModel, Field, PrivateAttr, StrictStr
 
 from libs.convex.api import ConvexApi
@@ -50,8 +51,6 @@ from libs.convex.convex_requests import create_test_code_correctness_request
 from libs.convex.convex_types import CodeSessionContentChangedEvent, TestcaseResult
 from libs.helpers import static_check_with_mypy
 from libs.message_wrapper import MessageWrapper
-
-from loguru import logger
 
 
 class Reminder(BaseModel):
@@ -243,6 +242,29 @@ class CodeEditorChangedEvent(BaseEvent[Any]):
         session = self.session
         session.on("content_changed", process_event)
         # self.assistant.on("user_speech_committed", lambda _: process_event())
+
+
+"""
+b1, a1
+b2, a2
+commit diff(b1, a2)
+
+b3
+
+@subcribe(UserMessageEvent, strategy=Mode.Interrupt())
+async def on_user_message(before, after): # (b1, a1), (b2, a2)
+    if state.before is None:
+        await mutate_state(before=before)
+
+    await asyncio.sleep(2)
+    # commit diff of state.before and after
+    await mutate_state(
+        messages=[commit_diff_msg(state.before, after)],
+        before=None,
+    )
+
+
+"""
 
 
 class TestcaseChangedEvent(BaseEvent[Any]):

@@ -95,7 +95,7 @@ requires-dist = [
     { name = "langgraph", specifier = ">=0.2.44,<0.3" },
     { name = "langgraph-sdk", specifier = "==0.1.42" },
     { name = "libs", editable = "../libs" },
-    { name = "livechain" },
+    { name = "livechain", specifier = "==0.0.11" },
     { name = "livekit", specifier = ">=0.18.1" },
     { name = "livekit-agents", specifier = ">=0.12.11" },
     { name = "livekit-plugins-cartesia", specifier = ">=0.4.8" },
@@ -1145,22 +1145,16 @@ requires-dist = [
 
 [[package]]
 name = "livechain"
-version = "0.0.8"
+version = "0.0.11"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "langchain-core" },
     { name = "langchain-openai" },
     { name = "langgraph" },
-    { name = "livekit-agents" },
-    { name = "livekit-plugins-deepgram" },
-    { name = "livekit-plugins-openai" },
-    { name = "livekit-plugins-silero" },
-    { name = "livekit-plugins-turn-detector" },
-    { name = "python-dotenv" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/34/49/bc88af3d996983c68179f3b4448c2f0145480a059c583aab9910f7005e40/livechain-0.0.8.tar.gz", hash = "sha256:3c4db9d6edab7f88b750a9ff3b7e87835f448642354ae323af91cddfc4331dde", size = 124487 }
+sdist = { url = "https://files.pythonhosted.org/packages/41/69/ab7eb3b664f931b3b4de76cad60eee37477f0f544806e480f889e8edb9ec/livechain-0.0.11.tar.gz", hash = "sha256:1c9f45cd2d6524985f4aae9a3f69d9d37450fa17ecc9a2ef40474a12efdbf65b", size = 139382 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/11/b8/6a27a3f4cc139dcb518611414af163e29841b9d0ad4a0062a64937cc8eaf/livechain-0.0.8-py3-none-any.whl", hash = "sha256:339c5cf20fd6490ce33b8a544dc10407305b01df001e782b0bd3f01bf5203216", size = 18939 },
+    { url = "https://files.pythonhosted.org/packages/fe/e6/9cd61fcd12f5dc86b394dcf158aeaa06819c1a7b3e0cdf61e9fcdf27ec85/livechain-0.0.11-py3-none-any.whl", hash = "sha256:fe95ce0b18f4676aac9936b68daad352165b43974b7dcf06cfa69aa08b8adaa8", size = 21550 },
 ]
 
 [[package]]
