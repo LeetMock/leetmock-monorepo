@@ -3,8 +3,14 @@ import { Doc } from "@/convex/_generated/dataModel";
 import { encode, isDefined } from "@/lib/utils";
 import { useConnectionState, useDataChannel } from "@livekit/components-react";
 import { useMutation, useQuery } from "convex/react";
+import { produce } from "immer";
 import { ConnectionState } from "livekit-client";
 import { createContext, useCallback, useContext, useEffect, useMemo } from "react";
+
+export type SessionStateData = Omit<
+  Doc<"codeSessionStates">,
+  "sessionId" | "_creationTime" | "_id" | "deletionTime"
+>;
 
 export const SessionContext = createContext<Doc<"sessions"> | undefined>(undefined);
 
@@ -28,23 +34,26 @@ export const useCodeSessionState = () => {
   const localSessionState = useMemo(() => {
     if (!isDefined(sessionState)) return undefined;
 
-    const { _id, _creationTime, sessionId, ...rest } = sessionState;
+    const { _id, _creationTime, sessionId, deletionTime, ...rest } = sessionState;
 
     return rest;
   }, [sessionState]);
 
   const setLocalSessionState = useCallback(
-    (state: Partial<Omit<typeof localSessionState, "sessionId">>) => {
-      setSessionState({
+    async (mutate: (data: SessionStateData) => void) => {
+      if (!isDefined(localSessionState)) return;
+
+      await setSessionState({
         sessionId: session._id,
-        ...state,
+        patch: produce(localSessionState, mutate),
       });
     },
-    [setSessionState, session]
+    [session._id, setSessionState, localSessionState]
   );
 
   useEffect(() => {
     if (!isDefined(sessionState)) return;
+    // [IMPORTANT] Only publish data when the connection is established
     if (connectionState !== ConnectionState.Connected) return;
 
     publishData(encode(JSON.stringify(sessionState)), { reliable: true });

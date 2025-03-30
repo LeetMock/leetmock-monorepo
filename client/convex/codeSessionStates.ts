@@ -39,31 +39,33 @@ export const get = query({
 export const set = userMutation({
   args: {
     sessionId: v.id("sessions"),
-    currentStageIdx: v.optional(v.number()),
-    editor: v.optional(
-      v.object({
-        language: v.string(),
-        content: v.string(),
-        lastUpdated: v.number(),
-      })
-    ),
-    terminal: v.optional(
-      v.object({
-        output: v.string(),
-        isError: v.boolean(),
-        executionTime: v.optional(v.number()),
-      })
-    ),
-    testcases: v.optional(
-      v.array(
+    patch: v.object({
+      currentStageIdx: v.optional(v.number()),
+      editor: v.optional(
         v.object({
-          input: v.record(v.string(), v.any()),
-          expectedOutput: v.optional(v.any()),
+          language: v.string(),
+          content: v.string(),
+          lastUpdated: v.number(),
         })
-      )
-    ),
+      ),
+      terminal: v.optional(
+        v.object({
+          output: v.string(),
+          isError: v.boolean(),
+          executionTime: v.optional(v.number()),
+        })
+      ),
+      testcases: v.optional(
+        v.array(
+          v.object({
+            input: v.record(v.string(), v.any()),
+            expectedOutput: v.optional(v.any()),
+          })
+        )
+      ),
+    }),
   },
-  handler: async (ctx, { sessionId, ...rest }) => {
+  handler: async (ctx, { sessionId, patch: rest }) => {
     const sessionState = await ctx.table("sessions").getX(sessionId).edgeX("codeSessionState");
 
     const patch = Object.fromEntries(
