@@ -21,6 +21,8 @@ import {
 import Editor from "@monaco-editor/react";
 import { toast } from "sonner";
 import { CodeTestPanel } from "./code-test-pannel";
+import { useCodeSessionState } from "@/hooks/use-session-state";
+import { useSessionStateEvent } from "@/hooks/use-session-state-event";
 
 const darkEditorTheme: monacoEditor.IStandaloneThemeData = {
   base: "vs-dark",
@@ -67,7 +69,12 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     maxSize: Math.min(height - 250, 900),
     direction: "vertical",
     storageId: "leetmock.workspace.code-editor",
-  });
+  })
+
+  // New
+  const [sessionState, setSessionState] = useCodeSessionState();
+  const setSessionStateDebounced = useDebounceCallback(setSessionState, 1000);
+  const publishEvent = useSessionStateEvent();
 
   useEffect(() => {
     if (!isDefined(editorState)) return;
@@ -90,6 +97,24 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     },
     [sessionId, commitCodeSessionEvent, connectionState]
   );
+
+  const handleContentChanged = async (before: string, after: string) => {
+    Promise.all([
+      setSessionStateDebounced(
+        (state) => ({
+          editor: {
+            language,
+            content: after,
+            lastUpdated: Date.now(),
+          },
+        })
+      ),
+      publishEvent({
+        type: "content_changed",
+        data: { before, after },
+      })
+    ])
+  }
 
   const debouncedCommitEvent = useDebounceCallback(handleCommitEvent, 500);
 
@@ -132,10 +157,7 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
               if (connectionState !== "connected") return;
               if (localEditorContent === value) return;
 
-              debouncedCommitEvent({
-                type: "content_changed",
-                data: { before: localEditorContent, after: value },
-              });
+              handleContentChanged(localEditorContent, value);
               setLocalEditorContent(value);
             }}
             beforeMount={(monaco) => {
