@@ -86,28 +86,16 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
     [editorState, terminalState]
   );
 
-  const handleCommitEvent = useCallback(
-    (event: CodeSessionEvent) => {
-      if (connectionState !== "connected") return;
-
-      if (event.type === "testcase_changed") {
-        toast.success("Testcases updated");
-      }
-      commitCodeSessionEvent({ sessionId, event });
-    },
-    [sessionId, commitCodeSessionEvent, connectionState]
-  );
-
   const handleContentChanged = async (before: string, after: string) => {
     Promise.all([
       setSessionStateDebounced(
-        (state) => ({
-          editor: {
-            language,
+        (state) => {
+          state.editor = {
+            ...state.editor,
             content: after,
             lastUpdated: Date.now(),
-          },
-        })
+          };
+        }
       ),
       publishEvent({
         type: "content_changed",
@@ -115,8 +103,6 @@ export const CodeEditorPanel: React.FC<CodeEditorPanelProps> = ({
       })
     ])
   }
-
-  const debouncedCommitEvent = useDebounceCallback(handleCommitEvent, 500);
 
   return (
     <div className={cn("h-full flex flex-col", className)} {...props}>

@@ -3,19 +3,19 @@
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { CodeSessionEvent } from "@/convex/types";
 import { useEditorStore } from "@/hooks/use-editor-store";
 import { useNonReactiveQuery } from "@/hooks/use-non-reactive-query";
-import { Testcase } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useConnectionState } from "@livekit/components-react";
-import { useAction, useMutation, useQuery } from "convex/react";
+import { useAction, useQuery } from "convex/react";
 import { Clock, Loader2, PlayIcon } from "lucide-react";
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import { toast } from "sonner";
-import { useDebounceCallback } from "usehooks-ts";
 import { TestResultsBlock } from "./test-results-block";
 import { TestcaseEditor } from "./testcase-editor";
+import { useCodeSessionState } from "@/hooks/use-session-state";
+import { useSessionStateEvent } from "@/hooks/use-session-state-event";
+import { RunTestResult, Testcase } from "@/lib/types";
 
 interface CodeTestPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   sessionId: Id<"sessions">;
@@ -38,8 +38,10 @@ export const CodeTestPanel: React.FC<CodeTestPanelProps> = ({
     sessionId,
   }) as Testcase[];
 
-  const commitCodeSessionEvent = useMutation(api.codeSessionEvents.commitCodeSessionEvent);
   const runTests = useAction(api.actions.runTests);
+
+  const [sessionState, setSessionState] = useCodeSessionState();
+  const publishEvent = useSessionStateEvent();
 
   const {
     testResults,
@@ -63,19 +65,32 @@ export const CodeTestPanel: React.FC<CodeTestPanelProps> = ({
     }
   }, [testCasesState, setTestcases]);
 
-  const handleCommitEvent = useCallback(
-    (event: CodeSessionEvent) => {
-      if (connectionState !== "connected") return;
+  const handleTestcaseChanged = async (before: Testcase[], after: Testcase[]) => {
+    if (connectionState !== "connected") return;
 
-      if (event.type === "testcase_changed") {
-        toast.success("Testcases updated");
-      }
-      commitCodeSessionEvent({ sessionId, event });
-    },
-    [sessionId, commitCodeSessionEvent, connectionState]
-  );
+    await Promise.all([
+      setSessionState((state) => {
+        state.testcases = after;
+      }),
+      publishEvent({
+        type: "testcase_changed",
+        data: {
+          before,
+          after,
+        },
+      }),
+    ]);
+    toast.success("Testcases updated");
+  };
 
-  const debouncedCommitEvent = useDebounceCallback(handleCommitEvent, 500);
+  const handleUserTestcaseExecuted = async (testResults: RunTestResult) => {
+    if (connectionState !== "connected") return;
+
+    publishEvent({
+      type: "user_testcase_executed",
+      data: { testResults },
+    });
+  };
 
   return (
     <div className={cn("w-full relative bg-background rounded-md", className)} {...props}>
@@ -130,13 +145,7 @@ export const CodeTestPanel: React.FC<CodeTestPanelProps> = ({
               }}
               onActiveTabChange={setActiveTestcaseTab}
               onSaveTestcases={() => {
-                debouncedCommitEvent({
-                  type: "testcase_changed",
-                  data: {
-                    before: savedTestcases,
-                    after: draftTestcases,
-                  },
-                });
+                handleTestcaseChanged(savedTestcases, draftTestcases);
                 saveDraft();
               }}
             />
@@ -153,7 +162,8 @@ export const CodeTestPanel: React.FC<CodeTestPanelProps> = ({
                 language,
                 editorState,
                 runTests,
-                onCommitEvent: debouncedCommitEvent,
+                handleUserTestcaseExecuted: handleUserTestcaseExecuted,
+                handleTestcaseChanged: handleTestcaseChanged,
               })
             }
             disabled={isRunning || connectionState !== "connected"}
