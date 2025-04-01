@@ -63,6 +63,7 @@ export const set = userMutation({
           })
         )
       ),
+      transitionTimestamps: v.optional(v.array(v.number())),
     }),
   },
   handler: async (ctx, { sessionId, patch: rest }) => {
