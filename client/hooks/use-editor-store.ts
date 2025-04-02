@@ -31,7 +31,8 @@ interface EditorStore {
     language: string;
     editorState: any;
     runTests: any;
-    onCommitEvent: (event: CodeSessionEvent) => void;
+    handleUserTestcaseExecuted: (testResults: RunTestResult) => void;
+    handleTestcaseChanged: (before: Testcase[], after: Testcase[]) => void;
   }) => Promise<void>;
   reset: () => void;
   setHasTestcaseChanges: (value: boolean) => void;
@@ -79,7 +80,8 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     language,
     editorState,
     runTests,
-    onCommitEvent,
+    handleUserTestcaseExecuted,
+    handleTestcaseChanged,
   }) => {
     const store = get();
     if (!editorState) return;
@@ -93,13 +95,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       // Wait for any pending testcase changes to be saved
       if (store.hasTestcaseChanges) {
         await new Promise<void>((resolve) => {
-          onCommitEvent({
-            type: "testcase_changed",
-            data: {
-              before: store.savedTestcases,
-              after: store.draftTestcases,
-            }
-          });
+          handleTestcaseChanged(store.savedTestcases, store.draftTestcases);
           resolve();
         });
         store.saveDraft();
@@ -110,10 +106,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       const result = await runTests({ language, sessionId, questionId });
       if (result.status === "success" && result.testResults) {
         store.setTestResults(result.testResults);
-        onCommitEvent({
-          type: "user_testcase_executed",
-          data: { testResults: result.testResults },
-        });
+        handleUserTestcaseExecuted(result.testResults);
       } else {
         const errorMessage =
           result.stderr || result.exception || "Error running tests. Please try again.";
