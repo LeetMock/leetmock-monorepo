@@ -225,3 +225,6 @@ export enum PricingTier {
   PayAsYouGo = "payAsYouGo",
   PremiumExtraMins = "premiumExtraMins",
 }
+
+export const GET_SESSION_ID_METHOD = "get_session_id";
+export const MUTATE_CODE_SESSION_STATE_METHOD = "mutate_code_session_state";

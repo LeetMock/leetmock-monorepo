@@ -7,7 +7,6 @@ import { useAgent } from "@/hooks/use-agent";
 import { useAgentChat } from "@/hooks/use-agent-chat";
 import { useConnection } from "@/hooks/use-connection";
 import { useEditorStore } from "@/hooks/use-editor-store";
-import { SessionContext } from "@/hooks/use-session-state";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { InterviewStage, STAGE_VIEW_MAPPING, StageView } from "@/lib/constants";
 import { isDefined } from "@/lib/utils";
@@ -83,11 +82,7 @@ export const Workspace: React.FC<{ sessionId: Id<"sessions"> }> = ({ sessionId }
           <Wait data={{ session }}>{({ session }) => <WorkspaceToolbar session={session} />}</Wait>
         </div>
         <div className="w-full h-full flex justify-center items-center p-2 pt-0 relative">
-          <Wait data={{ session }}>
-            {({ session }) => (
-              <SessionContext.Provider value={session}>{stageView}</SessionContext.Provider>
-            )}
-          </Wait>
+          {stageView}
         </div>
       </div>
       <ChatWindow isAgentConnected={isAgentConnected} />

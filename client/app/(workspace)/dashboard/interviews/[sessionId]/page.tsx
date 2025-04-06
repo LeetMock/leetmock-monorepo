@@ -9,13 +9,16 @@ import { notFound, useParams } from "next/navigation";
 import React, { useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { Workspace } from "./_components/workspace";
-
+import { useLivekitRPC } from "@/hooks/register_livekitRPC";
 const isKrispSupported = isKrispNoiseFilterSupported();
 
 const InterviewPage: React.FC = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const sessionExists = useQuery(api.sessions.exists, { sessionId });
   const { setNoiseFilterEnabled, isNoiseFilterEnabled } = useKrispNoiseFilter();
+
+  // register livekit rpc
+  useLivekitRPC();
 
   useEffect(() => {
     if (isNoiseFilterEnabled) return;
