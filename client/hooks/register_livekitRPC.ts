@@ -15,7 +15,7 @@ export const useLivekitRPC = () => {
     // Register RPC methods
     useEffect(() => {
         if (!room) return;
-
+        console.log("registering livekit rpc");
         // Register method to get session ID
         room.registerRpcMethod(
             GET_SESSION_ID_METHOD,
@@ -43,6 +43,8 @@ export const useLivekitRPC = () => {
                 return JSON.stringify({ success: true });
             }
         );
+
+        console.log("livekit rpc registered");
 
         // Cleanup RPC methods on unmount
         return () => {
