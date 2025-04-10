@@ -14,7 +14,7 @@ function App() {
       </div>
       <main className="relative">
         <div className="absolute inset-0 bg-gradient-to-b from-blue-900/20 to-black/50 pointer-events-none" />
-        
+
         <Hero />
         <section id="motivation" className="relative">
           <Features />

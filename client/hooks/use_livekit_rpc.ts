@@ -50,6 +50,7 @@ export const useLivekitRPC = () => {
         return () => {
             room.unregisterRpcMethod(GET_SESSION_ID_METHOD);
             room.unregisterRpcMethod(MUTATE_CODE_SESSION_STATE_METHOD);
+            console.log("livekit rpc unregistered");
         };
     }, [room, session, setSessionState]);
 

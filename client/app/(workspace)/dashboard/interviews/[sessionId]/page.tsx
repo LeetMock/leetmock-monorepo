@@ -9,7 +9,7 @@ import { notFound, useParams } from "next/navigation";
 import React, { useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { Workspace } from "./_components/workspace";
-import { useLivekitRPC } from "@/hooks/register_livekitRPC";
+import { useLivekitRPC } from "@/hooks/use_livekit_rpc";
 const isKrispSupported = isKrispNoiseFilterSupported();
 
 const InterviewPage: React.FC = () => {
