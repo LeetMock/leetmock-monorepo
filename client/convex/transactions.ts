@@ -139,10 +139,7 @@ async function handleSubscriptionUpdate(ctx: ActionCtx, subscription: Stripe.Sub
   const tier = product.name.toLowerCase() as "basic" | "premium";
 
   if (!["basic", "premium"].includes(tier)) {
-    throw new ConvexError({
-      code: ErrorCodes.INVALID_PRODUCT_NAME,
-      message: "Invalid product name",
-    });
+    return;
   }
 
   const pricing = await ctx.runQuery(internal.pricings.getPricingsInternal, {
